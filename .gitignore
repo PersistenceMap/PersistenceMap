@@ -1,0 +1,7 @@
+packages
+bin
+obj
+release
+*.user
+*.jtconfig
+*.suo

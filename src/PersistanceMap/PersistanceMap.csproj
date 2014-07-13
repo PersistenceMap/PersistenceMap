@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4160375C-5E51-484F-B07B-85A5EB9169F8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PersistanceMap</RootNamespace>
+    <AssemblyName>PersistanceMap</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\IgnoreAttribute.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="Enums\MapOperationType.cs" />
+    <Compile Include="Extensions\DataReaderExtensions.cs" />
+    <Compile Include="Extensions\PropertyExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
+    <Compile Include="Extensions\TypeExtensionsForObjectGeneration.cs" />
+    <Compile Include="IExpressionCompiler.cs" />
+    <Compile Include="IExpressionMapQueryPart.cs" />
+    <Compile Include="Compiler\LambdaExpressionCompiler.cs" />
+    <Compile Include="QueryBuilder\ExpressionMapQueryPart.cs" />
+    <Compile Include="IReaderContext.cs" />
+    <Compile Include="IEntityQueryPart.cs" />
+    <Compile Include="Internals\ReaderContext.cs" />
+    <Compile Include="Internals\SqlContextReader.cs" />
+    <Compile Include="MapOption.cs" />
+    <Compile Include="Mapping\MappingStrategy.cs" />
+    <Compile Include="Extensions\ObjectExtensionsForMapping.cs" />
+    <Compile Include="QueryBuilder\CompiledQuery.cs" />
+    <Compile Include="Compiler\SqlExpressionCompiler.cs" />
+    <Compile Include="Expressions\SelectExpression.cs" />
+    <Compile Include="Extensions\EnsureExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\MemberInfoExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="IContextProvider.cs" />
+    <Compile Include="IDbContext.cs" />
+    <Compile Include="Internals\DbContext.cs" />
+    <Compile Include="IQueryPart.cs" />
+    <Compile Include="QueryBuilder\ExpressionQueryPart.cs" />
+    <Compile Include="QueryBuilder\FieldQueryPart.cs" />
+    <Compile Include="QueryBuilder\FromQueryPart.cs" />
+    <Compile Include="QueryBuilder\JoinQueryPart.cs" />
+    <Compile Include="Extensions\TypeExtensionsForQueryParts.cs" />
+    <Compile Include="QueryPartsContainer.cs" />
+    <Compile Include="ISelectExpression.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="SqlContextProvider.cs" />
+    <Compile Include="FieldDefinition.cs" />
+    <Compile Include="Compiler\QueryCompiler.cs" />
+    <Compile Include="Sql\EnumMemberAccess.cs" />
+    <Compile Include="Sql\ISqlString.cs" />
+    <Compile Include="Sql\PartialSqlString.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

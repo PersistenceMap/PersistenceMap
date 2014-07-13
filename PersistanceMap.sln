@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap", "src\PersistanceMap\PersistanceMap.csproj", "{4160375C-5E51-484F-B07B-85A5EB9169F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Test", "src\Tests\PersistanceMap.Test\PersistanceMap.Test.csproj", "{923AB5EF-6D65-4452-A0C2-BF441308BE33}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{554CB4F9-23E8-45E3-A418-695F1D979249}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1710980-9178-4F25-93E0-24B85D91B64D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4160375C-5E51-484F-B07B-85A5EB9169F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4160375C-5E51-484F-B07B-85A5EB9169F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4160375C-5E51-484F-B07B-85A5EB9169F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4160375C-5E51-484F-B07B-85A5EB9169F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{923AB5EF-6D65-4452-A0C2-BF441308BE33} = {554CB4F9-23E8-45E3-A418-695F1D979249}
+	EndGlobalSection
+EndGlobal
