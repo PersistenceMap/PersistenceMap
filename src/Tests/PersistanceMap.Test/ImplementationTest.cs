@@ -34,6 +34,20 @@ namespace PersistanceMap.Test
                     .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
                     .Select<OrderDetails>();
 
+                // join using include
+                var orders3 = context
+                    .From<Orders>()
+                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID))
+                    .Join<Products>(opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID))
+                    .Select<OrderDetails>();
+
+                //THIS FAILS BECAUSE AND INSTEAD OF ON! AND HAS TO BE TESTED
+                var orders4 = context
+                    .From<Orders>()
+                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID))
+                    .Join<Products>(opt => opt.And<OrderDetails>((product, det) => product.ProductID == det.ProductID))
+                    .Select<OrderDetails>();
+
                 // join using identifiers in the on expression
                 var prsAbt3 = context.From<Orders>(opt => opt.Identifier(() => "orders")).Join<OrderDetails>(opt => opt.Identifier(() => "detail"), opt => opt.On("orders", (det, order) => det.OrderID == order.OrderID)).Select<OrderDetails>();
 

@@ -39,7 +39,7 @@ namespace PersistanceMap
     /// <typeparam name="T"></typeparam>
     public class MapOption<T>
     {
-        public IExpressionMapQueryPart Include<T3>(Expression<Func<T, T3>> predicate)
+        public IExpressionMapQueryPart Include<T2>(Expression<Func<T, T2>> predicate)
         {
             throw new NotImplementedException();
         }
@@ -71,6 +71,25 @@ namespace PersistanceMap
             throw new NotImplementedException("identifier has to be implemented on ExpressionMapQueryPart");
         }
 
+        public IExpressionMapQueryPart On<T3>(Expression<Func<T, T3, bool>> predicate)
+        {
+            return new ExpressionMapQueryPart(MapOperationType.Join, predicate);
+        }
+
+        public IExpressionMapQueryPart On<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
+        {
+            //var part = new ExpressionMapQueryPart(MapOperationType.Join, predicate);
+            //part.Identifier = identifier;
+            //return part;
+
+            throw new NotImplementedException("identifier has to be implemented on ExpressionMapQueryPart");
+        }
+
+
+
+
+
+
         public IExpressionMapQueryPart And(Expression<Func<T, T2, bool>> predicate)
         {
             return new ExpressionMapQueryPart(MapOperationType.And, predicate);
@@ -85,7 +104,30 @@ namespace PersistanceMap
             throw new NotImplementedException("identifier has to be implemented on ExpressionMapQueryPart");
         }
 
+        public IExpressionMapQueryPart And<T3>(Expression<Func<T, T3, bool>> predicate)
+        {
+            return new ExpressionMapQueryPart(MapOperationType.And, predicate);
+        }
+
+        public IExpressionMapQueryPart And<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
+        {
+            //var part = new ExpressionMapQueryPart(MapOperationType.And, predicate);
+            //part.Identifier = identifier;
+            //return part;
+
+            throw new NotImplementedException("identifier has to be implemented on ExpressionMapQueryPart");
+        }
+
+
+
+
+
         public IExpressionMapQueryPart Or(Expression<Func<T, T2, bool>> predicate)
+        {
+            return new ExpressionMapQueryPart(MapOperationType.Or, predicate);
+        }
+
+        public IExpressionMapQueryPart Or<T3>(Expression<Func<T, T3, bool>> predicate)
         {
             return new ExpressionMapQueryPart(MapOperationType.Or, predicate);
         }
