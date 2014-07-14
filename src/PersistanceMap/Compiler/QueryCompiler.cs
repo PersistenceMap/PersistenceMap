@@ -29,7 +29,7 @@ namespace PersistanceMap.Compiler
                 sb.AppendFormat("{0}{1} ", field.Compile(), _queryParts.Fields.Last() == field ? "" : ",");
 
             // add from
-            sb.AppendFormat("{0} ", _queryParts.From.Compile());
+            sb.AppendFormat("{0} \r\n", _queryParts.From.Compile());
 
             // add joins
             foreach (var join in _queryParts.Joins)

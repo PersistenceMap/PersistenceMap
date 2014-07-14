@@ -74,7 +74,7 @@
     <Compile Include="BusinessObjects\OrderDetails.cs" />
     <Compile Include="BusinessObjects\OrderWithDetail.cs" />
     <Compile Include="BusinessObjects\Products.cs" />
-    <Compile Include="Integration\ContextSelectTests.cs" />
+    <Compile Include="Integration\SelectTests.cs" />
     <Compile Include="Integration\FromTests.cs" />
     <Compile Include="Integration\JoinTests.cs" />
     <Compile Include="ImplementationTest.cs" />

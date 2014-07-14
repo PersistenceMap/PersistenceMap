@@ -44,13 +44,16 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Enums\MapOperationType.cs" />
+    <Compile Include="Expressions\ProcedureExpression.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
     <Compile Include="Extensions\TypeExtensionsForObjectGeneration.cs" />
     <Compile Include="IExpressionCompiler.cs" />
     <Compile Include="IExpressionMapQueryPart.cs" />
-    <Compile Include="Compiler\LambdaExpressionCompiler.cs" />
+    <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
+    <Compile Include="IExpressionQueryPart.cs" />
+    <Compile Include="IProcedureExpression.cs" />
     <Compile Include="QueryBuilder\ExpressionMapQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="IEntityQueryPart.cs" />
@@ -83,6 +86,8 @@
     <Compile Include="SqlContextProvider.cs" />
     <Compile Include="FieldDefinition.cs" />
     <Compile Include="Compiler\QueryCompiler.cs" />
+    <Compile Include="Sql\BaseDialectProvider.cs" />
+    <Compile Include="Sql\DialectProvider.cs" />
     <Compile Include="Sql\EnumMemberAccess.cs" />
     <Compile Include="Sql\ISqlString.cs" />
     <Compile Include="Sql\PartialSqlString.cs" />

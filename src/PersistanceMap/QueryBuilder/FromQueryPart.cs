@@ -1,7 +1,10 @@
 ﻿
+using System;
+using System.Collections.Generic;
+
 namespace PersistanceMap.QueryBuilder
 {
-    class FromQueryPart : IEntityQueryPart
+    class FromQueryPart<T> : ExpressionQueryPart<T>, IExpressionQueryPart
     {
         public FromQueryPart(string entity)
             : this(entity, null)
@@ -9,14 +12,20 @@ namespace PersistanceMap.QueryBuilder
         }
 
         public FromQueryPart(string entity, string identifier)
+            : this(entity, identifier, new List<IExpressionMapQueryPart>())
         {
-            Identifier = identifier;
-            Entity = entity;
         }
 
-        public string Entity { get; private set; }
+        public FromQueryPart(string entity, string identifier, IEnumerable<IExpressionMapQueryPart> mapOperations)
+            : base(identifier, entity, mapOperations)
+        {
+            //Identifier = identifier;
+            //Entity = entity;
+        }
 
-        public string Identifier { get; set; }
+        //public string Entity { get; private set; }
+
+        //public string Identifier { get; set; }
 
         public string Compile()
         {
@@ -32,6 +41,14 @@ namespace PersistanceMap.QueryBuilder
                 return string.Format("Entity: {0} [{0}]", Entity);
 
             return string.Format("Entity: {0} [{0} {1}]", Entity, Identifier);
+        }
+
+        internal void AddOperation(IExpressionMapQueryPart operation)
+        {
+            if (operation.MapOperationType != MapOperationType.Include)
+                throw new ArgumentException("Only MapOperationType.Include is allowed as operation on a from expression", "operation");
+
+            Operations.Add(operation);
         }
     }
 }

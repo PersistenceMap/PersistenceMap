@@ -12,9 +12,9 @@ namespace PersistanceMap
     /// </summary>
     internal static class TypeExtensionsForQueryParts
     {
-        public static FromQueryPart ToFromQueryPart(this Type type)
+        public static FromQueryPart<T> ToFromQueryPart<T>(this Type type)
         {
-            return new FromQueryPart(type.Name);
+            return new FromQueryPart<T>(type.Name);
         }
 
         public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, Expression<Func<TJoin, T, bool>> predicate)
@@ -28,11 +28,22 @@ namespace PersistanceMap
         {
             IEnumerable<IExpressionMapQueryPart> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
             IEnumerable<IExpressionMapQueryPart> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
+            IEnumerable<IExpressionMapQueryPart> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
 
             var join = new JoinQueryPart<TJoin>(type.Name, operationParts);
+            if (includeParts != null)
+                join.AddOperations(includeParts);
+
             if (idParts != null && idParts.Any())
             {
                 join.Identifier = idParts.First().Expression.Compile().DynamicInvoke() as string;
+                if (!string.IsNullOrEmpty(join.Identifier))
+                {
+                    foreach (var part in join.Operations)
+                    {
+                        part.IdentifierMap.Add(typeof (TJoin), join.Identifier);
+                    }
+                }
             }
 
             return join;

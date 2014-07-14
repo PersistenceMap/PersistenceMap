@@ -12,51 +12,35 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.Compiler
 {
-    public class LambdaExpressionCompiler<T>
+    public class LambdaExpressionToSqlCompiler<T>
     {
-        string sep = " ";
+        //TODO: separator has to be set as an option!
+        string separator = " ";
+
         //TODO: useFieldName has to be set as an option!
-        bool useFieldName = true;
+        bool _useFieldName = true;
+        private Dictionary<Type, string> _identifierMap;
 
         public bool PrefixFieldWithTableName { get; set; }
 
 
 
-        public LambdaExpressionCompiler()
+        public LambdaExpressionToSqlCompiler()
         {
             PrefixFieldWithTableName = true;
+            _identifierMap = new Dictionary<Type, string>();
         }
 
+        #region Compiles
 
-        
-
-
-
-        
-
-        protected virtual string GetQuotedColumnName(IEnumerable<FieldDefinition> tableDef, string memberName)
+        internal virtual object Compile(IExpressionMapQueryPart part)
         {
-            //TODO: CL check!
-            if (useFieldName)
-            {
-                var fd = tableDef.FirstOrDefault(x => x.Name == memberName);
-                var fieldName = fd != null ? fd.FieldName : memberName;
+            _identifierMap = part.IdentifierMap;
 
-                return PrefixFieldWithTableName
-                    ? DialectProvider.Instance.GetQuotedColumnName(fd.EntityName/*tableDef.Name*/, fieldName)
-                    : DialectProvider.Instance.GetQuotedColumnName(fieldName);
-            }
-
-            return memberName;
+            return Compile(part.Expression);
         }
-
-
-
-
-
-
-
-        protected internal virtual object Visit(Expression exp)
+        
+        internal virtual object Compile(Expression exp)
         {
             if (exp == null) 
                 return string.Empty;
@@ -64,11 +48,11 @@ namespace PersistanceMap.Compiler
             switch (exp.NodeType)
             {
                 case ExpressionType.Lambda:
-                    return VisitLambda(exp as LambdaExpression);
+                    return CompileLambda(exp as LambdaExpression);
                 case ExpressionType.MemberAccess:
-                    return VisitMemberAccess(exp as MemberExpression);
+                    return CompileMemberAccess(exp as MemberExpression);
                 case ExpressionType.Constant:
-                    return VisitConstant(exp as ConstantExpression);
+                    return CompileConstant(exp as ConstantExpression);
                 case ExpressionType.Add:
                 case ExpressionType.AddChecked:
                 case ExpressionType.Subtract:
@@ -92,7 +76,7 @@ namespace PersistanceMap.Compiler
                 case ExpressionType.RightShift:
                 case ExpressionType.LeftShift:
                 case ExpressionType.ExclusiveOr:
-                    return VisitBinary(exp as BinaryExpression);
+                    return CompileBinary(exp as BinaryExpression);
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
@@ -101,41 +85,40 @@ namespace PersistanceMap.Compiler
                 case ExpressionType.ArrayLength:
                 case ExpressionType.Quote:
                 case ExpressionType.TypeAs:
-                    return VisitUnary(exp as UnaryExpression);
+                    return CompileUnary(exp as UnaryExpression);
                 case ExpressionType.Parameter:
-                    return VisitParameter(exp as ParameterExpression);
+                    return CompileParameter(exp as ParameterExpression);
                 case ExpressionType.Call:
-                    return VisitMethodCall(exp as MethodCallExpression);
+                    return CompileMethodCall(exp as MethodCallExpression);
                 case ExpressionType.New:
-                    return VisitNew(exp as NewExpression);
+                    return CompileNew(exp as NewExpression);
                 case ExpressionType.NewArrayInit:
                 case ExpressionType.NewArrayBounds:
-                    return VisitNewArray(exp as NewArrayExpression);
+                    return CompileNewArray(exp as NewArrayExpression);
                 case ExpressionType.MemberInit:
-                    return VisitMemberInit(exp as MemberInitExpression);
+                    return CompileMemberInit(exp as MemberInitExpression);
                 default:
                     return exp.ToString();
             }
         }
 
-        protected virtual object VisitLambda(LambdaExpression lambda)
+        protected virtual object CompileLambda(LambdaExpression lambda)
         {
             if (lambda.Body.NodeType == ExpressionType.MemberAccess /*&& sep == " "*/)
             {
-                MemberExpression m = lambda.Body as MemberExpression;
+                var m = lambda.Body as MemberExpression;
 
                 if (m.Expression != null)
                 {
-                    string r = VisitMemberAccess(m).ToString();
+                    string r = CompileMemberAccess(m).ToString();
                     return string.Format("{0}={1}", r, GetQuotedTrueValue());
                 }
-
             }
 
-            return Visit(lambda.Body);
+            return Compile(lambda.Body);
         }
 
-        protected virtual object VisitMemberAccess(MemberExpression m)
+        protected virtual object CompileMemberAccess(MemberExpression m)
         {
             if (m.Expression != null && (m.Expression.NodeType == ExpressionType.Parameter || m.Expression.NodeType == ExpressionType.Convert))
             {
@@ -164,7 +147,7 @@ namespace PersistanceMap.Compiler
             return getter();
         }
 
-        protected virtual object VisitBinary(BinaryExpression expression)
+        protected virtual object CompileBinary(BinaryExpression expression)
         {
             object left, right;
             var operand = BindOperant(expression.NodeType);   //sep= " " ??
@@ -174,18 +157,18 @@ namespace PersistanceMap.Compiler
                 var m = expression.Left as MemberExpression;
                 if (m != null && m.Expression != null && m.Expression.NodeType == ExpressionType.Parameter)
                 {
-                    left = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m), GetQuotedTrueValue()));
+                    left = new PartialSqlString(string.Format("{0}={1}", CompileMemberAccess(m), GetQuotedTrueValue()));
                 }
                 else
-                    left = Visit(expression.Left);
+                    left = Compile(expression.Left);
 
                 m = expression.Right as MemberExpression;
                 if (m != null && m.Expression != null && m.Expression.NodeType == ExpressionType.Parameter)
                 {
-                    right = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m), GetQuotedTrueValue()));
+                    right = new PartialSqlString(string.Format("{0}={1}", CompileMemberAccess(m), GetQuotedTrueValue()));
                 }
                 else
-                    right = Visit(expression.Right);
+                    right = Compile(expression.Right);
 
                 if (left as PartialSqlString == null && right as PartialSqlString == null)
                 {
@@ -201,8 +184,8 @@ namespace PersistanceMap.Compiler
             }
             else
             {
-                left = Visit(expression.Left);
-                right = Visit(expression.Right);
+                left = Compile(expression.Left);
+                right = Compile(expression.Right);
 
                 var leftEnum = left as EnumMemberAccess;
                 var rightEnum = right as EnumMemberAccess;
@@ -227,7 +210,7 @@ namespace PersistanceMap.Compiler
                 }
                 else if (left as PartialSqlString == null && right as PartialSqlString == null)
                 {
-                    var result = System.Linq.Expressions.Expression.Lambda(expression).Compile().DynamicInvoke();
+                    var result = Expression.Lambda(expression).Compile().DynamicInvoke();
                     return result;
                 }
                 else if (left as PartialSqlString == null)
@@ -254,11 +237,11 @@ namespace PersistanceMap.Compiler
                     return new PartialSqlString(string.Format("{0}({1},{2})", operand, left, right));
 
                 default:
-                    return new PartialSqlString("(" + left + sep + operand + sep + right + ")");
+                    return new PartialSqlString("(" + left + separator + operand + separator + right + ")");
             }
         }
 
-        protected virtual object VisitConstant(ConstantExpression c)
+        protected virtual object CompileConstant(ConstantExpression c)
         {
             if (c.Value == null)
                 return new PartialSqlString("null");
@@ -266,12 +249,12 @@ namespace PersistanceMap.Compiler
             return c.Value;
         }
 
-        protected virtual object VisitUnary(UnaryExpression u)
+        protected virtual object CompileUnary(UnaryExpression u)
         {
             switch (u.NodeType)
             {
                 case ExpressionType.Not:
-                    var o = Visit(u.Operand);
+                    var o = Compile(u.Operand);
 
                     if (o as PartialSqlString == null)
                         return !((bool)o);
@@ -283,49 +266,49 @@ namespace PersistanceMap.Compiler
 
                 case ExpressionType.Convert:
                     if (u.Method != null)
-                        return System.Linq.Expressions.Expression.Lambda(u).Compile().DynamicInvoke();
+                        return Expression.Lambda(u).Compile().DynamicInvoke();
                     break;
             }
 
-            return Visit(u.Operand);
-
+            return Compile(u.Operand);
         }
 
-        protected virtual string VisitParameter(ParameterExpression p)
+        protected virtual string CompileParameter(ParameterExpression p)
         {
             return p.Name;
         }
 
-        protected virtual object VisitMethodCall(MethodCallExpression m)
+        protected virtual object CompileMethodCall(MethodCallExpression m)
         {
             //if (m.Method.DeclaringType == typeof(Sql))
-            //    return VisitSqlMethodCall(m);
+            //    return CompileSqlMethodCall(m);
 
             if (IsStaticArrayMethod(m))
-                return VisitStaticArrayMethodCall(m);
+                return CompileStaticArrayMethodCall(m);
 
             if (IsEnumerableMethod(m))
-                return VisitEnumerableMethodCall(m);
+                return CompileEnumerableMethodCall(m);
 
             if (IsColumnAccess(m))
-                return VisitColumnAccessMethod(m);
+                return CompileColumnAccessMethod(m);
 
-            return System.Linq.Expressions.Expression.Lambda(m).Compile().DynamicInvoke();
+            return Expression.Lambda(m).Compile().DynamicInvoke();
         }
 
-        protected virtual object VisitNew(NewExpression nex)
+        protected virtual object CompileNew(NewExpression nex)
         {
             // TODO : check !
-            var member = System.Linq.Expressions.Expression.Convert(nex, typeof(object));
-            var lambda = System.Linq.Expressions.Expression.Lambda<Func<object>>(member);
+            var member = Expression.Convert(nex, typeof(object));
+            var lambda = Expression.Lambda<Func<object>>(member);
             try
             {
                 var getter = lambda.Compile();
                 return getter();
             }
             catch (InvalidOperationException)
-            { // FieldName ?
-                var exprs = VisitExpressionList(nex.Arguments);
+            { 
+                // FieldName ?
+                var exprs = CompileExpressionList(nex.Arguments);
                 var sb = new StringBuilder();
                 foreach (var e in exprs)
                 {
@@ -338,10 +321,10 @@ namespace PersistanceMap.Compiler
             }
         }
 
-        protected virtual object VisitNewArray(NewArrayExpression na)
+        protected virtual object CompileNewArray(NewArrayExpression na)
         {
-            var exprs = VisitExpressionList(na.Expressions);
-            StringBuilder sb = new StringBuilder();
+            var exprs = CompileExpressionList(na.Expressions);
+            var sb = new StringBuilder();
             foreach (var e in exprs)
             {
                 sb.Append(sb.Length > 0 ? "," + e : e);
@@ -350,33 +333,33 @@ namespace PersistanceMap.Compiler
             return sb.ToString();
         }
 
-        protected virtual object VisitMemberInit(MemberInitExpression exp)
+        protected virtual object CompileMemberInit(MemberInitExpression exp)
         {
             return Expression.Lambda(exp).Compile().DynamicInvoke();
         }
 
-        protected virtual List<Object> VisitExpressionList(ReadOnlyCollection<Expression> original)
+        protected virtual List<object> CompileExpressionList(ReadOnlyCollection<Expression> original)
         {
-            List<Object> list = new List<Object>();
+            var list = new List<object>();
             for (int i = 0, n = original.Count; i < n; i++)
             {
                 if (original[i].NodeType == ExpressionType.NewArrayInit || original[i].NodeType == ExpressionType.NewArrayBounds)
                 {
-                    list.AddRange(VisitNewArrayFromExpressionList(original[i] as NewArrayExpression));
+                    list.AddRange(CompileNewArrayFromExpressionList(original[i] as NewArrayExpression));
                 }
                 else
-                    list.Add(Visit(original[i]));
+                    list.Add(Compile(original[i]));
             }
 
             return list;
         }
 
-        protected virtual IList<Object> VisitNewArrayFromExpressionList(NewArrayExpression na)
+        protected virtual IList<object> CompileNewArrayFromExpressionList(NewArrayExpression na)
         {
-            return VisitExpressionList(na.Expressions);
+            return CompileExpressionList(na.Expressions);
         }
 
-        //protected virtual object VisitSqlMethodCall(MethodCallExpression m)
+        //protected virtual object CompileSqlMethodCall(MethodCallExpression m)
         //{
         //    List<Object> args = this.VisitExpressionList(m.Arguments);
         //    object quotedColName = args[0];
@@ -443,12 +426,12 @@ namespace PersistanceMap.Compiler
         //    return new PartialSqlString(statement);
         //}
 
-        protected virtual object VisitStaticArrayMethodCall(MethodCallExpression m)
+        protected virtual object CompileStaticArrayMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name)
             {
                 case "Contains":
-                    List<Object> args = this.VisitExpressionList(m.Arguments);
+                    var args = CompileExpressionList(m.Arguments);
                     object quotedColName = args[1];
 
                     Expression memberExpr = m.Arguments[0];
@@ -462,12 +445,12 @@ namespace PersistanceMap.Compiler
             }
         }
 
-        protected virtual object VisitEnumerableMethodCall(MethodCallExpression m)
+        protected virtual object CompileEnumerableMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name)
             {
                 case "Contains":
-                    List<Object> args = this.VisitExpressionList(m.Arguments);
+                    var args = CompileExpressionList(m.Arguments);
                     object quotedColName = args[0];
                     return ToInPartialString(m.Object, quotedColName);
 
@@ -476,11 +459,11 @@ namespace PersistanceMap.Compiler
             }
         }
 
-        protected virtual object VisitColumnAccessMethod(MethodCallExpression m)
+        protected virtual object CompileColumnAccessMethod(MethodCallExpression m)
         {
-            List<Object> args = this.VisitExpressionList(m.Arguments);
-            var quotedColName = Visit(m.Object);
-            var statement = "";
+            var args = CompileExpressionList(m.Arguments);
+            var quotedColName = Compile(m.Object);
+            var statement = string.Empty;
 
             var wildcardArg = args.Count > 0 ? DialectProvider.Instance.EscapeWildcards(args[0].ToString()) : "";
             var escapeSuffix = wildcardArg.IndexOf('^') >= 0 ? " escape '^'" : "";
@@ -549,7 +532,7 @@ namespace PersistanceMap.Compiler
                     var startIndex = Int32.Parse(args[0].ToString()) + 1;
                     if (args.Count == 2)
                     {
-                        var length = Int32.Parse(args[1].ToString());
+                        var length = int.Parse(args[1].ToString());
                         statement = string.Format("substring({0} from {1} for {2})", quotedColName, startIndex, length);
                     }
                     else
@@ -563,6 +546,7 @@ namespace PersistanceMap.Compiler
             return new PartialSqlString(statement);
         }
 
+        #endregion
 
         protected string BindOperant(ExpressionType e)
         {
@@ -599,6 +583,27 @@ namespace PersistanceMap.Compiler
                 default:
                     return e.ToString();
             }
+        }
+
+        protected virtual string GetQuotedColumnName(IEnumerable<FieldDefinition> tableDef, string memberName)
+        {
+            if (_useFieldName)
+            {
+                var fd = tableDef.FirstOrDefault(x => x.Name == memberName);
+                var fieldName = fd != null ? fd.FieldName : memberName;
+
+                var id = string.Empty;
+                if (!_identifierMap.TryGetValue(fd.EntityType, out id))
+                {
+                    id = fd.EntityName;
+                }
+
+                return PrefixFieldWithTableName
+                    ? DialectProvider.Instance.GetQuotedColumnName(id, fieldName)
+                    : DialectProvider.Instance.GetQuotedColumnName(fieldName);
+            }
+
+            return memberName;
         }
 
         protected PartialSqlString GetTrueExpression()
@@ -695,11 +700,6 @@ namespace PersistanceMap.Compiler
             return exp;
         }
 
-
-
-
-
-
         protected bool IsFieldName(object quotedExp)
         {
             //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
@@ -740,254 +740,6 @@ namespace PersistanceMap.Compiler
                 && exp.Expression != null
                 && exp.Expression.Type == typeof(T)
                 && exp.Expression.NodeType == ExpressionType.Parameter;
-        }
-
-
-
-
-
-
-        
-
-        
-
-        
-
-
-
-
-
-
-
-        public class BaseDialectProvider
-        {
-            public string StringLengthNonUnicodeColumnDefinitionFormat = "VARCHAR({0})";
-            public string StringLengthUnicodeColumnDefinitionFormat = "NVARCHAR({0})";
-
-            public string StringColumnDefinition;
-            public string StringLengthColumnDefinitionFormat;
-
-            protected bool CompactGuid;
-            internal const string StringGuidDefinition = "VARCHAR2(37)";
-
-            protected bool _useUnicode;
-            public virtual bool UseUnicode
-            {
-                get
-                {
-                    return _useUnicode;
-                }
-                set
-                {
-                    _useUnicode = value;
-                    UpdateStringColumnDefinitions();
-                }
-            }
-
-            private int _defaultStringLength = 8000; //SqlServer express limit
-            public int DefaultStringLength
-            {
-                get
-                {
-                    return _defaultStringLength;
-                }
-                set
-                {
-                    _defaultStringLength = value;
-                    UpdateStringColumnDefinitions();
-                }
-            }
-
-            private string maxStringColumnDefinition;
-            public string MaxStringColumnDefinition
-            {
-                get { return maxStringColumnDefinition ?? StringColumnDefinition; }
-                set { maxStringColumnDefinition = value; }
-            }
-
-
-
-
-            public BaseDialectProvider()
-            {
-                UpdateStringColumnDefinitions();
-            }
-
-
-
-
-            public virtual void UpdateStringColumnDefinitions()
-            {
-                this.StringLengthColumnDefinitionFormat = UseUnicode ? StringLengthUnicodeColumnDefinitionFormat : StringLengthNonUnicodeColumnDefinitionFormat;
-
-                this.StringColumnDefinition = string.Format(StringLengthColumnDefinitionFormat, DefaultStringLength);
-            }
-
-            public virtual string GetQuotedValue(object value, Type fieldType)
-            {
-                if (value == null) 
-                    return "NULL";
-
-                //var dialectProvider = OrmLiteConfig.DialectProvider;
-                //if (fieldType.IsRefType())
-                //{
-                //    return dialectProvider.GetQuotedValue(dialectProvider.StringSerializer.SerializeToString(value));
-                //}
-
-                var typeCode = fieldType.GetTypeCode();
-                switch (typeCode)
-                {
-                    case TypeCode.Single:
-                        return ((float)value).ToString(CultureInfo.InvariantCulture);
-                    case TypeCode.Double:
-                        return ((double)value).ToString(CultureInfo.InvariantCulture);
-                    case TypeCode.Decimal:
-                        return ((decimal)value).ToString(CultureInfo.InvariantCulture);
-
-                    case TypeCode.Byte:
-                    case TypeCode.Int16:
-                    case TypeCode.Int32:
-                    case TypeCode.Int64:
-                    case TypeCode.SByte:
-                    case TypeCode.UInt16:
-                    case TypeCode.UInt32:
-                    case TypeCode.UInt64:
-                        if (fieldType.IsNumericType())
-                            return Convert.ChangeType(value, fieldType).ToString();
-                        break;
-                }
-
-                if (fieldType == typeof(TimeSpan))
-                    return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
-
-                return ShouldQuoteValue(fieldType) ? DialectProvider.Instance.GetQuotedValue(value.ToString()) : value.ToString();
-            }
-
-
-            public string AutoIncrementDefinition = "AUTOINCREMENT"; //SqlServer express limit
-            public string IntColumnDefinition = "INTEGER";
-            public string LongColumnDefinition = "BIGINT";
-            public string GuidColumnDefinition = "GUID";
-            public string BoolColumnDefinition = "BOOL";
-            public string RealColumnDefinition = "DOUBLE";
-            public string DecimalColumnDefinition = "DECIMAL";
-            public string BlobColumnDefinition = "BLOB";
-            public string DateTimeColumnDefinition = "DATETIME";
-            public string TimeColumnDefinition = "BIGINT";
-            public string DateTimeOffsetColumnDefinition = "DATETIMEOFFSET";
-
-            public virtual bool ShouldQuoteValue(Type fieldType)
-            {
-                string fieldDefinition;
-                //if (!DbTypeMap.ColumnTypeMap.TryGetValue(fieldType, out fieldDefinition))
-                //{
-                fieldDefinition = this.GetUndefinedColumnDefinition(fieldType, null);
-                //}
-
-                return fieldDefinition != IntColumnDefinition
-                       && fieldDefinition != LongColumnDefinition
-                       && fieldDefinition != RealColumnDefinition
-                       && fieldDefinition != DecimalColumnDefinition
-                       && fieldDefinition != BoolColumnDefinition;
-            }
-
-            protected virtual string GetUndefinedColumnDefinition(Type fieldType, int? fieldLength)
-            {
-                return fieldLength.HasValue
-                    ? string.Format(StringLengthColumnDefinitionFormat, fieldLength.GetValueOrDefault(DefaultStringLength))
-                    : MaxStringColumnDefinition;
-            }
-
-            public virtual string GetQuotedValue(string paramValue)
-            {
-                return "'" + paramValue.Replace("'", "''") + "'";
-            }
-
-            public virtual string GetQuotedColumnName(string columnName)
-            {
-                return string.Format("\"{0}\"", columnName/*namingStrategy.GetColumnName(columnName)*/);
-            }
-
-            public virtual string GetQuotedColumnName(string tableName, string fieldName)
-            {
-                //return dialect.GetQuotedTableName(tableName) + "." + dialect.GetQuotedColumnName(fieldName);
-                return tableName + "." + fieldName;
-            }
-
-            public virtual string EscapeWildcards(string value)
-            {
-                if (value == null)
-                    return null;
-
-                return value
-                    .Replace("^", @"^^")
-                    .Replace(@"\", @"^\")
-                    .Replace("_", @"^_")
-                    .Replace("%", @"^%");
-            }
-        }
-
-
-        public class DialectProvider : BaseDialectProvider
-        {
-            static DialectProvider _instance;
-            public static DialectProvider Instance
-            {
-                get
-                {
-                    if (_instance == null)
-                        _instance = new DialectProvider();
-                    return _instance;
-                }
-            }
-
-            public override string GetQuotedValue(object value, Type fieldType)
-            {
-                if (value == null) return "NULL";
-
-                if (fieldType == typeof(Guid))
-                {
-                    var guid = (Guid)value;
-                    return CompactGuid ? "'" + BitConverter.ToString(guid.ToByteArray()).Replace("-", "") + "'"
-                                       : string.Format("CAST('{0}' AS {1})", guid, StringGuidDefinition);
-                }
-
-                if (fieldType == typeof(DateTime) || fieldType == typeof(DateTime?))
-                {
-                    var dateValue = (DateTime)value;
-                    string iso8601Format = "yyyy-MM-dd";
-                    string oracleFormat = "YYYY-MM-DD";
-                    if (dateValue.ToString("yyyy-MM-dd HH:mm:ss.fff").EndsWith("00:00:00.000") == false)
-                    {
-                        iso8601Format = "yyyy-MM-dd HH:mm:ss.fff";
-                        oracleFormat = "YYYY-MM-DD HH24:MI:SS.FF3";
-                    }
-                    return "TO_TIMESTAMP(" + base.GetQuotedValue(dateValue.ToString(iso8601Format), typeof(string)) + ", " + base.GetQuotedValue(oracleFormat, typeof(string)) + ")";
-                }
-
-                if ((value is TimeSpan) && (fieldType == typeof(Int64) || fieldType == typeof(Int64?)))
-                {
-                    var longValue = ((TimeSpan)value).Ticks;
-                    return base.GetQuotedValue(longValue, fieldType);
-                }
-
-                if (fieldType == typeof(bool?) || fieldType == typeof(bool))
-                {
-                    var boolValue = (bool)value;
-                    return base.GetQuotedValue(boolValue ? "1" : "0", typeof(string));
-                }
-
-                if (fieldType == typeof(decimal?) || fieldType == typeof(decimal) ||
-                    fieldType == typeof(double?) || fieldType == typeof(double) ||
-                    fieldType == typeof(float?) || fieldType == typeof(float))
-                {
-                    var s = base.GetQuotedValue(value, fieldType);
-                    if (s.Length > 20) s = s.Substring(0, 20);
-                    return "'" + s + "'"; // when quoted exception is more clear!
-                }
-
-                return base.GetQuotedValue(value, fieldType);
-            }
         }
     }
 }

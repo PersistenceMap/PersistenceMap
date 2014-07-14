@@ -8,13 +8,29 @@ namespace PersistanceMap.Test
     public class ImplementationTest : TestBase
     {
         [Test]
+        public void ProcedureImplementationTestMethod()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                var proc = context.Procedure<Orders>("get_procnameWithReturn").AddParameter().Execute();
+
+                context.Procedure("get_procnameNoReturn").AddParameter().Execute();
+            }
+        }
+
+        [Test]
         public void SelectImplementationTestMethod()
         {
-            //var dbConnection = new DatabaseConnection(new SqlContextProvider("data source=.;initial catalog=Northwind;persist security info=False;user id=sa"));
-            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = dbConnection.Open())
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
             {
                 string brk = "";
+
+                //WHERE HAS TO ACCEPT PROPER PARAMETERS!
+                var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.On((d, o) => d.OrderID == o.OrderID)).Where(o => o.ShipName != "").Select<OrderDetails>();
+                var orders5 = context.From<Orders>().Join<OrderDetails>(opt => opt.On((d, o) => d.OrderID == o.OrderID)).Where<OrderDetails>(o => o.Discount > 0).Select<OrderDetails>();
+                var orders3 = context.From<Orders>().Join<OrderDetails>(opt => opt.On((d, o) => d.OrderID == o.OrderID)).Where<Orders, OrderDetails>(option => option.And((a, b) => true)).Select();
 
                 // join using on and or
                 //TODO: Or allways returns false! create connection that realy works!
@@ -25,21 +41,8 @@ namespace PersistanceMap.Test
                 // join using on and and
                 //TODO: And allways returns false! create connection that realy works!
                 var orders2 = context.From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.And((detail, order) => false))
+                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.And((detail, order) => true))
                     .Select<OrderWithDetail>();
-
-                // join using include
-                var orders = context
-                    .From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
-                    .Select<OrderDetails>();
-
-                // join using include
-                var orders3 = context
-                    .From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID))
-                    .Join<Products>(opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID))
-                    .Select<OrderDetails>();
 
                 //THIS FAILS BECAUSE AND INSTEAD OF ON! AND HAS TO BE TESTED
                 var orders4 = context
@@ -48,14 +51,9 @@ namespace PersistanceMap.Test
                     .Join<Products>(opt => opt.And<OrderDetails>((product, det) => product.ProductID == det.ProductID))
                     .Select<OrderDetails>();
 
-                // join using identifiers in the on expression
-                var prsAbt3 = context.From<Orders>(opt => opt.Identifier(() => "orders")).Join<OrderDetails>(opt => opt.Identifier(() => "detail"), opt => opt.On("orders", (det, order) => det.OrderID == order.OrderID)).Select<OrderDetails>();
+                
 
-
-                // this probably should not work!!! (no identifier in the from!)
-                var prsAbt4 = context.From<Orders>().Join<OrderDetails>(opt => opt.Identifier(() => "detail"), opt => opt.On("order", (det, order) => det.OrderID == order.OrderID)).Select<OrderDetails>();
-
-                var personen = context.From<Orders>().Where(p => p.CustomerID.StartsWith("P")).Select();
+                var personen = context.From<Orders>().Where(p => p.CustomerID.StartsWith("P"));
 
             }
         }

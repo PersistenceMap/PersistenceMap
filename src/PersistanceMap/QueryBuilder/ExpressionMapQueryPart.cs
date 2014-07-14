@@ -13,15 +13,25 @@ namespace PersistanceMap.QueryBuilder
         {
             MapOperationType = operationtype;
             Expression = expression;
+
+            IdentifierMap = new Dictionary<Type, string>();
         }
 
         public MapOperationType MapOperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
 
+        public Dictionary<Type, string> IdentifierMap { get; private set; }
+
         public string Compile()
         {
             throw new NotImplementedException();
+        }
+
+        internal void AddIdentifier(Type type, string identifier)
+        {
+            if (!string.IsNullOrEmpty(identifier))
+                IdentifierMap.Add(type, identifier);
         }
     }
 }

@@ -7,6 +7,8 @@ namespace PersistanceMap
 {
     public static class DbContextExtensions
     {
+        #region Select Expressions
+
         public static IEnumerable<T> Select<T>(this IDbContext context)
         {
             var expr = context.ContextProvider.ExpressionCompiler;
@@ -33,5 +35,21 @@ namespace PersistanceMap
                 .From<T>()
                 .Join<TJoin>(predicate);
         }
+
+        #endregion
+
+        #region Procedure Expressions
+
+        public static IProcedureExpression Procedure(this IDbContext context, string procName)
+        {
+            return new ProcedureExpression(context, procName);
+        }
+
+        public static IProcedureExpression<T> Procedure<T>(this IDbContext context, string procName)
+        {
+            return new ProcedureExpression<T>(context, procName);
+        }
+
+        #endregion
     }
 }

@@ -31,7 +31,7 @@ namespace PersistanceMap.QueryBuilder
 
         public override string ToString()
         {
-            return string.Format("Entity: {0} Field: {1} [{2}.{1}]", Entity, Identifier ?? Entity, Field);
+            return string.Format("Entity: {0} Field: {1} [{1}.{2}]", Entity, Identifier ?? Entity, Field);
         }
     }
 }

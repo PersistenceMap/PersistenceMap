@@ -72,6 +72,7 @@ namespace PersistanceMap
                 Name = propertyInfo.Name/*.ToLower()*/,
                 EntityName = propertyInfo.DeclaringType.Name,
                 FieldType = propertyType,
+                EntityType = propertyInfo.DeclaringType,
                 IsNullable = isNullable,
                 PropertyInfo = propertyInfo,
                 GetValueFunction = propertyInfo.GetPropertyGetter(),

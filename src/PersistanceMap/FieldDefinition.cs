@@ -13,6 +13,8 @@ namespace PersistanceMap
 
         public Type FieldType { get; set; }
 
+        public Type EntityType { get; set; }
+
         public PropertyInfo PropertyInfo { get; set; }
 
         public bool IsNullable { get; set; }

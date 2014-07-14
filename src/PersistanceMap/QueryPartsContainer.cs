@@ -17,18 +17,18 @@ namespace PersistanceMap
             }
         }
 
-        IList<IEntityQueryPart> _joins;
-        public IList<IEntityQueryPart> Joins
+        IList<IExpressionQueryPart> _joins;
+        public IList<IExpressionQueryPart> Joins
         {
             get
             {
                 if (_joins == null)
-                    _joins = new List<IEntityQueryPart>();
+                    _joins = new List<IExpressionQueryPart>();
                 return _joins;
             }
         }
 
-        public IEntityQueryPart From { get; private set; }
+        public IExpressionQueryPart From { get; private set; }
 
         public IQueryPart Where { get; private set; }
 
@@ -50,14 +50,18 @@ namespace PersistanceMap
                 if (!replace)
                     return;
 
-                // remove existing field map
-                Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
+
+                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).Identifier == field.Identifier))
+                {
+                    // remove existing field map
+                    Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
+                }
             }
 
             Fields.Add(field);
         }
 
-        internal void Add(FromQueryPart entity)
+        internal void Add<T>(FromQueryPart<T> entity)
         {
             if (Joins.Any(j => j.Entity == entity.Entity && j.Identifier == entity.Identifier))
             {

@@ -1,14 +1,11 @@
 ﻿using PersistanceMap.Compiler;
-using PersistanceMap.Internals;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
 using System.Linq;
-using System;
+using System.Text;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public class ExpressionQueryPart<T>
+    public class ExpressionQueryPart<T> : IExpressionQueryPart
     {
         public ExpressionQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
             : this(null, entity, mapOperations)
@@ -20,12 +17,20 @@ namespace PersistanceMap.QueryBuilder
             // ensure parameter is not null
             mapOperations.EnsureArgumentNotNull("mapOperations");
 
-            Operations = mapOperations;
+            Operations = mapOperations.ToList();
             Identifier = identifier;
             Entity = entity;
         }
 
-        public IEnumerable<IExpressionMapQueryPart> Operations { get; private set; }
+        IEnumerable<IExpressionMapQueryPart> IExpressionQueryPart.Operations
+        {
+            get
+            {
+                return Operations;
+            }
+        }
+
+        public IList<IExpressionMapQueryPart> Operations { get; private set; }
 
         public string Entity { get; private set; }
 
@@ -33,7 +38,7 @@ namespace PersistanceMap.QueryBuilder
 
         public virtual string Compile()
         {
-            var conv = new LambdaExpressionCompiler<T>();
+            var conv = new LambdaExpressionToSqlCompiler<T>();
 
             var sb = new StringBuilder();
             //TODO: call operation.Compile!
@@ -57,7 +62,7 @@ namespace PersistanceMap.QueryBuilder
                     }
                 }
 
-                sb.AppendLine(string.Format(" {0} {1}", keyword, conv.Visit(a.Expression).ToString()));
+                sb.AppendLine(string.Format(" {0} {1}", keyword, conv.Compile(a).ToString()));
             });
 
             return sb.ToString();
