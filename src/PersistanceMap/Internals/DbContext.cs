@@ -26,6 +26,11 @@ namespace PersistanceMap.Internals
             }
         }
 
+        public void Execute(CompiledQuery compiledQuery)
+        {
+            ContextProvider.Execute(compiledQuery.QueryString);
+        }
+
         #region IDisposeable Implementation
 
         /// <summary>

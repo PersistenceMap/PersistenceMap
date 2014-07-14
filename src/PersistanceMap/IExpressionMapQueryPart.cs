@@ -11,7 +11,5 @@ namespace PersistanceMap
         LambdaExpression Expression { get; }
 
         Dictionary<Type, string> IdentifierMap { get; }
-
-        string Compile();
     }
 }

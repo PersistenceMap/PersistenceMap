@@ -39,44 +39,75 @@ namespace PersistanceMap
             SqlConnection connection;
             SqlCommand command;
 
-            connection = new SqlConnection(ConnectionString);
-            try
+            using (connection = new SqlConnection(ConnectionString))
             {
-                connection.Open();
-                command = new SqlCommand(query, connection);
-
-                /*
-                SqlDataReader sqlReader = sqlCmd.ExecuteReader();
-                while (sqlReader.Read())
+                try
                 {
-                    MessageBox.Show("From first SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                    connection.Open();
+                    using (command = new SqlCommand(query, connection))
+                    {
+
+                        /*
+                        SqlDataReader sqlReader = sqlCmd.ExecuteReader();
+                        while (sqlReader.Read())
+                        {
+                            MessageBox.Show("From first SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                        }
+
+                        sqlReader.NextResult();
+
+                        while (sqlReader.Read())
+                        {
+                            MessageBox.Show("From second SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                        }
+
+                        sqlReader.NextResult();
+
+                        while (sqlReader.Read())
+                        {
+                            MessageBox.Show("From third SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                        }
+
+                        sqlReader.Close();
+                        sqlCmd.Dispose();
+                        sqlCnn.Close();
+                        */
+
+                        return new SqlContextReader(command.ExecuteReader(), connection, command);
+                    }
                 }
-
-                sqlReader.NextResult();
-
-                while (sqlReader.Read())
+                catch (Exception ex)
                 {
-                    MessageBox.Show("From second SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                    Trace.WriteLine(ex);
+                    throw;
                 }
-
-                sqlReader.NextResult();
-
-                while (sqlReader.Read())
-                {
-                    MessageBox.Show("From third SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                }
-
-                sqlReader.Close();
-                sqlCmd.Dispose();
-                sqlCnn.Close();
-                */
-
-                return new SqlContextReader(command.ExecuteReader(), connection, command);
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// Executes a sql query without returning a resultset
+        /// </summary>
+        /// <param name="query"></param>
+        public void ExecuteNonQuery(string query)
+        {
+            SqlConnection connection;
+            SqlCommand command;
+
+            using (connection = new SqlConnection(ConnectionString))
             {
-                Trace.WriteLine(ex);
-                throw;
+                try
+                {
+                    connection.Open();
+                    using (command = new SqlCommand(query, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex);
+                    throw;
+                }
             }
         }
     }

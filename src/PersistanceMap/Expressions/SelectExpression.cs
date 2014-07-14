@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Compiler;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -6,44 +7,59 @@ namespace PersistanceMap.Expressions
 {
     public class SelectExpression<T> : ISelectExpression<T>
     {
-        IDbContext _context;
-
-        QueryPartsContainer _queryPartContainer;
-        public QueryPartsContainer QueryPartContainer
-        {
-            get
-            {
-                if (_queryPartContainer == null)
-                    _queryPartContainer = new QueryPartsContainer();
-                return _queryPartContainer;
-            }
-        }
-
         public SelectExpression(IDbContext context)
         {
             _context = context;
         }
 
-        public SelectExpression(IDbContext context, QueryPartsContainer container)
+        public SelectExpression(IDbContext context, SelectQueryPartsMap container)
         {
             _context = context;
-            _queryPartContainer = container;
+            _queryPartsMap = container;
+        }
+
+        readonly IDbContext _context;
+        public IDbContext Context
+        {
+            get
+            {
+                return _context;
+            }
+        }
+
+        SelectQueryPartsMap _queryPartsMap;
+        public SelectQueryPartsMap QueryPartsMap
+        {
+            get
+            {
+                if (_queryPartsMap == null)
+                    _queryPartsMap = new SelectQueryPartsMap();
+                return _queryPartsMap;
+            }
+        }
+
+        IQueryPartsMap IPersistanceExpression.QueryPartsMap
+        {
+            get
+            {
+                return QueryPartsMap;
+            }
         }
 
         #region Internal Implementation
 
-        internal ISelectExpression<T> From<T>()
+        internal ISelectExpression<T2> From<T2>()
         {
-            QueryPartContainer.Add(typeof(T).ToFromQueryPart<T>());
+            QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>());
 
-            return new SelectExpression<T>(_context, QueryPartContainer);
+            return new SelectExpression<T2>(Context, QueryPartsMap);
         }
 
-        internal ISelectExpression<T> From<T>(params IExpressionMapQueryPart[] parts)
+        internal ISelectExpression<T2> From<T2>(params IExpressionMapQueryPart[] parts)
         {
             parts.EnsureArgumentNotNull("part");
 
-            var fromPart = typeof(T).ToFromQueryPart<T>();
+            var fromPart = typeof(T2).ToFromQueryPart<T>();
 
             parts.ForEach(part =>
             {
@@ -59,35 +75,35 @@ namespace PersistanceMap.Expressions
                 }
             });
 
-            QueryPartContainer.Add(fromPart);
+            QueryPartsMap.Add(fromPart);
 
-            return new SelectExpression<T>(_context, QueryPartContainer);
+            return new SelectExpression<T2>(Context, QueryPartsMap);
         }
 
         #endregion
 
         #region ISqlExpression<T> Implementation
 
-        public IEnumerable<T> Select<T>()
+        public IEnumerable<T2> Select<T2>()
         {
-            var expr = _context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(QueryPartContainer);
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T2>(QueryPartsMap);
 
-            return _context.Execute<T>(query);
+            return Context.Execute<T2>(query);
         }
 
         public IEnumerable<T> Select()
         {
-            var expr = _context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(QueryPartContainer);
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(QueryPartsMap);
 
-            return _context.Execute<T>(query);
+            return Context.Execute<T>(query);
         }
 
 
 
 
-        public T Single<T>()
+        public T2 Single<T2>()
         {
             throw new NotImplementedException();
         }
@@ -98,17 +114,16 @@ namespace PersistanceMap.Expressions
 
         public ISelectExpression<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            QueryPartContainer.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(predicate));
+            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(predicate));
 
-            return new SelectExpression<T>(_context, QueryPartContainer);
+            return new SelectExpression<T>(Context, QueryPartsMap);
         }
 
-        public ISelectExpression<T> Join<TJoin>(params Expression<Func<MapOption<TJoin, T>, IExpressionMapQueryPart>>[] args)
+        public ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IExpressionMapQueryPart>>[] args)
         {
+            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile<TJoin, T>(args)));
 
-            QueryPartContainer.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile<TJoin, T>(args)));
-
-            return new SelectExpression<T>(_context, QueryPartContainer);
+            return new SelectExpression<T>(Context, QueryPartsMap);
         }
 
 
@@ -124,7 +139,7 @@ namespace PersistanceMap.Expressions
             throw new NotImplementedException();
         }
 
-        public ISelectExpression<T> Where<T2, T3>(params Expression<Func<MapOption<T2, T3>, IExpressionMapQueryPart>>[] args)
+        public ISelectExpression<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IExpressionMapQueryPart>>[] args)
         {
             throw new NotImplementedException();
         }

@@ -1,31 +1,81 @@
-﻿using System;
+﻿using PersistanceMap.Compiler;
+using PersistanceMap.QueryBuilder;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace PersistanceMap.Expressions
 {
-    public class ProcedureExpressionBase
+    public abstract class ProcedureExpressionBase : IPersistanceExpression
     {
         public ProcedureExpressionBase(IDbContext context, string procName)
+            : this(context, procName, null)
+        {
+        }
+
+        public ProcedureExpressionBase(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
         {
             context.EnsureArgumentNotNull("context");
             procName.EnsureArgumentNotNullOrEmpty("procName");
 
             _context = context;
             ProcedureName = procName;
+
+            if (queryPartsMap != null)
+                _queryPartsMap = queryPartsMap;
         }
 
         public string ProcedureName { get; private set; }
 
-        IDbContext _context;
-        protected IDbContext Context
+        readonly IDbContext _context;
+        public IDbContext Context
         {
             get
             {
                 return _context;
             }
+        }
+
+        ProcedureQueryPartsMap _queryPartsMap;
+        public ProcedureQueryPartsMap QueryPartsMap
+        {
+            get
+            {
+                if (_queryPartsMap == null)
+                    _queryPartsMap = new ProcedureQueryPartsMap(ProcedureName);
+                return _queryPartsMap;
+            }
+        }
+
+        IQueryPartsMap IPersistanceExpression.QueryPartsMap
+        {
+            get
+            {
+                return QueryPartsMap;
+            }
+        }
+
+        internal ParameterQueryPart Convert<T2>(Expression<Func<T2>> predicate)
+        {
+            return new ParameterQueryPart(new List<ExpressionMapQueryPart> 
+            { 
+                new ExpressionMapQueryPart(MapOperationType.Value, predicate) 
+            });
+        }
+
+        internal ParameterQueryPart Convert(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] args)
+        {
+            var list = new List<ExpressionMapQueryPart>();
+            var option = new ProcedureMapOption();
+
+            var parts =  MapOptionCompiler.Compile(args);
+
+            parts.ForEach(part =>
+            {
+                list.Add(new ExpressionMapQueryPart(part.MapOperationType, part.Expression));
+            });
+
+            return new ParameterQueryPart(list);
         }
     }
 
@@ -36,14 +86,31 @@ namespace PersistanceMap.Expressions
         {
         }
 
-        public IProcedureExpression AddParameter()
+        public ProcedureExpression(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+            : base(context, procName, queryPartsMap)
         {
-            throw new NotImplementedException();
+        }
+
+        public IProcedureExpression AddParameter<T2>(Expression<Func<T2>> predicate)
+        {
+            QueryPartsMap.Add(Convert(predicate));
+
+            return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
+        }
+
+        public IProcedureExpression AddParameter(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] parts)
+        {
+            QueryPartsMap.Add(Convert(parts));
+
+            return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
         }
 
         public void Execute()
         {
-            throw new NotImplementedException();
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile(QueryPartsMap);
+
+            Context.Execute(query);
         }
     }
 
@@ -54,14 +121,31 @@ namespace PersistanceMap.Expressions
         {
         }
 
-        public IProcedureExpression<T> AddParameter()
+        public ProcedureExpression(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+            : base(context, procName, queryPartsMap)
         {
-            throw new NotImplementedException();
+        }
+
+        public IProcedureExpression<T> AddParameter<T2>(Expression<Func<T2>> predicate)
+        {
+            QueryPartsMap.Add(Convert(predicate));
+
+            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
+        }
+
+        public IProcedureExpression<T> AddParameter(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] parts)
+        {
+            QueryPartsMap.Add(Convert(parts));
+
+            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
         }
 
         public IEnumerable<T> Execute()
         {
-            throw new NotImplementedException();
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(QueryPartsMap);
+
+            return Context.Execute<T>(query);
         }
     }
 }

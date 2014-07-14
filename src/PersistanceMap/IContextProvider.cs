@@ -9,5 +9,7 @@ namespace PersistanceMap
         IExpressionCompiler ExpressionCompiler { get; }
 
         IReaderContext Execute(string query);
+
+        void ExecuteNonQuery(string query);
     }
 }

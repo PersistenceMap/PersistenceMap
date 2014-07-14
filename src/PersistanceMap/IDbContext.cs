@@ -1,9 +1,6 @@
 ﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap
 {
@@ -12,5 +9,7 @@ namespace PersistanceMap
         IContextProvider ContextProvider { get; }
 
         IEnumerable<T> Execute<T>(CompiledQuery compiledQuery);
+
+        void Execute(CompiledQuery compiledQuery);
     }
 }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.Compiler
 {
-    public class LambdaExpressionToSqlCompiler<T>
+    public class LambdaExpressionToSqlCompiler
     {
         //TODO: separator has to be set as an option!
         string separator = " ";
@@ -700,11 +700,9 @@ namespace PersistanceMap.Compiler
             return exp;
         }
 
-        protected bool IsFieldName(object quotedExp)
+        protected virtual bool IsFieldName(object quotedExp)
         {
-            //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
-            FieldDefinition fd = typeof(T).GetFieldDefinitions().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
-            return (fd != default(FieldDefinition));
+            return false;
         }
 
         private bool IsStaticArrayMethod(MethodCallExpression m)
@@ -730,7 +728,29 @@ namespace PersistanceMap.Compiler
             return false;
         }
 
-        private bool IsColumnAccess(MethodCallExpression m)
+        protected virtual bool IsColumnAccess(MethodCallExpression m)
+        {
+            if (m.Object != null && m.Object as MethodCallExpression != null)
+                return IsColumnAccess(m.Object as MethodCallExpression);
+
+            var exp = m.Object as MemberExpression;
+            return exp != null
+                && exp.Expression != null
+                /*&& exp.Expression.Type == typeof(T)*/
+                && exp.Expression.NodeType == ExpressionType.Parameter;
+        }
+    }
+
+    public class LambdaExpressionToSqlCompiler<T> : LambdaExpressionToSqlCompiler
+    {
+        protected override bool IsFieldName(object quotedExp)
+        {
+            //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
+            FieldDefinition fd = typeof(T).GetFieldDefinitions().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
+            return (fd != default(FieldDefinition));
+        }
+
+        protected override bool IsColumnAccess(MethodCallExpression m)
         {
             if (m.Object != null && m.Object as MethodCallExpression != null)
                 return IsColumnAccess(m.Object as MethodCallExpression);

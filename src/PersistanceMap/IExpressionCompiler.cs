@@ -4,6 +4,10 @@ namespace PersistanceMap
 {
     public interface IExpressionCompiler
     {
-        CompiledQuery Compile<T>(/*ISelectExpression<T> sqlExpr, */QueryPartsContainer queryParts);
+        CompiledQuery Compile<T>(SelectQueryPartsMap queryParts);
+
+        CompiledQuery Compile<T>(ProcedureQueryPartsMap queryParts);
+
+        CompiledQuery Compile(ProcedureQueryPartsMap queryParts);
     }
 }

@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Expressions;
+﻿using PersistanceMap.Compiler;
+using PersistanceMap.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -12,7 +13,7 @@ namespace PersistanceMap
         public static IEnumerable<T> Select<T>(this IDbContext context)
         {
             var expr = context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(new QueryPartsContainer());
+            var query = expr.Compile<T>(new SelectQueryPartsMap());
 
             return context.Execute<T>(query);
         }
@@ -23,7 +24,7 @@ namespace PersistanceMap
                 .From<T>();
         }
 
-        public static ISelectExpression<T> From<T>(this IDbContext context, params Expression<Func<MapOption<T>, IExpressionMapQueryPart>>[] parts)
+        public static ISelectExpression<T> From<T>(this IDbContext context, params Expression<Func<SelectMapOption<T>, IExpressionMapQueryPart>>[] parts)
         {
             return new SelectExpression<T>(context)
                 .From<T>(MapOptionCompiler.Compile<T>(parts).ToArray());

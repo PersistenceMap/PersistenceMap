@@ -65,8 +65,8 @@ GO
 if exists (select * from sysobjects where id = object_id('dbo.OrderDetailsExtended') and sysstat & 0xf = 2)
 	drop view "dbo"."OrderDetailsExtended"
 GO
-if exists (select * from sysobjects where id = object_id('dbo.Order Subtotals') and sysstat & 0xf = 2)
-	drop view "dbo"."Order Subtotals"
+if exists (select * from sysobjects where id = object_id('dbo.OrderSubtotals') and sysstat & 0xf = 2)
+	drop view "dbo"."OrderSubtotals"
 GO
 if exists (select * from sysobjects where id = object_id('dbo.Product Sales for 1997') and sysstat & 0xf = 2)
 	drop view "dbo"."Product Sales for 1997"
@@ -442,7 +442,7 @@ FROM Products INNER JOIN "OrderDetails" ON Products.ProductID = "OrderDetails".P
 --ORDER BY "OrderDetails".OrderID
 GO
 
-create view "Order Subtotals" AS
+create view "OrderSubtotals" AS
 SELECT "OrderDetails".OrderID, Sum(CONVERT(money,("OrderDetails".UnitPrice*Quantity*(1-Discount)/100))*100) AS Subtotal
 FROM "OrderDetails"
 GROUP BY "OrderDetails".OrderID
@@ -479,23 +479,23 @@ GO
 --GO
 
 create view "SalesTotalsByAmount" AS
-SELECT "Order Subtotals".Subtotal AS SaleAmount, Orders.OrderID, Customers.CompanyName, Orders.ShippedDate
+SELECT "OrderSubtotals".Subtotal AS SaleAmount, Orders.OrderID, Customers.CompanyName, Orders.ShippedDate
 FROM 	Customers INNER JOIN 
-		(Orders INNER JOIN "Order Subtotals" ON Orders.OrderID = "Order Subtotals".OrderID) 
+		(Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID) 
 	ON Customers.CustomerID = Orders.CustomerID
-WHERE ("Order Subtotals".Subtotal >2500) AND (Orders.ShippedDate BETWEEN '19970101' And '19971231')
+WHERE ("OrderSubtotals".Subtotal >2500) AND (Orders.ShippedDate BETWEEN '19970101' And '19971231')
 GO
 
 create view "SummaryOfSalesByQuarter" AS
-SELECT Orders.ShippedDate, Orders.OrderID, "Order Subtotals".Subtotal
-FROM Orders INNER JOIN "Order Subtotals" ON Orders.OrderID = "Order Subtotals".OrderID
+SELECT Orders.ShippedDate, Orders.OrderID, "OrderSubtotals".Subtotal
+FROM Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID
 WHERE Orders.ShippedDate IS NOT NULL
 --ORDER BY Orders.ShippedDate
 GO
 
 create view "SummaryOfSalesByYear" AS
-SELECT Orders.ShippedDate, Orders.OrderID, "Order Subtotals".Subtotal
-FROM Orders INNER JOIN "Order Subtotals" ON Orders.OrderID = "Order Subtotals".OrderID
+SELECT Orders.ShippedDate, Orders.OrderID, "OrderSubtotals".Subtotal
+FROM Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID
 WHERE Orders.ShippedDate IS NOT NULL
 --ORDER BY Orders.ShippedDate
 GO
@@ -509,17 +509,17 @@ GO
 
 create procedure "EmployeeSalesByCountry" 
 @Beginning_Date DateTime, @Ending_Date DateTime AS
-SELECT Employees.Country, Employees.LastName, Employees.FirstName, Orders.ShippedDate, Orders.OrderID, "Order Subtotals".Subtotal AS SaleAmount
+SELECT Employees.Country, Employees.LastName, Employees.FirstName, Orders.ShippedDate, Orders.OrderID, "OrderSubtotals".Subtotal AS SaleAmount
 FROM Employees INNER JOIN 
-	(Orders INNER JOIN "Order Subtotals" ON Orders.OrderID = "Order Subtotals".OrderID) 
+	(Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID) 
 	ON Employees.EmployeeID = Orders.EmployeeID
 WHERE Orders.ShippedDate Between @Beginning_Date And @Ending_Date
 GO
 
 create procedure "SalesByYear" 
 	@Beginning_Date DateTime, @Ending_Date DateTime AS
-SELECT Orders.ShippedDate, Orders.OrderID, "Order Subtotals".Subtotal, DATENAME(yy,ShippedDate) AS Year
-FROM Orders INNER JOIN "Order Subtotals" ON Orders.OrderID = "Order Subtotals".OrderID
+SELECT Orders.ShippedDate, Orders.OrderID, "OrderSubtotals".Subtotal, DATENAME(yy,ShippedDate) AS Year
+FROM Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID
 WHERE Orders.ShippedDate Between @Beginning_Date And @Ending_Date
 GO
 

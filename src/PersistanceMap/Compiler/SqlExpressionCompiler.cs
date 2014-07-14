@@ -9,7 +9,7 @@ namespace PersistanceMap.Compiler
 {
     public class SqlExpressionCompiler : IExpressionCompiler
     {
-        public virtual CompiledQuery Compile<T>(QueryPartsContainer queryParts)
+        public virtual CompiledQuery Compile<T>(SelectQueryPartsMap queryParts)
         {
             var from = queryParts.From;
             if (from == null)
@@ -53,6 +53,21 @@ namespace PersistanceMap.Compiler
             var builder = new QueryCompiler(queryParts);
             return builder.Compile();
         }
+
+
+
+        public CompiledQuery Compile<T>(ProcedureQueryPartsMap queryParts)
+        {
+            var builder = new QueryCompiler(queryParts);
+            return builder.Compile();
+        }
+
+        public CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
+        {
+            var builder = new QueryCompiler(queryParts);
+            return builder.Compile();
+        }
+
 
         private static string ExtractPropertyName(LambdaExpression propertyExpression)
         {

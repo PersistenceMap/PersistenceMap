@@ -43,7 +43,7 @@ namespace PersistanceMap
                 //return dataReader.GetOrdinal(OrmLiteConfig.DialectProvider.NamingStrategy.GetColumnName(fieldName));
                 return dataReader.GetOrdinal(fieldName);
             }
-            catch (IndexOutOfRangeException ignore)
+            catch (IndexOutOfRangeException)
             {
                 return NotFound;
             }

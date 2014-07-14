@@ -51,19 +51,6 @@ namespace PersistanceMap.Internals
         #region IDisposeable Implementation
 
         /// <summary>
-        /// Gets a value indicating whether this instance is disposed.
-        /// </summary>
-        internal bool IsDisposed { get; private set; }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
         /// Releases resources held by the object.
         /// </summary>
         public override void Dispose(bool disposing)

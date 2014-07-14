@@ -3,41 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace PersistanceMap
+namespace PersistanceMap.Expressions
 {
     /// <summary>
-    /// Helper class that compiles Expression{Func{MapOption{T}, IExpressionMapQueryPart}}[] to IEnumerable{IExpressionMapQueryPart}
-    /// </summary>
-    internal static class MapOptionCompiler
-    {
-        public static IEnumerable<IExpressionMapQueryPart> Compile<T>(params Expression<Func<MapOption<T>, IExpressionMapQueryPart>>[] predicates)
-        {
-            var parts = new List<IExpressionMapQueryPart>();
-            var options = new MapOption<T>();
-
-            foreach (var predicate in predicates)
-                parts.Add(predicate.Compile().Invoke(options));
-
-            return parts;
-        }
-
-        public static IEnumerable<IExpressionMapQueryPart> Compile<T, T2>(params Expression<Func<MapOption<T, T2>, IExpressionMapQueryPart>>[] predicates)
-        {
-            var parts = new List<IExpressionMapQueryPart>();
-            var options = new MapOption<T, T2>();
-
-            foreach (var predicate in predicates)
-                parts.Add(predicate.Compile().Invoke(options));
-
-            return parts;
-        }
-    }
-
-    /// <summary>
-    /// MapOption for simple expressions like From{T}
+    /// MapOption for simple select expressions like From{T}
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class MapOption<T>
+    public class SelectMapOption<T>
     {
         /// <summary>
         /// Creates a include expression to mark fields of the curent join that have to be included in the select statement
@@ -62,11 +34,11 @@ namespace PersistanceMap
     }
 
     /// <summary>
-    /// MapOption for extended expressions like Join{T,T2}
+    /// MapOption for extended select expressions like Join{T,T2}
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    public class MapOption<T, T2> : MapOption<T>
+    public class SelectMapOption<T, T2> : SelectMapOption<T>
     {
         #region On
 

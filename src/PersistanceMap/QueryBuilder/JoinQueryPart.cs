@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class JoinQueryPart<T> : ExpressionQueryPart<T>, IExpressionQueryPart
+    internal class JoinQueryPart<T> : SelectExpressionQueryPart<T>, ISelectExpressionQueryPart
     {
         public JoinQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
             : this(null, entity, mapOperations)
@@ -16,7 +16,7 @@ namespace PersistanceMap.QueryBuilder
         {
         }
 
-        public string Compile()
+        public override string Compile()
         {
             //return string.Format("join {0} on {1}", Entity, base.Compile());
             return string.Format("join {0}{1}{2}", Entity, string.IsNullOrEmpty(Identifier) ? string.Empty : string.Format(" {0}", Identifier) , base.Compile());

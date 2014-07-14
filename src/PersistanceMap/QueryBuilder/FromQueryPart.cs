@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PersistanceMap.QueryBuilder
 {
-    class FromQueryPart<T> : ExpressionQueryPart<T>, IExpressionQueryPart
+    class FromQueryPart<T> : SelectExpressionQueryPart<T>, ISelectExpressionQueryPart
     {
         public FromQueryPart(string entity)
             : this(entity, null)
@@ -19,15 +19,9 @@ namespace PersistanceMap.QueryBuilder
         public FromQueryPart(string entity, string identifier, IEnumerable<IExpressionMapQueryPart> mapOperations)
             : base(identifier, entity, mapOperations)
         {
-            //Identifier = identifier;
-            //Entity = entity;
         }
 
-        //public string Entity { get; private set; }
-
-        //public string Identifier { get; set; }
-
-        public string Compile()
+        public override string Compile()
         {
             if(string.IsNullOrEmpty(Identifier))
                 return string.Format("from {0}", Entity);

@@ -35,7 +35,7 @@ namespace PersistanceMap.Internals
             {
                 fieldDef.SetValueFunction(instance, convertedValue);
             }
-            catch (NullReferenceException ignore) { }
+            catch (NullReferenceException) { }
         }
 
         public bool HandledDbNullValue(FieldDefinition fieldDef, int colIndex, object instance)

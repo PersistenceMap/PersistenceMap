@@ -5,6 +5,6 @@ namespace PersistanceMap.QueryBuilder
     {
         public string QueryString { get; internal set; }
 
-        public QueryPartsContainer QueryParts { get; internal set; }
+        public IQueryPartsMap QueryParts { get; internal set; }
     }
 }

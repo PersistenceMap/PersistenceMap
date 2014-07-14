@@ -13,9 +13,29 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                var proc = context.Procedure<Orders>("get_procnameWithReturn").AddParameter().Execute();
+                // proc with resultset without parameter names
+                var proc = context.Procedure<Orders>("SalesByYear")
+                    .AddParameter(() => new DateTime(1,1,1970))
+                    .AddParameter(() => DateTime.Today)
+                    .Execute();
 
-                context.Procedure("get_procnameNoReturn").AddParameter().Execute();
+                // proc with resultset with parameter names
+                proc = context.Procedure<Orders>("SalesByYear")
+                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1, 1, 1970)))
+                    .AddParameter(p => p.Name(() => "name2"), p => p.Value<DateTime>(() => DateTime.Today))
+                    .Execute();
+
+                // proc without resultset without parameter names
+                context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1, 1, 1970))
+                    .AddParameter(() => DateTime.Today)
+                    .Execute();
+
+                // proc without resultset with parameter names
+                context.Procedure("SalesByYear")
+                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1, 1, 1970)))
+                    .AddParameter(p => p.Name(() => "name2"), p => p.Value<DateTime>(() => DateTime.Today))
+                    .Execute();
             }
         }
 

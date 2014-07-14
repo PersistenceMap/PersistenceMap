@@ -5,14 +5,14 @@ using System.Text;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public class ExpressionQueryPart<T> : IExpressionQueryPart
+    public class SelectExpressionQueryPart<T> : ISelectExpressionQueryPart
     {
-        public ExpressionQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public SelectExpressionQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
             : this(null, entity, mapOperations)
         {
         }
 
-        public ExpressionQueryPart(string identifier, string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public SelectExpressionQueryPart(string identifier, string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
         {
             // ensure parameter is not null
             mapOperations.EnsureArgumentNotNull("mapOperations");

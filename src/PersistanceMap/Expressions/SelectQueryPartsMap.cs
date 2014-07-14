@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PersistanceMap
 {
-    public class QueryPartsContainer
+    public class SelectQueryPartsMap : IQueryPartsMap
     {
         IList<IEntityQueryPart> _fields;
         public IList<IEntityQueryPart> Fields
@@ -17,18 +17,18 @@ namespace PersistanceMap
             }
         }
 
-        IList<IExpressionQueryPart> _joins;
-        public IList<IExpressionQueryPart> Joins
+        IList<ISelectExpressionQueryPart> _joins;
+        public IList<ISelectExpressionQueryPart> Joins
         {
             get
             {
                 if (_joins == null)
-                    _joins = new List<IExpressionQueryPart>();
+                    _joins = new List<ISelectExpressionQueryPart>();
                 return _joins;
             }
         }
 
-        public IExpressionQueryPart From { get; private set; }
+        public ISelectExpressionQueryPart From { get; private set; }
 
         public IQueryPart Where { get; private set; }
 

@@ -4,7 +4,7 @@ namespace PersistanceMap
     public enum MapOperationType
     {
         /// <summary>
-        /// Defines the Operation as a identifier of a table
+        /// Defines the Operation as a identifier of a table or a storedprocedure parameter
         /// </summary>
         Identifier,
 
@@ -26,6 +26,11 @@ namespace PersistanceMap
         /// <summary>
         /// 
         /// </summary>
-        Or
+        Or,
+
+        /// <summary>
+        /// defines the value of a storeprocedure parameter
+        /// </summary>
+        Value
     }
 }
