@@ -12,11 +12,11 @@ namespace PersistanceMap.QueryBuilder
         }
 
         public FromQueryPart(string entity, string identifier)
-            : this(entity, identifier, new List<IExpressionMapQueryPart>())
+            : this(entity, identifier, new List<IMapQueryPart>())
         {
         }
 
-        public FromQueryPart(string entity, string identifier, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public FromQueryPart(string entity, string identifier, IEnumerable<IMapQueryPart> mapOperations)
             : base(identifier, entity, mapOperations)
         {
         }
@@ -37,7 +37,7 @@ namespace PersistanceMap.QueryBuilder
             return string.Format("Entity: {0} [{0} {1}]", Entity, Identifier);
         }
 
-        internal void AddOperation(IExpressionMapQueryPart operation)
+        internal void AddOperation(IMapQueryPart operation)
         {
             if (operation.MapOperationType != MapOperationType.Include)
                 throw new ArgumentException("Only MapOperationType.Include is allowed as operation on a from expression", "operation");

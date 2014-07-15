@@ -23,6 +23,16 @@ namespace PersistanceMap.Compiler
 
         public bool PrefixFieldWithTableName { get; set; }
 
+        static LambdaExpressionToSqlCompiler _instance;
+        public static LambdaExpressionToSqlCompiler Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new LambdaExpressionToSqlCompiler();
+                return _instance;
+            }
+        }
 
 
         public LambdaExpressionToSqlCompiler()
@@ -33,9 +43,17 @@ namespace PersistanceMap.Compiler
 
         #region Compiles
 
-        internal virtual object Compile(IExpressionMapQueryPart part)
+        //internal virtual object Compile(IIdentifierMapQueryPart part)
+        //{
+        //    _identifierMap = part.IdentifierMap;
+
+        //    return Compile(part.Expression);
+        //}
+
+        internal virtual object Compile(IMapQueryPart part)
         {
-            _identifierMap = part.IdentifierMap;
+            var idpart = part as IIdentifierMapQueryPart;
+            _identifierMap = idpart != null ? idpart.IdentifierMap : new Dictionary<Type, string>();
 
             return Compile(part.Expression);
         }

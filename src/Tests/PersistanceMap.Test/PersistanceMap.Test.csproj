@@ -75,6 +75,7 @@
     <Compile Include="BusinessObjects\OrderWithDetail.cs" />
     <Compile Include="BusinessObjects\Products.cs" />
     <Compile Include="BusinessObjects\SalesByYear.cs" />
+    <Compile Include="Integration\ProcedureTests.cs" />
     <Compile Include="Integration\SelectTests.cs" />
     <Compile Include="Integration\FromTests.cs" />
     <Compile Include="Integration\JoinTests.cs" />

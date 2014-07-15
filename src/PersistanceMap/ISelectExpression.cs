@@ -15,12 +15,12 @@ namespace PersistanceMap
         
         ISelectExpression<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
 
-        ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IExpressionMapQueryPart>>[] args);
+        ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IMapQueryPart>>[] args);
 
         ISelectExpression<T> Where(Expression<Func<T, bool>> predicate);
 
         ISelectExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate);
 
-        ISelectExpression<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IExpressionMapQueryPart>>[] args);
+        ISelectExpression<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IMapQueryPart>>[] args);
     }
 }

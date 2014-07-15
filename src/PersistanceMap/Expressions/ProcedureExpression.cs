@@ -57,23 +57,23 @@ namespace PersistanceMap.Expressions
 
         internal ParameterQueryPart Convert<T2>(Expression<Func<T2>> predicate)
         {
-            return new ParameterQueryPart(new List<ExpressionMapQueryPart> 
+            return new ParameterQueryPart(new List<MapQueryPart> 
             { 
-                new ExpressionMapQueryPart(MapOperationType.Value, predicate) 
+                new MapQueryPart(MapOperationType.Value, predicate) 
             });
         }
 
-        internal ParameterQueryPart Convert(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] args)
+        internal ParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IMapQueryPart>> arg)
         {
-            var list = new List<ExpressionMapQueryPart>();
+            var list = new List<MapQueryPart>();
             var option = new ProcedureMapOption();
 
-            var parts =  MapOptionCompiler.Compile(args);
+            var part =  MapOptionCompiler.Compile(arg);
 
-            parts.ForEach(part =>
-            {
-                list.Add(new ExpressionMapQueryPart(part.MapOperationType, part.Expression));
-            });
+            //parts.ForEach(part =>
+            //{
+                list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
+            //});
 
             return new ParameterQueryPart(list);
         }
@@ -98,9 +98,25 @@ namespace PersistanceMap.Expressions
             return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureExpression AddParameter(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] parts)
+        //public IProcedureExpression AddParameter(params Expression<Func<ProcedureMapOption, IMapQueryPart>>[] parts)
+        //{
+        //    QueryPartsMap.Add(Convert(parts));
+
+        //    return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
+        //}
+
+        public IProcedureExpression AddParameter(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
         {
-            QueryPartsMap.Add(Convert(parts));
+            QueryPartsMap.Add(Convert(part));
+
+            return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
+        }
+
+        public IProcedureExpression AddParameter<T2>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part, Action<T2> callback)
+        {
+            throw new NotImplementedException("Callback not jet implemented!");
+
+            QueryPartsMap.Add(Convert(part));
 
             return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
         }
@@ -133,11 +149,32 @@ namespace PersistanceMap.Expressions
             return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureExpression<T> AddParameter(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] parts)
+        //public IProcedureExpression<T> AddParameter(params Expression<Func<ProcedureMapOption, IMapQueryPart>>[] parts)
+        //{
+        //    QueryPartsMap.Add(Convert(parts));
+
+        //    return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
+        //}
+
+        public IProcedureExpression<T> AddParameter(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
         {
-            QueryPartsMap.Add(Convert(parts));
+            QueryPartsMap.Add(Convert(part));
 
             return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
+        }
+
+        public IProcedureExpression<T> AddParameter<T2>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part, Action<T2> callback)
+        {
+            throw new NotImplementedException("Callback not jet implemented!");
+
+            QueryPartsMap.Add(Convert(part));
+
+            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
+        }
+
+        public IProcedureExpression<T> AddParameter<T2>(Action<T2> callback)
+        {
+            throw new NotImplementedException("Callback not jet implemented!");
         }
 
         public IEnumerable<T> Execute()

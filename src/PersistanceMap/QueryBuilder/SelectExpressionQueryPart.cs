@@ -7,12 +7,12 @@ namespace PersistanceMap.QueryBuilder
 {
     public class SelectExpressionQueryPart<T> : ISelectExpressionQueryPart
     {
-        public SelectExpressionQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public SelectExpressionQueryPart(string entity, IEnumerable<IMapQueryPart> mapOperations)
             : this(null, entity, mapOperations)
         {
         }
 
-        public SelectExpressionQueryPart(string identifier, string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public SelectExpressionQueryPart(string identifier, string entity, IEnumerable<IMapQueryPart> mapOperations)
         {
             // ensure parameter is not null
             mapOperations.EnsureArgumentNotNull("mapOperations");
@@ -22,7 +22,7 @@ namespace PersistanceMap.QueryBuilder
             Entity = entity;
         }
 
-        IEnumerable<IExpressionMapQueryPart> IExpressionQueryPart.Operations
+        IEnumerable<IMapQueryPart> IExpressionQueryPart.Operations
         {
             get
             {
@@ -30,7 +30,7 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        public IList<IExpressionMapQueryPart> Operations { get; private set; }
+        public IList<IMapQueryPart> Operations { get; private set; }
 
         public string Entity { get; private set; }
 

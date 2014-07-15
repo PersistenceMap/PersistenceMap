@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap
 {
@@ -18,6 +14,12 @@ namespace PersistanceMap
         {
             if (String.IsNullOrEmpty(argument))
                 throw new ArgumentException("Cannot be null or empty", name);
+        }
+
+        public static void EnsureArgumentNotNullOrEmpty(this string argument, string name, string message)
+        {
+            if (String.IsNullOrEmpty(argument))
+                throw new ArgumentException(message ?? "Cannot be null or empty", name);
         }
 
         //public static void EnsureMappingTypeMatches(this Type keyType, Type mappedType)

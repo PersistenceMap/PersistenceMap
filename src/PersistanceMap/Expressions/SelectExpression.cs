@@ -55,7 +55,7 @@ namespace PersistanceMap.Expressions
             return new SelectExpression<T2>(Context, QueryPartsMap);
         }
 
-        internal ISelectExpression<T2> From<T2>(params IExpressionMapQueryPart[] parts)
+        internal ISelectExpression<T2> From<T2>(params IMapQueryPart[] parts)
         {
             parts.EnsureArgumentNotNull("part");
 
@@ -119,7 +119,7 @@ namespace PersistanceMap.Expressions
             return new SelectExpression<T>(Context, QueryPartsMap);
         }
 
-        public ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IExpressionMapQueryPart>>[] args)
+        public ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IMapQueryPart>>[] args)
         {
             QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile<TJoin, T>(args)));
 
@@ -139,7 +139,7 @@ namespace PersistanceMap.Expressions
             throw new NotImplementedException();
         }
 
-        public ISelectExpression<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IExpressionMapQueryPart>>[] args)
+        public ISelectExpression<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IMapQueryPart>>[] args)
         {
             throw new NotImplementedException();
         }

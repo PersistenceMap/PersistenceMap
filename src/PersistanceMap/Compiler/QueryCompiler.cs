@@ -78,12 +78,12 @@ namespace PersistanceMap.Compiler
 
             foreach (var param in _queryParts.Parameters)
             {
-                //TODO: operations can also be MapOperationType.Identifier!
                 var valuePredicate = param.Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
                 if (valuePredicate != null)
                 {
-                    var obj = conv.Compile(valuePredicate.Expression);
-                    var value = DialectProvider.Instance.GetQuotedValue(obj, obj.GetType());
+                    //var obj = conv.Compile(valuePredicate.Expression);
+                    //var value = DialectProvider.Instance.GetQuotedValue(obj, obj.GetType());
+                    var value = valuePredicate.Compile();
 
                     sb.Append(string.Format("{0}{1}", value, _queryParts.Parameters.Last() == param ? "" : ", "));
                 }

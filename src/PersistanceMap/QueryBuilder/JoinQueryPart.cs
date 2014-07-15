@@ -6,12 +6,12 @@ namespace PersistanceMap.QueryBuilder
 {
     internal class JoinQueryPart<T> : SelectExpressionQueryPart<T>, ISelectExpressionQueryPart
     {
-        public JoinQueryPart(string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public JoinQueryPart(string entity, IEnumerable<IMapQueryPart> mapOperations)
             : this(null, entity, mapOperations)
         {
         }
 
-        public JoinQueryPart(string identifier, string entity, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public JoinQueryPart(string identifier, string entity, IEnumerable<IMapQueryPart> mapOperations)
             : base(identifier, entity, mapOperations)
         {
         }
@@ -27,7 +27,7 @@ namespace PersistanceMap.QueryBuilder
             return string.Format("join {0}", Entity);
         }
 
-        internal void AddOperations(IEnumerable<IExpressionMapQueryPart> operations)
+        internal void AddOperations(IEnumerable<IMapQueryPart> operations)
         {
             operations.ForEach(o => Operations.Add(o));
         }

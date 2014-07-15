@@ -24,7 +24,7 @@ namespace PersistanceMap
                 .From<T>();
         }
 
-        public static ISelectExpression<T> From<T>(this IDbContext context, params Expression<Func<SelectMapOption<T>, IExpressionMapQueryPart>>[] parts)
+        public static ISelectExpression<T> From<T>(this IDbContext context, params Expression<Func<SelectMapOption<T>, IMapQueryPart>>[] parts)
         {
             return new SelectExpression<T>(context)
                 .From<T>(MapOptionCompiler.Compile<T>(parts).ToArray());

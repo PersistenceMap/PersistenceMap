@@ -6,12 +6,12 @@ namespace PersistanceMap.QueryBuilder
 {
     internal class ParameterQueryPart : IExpressionQueryPart
     {
-        public ParameterQueryPart(IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public ParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations)
             : this(null, mapOperations)
         {
         }
 
-        public ParameterQueryPart(string name, IEnumerable<IExpressionMapQueryPart> mapOperations)
+        public ParameterQueryPart(string name, IEnumerable<IMapQueryPart> mapOperations)
         {
             // ensure parameter is not null
             mapOperations.EnsureArgumentNotNull("mapOperations");
@@ -20,7 +20,7 @@ namespace PersistanceMap.QueryBuilder
             Name = name;
         }
 
-        IEnumerable<IExpressionMapQueryPart> IExpressionQueryPart.Operations
+        IEnumerable<IMapQueryPart> IExpressionQueryPart.Operations
         {
             get
             {
@@ -28,7 +28,7 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        public IList<IExpressionMapQueryPart> Operations { get; private set; }
+        public IList<IMapQueryPart> Operations { get; private set; }
 
         public string Name { get; private set; }
 

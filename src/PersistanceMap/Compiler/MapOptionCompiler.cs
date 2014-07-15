@@ -10,20 +10,21 @@ namespace PersistanceMap.Compiler
     /// </summary>
     internal static class MapOptionCompiler
     {
-        public static IEnumerable<IExpressionMapQueryPart> Compile(params Expression<Func<ProcedureMapOption, IExpressionMapQueryPart>>[] predicates)
+        public static IMapQueryPart Compile(Expression<Func<ProcedureMapOption, IMapQueryPart>> predicate)
         {
-            var parts = new List<IExpressionMapQueryPart>();
+            //var parts = new List<IMapQueryPart>();
             var options = new ProcedureMapOption();
 
-            foreach (var predicate in predicates)
-                parts.Add(predicate.Compile().Invoke(options));
+            //foreach (var predicate in predicates)
+            //    parts.Add(predicate.Compile().Invoke(options));
 
-            return parts;
+            //return parts;
+            return predicate.Compile().Invoke(options);
         }
 
-        public static IEnumerable<IExpressionMapQueryPart> Compile<T>(params Expression<Func<SelectMapOption<T>, IExpressionMapQueryPart>>[] predicates)
+        public static IEnumerable<IMapQueryPart> Compile<T>(params Expression<Func<SelectMapOption<T>, IMapQueryPart>>[] predicates)
         {
-            var parts = new List<IExpressionMapQueryPart>();
+            var parts = new List<IMapQueryPart>();
             var options = new SelectMapOption<T>();
 
             foreach (var predicate in predicates)
@@ -32,9 +33,9 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        public static IEnumerable<IExpressionMapQueryPart> Compile<T, T2>(params Expression<Func<SelectMapOption<T, T2>, IExpressionMapQueryPart>>[] predicates)
+        public static IEnumerable<IMapQueryPart> Compile<T, T2>(params Expression<Func<SelectMapOption<T, T2>, IMapQueryPart>>[] predicates)
         {
-            var parts = new List<IExpressionMapQueryPart>();
+            var parts = new List<IMapQueryPart>();
             var options = new SelectMapOption<T, T2>();
 
             foreach (var predicate in predicates)

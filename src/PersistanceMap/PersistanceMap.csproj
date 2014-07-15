@@ -52,7 +52,7 @@
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
     <Compile Include="Extensions\TypeExtensionsForObjectGeneration.cs" />
     <Compile Include="IExpressionCompiler.cs" />
-    <Compile Include="IExpressionMapQueryPart.cs" />
+    <Compile Include="IMapQueryPart.cs" />
     <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
     <Compile Include="IExpressionQueryPart.cs" />
     <Compile Include="ISelectExpressionQueryPart.cs" />
@@ -60,7 +60,7 @@
     <Compile Include="IProcedureExpression.cs" />
     <Compile Include="IQueryPartsMap.cs" />
     <Compile Include="Expressions\ProcedureQueryPartsMap.cs" />
-    <Compile Include="QueryBuilder\ExpressionMapQueryPart.cs" />
+    <Compile Include="QueryBuilder\MapQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="IEntityQueryPart.cs" />
     <Compile Include="Internals\ReaderContext.cs" />

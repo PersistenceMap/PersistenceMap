@@ -19,16 +19,16 @@ namespace PersistanceMap
 
         public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var operation = new ExpressionMapQueryPart(MapOperationType.Join, predicate);
+            var operation = new MapQueryPart(MapOperationType.Join, predicate);
 
-            return new JoinQueryPart<TJoin>(type.Name, new List<IExpressionMapQueryPart> { operation });
+            return new JoinQueryPart<TJoin>(type.Name, new List<IMapQueryPart> { operation });
         }
 
-        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IEnumerable<IExpressionMapQueryPart> parts)
+        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IEnumerable<IMapQueryPart> parts)
         {
-            IEnumerable<IExpressionMapQueryPart> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
-            IEnumerable<IExpressionMapQueryPart> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
-            IEnumerable<IExpressionMapQueryPart> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
+            IEnumerable<IMapQueryPart> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
+            IEnumerable<IMapQueryPart> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
+            IEnumerable<IMapQueryPart> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
 
             var join = new JoinQueryPart<TJoin>(type.Name, operationParts);
             if (includeParts != null)
@@ -41,7 +41,9 @@ namespace PersistanceMap
                 {
                     foreach (var part in join.Operations)
                     {
-                        part.IdentifierMap.Add(typeof (TJoin), join.Identifier);
+                        var idpart = part as IIdentifierMapQueryPart;
+                        if (idpart != null)
+                            idpart.IdentifierMap.Add(typeof(TJoin), join.Identifier);
                     }
                 }
             }

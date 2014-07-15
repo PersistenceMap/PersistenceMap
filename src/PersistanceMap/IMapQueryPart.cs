@@ -4,12 +4,15 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IExpressionMapQueryPart : IQueryPart
+    public interface IMapQueryPart : IQueryPart
     {
         MapOperationType MapOperationType { get; }
 
         LambdaExpression Expression { get; }
+    }
 
+    public interface IIdentifierMapQueryPart : IMapQueryPart
+    {
         Dictionary<Type, string> IdentifierMap { get; }
     }
 }
