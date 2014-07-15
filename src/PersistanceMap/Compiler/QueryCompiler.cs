@@ -9,7 +9,7 @@ namespace PersistanceMap.Compiler
     {
         public abstract CompiledQuery Compile();
     }
-    
+
     /// <summary>
     /// Compiles all elements of a QueryPartsContainer to a CompiledQuery
     /// </summary>

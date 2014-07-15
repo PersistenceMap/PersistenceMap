@@ -2,6 +2,8 @@
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq.Expressions;
 
 namespace PersistanceMap.Internals
 {
@@ -31,6 +33,19 @@ namespace PersistanceMap.Internals
             using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
             {
                 // make sure Disposed is called on reader!
+            }
+        }
+
+        public void Execute(CompiledQuery compiledQuery, params Expression<Action<IDataReader>>[] expressions)
+        {
+            using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
+            {
+                foreach (var expression in expressions)
+                {
+                    expression.Compile().Invoke(reader.DataReader);
+                    if(!reader.DataReader.NextResult())
+                        break;
+                }
             }
         }
 
