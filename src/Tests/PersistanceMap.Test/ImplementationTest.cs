@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
 
@@ -14,28 +15,42 @@ namespace PersistanceMap.Test
             using (var context = connection.Open())
             {
                 // proc with resultset without parameter names
-                var proc = context.Procedure<Orders>("SalesByYear")
-                    .AddParameter(() => new DateTime(1,1,1970))
+                var proc = context.Procedure<SalesByYear>("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
                     .AddParameter(() => DateTime.Today)
                     .Execute();
 
+                Assert.IsTrue(proc.Any());
+
                 // proc with resultset with parameter names
-                proc = context.Procedure<Orders>("SalesByYear")
-                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1, 1, 1970)))
+                proc = context.Procedure<SalesByYear>("SalesByYear")
+                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1970, 1, 1)))
                     .AddParameter(p => p.Name(() => "name2"), p => p.Value<DateTime>(() => DateTime.Today))
                     .Execute();
 
+                Assert.IsTrue(proc.Any());
+
                 // proc without resultset without parameter names
                 context.Procedure("SalesByYear")
-                    .AddParameter(() => new DateTime(1, 1, 1970))
+                    .AddParameter(() => new DateTime(1970, 1, 1))
                     .AddParameter(() => DateTime.Today)
                     .Execute();
 
                 // proc without resultset with parameter names
                 context.Procedure("SalesByYear")
-                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1, 1, 1970)))
+                    .AddParameter(p => p.Name(() => "name1"), p => p.Value<DateTime>(() => new DateTime(1970, 1, 1)))
                     .AddParameter(p => p.Name(() => "name2"), p => p.Value<DateTime>(() => DateTime.Today))
                     .Execute();
+
+
+                /* *Using Output compiles to*
+                
+                declare @p1 datetime
+                set @p1='2012-01-01 00:00:00'
+                exec SalesByYear @Beginning_Date=@p1 output,@Ending_Date='2014-07-15 00:00:00'
+                select @p1
+                
+                */
             }
         }
 

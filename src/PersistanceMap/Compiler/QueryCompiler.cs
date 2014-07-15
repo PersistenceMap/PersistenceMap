@@ -1,51 +1,44 @@
 ﻿using PersistanceMap.QueryBuilder;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using PersistanceMap.Sql;
 
 namespace PersistanceMap.Compiler
 {
+    public abstract class QueryCompiler
+    {
+        public abstract CompiledQuery Compile();
+    }
+    
     /// <summary>
     /// Compiles all elements of a QueryPartsContainer to a CompiledQuery
     /// </summary>
-    public class QueryCompiler
+    public class SelectQueryCompiler : QueryCompiler
     {
-        readonly IQueryPartsMap _queryParts;
+        private readonly SelectQueryPartsMap _queryParts;
 
-        public QueryCompiler(IQueryPartsMap queryParts)
+        public SelectQueryCompiler(SelectQueryPartsMap queryParts)
         {
             _queryParts = queryParts;
         }
 
-        public CompiledQuery Compile()
+        public override CompiledQuery Compile()
         {
-            var query = Compile(_queryParts as SelectQueryPartsMap);
-
-            if (query == null)
-                query = Compile(_queryParts as ProcedureQueryPartsMap);
-
-            return query;
-        }
-
-        private CompiledQuery Compile(SelectQueryPartsMap map)
-        {
-            if (map == null)
+            if (_queryParts == null)
                 return null;
 
             var sb = new StringBuilder(100);
             sb.Append("select ");
 
             // add resultset fields
-            foreach (var field in map.Fields)
-                sb.AppendFormat("{0}{1} ", field.Compile(), map.Fields.Last() == field ? "" : ",");
+            foreach (var field in _queryParts.Fields)
+                sb.AppendFormat("{0}{1} ", field.Compile(), _queryParts.Fields.Last() == field ? "" : ",");
 
             // add from
-            sb.AppendFormat("{0} \r\n", map.From.Compile());
+            sb.AppendFormat("{0} \r\n", _queryParts.From.Compile());
 
             // add joins
-            foreach (var join in map.Joins)
+            foreach (var join in _queryParts.Joins)
                 sb.Append(join.Compile());
 
             // where
@@ -55,33 +48,51 @@ namespace PersistanceMap.Compiler
             return new CompiledQuery
             {
                 QueryString = sb.ToString(),
-                QueryParts = map
+                QueryParts = _queryParts
             };
         }
+    }
 
-        private CompiledQuery Compile(ProcedureQueryPartsMap map)
+    /// <summary>
+    /// Compiles all elements of a QueryPartsContainer to a CompiledQuery
+    /// </summary>
+    public class ProcedureQueryCompiler : QueryCompiler
+    {
+        private readonly ProcedureQueryPartsMap _queryParts;
+
+        public ProcedureQueryCompiler(ProcedureQueryPartsMap queryParts)
         {
-            if (map == null)
+            _queryParts = queryParts;
+        }
+
+        public override CompiledQuery Compile()
+        {
+            if (_queryParts == null)
                 return null;
 
             var sb = new StringBuilder(100);
-            sb.Append(string.Format("exec {0} ", map.ProcedureName));
+            sb.Append(string.Format("exec {0} ", _queryParts.ProcedureName));
 
             var conv = new LambdaExpressionToSqlCompiler();
             conv.PrefixFieldWithTableName = false;
 
-            foreach (var param in map.Parameters)
+            foreach (var param in _queryParts.Parameters)
             {
                 //TODO: operations can also be MapOperationType.Identifier!
                 var valuePredicate = param.Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
                 if (valuePredicate != null)
-                    sb.Append(string.Format("{0} ", conv.Compile(valuePredicate.Expression)));
+                {
+                    var obj = conv.Compile(valuePredicate.Expression);
+                    var value = DialectProvider.Instance.GetQuotedValue(obj, obj.GetType());
+
+                    sb.Append(string.Format("{0}{1}", value, _queryParts.Parameters.Last() == param ? "" : ", "));
+                }
             }
 
             return new CompiledQuery
             {
                 QueryString = sb.ToString(),
-                QueryParts = map
+                QueryParts = _queryParts
             };
         }
     }

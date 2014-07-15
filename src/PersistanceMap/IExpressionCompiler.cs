@@ -6,7 +6,7 @@ namespace PersistanceMap
     {
         CompiledQuery Compile<T>(SelectQueryPartsMap queryParts);
 
-        CompiledQuery Compile<T>(ProcedureQueryPartsMap queryParts);
+        //CompiledQuery Compile<T>(ProcedureQueryPartsMap queryParts);
 
         CompiledQuery Compile(ProcedureQueryPartsMap queryParts);
     }

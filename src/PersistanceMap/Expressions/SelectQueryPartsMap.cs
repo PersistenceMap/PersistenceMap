@@ -1,4 +1,5 @@
-﻿using PersistanceMap.QueryBuilder;
+﻿using System.Text;
+using PersistanceMap.QueryBuilder;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,8 @@ namespace PersistanceMap
 {
     public class SelectQueryPartsMap : IQueryPartsMap
     {
+        #region Properties
+
         IList<IEntityQueryPart> _fields;
         public IList<IEntityQueryPart> Fields
         {
@@ -38,6 +41,10 @@ namespace PersistanceMap
         /// Indicates if the resultset is a distinct set of fields provided by a 'For' expression
         /// </summary>
         internal bool IsResultSetComplete { get; private set; }
+
+        #endregion
+
+        #region Add Methods
 
         internal void Add(FieldQueryPart field, bool replace)
         {
@@ -95,5 +102,13 @@ namespace PersistanceMap
 
             Joins.Add(join);
         }
+
+        #endregion
+
+        #region IQueryPartsMap Implementation
+
+        
+
+        #endregion
     }
 }

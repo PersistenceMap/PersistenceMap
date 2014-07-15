@@ -17,7 +17,8 @@ namespace PersistanceMap.Sql
 
         public override string GetQuotedValue(object value, Type fieldType)
         {
-            if (value == null) return "NULL";
+            if (value == null) 
+                return "NULL";
 
             if (fieldType == typeof(Guid))
             {
@@ -28,6 +29,9 @@ namespace PersistanceMap.Sql
             if (fieldType == typeof(DateTime) || fieldType == typeof(DateTime?))
             {
                 var dateValue = (DateTime)value;
+                /*
+                 * Original *
+                 //TODO: check if this is correct!
                 string iso8601Format = "yyyy-MM-dd";
                 string oracleFormat = "YYYY-MM-DD";
                 if (dateValue.ToString("yyyy-MM-dd HH:mm:ss.fff").EndsWith("00:00:00.000") == false)
@@ -36,6 +40,11 @@ namespace PersistanceMap.Sql
                     oracleFormat = "YYYY-MM-DD HH24:MI:SS.FF3";
                 }
                 return "TO_TIMESTAMP(" + base.GetQuotedValue(dateValue.ToString(iso8601Format), typeof(string)) + ", " + base.GetQuotedValue(oracleFormat, typeof(string)) + ")";
+                */
+
+                /*New*/
+                const string iso8601Format = "yyyy-MM-dd";
+                return base.GetQuotedValue(dateValue.ToString(iso8601Format), typeof(string));
             }
 
             if ((value is TimeSpan) && (fieldType == typeof(Int64) || fieldType == typeof(Int64?)))

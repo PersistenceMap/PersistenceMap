@@ -10,6 +10,6 @@ namespace PersistanceMap
 
         IReaderContext Execute(string query);
 
-        void ExecuteNonQuery(string query);
+        IReaderContext ExecuteNonQuery(string query);
     }
 }

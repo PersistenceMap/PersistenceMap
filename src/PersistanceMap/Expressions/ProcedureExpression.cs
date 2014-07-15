@@ -143,7 +143,7 @@ namespace PersistanceMap.Expressions
         public IEnumerable<T> Execute()
         {
             var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(QueryPartsMap);
+            var query = expr.Compile(QueryPartsMap);
 
             return Context.Execute<T>(query);
         }

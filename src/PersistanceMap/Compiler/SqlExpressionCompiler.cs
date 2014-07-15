@@ -1,9 +1,8 @@
-﻿using System;
-using System.Reflection;
-using PersistanceMap.Expressions;
-using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.QueryBuilder;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace PersistanceMap.Compiler
 {
@@ -45,26 +44,18 @@ namespace PersistanceMap.Compiler
                 inc.Operations.ForEach(o => queryParts.Add(new FieldQueryPart(ExtractPropertyName(o.Expression), string.IsNullOrEmpty(inc.Identifier) ? inc.Entity : inc.Identifier, inc.Entity), true));
             }
 
-            // don't set identifier
+            // don't set identifier to prevent fields being set with a default identifier of the from expression
             //TODO: should entity also not be set?
             foreach (var field in members.Select(m => m.ToFieldQueryPart(/*from.Identifier*/null, from.Entity)))
                 queryParts.Add(field, false);
 
-            var builder = new QueryCompiler(queryParts);
-            return builder.Compile();
-        }
-
-
-
-        public CompiledQuery Compile<T>(ProcedureQueryPartsMap queryParts)
-        {
-            var builder = new QueryCompiler(queryParts);
+            var builder = new SelectQueryCompiler(queryParts);
             return builder.Compile();
         }
 
         public CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
         {
-            var builder = new QueryCompiler(queryParts);
+            var builder = new ProcedureQueryCompiler(queryParts);
             return builder.Compile();
         }
 

@@ -1,13 +1,9 @@
-﻿using PersistanceMap.Compiler;
+﻿using System.Data;
+using PersistanceMap.Compiler;
 using PersistanceMap.Internals;
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap
 {
@@ -22,7 +18,8 @@ namespace PersistanceMap
 
         public string ConnectionString { get; private set; }
 
-        IExpressionCompiler _expressionCompiler;
+        private IExpressionCompiler _expressionCompiler;
+
         public virtual IExpressionCompiler ExpressionCompiler
         {
             get
@@ -39,75 +36,109 @@ namespace PersistanceMap
             SqlConnection connection;
             SqlCommand command;
 
-            using (connection = new SqlConnection(ConnectionString))
+            //TestExecuteProc();
+
+            connection = new SqlConnection(ConnectionString);
+            try
             {
-                try
+                connection.Open();
+                command = new SqlCommand(query, connection);
+                
+                /*
+                SqlDataReader sqlReader = sqlCmd.ExecuteReader();
+                while (sqlReader.Read())
                 {
-                    connection.Open();
-                    using (command = new SqlCommand(query, connection))
-                    {
-
-                        /*
-                        SqlDataReader sqlReader = sqlCmd.ExecuteReader();
-                        while (sqlReader.Read())
-                        {
-                            MessageBox.Show("From first SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                        }
-
-                        sqlReader.NextResult();
-
-                        while (sqlReader.Read())
-                        {
-                            MessageBox.Show("From second SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                        }
-
-                        sqlReader.NextResult();
-
-                        while (sqlReader.Read())
-                        {
-                            MessageBox.Show("From third SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                        }
-
-                        sqlReader.Close();
-                        sqlCmd.Dispose();
-                        sqlCnn.Close();
-                        */
-
-                        return new SqlContextReader(command.ExecuteReader(), connection, command);
-                    }
+                    MessageBox.Show("From first SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
                 }
-                catch (Exception ex)
+
+                sqlReader.NextResult();
+
+                while (sqlReader.Read())
                 {
-                    Trace.WriteLine(ex);
-                    throw;
+                    MessageBox.Show("From second SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
                 }
+
+                sqlReader.NextResult();
+
+                while (sqlReader.Read())
+                {
+                    MessageBox.Show("From third SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
+                }
+
+                sqlReader.Close();
+                sqlCmd.Dispose();
+                sqlCnn.Close();
+                */
+
+                return new SqlContextReader(command.ExecuteReader(), connection, command);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                throw;
             }
         }
+
+
+        //public void TestExecuteProc()
+        //{
+        //    SqlConnection connection;
+        //    SqlCommand command;
+
+        //    connection = new SqlConnection(ConnectionString);
+        //    try
+        //    {
+        //        connection.Open();
+        //        command = new SqlCommand("SalesByYear", connection);
+        //        command.CommandType = CommandType.StoredProcedure;
+
+        //        var param1 = command.Parameters.Add("Beginning_Date", SqlDbType.DateTime);
+        //        param1.Value = new DateTime(1980, 1, 1);
+        //        param1.Direction = ParameterDirection.Output;
+
+
+        //        var param2 = command.Parameters.Add("Ending_Date", SqlDbType.DateTime);
+        //        param2.Value = DateTime.Today;
+        //        param2.Direction = ParameterDirection.Input;
+
+
+        //        var reader = command.ExecuteReader();
+        //        while (reader.Read())
+        //        {
+        //            Console.WriteLine("From first SQL - " + reader.GetValue(0) + " - " + reader.GetValue(1));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Trace.WriteLine(ex);
+        //        throw;
+        //    }
+        //}
 
         /// <summary>
         /// Executes a sql query without returning a resultset
         /// </summary>
         /// <param name="query"></param>
-        public void ExecuteNonQuery(string query)
+        public IReaderContext ExecuteNonQuery(string query)
         {
             SqlConnection connection;
             SqlCommand command;
 
-            using (connection = new SqlConnection(ConnectionString))
+            connection = new SqlConnection(ConnectionString);
+            try
             {
-                try
-                {
-                    connection.Open();
-                    using (command = new SqlCommand(query, connection))
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Trace.WriteLine(ex);
-                    throw;
-                }
+                connection.Open();
+                command = new SqlCommand(query, connection);
+                
+                command.ExecuteNonQuery();
+
+                return new SqlContextReader(null, connection, command);
+
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                throw;
             }
         }
     }

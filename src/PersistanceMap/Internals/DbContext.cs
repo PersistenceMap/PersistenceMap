@@ -28,7 +28,10 @@ namespace PersistanceMap.Internals
 
         public void Execute(CompiledQuery compiledQuery)
         {
-            ContextProvider.Execute(compiledQuery.QueryString);
+            using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
+            {
+                // make sure Disposed is called on reader!
+            }
         }
 
         #region IDisposeable Implementation
