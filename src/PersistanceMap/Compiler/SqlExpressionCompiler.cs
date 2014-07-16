@@ -55,6 +55,16 @@ namespace PersistanceMap.Compiler
 
         public CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
         {
+
+            
+            foreach (var param in queryParts.Parameters.Where(p=>p.Callback != null))
+            {
+                throw new NotImplementedException();
+            }
+
+
+
+
             var builder = new ProcedureQueryCompiler(queryParts);
             return builder.Compile();
         }

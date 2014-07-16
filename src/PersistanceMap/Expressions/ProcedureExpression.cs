@@ -65,10 +65,12 @@ namespace PersistanceMap.Expressions
 
         internal ParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IMapQueryPart>> arg)
         {
-            var list = new List<MapQueryPart>();
+            var list = new List<IMapQueryPart>();
             var part = MapOptionCompiler.Compile(arg);
 
-            list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
+            //list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
+
+            list.Add(part);
 
             return new ParameterQueryPart(list);
         }
@@ -102,9 +104,12 @@ namespace PersistanceMap.Expressions
 
         public IProcedureExpression AddParameter<T2>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part, Action<T2> callback)
         {
-            throw new NotImplementedException("Callback not jet implemented!");
+            var tmp = Convert(part);
+            var cb = tmp as ICallbackQueryPart;
+            if (cb != null)
+                cb.Callback = callback;
 
-            QueryPartsMap.Add(Convert(part));
+            QueryPartsMap.Add(tmp);
 
             return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PersistanceMap
+namespace PersistanceMap.QueryBuilder
 {
     public interface ISelectExpressionQueryPart : IEntityQueryPart, IExpressionQueryPart
     {

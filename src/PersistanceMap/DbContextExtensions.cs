@@ -3,6 +3,7 @@ using PersistanceMap.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {

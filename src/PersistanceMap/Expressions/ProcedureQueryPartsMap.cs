@@ -17,13 +17,13 @@ namespace PersistanceMap
 
         #region Properties
 
-        IList<IExpressionQueryPart> _parameters;
-        public IList<IExpressionQueryPart> Parameters
+        IList<IParameterQueryPart> _parameters;
+        internal IList<IParameterQueryPart> Parameters
         {
             get
             {
                 if (_parameters == null)
-                    _parameters = new List<IExpressionQueryPart>();
+                    _parameters = new List<IParameterQueryPart>();
                 return _parameters;
             }
         }

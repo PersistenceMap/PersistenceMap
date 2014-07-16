@@ -9,11 +9,6 @@ namespace PersistanceMap.Expressions
     /// </summary>
     public class ProcedureMapOption
     {
-        //public IExpressionMapQueryPart Name(Expression<Func<string>> predicate)
-        //{
-        //    return new ExpressionMapQueryPart(MapOperationType.Identifier, predicate);
-        //}
-
         public IMapQueryPart Value<T>(Expression<Func<T>> predicate)
         {
             return new MapQueryPart(MapOperationType.Value, predicate);
@@ -27,14 +22,5 @@ namespace PersistanceMap.Expressions
 
             return new NamedMapQueryPart(MapOperationType.Value, name, predicate);
         }
-
-        //public IMapQueryPart Value<T>(string name, Expression<Func<T>> predicate, Expression<Action<T>> callback)
-        //{
-        //    // parameters have to start with @
-        //    if (!name.StartsWith("@"))
-        //        name = string.Format("@{0}", name);
-
-        //    return new CallbackMapQueryPart<T>(MapOperationType.Value, name, predicate, callback);
-        //}
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace PersistanceMap
+namespace PersistanceMap.QueryBuilder
 {
     public interface IMapQueryPart : IQueryPart
     {

@@ -24,7 +24,7 @@ namespace PersistanceMap.QueryBuilder
 
         public virtual string Compile()
         {
-            var value = LambdaExpressionToSqlCompiler.Instance.Compile(Expression);
+            var value = LambdaExpressionToSqlCompiler.Instance.Compile(this/*Expression*/);
             if (value != null)
                 return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
 
