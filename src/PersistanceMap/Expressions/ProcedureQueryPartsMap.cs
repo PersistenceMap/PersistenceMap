@@ -34,7 +34,7 @@ namespace PersistanceMap
 
         #region Add Methods
 
-        internal void Add(ParameterQueryPart part)
+        internal void Add(IParameterQueryPart part)
         {
             Parameters.Add(part);
         }

@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Linq.Expressions;
-using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 
@@ -14,6 +12,8 @@ namespace PersistanceMap
 
         void Execute(CompiledQuery compiledQuery);
 
-        void Execute(CompiledQuery compiledQuery, params Expression<Action<IDataReader>>[] expressions);
+        void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions);
+
+        IEnumerable<T> Map<T>(IReaderContext reader);
     }
 }

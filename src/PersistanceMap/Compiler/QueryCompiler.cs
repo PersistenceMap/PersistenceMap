@@ -83,6 +83,10 @@ namespace PersistanceMap.Compiler
                 {
                     //var obj = conv.Compile(valuePredicate.Expression);
                     //var value = DialectProvider.Instance.GetQuotedValue(obj, obj.GetType());
+
+                    //TODO: make sure the parameters and query string are created properly if a callback is used
+                    //TODO: output parameter
+
                     var value = valuePredicate.Compile();
 
                     sb.Append(string.Format("{0}{1}", value, _queryParts.Parameters.Last() == param ? "" : ", "));

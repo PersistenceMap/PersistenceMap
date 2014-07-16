@@ -55,22 +55,26 @@ namespace PersistanceMap.Expressions
             }
         }
 
-        internal ParameterQueryPart Convert<T2>(Expression<Func<T2>> predicate)
+        internal IParameterQueryPart Convert<T2>(Expression<Func<T2>> predicate)
         {
-            return new ParameterQueryPart(new List<MapQueryPart> 
+            return new CallbackParameterQueryPart<T2>(new List<MapQueryPart> 
             { 
                 new MapQueryPart(MapOperationType.Value, predicate) 
             });
         }
 
-        internal ParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IMapQueryPart>> arg)
+        internal IParameterQueryPart Convert<T>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
         {
             var list = new List<IMapQueryPart>();
-            var part = MapOptionCompiler.Compile(arg);
+            list.Add(MapOptionCompiler.Compile(part));
 
-            //list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
+            return new CallbackParameterQueryPart<T>(list);
+        }
 
-            list.Add(part);
+        internal IParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
+        {
+            var list = new List<IMapQueryPart>();
+            list.Add(MapOptionCompiler.Compile(part));
 
             return new ParameterQueryPart(list);
         }
@@ -104,8 +108,8 @@ namespace PersistanceMap.Expressions
 
         public IProcedureExpression AddParameter<T2>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part, Action<T2> callback)
         {
-            var tmp = Convert(part);
-            var cb = tmp as ICallbackQueryPart;
+            var tmp = Convert<T2>(part);
+            var cb = tmp as ICallbackQueryPart<T2>;
             if (cb != null)
                 cb.Callback = callback;
 
@@ -127,7 +131,16 @@ namespace PersistanceMap.Expressions
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);
 
-            return Context.Execute<T>(query);
+
+            //TODO: get the datareader and call all callbacks for return parameters
+            //TODO: handle out parameters/callbacks in execute!
+            //TODO: output parameter
+
+            IEnumerable<T> values = null;
+
+            Context.Execute(query, dr => values = Context.Map<T>(dr));
+
+            return values;
         }
     }
 }

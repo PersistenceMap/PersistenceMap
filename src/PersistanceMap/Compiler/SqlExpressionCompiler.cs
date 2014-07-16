@@ -56,9 +56,11 @@ namespace PersistanceMap.Compiler
         public CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
         {
 
-            
-            foreach (var param in queryParts.Parameters.Where(p=>p.Callback != null))
+
+            foreach (var param in queryParts.Parameters.Where(p => p.CanHandleCallback))
             {
+                //TODO: update queryparts so the ProcedureQueryCompiler knows how to compile the corect sqlstring
+                //TODO: output parameter
                 throw new NotImplementedException();
             }
 
