@@ -114,14 +114,14 @@ namespace PersistanceMap.Expressions
 
         public ISelectExpression<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(predicate));
+            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart(predicate));
 
             return new SelectExpression<T>(Context, QueryPartsMap);
         }
 
         public ISelectExpression<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IMapQueryPart>>[] args)
         {
-            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile<TJoin, T>(args)));
+            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args)));
 
             return new SelectExpression<T>(Context, QueryPartsMap);
         }

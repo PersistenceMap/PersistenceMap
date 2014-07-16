@@ -41,9 +41,7 @@ namespace PersistanceMap
                 {
                     foreach (var part in join.Operations)
                     {
-                        var idpart = part as IIdentifierMapQueryPart;
-                        if (idpart != null)
-                            idpart.IdentifierMap.Add(typeof(TJoin), join.Identifier);
+                        part.IdentifierMap.Add(typeof(TJoin), join.Identifier);
                     }
                 }
             }

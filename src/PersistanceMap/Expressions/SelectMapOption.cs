@@ -60,7 +60,7 @@ namespace PersistanceMap.Expressions
         /// <returns></returns>
         public IMapQueryPart On(string identifier, Expression<Func<T, T2, bool>> predicate)
         {
-            var part = new IdentifierMapQueryPart(MapOperationType.Join, predicate);
+            var part = new MapQueryPart(MapOperationType.Join, predicate);
             part.AddIdentifier(typeof(T2), identifier);
 
             return part;
@@ -86,7 +86,7 @@ namespace PersistanceMap.Expressions
         /// <returns></returns>
         public IMapQueryPart On<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
         {
-            var part = new IdentifierMapQueryPart(MapOperationType.Join, predicate);
+            var part = new MapQueryPart(MapOperationType.Join, predicate);
             part.AddIdentifier(typeof(T3), identifier);
 
             return part;
@@ -114,7 +114,7 @@ namespace PersistanceMap.Expressions
         /// <returns></returns>
         public IMapQueryPart And(string identifier, Expression<Func<T, T2, bool>> predicate)
         {
-            var part = new IdentifierMapQueryPart(MapOperationType.And, predicate);
+            var part = new MapQueryPart(MapOperationType.And, predicate);
             part.AddIdentifier(typeof(T2), identifier);
 
             return part;
@@ -140,7 +140,7 @@ namespace PersistanceMap.Expressions
         /// <returns></returns>
         public IMapQueryPart And<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
         {
-            var part = new IdentifierMapQueryPart(MapOperationType.And, predicate);
+            var part = new MapQueryPart(MapOperationType.And, predicate);
             part.AddIdentifier(typeof(T3), identifier);
 
             return part;

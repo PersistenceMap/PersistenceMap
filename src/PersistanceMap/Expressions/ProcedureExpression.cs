@@ -66,20 +66,15 @@ namespace PersistanceMap.Expressions
         internal ParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IMapQueryPart>> arg)
         {
             var list = new List<MapQueryPart>();
-            var option = new ProcedureMapOption();
+            var part = MapOptionCompiler.Compile(arg);
 
-            var part =  MapOptionCompiler.Compile(arg);
-
-            //parts.ForEach(part =>
-            //{
-                list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
-            //});
+            list.Add(new MapQueryPart(part.MapOperationType, part.Expression));
 
             return new ParameterQueryPart(list);
         }
     }
 
-    public class ProcedureExpression : ProcedureExpressionBase, IProcedureExpression
+    public class ProcedureExpression : ProcedureExpressionBase, IProcedureExpression, IPersistanceExpression
     {
         public ProcedureExpression(IDbContext context, string procName)
             : base(context, procName)
@@ -97,14 +92,7 @@ namespace PersistanceMap.Expressions
 
             return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
         }
-
-        //public IProcedureExpression AddParameter(params Expression<Func<ProcedureMapOption, IMapQueryPart>>[] parts)
-        //{
-        //    QueryPartsMap.Add(Convert(parts));
-
-        //    return new ProcedureExpression(Context, ProcedureName, QueryPartsMap);
-        //}
-
+        
         public IProcedureExpression AddParameter(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
         {
             QueryPartsMap.Add(Convert(part));
@@ -128,56 +116,8 @@ namespace PersistanceMap.Expressions
 
             Context.Execute(query);
         }
-    }
 
-    public class ProcedureExpression<T> : ProcedureExpressionBase, IProcedureExpression<T>
-    {
-        public ProcedureExpression(IDbContext context, string procName)
-            : base(context, procName)
-        {
-        }
-
-        public ProcedureExpression(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-            : base(context, procName, queryPartsMap)
-        {
-        }
-
-        public IProcedureExpression<T> AddParameter<T2>(Expression<Func<T2>> predicate)
-        {
-            QueryPartsMap.Add(Convert(predicate));
-
-            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
-        }
-
-        //public IProcedureExpression<T> AddParameter(params Expression<Func<ProcedureMapOption, IMapQueryPart>>[] parts)
-        //{
-        //    QueryPartsMap.Add(Convert(parts));
-
-        //    return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
-        //}
-
-        public IProcedureExpression<T> AddParameter(Expression<Func<ProcedureMapOption, IMapQueryPart>> part)
-        {
-            QueryPartsMap.Add(Convert(part));
-
-            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
-        }
-
-        public IProcedureExpression<T> AddParameter<T2>(Expression<Func<ProcedureMapOption, IMapQueryPart>> part, Action<T2> callback)
-        {
-            throw new NotImplementedException("Callback not jet implemented!");
-
-            QueryPartsMap.Add(Convert(part));
-
-            return new ProcedureExpression<T>(Context, ProcedureName, QueryPartsMap);
-        }
-
-        public IProcedureExpression<T> AddParameter<T2>(Action<T2> callback)
-        {
-            throw new NotImplementedException("Callback not jet implemented!");
-        }
-
-        public IEnumerable<T> Execute()
+        public IEnumerable<T> Execute<T>()
         {
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);

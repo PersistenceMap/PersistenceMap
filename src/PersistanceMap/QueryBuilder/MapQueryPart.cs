@@ -2,10 +2,7 @@
 using PersistanceMap.Sql;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -15,11 +12,15 @@ namespace PersistanceMap.QueryBuilder
         {
             MapOperationType = operationtype;
             Expression = expression;
+
+            IdentifierMap = new Dictionary<Type, string>();
         }
 
         public MapOperationType MapOperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
+
+        public Dictionary<Type, string> IdentifierMap { get; private set; }
 
         public virtual string Compile()
         {
@@ -29,17 +30,6 @@ namespace PersistanceMap.QueryBuilder
 
             return null;
         }
-    }
-
-    internal class IdentifierMapQueryPart : MapQueryPart, IIdentifierMapQueryPart
-    {
-        public IdentifierMapQueryPart(MapOperationType operationtype, LambdaExpression expression)
-            : base(operationtype, expression)
-        {
-            IdentifierMap = new Dictionary<Type, string>();
-        }
-
-        public Dictionary<Type, string> IdentifierMap { get; private set; }
 
         internal void AddIdentifier(Type type, string identifier)
         {
@@ -47,6 +37,23 @@ namespace PersistanceMap.QueryBuilder
                 IdentifierMap.Add(type, identifier);
         }
     }
+
+    //internal class IdentifierMapQueryPart : MapQueryPart, IIdentifierMapQueryPart
+    //{
+    //    public IdentifierMapQueryPart(MapOperationType operationtype, LambdaExpression expression)
+    //        : base(operationtype, expression)
+    //    {
+    //        IdentifierMap = new Dictionary<Type, string>();
+    //    }
+
+    //    public Dictionary<Type, string> IdentifierMap { get; private set; }
+
+    //    internal void AddIdentifier(Type type, string identifier)
+    //    {
+    //        if (!string.IsNullOrEmpty(identifier))
+    //            IdentifierMap.Add(type, identifier);
+    //    }
+    //}
 
     internal class NamedMapQueryPart : MapQueryPart
     {

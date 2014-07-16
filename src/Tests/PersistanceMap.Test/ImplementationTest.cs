@@ -18,10 +18,10 @@ namespace PersistanceMap.Test
                 int returnvalue = 1;
 
                 // proc without resultset with output parameter with names
-                var proc = context.Procedure<SalesByYear>("SalesOfYear")
+                var proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
                     .AddParameter<int>(p => p.Value("outputparam", () => returnvalue), r => returnvalue = r)
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
                 Assert.IsTrue(returnvalue != 1);
@@ -39,10 +39,10 @@ namespace PersistanceMap.Test
                 returnvalue = 1;
 
                 // proc without resultset with output parameter with names and @ before name
-                proc = context.Procedure<SalesByYear>("SalesOfYear")
+                proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
                     .AddParameter<int>(p => p.Value("@outputparam", () => 1), r => returnvalue = r)
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
                 Assert.IsTrue(returnvalue != 1);

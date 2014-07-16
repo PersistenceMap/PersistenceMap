@@ -39,7 +39,10 @@ if exists (select * from sysobjects where id = object_id('dbo.EmployeeSalesByCou
 	drop procedure "dbo"."EmployeeSalesByCountry"
 GO
 if exists (select * from sysobjects where id = object_id('dbo.SalesByYear') and sysstat & 0xf = 4)
-	drop procedure "dbo"."SalesByYear"
+	drop procedure dbo.SalesByYear
+GO
+if exists (select * from sysobjects where id = object_id('dbo.SalesOfYear') and sysstat & 0xf = 4)
+	drop procedure dbo.SalesOfYear
 GO
 if exists (select * from sysobjects where id = object_id('dbo.TenMostExpensiveProducts') and sysstat & 0xf = 4)
 	drop procedure "dbo"."TenMostExpensiveProducts"
@@ -516,12 +519,19 @@ FROM Employees INNER JOIN
 WHERE Orders.ShippedDate Between @Beginning_Date And @Ending_Date
 GO
 
-create procedure "SalesByYear" 
-	@Beginning_Date DateTime, @Ending_Date DateTime, @outputparam int AS
+create procedure SalesByYear
+	@BeginDate DateTime, @EndDate DateTime AS
+SELECT Orders.ShippedDate, Orders.OrderID, OrderSubtotals.Subtotal, DATENAME(yy,ShippedDate) AS Year
+FROM Orders INNER JOIN OrderSubtotals ON Orders.OrderID = OrderSubtotals.OrderID
+WHERE Orders.ShippedDate Between @BeginDate And @EndDate
+GO
+
+create procedure SalesOfYear
+	@Date DateTime, @outputparam int out AS
 	select @outputparam = 2
-SELECT Orders.ShippedDate, Orders.OrderID, "OrderSubtotals".Subtotal, DATENAME(yy,ShippedDate) AS Year
-FROM Orders INNER JOIN "OrderSubtotals" ON Orders.OrderID = "OrderSubtotals".OrderID
-WHERE Orders.ShippedDate Between @Beginning_Date And @Ending_Date
+SELECT Orders.ShippedDate, Orders.OrderID, OrderSubtotals.Subtotal, DATENAME(yy,ShippedDate) AS Year
+FROM Orders INNER JOIN OrderSubtotals ON Orders.OrderID = OrderSubtotals.OrderID
+WHERE DATEPART(yy, Orders.ShippedDate) = DATEPART(yy, @Date)
 GO
 
 set quoted_identifier on

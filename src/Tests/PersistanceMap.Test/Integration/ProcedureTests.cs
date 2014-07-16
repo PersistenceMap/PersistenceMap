@@ -18,10 +18,10 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // proc with resultset without parameter names
-                var proc = context.Procedure<SalesByYear>("SalesByYear")
+                var proc = context.Procedure("SalesByYear")
                     .AddParameter(() => new DateTime(1970, 1, 1))
                     .AddParameter(() => DateTime.Today)
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
             }
@@ -34,10 +34,10 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // proc with resultset with parameter names
-                var proc = context.Procedure<SalesByYear>("SalesByYear")
+                var proc = context.Procedure("SalesByYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
                     .AddParameter(p => p.Value("EndDate", () => DateTime.Today))
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
             }
@@ -50,10 +50,10 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // proc with resultset with parameter names and @ before name
-                var proc = context.Procedure<SalesByYear>("SalesByYear")
+                var proc = context.Procedure("SalesByYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1970, 1, 1)))
                     .AddParameter(p => p.Value("@EndDate", () => DateTime.Today))
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
             }
@@ -110,10 +110,10 @@ namespace PersistanceMap.Test.Integration
                 int returnvalue = 1;
 
                 // proc with resultset with output parameter with names
-                var proc = context.Procedure<SalesByYear>("SalesOfYear")
+                var proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter<int>(p => p.Value<int>("outputparam", () => 1), r => returnvalue = r)
-                    .Execute();
+                    .AddParameter<int>(p => p.Value("outputparam", () => 1), r => returnvalue = r)
+                    .Execute<SalesByYear>();
 
                 /* *Using Output compiles to*
                 
@@ -165,10 +165,10 @@ namespace PersistanceMap.Test.Integration
                 int returnvalue = 1;
 
                 // proc without resultset with output parameter with names and @ before name
-                var proc = context.Procedure<SalesByYear>("SalesOfYear")
+                var proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
                     .AddParameter<int>(p => p.Value<int>("@outputparam", () => 1), r => returnvalue = r)
-                    .Execute();
+                    .Execute<SalesByYear>();
 
                 /* *Using Output compiles to*
                 
@@ -195,7 +195,7 @@ namespace PersistanceMap.Test.Integration
                 // proc without resultset with output parameter with names and @ before name
                 context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
-                    .AddParameter<int>(p => p.Value<int>("@outputparam", () => 1), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value("@outputparam", () => 1), r => returnvalue = r)
                     .Execute();
 
 
@@ -223,10 +223,10 @@ namespace PersistanceMap.Test.Integration
 
                 // name parameter is not supplied => exception
                 // proc with resultset with output parameter with names
-                var proc = context.Procedure<SalesByYear>("SalesOfYear")
+                var proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter<int>(p => p.Value<int>(() => 1), r => returnvalue = r)
-                    .Execute();
+                    .AddParameter<int>(p => p.Value(() => 1), r => returnvalue = r)
+                    .Execute<SalesByYear>();
 
                 /* *Using Output compiles to*
                 
@@ -255,7 +255,7 @@ namespace PersistanceMap.Test.Integration
                 // proc without resultset with output parameter with names and @ before name
                 context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
-                    .AddParameter<int>(p => p.Value<int>(() => 1), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value(() => 1), r => returnvalue = r)
                     .Execute();
 
 

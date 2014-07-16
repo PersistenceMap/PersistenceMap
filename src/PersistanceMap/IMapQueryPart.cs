@@ -9,10 +9,7 @@ namespace PersistanceMap
         MapOperationType MapOperationType { get; }
 
         LambdaExpression Expression { get; }
-    }
 
-    public interface IIdentifierMapQueryPart : IMapQueryPart
-    {
         Dictionary<Type, string> IdentifierMap { get; }
     }
 }

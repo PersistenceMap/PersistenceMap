@@ -12,13 +12,8 @@ namespace PersistanceMap.Compiler
     {
         public static IMapQueryPart Compile(Expression<Func<ProcedureMapOption, IMapQueryPart>> predicate)
         {
-            //var parts = new List<IMapQueryPart>();
             var options = new ProcedureMapOption();
 
-            //foreach (var predicate in predicates)
-            //    parts.Add(predicate.Compile().Invoke(options));
-
-            //return parts;
             return predicate.Compile().Invoke(options);
         }
 

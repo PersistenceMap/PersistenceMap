@@ -41,19 +41,11 @@ namespace PersistanceMap.Compiler
             _identifierMap = new Dictionary<Type, string>();
         }
 
-        #region Compiles
-
-        //internal virtual object Compile(IIdentifierMapQueryPart part)
-        //{
-        //    _identifierMap = part.IdentifierMap;
-
-        //    return Compile(part.Expression);
-        //}
+        #region Compilers
 
         internal virtual object Compile(IMapQueryPart part)
         {
-            var idpart = part as IIdentifierMapQueryPart;
-            _identifierMap = idpart != null ? idpart.IdentifierMap : new Dictionary<Type, string>();
+            _identifierMap = part.IdentifierMap;
 
             return Compile(part.Expression);
         }

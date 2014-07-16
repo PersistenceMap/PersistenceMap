@@ -46,11 +46,6 @@ namespace PersistanceMap
             return new ProcedureExpression(context, procName);
         }
 
-        public static IProcedureExpression<T> Procedure<T>(this IDbContext context, string procName)
-        {
-            return new ProcedureExpression<T>(context, procName);
-        }
-
         #endregion
     }
 }
