@@ -527,8 +527,9 @@ WHERE Orders.ShippedDate Between @BeginDate And @EndDate
 GO
 
 create procedure SalesOfYear
-	@Date DateTime, @outputparam int out AS
-	select @outputparam = 2
+	@Date DateTime, @outputparam1 int out, @outputparam2 int out AS
+	select @outputparam1 = 2
+	select @outputparam2 = 3
 SELECT Orders.ShippedDate, Orders.OrderID, OrderSubtotals.Subtotal, DATENAME(yy,ShippedDate) AS Year
 FROM Orders INNER JOIN OrderSubtotals ON Orders.OrderID = OrderSubtotals.OrderID
 WHERE DATEPART(yy, Orders.ShippedDate) = DATEPART(yy, @Date)

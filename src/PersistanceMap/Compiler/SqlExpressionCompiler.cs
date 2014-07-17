@@ -53,16 +53,16 @@ namespace PersistanceMap.Compiler
             return builder.Compile();
         }
 
-        public CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
+        public virtual CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
         {
 
 
-            foreach (var param in queryParts.Parameters.Where(p => p.CanHandleCallback))
-            {
-                //TODO: update queryparts so the ProcedureQueryCompiler knows how to compile the corect sqlstring
-                //TODO: output parameter
-                throw new NotImplementedException();
-            }
+            //foreach (var param in queryParts.Parameters.Where(p => p.CanHandleCallback))
+            //{
+            //    //TODO: update queryparts so the ProcedureQueryCompiler knows how to compile the corect sqlstring
+            //    //TODO: output parameter
+            //    throw new NotImplementedException();
+            //}
 
 
 

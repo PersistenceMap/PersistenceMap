@@ -21,8 +21,6 @@ namespace PersistanceMap.Internals
         {
             using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
             {
-                //var mapper = new MappingStrategy();
-                //return mapper.Map<T>(reader);
                 return Map<T>(reader);
             }
         }
@@ -41,8 +39,11 @@ namespace PersistanceMap.Internals
             {
                 foreach (var expression in expressions)
                 {
+                    // invoke expression with the reader
                     expression.Invoke(reader);
-                    if(!reader.DataReader.NextResult())
+
+                    // read next resultset
+                    if(reader.DataReader.IsClosed || !reader.DataReader.NextResult())
                         break;
                 }
             }
@@ -50,8 +51,22 @@ namespace PersistanceMap.Internals
 
         public IEnumerable<T> Map<T>(IReaderContext reader)
         {
-            var mapper = new MappingStrategy();
-            return mapper.Map<T>(reader);
+            return Mapper.Map<T>(reader);
+        }
+
+        private MappingStrategy _mapper;
+        /// <summary>
+        /// Gets or sets a MappingStrategy
+        /// </summary>
+        public MappingStrategy Mapper
+        {
+            get
+            {
+                if (_mapper == null)
+                    _mapper = new MappingStrategy();
+
+                return _mapper;
+            }
         }
 
         #region IDisposeable Implementation

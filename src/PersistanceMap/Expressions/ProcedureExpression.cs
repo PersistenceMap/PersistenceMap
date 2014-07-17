@@ -123,7 +123,13 @@ namespace PersistanceMap.Expressions
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);
 
-            Context.Execute(query);
+            //TODO: get the datareader and call all callbacks for return parameters
+            //TODO: handle out parameters/callbacks in execute!
+            //TODO: output parameter
+
+            Context.Execute(query, dr => { });
+
+            //Context.Execute(query);
         }
 
         public IEnumerable<T> Execute<T>()

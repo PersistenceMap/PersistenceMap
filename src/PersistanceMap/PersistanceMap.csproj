@@ -51,6 +51,7 @@
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
     <Compile Include="Extensions\TypeExtensionsForObjectGeneration.cs" />
+    <Compile Include="Extensions\TypeExtensionsForSql.cs" />
     <Compile Include="IExpressionCompiler.cs" />
     <Compile Include="QueryBuilder\ICallbackQueryPart.cs" />
     <Compile Include="QueryBuilder\IMapQueryPart.cs" />

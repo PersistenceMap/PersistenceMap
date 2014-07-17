@@ -70,28 +70,63 @@ namespace PersistanceMap.Compiler
             if (_queryParts == null)
                 return null;
 
+            /* *Using Output parameters compiles to*                
+            declare @p1 datetime
+            set @p1='2012-01-01 00:00:00'
+            exec procedure @param1=@p1 output,@param2='2014-07-15 00:00:00'
+            select @p1                
+            */
+
+            /* *Using Output compiles to*                
+            declare @p1 datetime
+            set @p1='2012-01-01 00:00:00'
+            exec procedure @param1=@p1 output,@param2='2014-07-15 00:00:00'
+            select @p1                
+            */
+
             var sb = new StringBuilder(100);
+
+            // prepare outputparameters
+            int i = 1;
+            foreach (var param in _queryParts.Parameters.Where(p => p.CanHandleCallback))
+            {
+                var definition = param.CompileOutParameter(i);
+                if (!string.IsNullOrEmpty(definition))
+                {
+                    sb.AppendLine(definition);
+
+                    i++;
+                }
+            }
+
+            // create the exec statement
             sb.Append(string.Format("exec {0} ", _queryParts.ProcedureName));
 
             var conv = new LambdaExpressionToSqlCompiler();
             conv.PrefixFieldWithTableName = false;
 
+            // add parameters
             foreach (var param in _queryParts.Parameters)
             {
-                var valuePredicate = param.Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
-                if (valuePredicate != null)
+                var value = param.Compile();
+                sb.Append(string.Format("{0}{1}", value, _queryParts.Parameters.Last() == param ? "" : ", "));
+            }
+
+            // add the select for all output parameters
+            var lastCallback = _queryParts.Parameters.LastOrDefault(p => p.CanHandleCallback);
+            var selectoutput = string.Empty;
+            foreach (var param in _queryParts.Parameters.Where(p => p.CanHandleCallback))
+            {
+                if (string.IsNullOrEmpty(selectoutput))
+                    selectoutput = "select";
+
+                if (!string.IsNullOrEmpty(param.CallbackParameterName))
                 {
-                    //var obj = conv.Compile(valuePredicate.Expression);
-                    //var value = DialectProvider.Instance.GetQuotedValue(obj, obj.GetType());
-
-                    //TODO: make sure the parameters and query string are created properly if a callback is used
-                    //TODO: output parameter
-
-                    var value = valuePredicate.Compile();
-
-                    sb.Append(string.Format("{0}{1}", value, _queryParts.Parameters.Last() == param ? "" : ", "));
+                    selectoutput = string.Format("{0} {1}{2}", selectoutput, param.CallbackParameterName, lastCallback == param ? "" : ", ");
                 }
             }
+
+            sb.AppendLine(selectoutput);
 
             return new CompiledQuery
             {

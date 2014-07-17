@@ -129,7 +129,7 @@ namespace PersistanceMap.Sql
             string fieldDefinition;
             //if (!DbTypeMap.ColumnTypeMap.TryGetValue(fieldType, out fieldDefinition))
             //{
-            fieldDefinition = this.GetUndefinedColumnDefinition(fieldType, null);
+            fieldDefinition = GetUndefinedColumnDefinition(fieldType, null);
             //}
 
             return fieldDefinition != IntColumnDefinition

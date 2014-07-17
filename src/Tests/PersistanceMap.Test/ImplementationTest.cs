@@ -15,54 +15,65 @@ namespace PersistanceMap.Test
             using (var context = connection.Open())
             {
 
-                int returnvalue = 1;
+                int returnvalue1 = 1;
+                string returnvalue2 = "tmp";
 
                 // proc without resultset with output parameter with names
                 var proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam", () => returnvalue), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
+                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
-                Assert.IsTrue(returnvalue != 1);
+                Assert.IsTrue(returnvalue1 != 1);
 
-                returnvalue = 1;
+                returnvalue1 = 1;
+                returnvalue2 = "tmp";
 
                 // proc without resultset with output parameter with names
                 context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam", () => returnvalue), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
+                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute();
 
-                Assert.IsTrue(returnvalue != 1);
+                Assert.IsTrue(returnvalue1 != 1);
 
-                returnvalue = 1;
+                returnvalue1 = 1;
+                returnvalue2 = "tmp";
 
                 // proc without resultset with output parameter with names and @ before name
                 proc = context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam", () => 1), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
+                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
-                Assert.IsTrue(returnvalue != 1);
+                Assert.IsTrue(returnvalue1 != 1);
 
-                returnvalue = 1;
+                returnvalue1 = 1;
+                returnvalue2 = "tmp";
 
                 // proc without resultset with output parameter with names and @ before name
                 context.Procedure("SalesOfYear")
                     .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam", () => 1), r => returnvalue = r)
+                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
+                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute();
 
-                Assert.IsTrue(returnvalue != 1);
-                
+                Assert.IsTrue(returnvalue1 != 1);
+                returnvalue2 = "tmp";
+
                 /* *Using Output compiles to*
                 
-                declare @p1 datetime
-                set @p1='2012-01-01 00:00:00'
-                exec SalesByYear @Beginning_Date=@p1 output,@Ending_Date='2014-07-15 00:00:00'
-                select @p1
+                declare @p1 int
+                select @p1 = 1
+                declare @p2 varchar(max)
+                select @p2 = 'lol'
+                exec SalesOfYear @date='1980-01-01', @outputparam1=@p1 output, @outputparam2=@p2 output
+                select @p1, @p2
                 
                 */
             }

@@ -55,7 +55,7 @@ namespace PersistanceMap.QueryBuilder
     //    }
     //}
 
-    internal class NamedMapQueryPart : MapQueryPart
+    internal class NamedMapQueryPart : MapQueryPart, INamedQueryPart
     {
         public NamedMapQueryPart(MapOperationType operationtype, string name, LambdaExpression expression)
             : base(operationtype, expression)
