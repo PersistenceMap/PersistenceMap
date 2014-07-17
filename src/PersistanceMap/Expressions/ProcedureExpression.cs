@@ -3,6 +3,7 @@ using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace PersistanceMap.Expressions
 {
@@ -127,7 +128,7 @@ namespace PersistanceMap.Expressions
             //TODO: handle out parameters/callbacks in execute!
             //TODO: output parameter
 
-            Context.Execute(query, dr => { });
+            Context.Execute(query, dr => SetupReturnValues(dr));
 
             //Context.Execute(query);
         }
@@ -144,9 +145,15 @@ namespace PersistanceMap.Expressions
 
             IEnumerable<T> values = null;
 
-            Context.Execute(query, dr => values = Context.Map<T>(dr));
+            Context.Execute(query, dr => values = Context.Map<T>(dr), dr => SetupReturnValues(dr));
 
             return values;
+        }
+
+        private void SetupReturnValues(IReaderContext reader)
+        {
+            var mapper = new Mapping.MappingStrategy();
+            mapper.Map(reader, QueryPartsMap.Parameters.Where(p => p.CanHandleCallback).Select(p => p.CallbackParameterName));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace PersistanceMap.Test
 
                 // proc without resultset with output parameter with names
                 var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
+                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
                     .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
                     .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute<SalesByYear>();
@@ -33,7 +33,7 @@ namespace PersistanceMap.Test
 
                 // proc without resultset with output parameter with names
                 context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
+                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
                     .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
                     .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute();
@@ -45,7 +45,7 @@ namespace PersistanceMap.Test
 
                 // proc without resultset with output parameter with names and @ before name
                 proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
+                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
                     .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
                     .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute<SalesByYear>();
@@ -58,13 +58,12 @@ namespace PersistanceMap.Test
 
                 // proc without resultset with output parameter with names and @ before name
                 context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1978, 1, 1)))
+                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
                     .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
                     .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
                     .Execute();
 
                 Assert.IsTrue(returnvalue1 != 1);
-                returnvalue2 = "tmp";
 
                 /* *Using Output compiles to*
                 

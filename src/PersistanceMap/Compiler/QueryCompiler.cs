@@ -70,13 +70,6 @@ namespace PersistanceMap.Compiler
             if (_queryParts == null)
                 return null;
 
-            /* *Using Output parameters compiles to*                
-            declare @p1 datetime
-            set @p1='2012-01-01 00:00:00'
-            exec procedure @param1=@p1 output,@param2='2014-07-15 00:00:00'
-            select @p1                
-            */
-
             /* *Using Output compiles to*                
             declare @p1 datetime
             set @p1='2012-01-01 00:00:00'
@@ -90,6 +83,7 @@ namespace PersistanceMap.Compiler
             int i = 1;
             foreach (var param in _queryParts.Parameters.Where(p => p.CanHandleCallback))
             {
+                // creates a name for the output parameter
                 var definition = param.CompileOutParameter(i);
                 if (!string.IsNullOrEmpty(definition))
                 {
@@ -122,10 +116,11 @@ namespace PersistanceMap.Compiler
 
                 if (!string.IsNullOrEmpty(param.CallbackParameterName))
                 {
-                    selectoutput = string.Format("{0} {1}{2}", selectoutput, param.CallbackParameterName, lastCallback == param ? "" : ", ");
+                    selectoutput = string.Format("{0} @{1} as {1}{2}", selectoutput, param.CallbackParameterName, lastCallback == param ? "" : ", ");
                 }
             }
 
+            sb.AppendLine();
             sb.AppendLine(selectoutput);
 
             return new CompiledQuery

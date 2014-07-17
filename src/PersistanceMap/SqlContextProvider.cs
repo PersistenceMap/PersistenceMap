@@ -44,32 +44,6 @@ namespace PersistanceMap
                 connection.Open();
                 command = new SqlCommand(query, connection);
                 
-                /*
-                SqlDataReader sqlReader = sqlCmd.ExecuteReader();
-                while (sqlReader.Read())
-                {
-                    MessageBox.Show("From first SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                }
-
-                sqlReader.NextResult();
-
-                while (sqlReader.Read())
-                {
-                    MessageBox.Show("From second SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                }
-
-                sqlReader.NextResult();
-
-                while (sqlReader.Read())
-                {
-                    MessageBox.Show("From third SQL - " + sqlReader.GetValue(0) + " - " + sqlReader.GetValue(1));
-                }
-
-                sqlReader.Close();
-                sqlCmd.Dispose();
-                sqlCnn.Close();
-                */
-
                 return new SqlContextReader(command.ExecuteReader(), connection, command);
             }
             catch (Exception ex)

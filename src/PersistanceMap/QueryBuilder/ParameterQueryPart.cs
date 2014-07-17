@@ -9,7 +9,7 @@ using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, /*INamedQueryPart,*/ IExpressionQueryPart, IQueryPart
+    internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, IExpressionQueryPart, IQueryPart
     {
         public ParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations)
         {
@@ -32,12 +32,6 @@ namespace PersistanceMap.QueryBuilder
         public IList<IMapQueryPart> Operations { get; private set; }
 
         #endregion
-
-        //#region INamedQueryPart Implementation
-
-        //public string Name { get; private set; }
-
-        //#endregion
 
         #region ICallbackHandlerQueryPart  Implementation
 
@@ -79,11 +73,6 @@ namespace PersistanceMap.QueryBuilder
         {
         }
 
-        //public CallbackParameterQueryPart(string name, IEnumerable<IMapQueryPart> mapOperations)
-        //    : this(name, mapOperations, null)
-        //{
-        //}
-
         public CallbackParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations, Action<T> callback)
             : base(mapOperations)
         {
@@ -118,22 +107,24 @@ namespace PersistanceMap.QueryBuilder
             select @p1                
             */
 
+            CallbackParameterName = string.Format("p{0}", index);
+
+            var valuePredicate = Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+
+            // get the return value of the expression
+            var value = valuePredicate.Expression.Compile().DynamicInvoke();
+
+            // set the value into the right format
+            value = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+
             //
             // declare @p1 datetime
             // set @p1='2012-01-01 00:00:00'
             //
 
-            CallbackParameterName = string.Format("@p{0}", index);
-
-            var valuePredicate = Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
-
-            var value = LambdaExpressionToSqlCompiler.Instance.Compile(valuePredicate/*Expression*/);
-            if (value != null)
-                return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
-
             var sb = new StringBuilder();
-            sb.AppendLine(string.Format("declare {0} {1}", CallbackParameterName, typeof(T).ToSqlDbType()));
-            sb.AppendLine(string.Format("set {0}={1}", CallbackParameterName, value ?? base.Compile()));
+            sb.AppendLine(string.Format("declare @{0} {1}", CallbackParameterName, typeof(T).ToSqlDbType()));
+            sb.AppendLine(string.Format("set @{0}={1}", CallbackParameterName, value ?? base.Compile()));
 
             return sb.ToString();
         }
@@ -168,12 +159,11 @@ namespace PersistanceMap.QueryBuilder
                 if (valuePredicate != null)
                     name = valuePredicate.Name;
 
-                return string.Format("{0}={1} output", name, CallbackParameterName);
+                return string.Format("{0}=@{1} output", name, CallbackParameterName);
             }
 
             // return default
             // @parametername=value
-            // exec procedure @parm1=value,@param2=value
             return base.Compile();
         }
     }

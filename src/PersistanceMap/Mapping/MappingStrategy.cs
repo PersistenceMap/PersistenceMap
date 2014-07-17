@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Data;
+using System;
 
 namespace PersistanceMap.Mapping
 {
@@ -12,21 +13,23 @@ namespace PersistanceMap.Mapping
 
             var rows = new List<T>();
 
-            using (context)
+            var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
+            var fields = typeof(T).GetFieldDefinitions().ToArray();
+            while (context.DataReader.Read())
             {
-                var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
-                var fields = typeof(T).GetFieldDefinitions().ToArray();
-                while (context.DataReader.Read())
-                {
-                    var row = (T)typeof(T).CreateInstance<T>();
+                var row = (T)typeof(T).CreateInstance<T>();
 
-                    row.PopulateFromReader(context, fields, indexCache);
+                row.PopulateFromReader(context, fields, indexCache);
 
-                    rows.Add(row);
-                }
+                rows.Add(row);
             }
 
             return rows;
+        }
+
+        public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, IEnumerable<string> keys)
+        {
+            throw new NotImplementedException();
         }
     }
 }
