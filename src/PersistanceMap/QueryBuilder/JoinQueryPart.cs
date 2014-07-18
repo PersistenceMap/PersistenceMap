@@ -4,14 +4,14 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class JoinQueryPart<T> : SelectExpressionQueryPart<T>, ISelectExpressionQueryPart
+    internal class JoinQueryPart<T> : SelectQueryPart<T>, ISelectQueryPart
     {
-        public JoinQueryPart(string entity, IEnumerable<IMapQueryPart> mapOperations)
+        public JoinQueryPart(string entity, IEnumerable<IQueryMap> mapOperations)
             : this(null, entity, mapOperations)
         {
         }
 
-        public JoinQueryPart(string identifier, string entity, IEnumerable<IMapQueryPart> mapOperations)
+        public JoinQueryPart(string identifier, string entity, IEnumerable<IQueryMap> mapOperations)
             : base(identifier, entity, mapOperations)
         {
         }
@@ -27,7 +27,7 @@ namespace PersistanceMap.QueryBuilder
             return string.Format("join {0}", Entity);
         }
 
-        internal void AddOperations(IEnumerable<IMapQueryPart> operations)
+        internal void AddOperations(IEnumerable<IQueryMap> operations)
         {
             operations.ForEach(o => Operations.Add(o));
         }

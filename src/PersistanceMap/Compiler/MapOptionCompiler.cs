@@ -1,4 +1,4 @@
-﻿using PersistanceMap.Expressions;
+﻿using PersistanceMap.QueryProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -11,16 +11,16 @@ namespace PersistanceMap.Compiler
     /// </summary>
     internal static class MapOptionCompiler
     {
-        public static IMapQueryPart Compile(Expression<Func<ProcedureMapOption, IMapQueryPart>> predicate)
+        public static IQueryMap Compile(Expression<Func<ProcedureMapOption, IQueryMap>> predicate)
         {
             var options = new ProcedureMapOption();
 
             return predicate.Compile().Invoke(options);
         }
 
-        public static IEnumerable<IMapQueryPart> Compile<T>(params Expression<Func<SelectMapOption<T>, IMapQueryPart>>[] predicates)
+        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<SelectMapOption<T>, IQueryMap>>[] predicates)
         {
-            var parts = new List<IMapQueryPart>();
+            var parts = new List<IQueryMap>();
             var options = new SelectMapOption<T>();
 
             foreach (var predicate in predicates)
@@ -29,9 +29,9 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        public static IEnumerable<IMapQueryPart> Compile<T, T2>(params Expression<Func<SelectMapOption<T, T2>, IMapQueryPart>>[] predicates)
+        public static IEnumerable<IQueryMap> Compile<T, T2>(params Expression<Func<SelectMapOption<T, T2>, IQueryMap>>[] predicates)
         {
-            var parts = new List<IMapQueryPart>();
+            var parts = new List<IQueryMap>();
             var options = new SelectMapOption<T, T2>();
 
             foreach (var predicate in predicates)

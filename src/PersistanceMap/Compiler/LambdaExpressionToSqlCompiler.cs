@@ -44,7 +44,7 @@ namespace PersistanceMap.Compiler
 
         #region Compilers
 
-        internal virtual object Compile(IMapQueryPart part)
+        internal virtual object Compile(IQueryMap part)
         {
             _identifierMap = part.IdentifierMap;
 

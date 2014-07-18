@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class MapQueryPart : IMapQueryPart
+    internal class QueryMap : IQueryMap, IQueryPart
     {
-        public MapQueryPart(MapOperationType operationtype, LambdaExpression expression)
+        public QueryMap(MapOperationType operationtype, LambdaExpression expression)
         {
             MapOperationType = operationtype;
             Expression = expression;

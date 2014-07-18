@@ -19,16 +19,16 @@ namespace PersistanceMap
 
         public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var operation = new MapQueryPart(MapOperationType.Join, predicate);
+            var operation = new QueryMap(MapOperationType.Join, predicate);
 
-            return new JoinQueryPart<TJoin>(type.Name, new List<IMapQueryPart> { operation });
+            return new JoinQueryPart<TJoin>(type.Name, new List<IQueryMap> { operation });
         }
 
-        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IEnumerable<IMapQueryPart> parts)
+        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IEnumerable<IQueryMap> parts)
         {
-            IEnumerable<IMapQueryPart> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
-            IEnumerable<IMapQueryPart> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
-            IEnumerable<IMapQueryPart> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
+            IEnumerable<IQueryMap> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
+            IEnumerable<IQueryMap> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
+            IEnumerable<IQueryMap> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
 
             var join = new JoinQueryPart<TJoin>(type.Name, operationParts);
             if (includeParts != null)

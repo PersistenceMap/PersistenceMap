@@ -1,5 +1,5 @@
 ﻿using PersistanceMap.Compiler;
-using PersistanceMap.Expressions;
+using PersistanceMap.QueryProvider;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -19,21 +19,21 @@ namespace PersistanceMap
             return context.Execute<T>(query);
         }
 
-        public static ISelectExpression<T> From<T>(this IDatabaseContext context)
+        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context)
         {
-            return new SelectExpression<T>(context)
+            return new SelectQueryProvider<T>(context)
                 .From<T>();
         }
 
-        public static ISelectExpression<T> From<T>(this IDatabaseContext context, params Expression<Func<SelectMapOption<T>, IMapQueryPart>>[] parts)
+        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<SelectMapOption<T>, IQueryMap>>[] parts)
         {
-            return new SelectExpression<T>(context)
+            return new SelectQueryProvider<T>(context)
                 .From<T>(MapOptionCompiler.Compile<T>(parts).ToArray());
         }
 
-        public static ISelectExpression<T> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
+        public static ISelectQueryProvider<T> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
         {
-            return new SelectExpression<T>(context)
+            return new SelectQueryProvider<T>(context)
                 .From<T>()
                 .Join<TJoin>(predicate);
         }
@@ -42,9 +42,9 @@ namespace PersistanceMap
 
         #region Procedure Expressions
 
-        public static IProcedureExpression Procedure(this IDatabaseContext context, string procName)
+        public static IProcedureQueryProvider Procedure(this IDatabaseContext context, string procName)
         {
-            return new ProcedureExpression(context, procName);
+            return new ProcedureQueryProvider(context, procName);
         }
 
         #endregion

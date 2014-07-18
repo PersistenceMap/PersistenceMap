@@ -4,6 +4,6 @@ namespace PersistanceMap.QueryBuilder
 {
     public interface IExpressionQueryPart : IQueryPart
     {
-        IEnumerable<IMapQueryPart> Operations { get; }
+        IEnumerable<IQueryMap> Operations { get; }
     }
 }

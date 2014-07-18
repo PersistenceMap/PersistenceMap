@@ -2,25 +2,25 @@
 using System;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.Expressions
+namespace PersistanceMap.QueryProvider
 {
     /// <summary>
     /// MapOption for procedures
     /// </summary>
     public class ProcedureMapOption
     {
-        public IMapQueryPart Value<T>(Expression<Func<T>> predicate)
+        public IQueryMap Value<T>(Expression<Func<T>> predicate)
         {
-            return new ParameterMapQueryPart(MapOperationType.Value, predicate);
+            return new ParameterQueryMap(MapOperationType.Value, predicate);
         }
 
-        public IMapQueryPart Value<T>(string name, Expression<Func<T>> predicate)
+        public IQueryMap Value<T>(string name, Expression<Func<T>> predicate)
         {
             // parameters have to start with @
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
 
-            return new ParameterMapQueryPart(MapOperationType.Value, name, predicate);
+            return new ParameterQueryMap(MapOperationType.Value, name, predicate);
         }
     }
 }

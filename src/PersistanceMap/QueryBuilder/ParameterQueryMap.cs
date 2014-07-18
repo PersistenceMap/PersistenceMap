@@ -3,14 +3,14 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class ParameterMapQueryPart : MapQueryPart, INamedQueryPart
+    internal class ParameterQueryMap : QueryMap, INamedQueryPart
     {
-        public ParameterMapQueryPart(MapOperationType operationtype, LambdaExpression expression)
+        public ParameterQueryMap(MapOperationType operationtype, LambdaExpression expression)
             : this(operationtype, null, expression)
         {
         }
 
-        public ParameterMapQueryPart(MapOperationType operationtype, string name, LambdaExpression expression)
+        public ParameterQueryMap(MapOperationType operationtype, string name, LambdaExpression expression)
             : base(operationtype, expression)
         {
             Name = name;

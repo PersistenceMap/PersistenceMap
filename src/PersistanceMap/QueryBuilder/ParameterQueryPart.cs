@@ -12,7 +12,7 @@ namespace PersistanceMap.QueryBuilder
 {
     internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, IExpressionQueryPart, IQueryPart
     {
-        public ParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations)
+        public ParameterQueryPart(IEnumerable<IQueryMap> mapOperations)
         {
             // ensure parameter is not null
             mapOperations.EnsureArgumentNotNull("mapOperations");
@@ -22,7 +22,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region IExpressionQueryPart Implementation
 
-        IEnumerable<IMapQueryPart> IExpressionQueryPart.Operations
+        IEnumerable<IQueryMap> IExpressionQueryPart.Operations
         {
             get
             {
@@ -30,7 +30,7 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        public IList<IMapQueryPart> Operations { get; private set; }
+        public IList<IQueryMap> Operations { get; private set; }
 
         #endregion
 
@@ -80,12 +80,12 @@ namespace PersistanceMap.QueryBuilder
 
     internal class CallbackParameterQueryPart<T> : ParameterQueryPart, ICallbackQueryPart<T>, IParameterQueryPart, ICallbackHandlerQueryPart, /*INamedQueryPart,*/ IExpressionQueryPart, IQueryPart
     {
-        public CallbackParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations)
+        public CallbackParameterQueryPart(IEnumerable<IQueryMap> mapOperations)
             : this(mapOperations, null)
         {
         }
 
-        public CallbackParameterQueryPart(IEnumerable<IMapQueryPart> mapOperations, Action<T> callback)
+        public CallbackParameterQueryPart(IEnumerable<IQueryMap> mapOperations, Action<T> callback)
             : base(mapOperations)
         {
             Callback = callback;
