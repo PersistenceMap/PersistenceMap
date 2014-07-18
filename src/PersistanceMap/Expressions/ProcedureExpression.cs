@@ -9,12 +9,12 @@ namespace PersistanceMap.Expressions
 {
     public abstract class ProcedureExpressionBase : IPersistanceExpression
     {
-        public ProcedureExpressionBase(IDbContext context, string procName)
+        public ProcedureExpressionBase(IDatabaseContext context, string procName)
             : this(context, procName, null)
         {
         }
 
-        public ProcedureExpressionBase(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+        public ProcedureExpressionBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
         {
             context.EnsureArgumentNotNull("context");
             procName.EnsureArgumentNotNullOrEmpty("procName");
@@ -28,8 +28,8 @@ namespace PersistanceMap.Expressions
 
         public string ProcedureName { get; private set; }
 
-        readonly IDbContext _context;
-        public IDbContext Context
+        readonly IDatabaseContext _context;
+        public IDatabaseContext Context
         {
             get
             {
@@ -83,12 +83,12 @@ namespace PersistanceMap.Expressions
 
     public class ProcedureExpression : ProcedureExpressionBase, IProcedureExpression, IPersistanceExpression
     {
-        public ProcedureExpression(IDbContext context, string procName)
+        public ProcedureExpression(IDatabaseContext context, string procName)
             : base(context, procName)
         {
         }
 
-        public ProcedureExpression(IDbContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+        public ProcedureExpression(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
             : base(context, procName, queryPartsMap)
         {
         }
@@ -124,11 +124,7 @@ namespace PersistanceMap.Expressions
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);
 
-            //TODO: get the datareader and call all callbacks for return parameters
-            //TODO: handle out parameters/callbacks in execute!
-            //TODO: output parameter
-
-            Context.Execute(query, dr => SetupReturnValues(dr));
+            Context.Execute(query, dr => ReadReturnValues(dr), dr => ReadReturnValues(dr));
 
             //Context.Execute(query);
         }
@@ -138,22 +134,38 @@ namespace PersistanceMap.Expressions
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);
 
-
-            //TODO: get the datareader and call all callbacks for return parameters
-            //TODO: handle out parameters/callbacks in execute!
-            //TODO: output parameter
-
             IEnumerable<T> values = null;
 
-            Context.Execute(query, dr => values = Context.Map<T>(dr), dr => SetupReturnValues(dr));
+            Context.Execute(query, dr => values = Context.Map<T>(dr), dr => ReadReturnValues(dr));
 
             return values;
         }
 
-        private void SetupReturnValues(IReaderContext reader)
+        private void ReadReturnValues(IReaderContext reader)
         {
             var mapper = new Mapping.MappingStrategy();
-            mapper.Map(reader, QueryPartsMap.Parameters.Where(p => p.CanHandleCallback).Select(p => p.CallbackParameterName));
+            
+            var objectDefs = QueryPartsMap.Parameters.Where(p => p.CanHandleCallback)
+                .Select(p =>
+                    new ObjectDefinition
+                    {
+                        Name = p.CallbackParameterName,
+                        ObjectType = p.CallbackParameterType
+                    });
+
+            var mapping = mapper.MapToDictionary(reader, objectDefs).FirstOrDefault();
+
+            if (mapping == null || !mapping.Any())
+                return;
+
+            foreach (var param in QueryPartsMap.Parameters.Where(p => p.CanHandleCallback))
+            {
+                object value = null;
+                if (!mapping.TryGetValue(param.CallbackParameterName, out value))
+                    continue;
+
+                param.TryHandleCallback(value);
+            }
         }
     }
 }

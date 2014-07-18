@@ -152,8 +152,8 @@ namespace PersistanceMap.Compiler
                 return new PartialSqlString(GetQuotedColumnName(fieldDefinitions, m.Member.Name));
             }
 
-            var member = System.Linq.Expressions.Expression.Convert(m, typeof(object));
-            var lambda = System.Linq.Expressions.Expression.Lambda<Func<object>>(member);
+            var member = Expression.Convert(m, typeof(object));
+            var lambda = Expression.Lambda<Func<object>>(member);
             var getter = lambda.Compile();
             return getter();
         }

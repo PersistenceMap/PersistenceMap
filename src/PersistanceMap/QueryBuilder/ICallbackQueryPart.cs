@@ -7,11 +7,13 @@ namespace PersistanceMap.QueryBuilder
     {
         string CallbackParameterName { get; }
 
+        Type CallbackParameterType { get; }
+
         bool CanHandleCallback { get; }
 
         string CompileOutParameter(int index);
 
-        void HandleCallback(IDataReader reader);
+        void TryHandleCallback(object value); //IDataReader reader);
     }
 
     public interface ICallbackQueryPart<T> : ICallbackHandlerQueryPart, IQueryPart

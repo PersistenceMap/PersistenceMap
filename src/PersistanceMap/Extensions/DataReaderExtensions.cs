@@ -36,6 +36,20 @@ namespace PersistanceMap
             return cache;
         }
 
+        public static Dictionary<string, int> CreateFieldIndexCache(this IDataReader reader, IEnumerable<ObjectDefinition> objectDefs)
+        {
+            var cache = new Dictionary<string, int>();
+
+            for (var i = 0; i < reader.FieldCount; i++)
+            {
+                var name = reader.GetName(i);
+                if (objectDefs.Any(o => o.Name.ToLower() == name.ToLower()))
+                    cache[name] = i;
+            }
+
+            return cache;
+        }
+
         public static int GetColumnIndex(this IDataReader dataReader, string fieldName)
         {
             try

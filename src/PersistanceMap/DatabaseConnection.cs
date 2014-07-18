@@ -17,9 +17,9 @@ namespace PersistanceMap
             _provider = provider;
         }
 
-        public virtual IDbContext Open()
+        public virtual IDatabaseContext Open()
         {
-            return new DbContext(_provider);
+            return new DatabaseContext(_provider);
         }
     }
 }

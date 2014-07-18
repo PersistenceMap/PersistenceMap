@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -37,6 +38,14 @@ namespace PersistanceMap.QueryBuilder
 
         public string CallbackParameterName { get; protected set; }
 
+        public virtual Type CallbackParameterType 
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public virtual bool CanHandleCallback
         {
             get
@@ -50,7 +59,7 @@ namespace PersistanceMap.QueryBuilder
             return string.Empty;
         }
 
-        public virtual void HandleCallback(IDataReader reader)
+        public virtual void TryHandleCallback(object value)
         {
         }
 
@@ -60,7 +69,10 @@ namespace PersistanceMap.QueryBuilder
         {
             var valuePredicate = Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
             if (valuePredicate != null)
+            {
+                // compile the part
                 return valuePredicate.Compile();
+            }
 
             return string.Empty;
         }
@@ -86,6 +98,14 @@ namespace PersistanceMap.QueryBuilder
         #endregion
 
         #region ICallbackHandlerQueryPart  Implementation
+
+        public override Type CallbackParameterType
+        {
+            get
+            {
+                return typeof(T);
+            }
+        }
 
         public override bool CanHandleCallback
         {
@@ -129,9 +149,17 @@ namespace PersistanceMap.QueryBuilder
             return sb.ToString();
         }
 
-        public override void HandleCallback(IDataReader reader)
+        public override void TryHandleCallback(object value)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Callback((T)value);
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof (T).Name));
+                Trace.WriteLine(e.Message);
+            }
         }
 
         #endregion
@@ -158,6 +186,13 @@ namespace PersistanceMap.QueryBuilder
                 var valuePredicate = Operations.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value) as INamedQueryPart;
                 if (valuePredicate != null)
                     name = valuePredicate.Name;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    //throw new NotSupportedException("The Parametername has to be provided when using Output Parameters");
+                    Trace.WriteLine("The Parametername has to be provided when using Output Parameters");
+                    return base.Compile();
+                }
 
                 return string.Format("{0}=@{1} output", name, CallbackParameterName);
             }

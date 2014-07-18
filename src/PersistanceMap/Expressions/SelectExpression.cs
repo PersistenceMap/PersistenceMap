@@ -8,19 +8,19 @@ namespace PersistanceMap.Expressions
 {
     public class SelectExpression<T> : ISelectExpression<T>
     {
-        public SelectExpression(IDbContext context)
+        public SelectExpression(IDatabaseContext context)
         {
             _context = context;
         }
 
-        public SelectExpression(IDbContext context, SelectQueryPartsMap container)
+        public SelectExpression(IDatabaseContext context, SelectQueryPartsMap container)
         {
             _context = context;
             _queryPartsMap = container;
         }
 
-        readonly IDbContext _context;
-        public IDbContext Context
+        readonly IDatabaseContext _context;
+        public IDatabaseContext Context
         {
             get
             {

@@ -53,6 +53,7 @@
     <Compile Include="Extensions\TypeExtensionsForObjectGeneration.cs" />
     <Compile Include="Extensions\TypeExtensionsForSql.cs" />
     <Compile Include="IExpressionCompiler.cs" />
+    <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryBuilder\ICallbackQueryPart.cs" />
     <Compile Include="QueryBuilder\IMapQueryPart.cs" />
     <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
@@ -81,9 +82,10 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IContextProvider.cs" />
-    <Compile Include="IDbContext.cs" />
-    <Compile Include="Internals\DbContext.cs" />
+    <Compile Include="IDatabaseContext.cs" />
+    <Compile Include="Internals\DatabaseContext.cs" />
     <Compile Include="QueryBuilder\IQueryPart.cs" />
+    <Compile Include="QueryBuilder\ParameterMapQueryPart.cs" />
     <Compile Include="QueryBuilder\SelectExpressionQueryPart.cs" />
     <Compile Include="QueryBuilder\FieldQueryPart.cs" />
     <Compile Include="QueryBuilder\FromQueryPart.cs" />
@@ -92,7 +94,7 @@
     <Compile Include="Expressions\SelectQueryPartsMap.cs" />
     <Compile Include="ISelectExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="DatabaseContextExtensions.cs" />
     <Compile Include="QueryBuilder\ParameterQueryPart.cs" />
     <Compile Include="SqlContextProvider.cs" />
     <Compile Include="FieldDefinition.cs" />

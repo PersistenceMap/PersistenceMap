@@ -3,7 +3,7 @@ namespace PersistanceMap
 {
     public interface IPersistanceExpression
     {
-        IDbContext Context { get; }
+        IDatabaseContext Context { get; }
 
         IQueryPartsMap QueryPartsMap { get; }
     }

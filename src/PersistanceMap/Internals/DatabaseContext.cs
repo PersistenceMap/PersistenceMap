@@ -8,9 +8,9 @@ namespace PersistanceMap.Internals
     /// <summary>
     /// Internal implementation of the Database Context
     /// </summary>
-    internal class DbContext : IDbContext
+    internal class DatabaseContext : IDatabaseContext
     {
-        public DbContext(IContextProvider provider)
+        public DatabaseContext(IContextProvider provider)
         {
             ContextProvider = provider;
         }
@@ -102,7 +102,7 @@ namespace PersistanceMap.Internals
         /// <summary>
         /// Releases resources before the object is reclaimed by garbage collection.
         /// </summary>
-        ~DbContext()
+        ~DatabaseContext()
         {
             Dispose(false);
         }

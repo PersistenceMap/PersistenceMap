@@ -14,7 +14,8 @@ namespace PersistanceMap.Mapping
             var rows = new List<T>();
 
             var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
-            var fields = typeof(T).GetFieldDefinitions().ToArray();
+            var fields = typeof(T).GetFieldDefinitions();
+
             while (context.DataReader.Read())
             {
                 var row = (T)typeof(T).CreateInstance<T>();
@@ -27,9 +28,26 @@ namespace PersistanceMap.Mapping
             return rows;
         }
 
-        public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, IEnumerable<string> keys)
+        public IEnumerable<Dictionary<string, object>> MapToDictionary(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs)
         {
-            throw new NotImplementedException();
+            context.EnsureArgumentNotNull("context");
+
+            var rows = new List<Dictionary<string, object>>();
+
+            var indexCache = context.DataReader.CreateFieldIndexCache(objectDefs);
+            if (!indexCache.Any())
+                return rows;
+
+            while (context.DataReader.Read())
+            {
+                var row = new Dictionary<string, object>();
+
+                row.PopulateFromReader(context, objectDefs, indexCache);
+
+                rows.Add(row);
+            }
+
+            return rows;
         }
     }
 }

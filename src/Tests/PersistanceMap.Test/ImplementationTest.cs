@@ -14,57 +14,6 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-
-                int returnvalue1 = 1;
-                string returnvalue2 = "tmp";
-
-                // proc without resultset with output parameter with names
-                var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
-                    .Execute<SalesByYear>();
-
-                Assert.IsTrue(proc.Any());
-                Assert.IsTrue(returnvalue1 != 1);
-
-                returnvalue1 = 1;
-                returnvalue2 = "tmp";
-
-                // proc without resultset with output parameter with names
-                context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
-                    .Execute();
-
-                Assert.IsTrue(returnvalue1 != 1);
-
-                returnvalue1 = 1;
-                returnvalue2 = "tmp";
-
-                // proc without resultset with output parameter with names and @ before name
-                proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
-                    .Execute<SalesByYear>();
-
-                Assert.IsTrue(proc.Any());
-                Assert.IsTrue(returnvalue1 != 1);
-
-                returnvalue1 = 1;
-                returnvalue2 = "tmp";
-
-                // proc without resultset with output parameter with names and @ before name
-                context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
-                    .Execute();
-
-                Assert.IsTrue(returnvalue1 != 1);
-
                 /* *Using Output compiles to*
                 
                 declare @p1 int

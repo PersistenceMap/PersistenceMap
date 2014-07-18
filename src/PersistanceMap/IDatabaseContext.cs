@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PersistanceMap
 {
-    public interface IDbContext : IDisposable
+    public interface IDatabaseContext : IDisposable
     {
         IContextProvider ContextProvider { get; }
 

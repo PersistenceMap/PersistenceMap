@@ -27,26 +27,26 @@ namespace PersistanceMap.Internals
         }
 
 
-        public override void SetValue(FieldDefinition fieldDef, int colIndex, object instance)
-        {
-            //if (fieldDef.IsRowVersion)
-            //{
-            //    var bytes = DataReader.GetValue(colIndex) as byte[];
-            //    if (bytes != null)
-            //    {
-            //        var ulongValue = ConvertToULong(bytes);
-            //        try
-            //        {
-            //            fieldDef.SetValueFn(instance, ulongValue);
-            //        }
-            //        catch (NullReferenceException ignore) { }
-            //    }
-            //}
-            //else
-            //{
-                base.SetValue(fieldDef, colIndex, instance);
-            //}
-        }
+        //public override void SetValue(FieldDefinition fieldDef, int colIndex, object instance)
+        //{
+        //    //if (fieldDef.IsRowVersion)
+        //    //{
+        //    //    var bytes = DataReader.GetValue(colIndex) as byte[];
+        //    //    if (bytes != null)
+        //    //    {
+        //    //        var ulongValue = ConvertToULong(bytes);
+        //    //        try
+        //    //        {
+        //    //            fieldDef.SetValueFn(instance, ulongValue);
+        //    //        }
+        //    //        catch (NullReferenceException ignore) { }
+        //    //    }
+        //    //}
+        //    //else
+        //    //{
+        //        base.SetValue(fieldDef, colIndex, instance);
+        //    //}
+        //}
 
         #region IDisposeable Implementation
 

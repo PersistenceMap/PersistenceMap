@@ -11,7 +11,7 @@ namespace PersistanceMap.Expressions
     {
         public IMapQueryPart Value<T>(Expression<Func<T>> predicate)
         {
-            return new MapQueryPart(MapOperationType.Value, predicate);
+            return new ParameterMapQueryPart(MapOperationType.Value, predicate);
         }
 
         public IMapQueryPart Value<T>(string name, Expression<Func<T>> predicate)
@@ -20,7 +20,7 @@ namespace PersistanceMap.Expressions
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
 
-            return new NamedMapQueryPart(MapOperationType.Value, name, predicate);
+            return new ParameterMapQueryPart(MapOperationType.Value, name, predicate);
         }
     }
 }

@@ -38,6 +38,14 @@ namespace PersistanceMap.Internals
             catch (NullReferenceException) { }
         }
 
+        public virtual object GetValue(ObjectDefinition objectDef, int colIndex)
+        {
+            if (HandledDbNullValue(objectDef, colIndex))
+                return null;
+
+            return ConvertDatabaseValueToTypeValue(DataReader.GetValue(colIndex), objectDef.ObjectType);
+        }
+        
         public bool HandledDbNullValue(FieldDefinition fieldDef, int colIndex, object instance)
         {
             if (fieldDef == null || fieldDef.SetValueFunction == null || colIndex == NotFound) 
@@ -60,7 +68,12 @@ namespace PersistanceMap.Internals
             return false;
         }
 
-
+        private bool HandledDbNullValue(ObjectDefinition objectDef, int colIndex)
+        {
+            //throw new NotImplementedException();
+            //TODO: Does this have to be implemented?
+            return false;
+        }
 
 
         public virtual object ConvertDatabaseValueToTypeValue(object value, Type type)

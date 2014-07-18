@@ -9,9 +9,7 @@ namespace PersistanceMap
     /// </summary>
     internal static class ObjectExtensionsForMapping
     {
-        private const int NotFound = -1;
-
-        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, FieldDefinition[] fieldDefs, Dictionary<string, int> indexCache)
+        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, IEnumerable<FieldDefinition> fieldDefs, Dictionary<string, int> indexCache)
         {
             try
             {
@@ -49,6 +47,36 @@ namespace PersistanceMap
             }
 
             return objWithProperties;
+        }
+
+        public static void PopulateFromReader(this Dictionary<string, object> row, IReaderContext context, IEnumerable<ObjectDefinition> objectDefs, Dictionary<string, int> indexCache)
+        {
+            try
+            {
+                foreach (var def in objectDefs)
+                {
+                    int index;
+                    if (indexCache != null)
+                    {
+                        if (!indexCache.TryGetValue(def.Name, out index))
+                        {
+                            index = context.DataReader.GetColumnIndex(def.Name);
+
+                            indexCache.Add(def.Name, index);
+                        }
+                    }
+                    else
+                    {
+                        index = context.DataReader.GetColumnIndex(def.Name);
+                    }
+
+                    row[def.Name] = context.GetValue(def, index);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+            }
         }
 
         /*
