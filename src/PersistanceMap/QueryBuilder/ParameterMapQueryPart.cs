@@ -16,6 +16,9 @@ namespace PersistanceMap.QueryBuilder
             Name = name;
         }
 
+        /// <summary>
+        /// Gets the name of the parameter
+        /// </summary>
         public string Name { get; private set; }
 
         public override string Compile()
@@ -24,23 +27,28 @@ namespace PersistanceMap.QueryBuilder
             var value = Expression.Compile().DynamicInvoke();
             if (value != null)
             {
+                // quotate and format the value if needed
                 var quotated = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
 
-                if (string.IsNullOrEmpty(Name))
+                // return only the formated value if the parameter has no name
+                if (string.IsNullOrEmpty(Name) && quotated != null)
                 {
-                    if (quotated != null)
-                        return quotated;
+                    return quotated;
                 }
 
+                // return the name with the formated value
                 if (quotated != null)
                     return string.Format("{0}={1}", Name, quotated);
 
+                // return the name with the unformated value
                 return string.Format("{0}={1}", Name, value);
             }
 
+            // return the name with the compiled expression
             if (string.IsNullOrEmpty(Name))
                 return string.Format("{0}={1}", Name, base.Compile());
 
+            // compile the expression if there is no value and no name
             return base.Compile();
         }
     }

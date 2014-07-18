@@ -3,31 +3,30 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace PersistanceMap.Internals.Extensions
+namespace PersistanceMap.Internals
 {
-    public delegate EmptyConstructorDelegate EmptyConstructorFactoryDelegate(Type type);
+    //public delegate EmptyConstructorDelegate EmptyConstructorFactoryDelegate(Type type);
 
     public delegate object EmptyConstructorDelegate();
 
-    internal static class TypeExtensionsForObjectGeneration
+    /// <summary>
+    /// Factory Class that generates instances of a type
+    /// </summary>
+    internal static class InstanceFactory
     {
         static Dictionary<Type, EmptyConstructorDelegate> ConstructorMethods = new Dictionary<Type, EmptyConstructorDelegate>();
 
-        private static class TypeMeta<T>
+        /// <summary>
+        /// Factory Method that creates an instance of type T
+        /// </summary>
+        /// <typeparam name="T">The type to create an instance of</typeparam>
+        /// <returns>An instance of type T</returns>
+        public static T CreateInstance<T>()
         {
-            public static readonly EmptyConstructorDelegate EmptyCtorFn;
-            static TypeMeta()
-            {
-                EmptyCtorFn = GetConstructorMethodToCache(typeof(T));
-            }
+            return (T)TypeMeta<T>.EmptyCtorFunction();
         }
 
-        public static object CreateInstance<T>(this Type type)
-        {
-            return TypeMeta<T>.EmptyCtorFn();
-        }
-
-        public static object CreateInstance(this Type type)
+        private static object CreateInstance(this Type type)
         {
             if (type == null)
                 return null;
@@ -35,7 +34,9 @@ namespace PersistanceMap.Internals.Extensions
             return GetConstructorMethod(type).Invoke();
         }
 
-        public static EmptyConstructorDelegate GetConstructorMethodToCache(this Type type)
+        #region Constructor Delegate generation methods
+
+        private static EmptyConstructorDelegate GetConstructorMethodToCache(Type type)
         {
             if (type.IsInterface)
             {
@@ -97,24 +98,43 @@ namespace PersistanceMap.Internals.Extensions
             return () => FormatterServices.GetUninitializedObject(type);
         }
 
-        public static EmptyConstructorDelegate GetConstructorMethod(Type type)
+        private static EmptyConstructorDelegate GetConstructorMethod(Type type)
         {
-            EmptyConstructorDelegate emptyCtorFn;
-            if (ConstructorMethods.TryGetValue(type, out emptyCtorFn))
-                return emptyCtorFn;
+            EmptyConstructorDelegate emptyCtorFunction;
+            if (ConstructorMethods.TryGetValue(type, out emptyCtorFunction))
+            {
+                return emptyCtorFunction;
+            }
 
-            emptyCtorFn = GetConstructorMethodToCache(type);
+            emptyCtorFunction = GetConstructorMethodToCache(type);
 
-            Dictionary<Type, EmptyConstructorDelegate> snapshot, newCache;
+            Dictionary<Type, EmptyConstructorDelegate> snapshot;
+            Dictionary<Type, EmptyConstructorDelegate> newCache;
+
             do
             {
                 snapshot = ConstructorMethods;
                 newCache = new Dictionary<Type, EmptyConstructorDelegate>(ConstructorMethods);
-                newCache[type] = emptyCtorFn;
+                newCache[type] = emptyCtorFunction;
+            } 
+            while (!ReferenceEquals(Interlocked.CompareExchange(ref ConstructorMethods, newCache, snapshot), snapshot));
 
-            } while (!ReferenceEquals(Interlocked.CompareExchange(ref ConstructorMethods, newCache, snapshot), snapshot));
-
-            return emptyCtorFn;
+            return emptyCtorFunction;
         }
+
+        #endregion
+
+        #region Internal Classes
+
+        private static class TypeMeta<T>
+        {
+            public static readonly EmptyConstructorDelegate EmptyCtorFunction;
+            static TypeMeta()
+            {
+                EmptyCtorFunction = GetConstructorMethodToCache(typeof(T));
+            }
+        }
+
+        #endregion
     }
 }

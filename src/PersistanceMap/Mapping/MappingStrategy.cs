@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Data;
 using System;
+using PersistanceMap.Internals;
 
 namespace PersistanceMap.Mapping
 {
@@ -18,7 +19,8 @@ namespace PersistanceMap.Mapping
 
             while (context.DataReader.Read())
             {
-                var row = (T)typeof(T).CreateInstance<T>();
+                //var row = (T)typeof(T).CreateInstance<T>();
+                var row = InstanceFactory.CreateInstance<T>();
 
                 row.PopulateFromReader(context, fields, indexCache);
 
