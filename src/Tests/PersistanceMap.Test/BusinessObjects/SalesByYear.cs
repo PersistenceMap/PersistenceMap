@@ -10,6 +10,8 @@ namespace PersistanceMap.Test.BusinessObjects
 
         public double Subtotal { get; set; }
 
+        public double SpecialSubtotal { get; set; }
+
         public int Year { get; set; }
     }
 }

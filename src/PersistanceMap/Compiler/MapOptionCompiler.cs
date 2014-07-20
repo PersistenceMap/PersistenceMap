@@ -11,9 +11,9 @@ namespace PersistanceMap.Compiler
     /// </summary>
     internal static class MapOptionCompiler
     {
-        public static IQueryMap Compile(Expression<Func<ProcedureMapOption, IQueryMap>> predicate)
+        public static IQueryMap Compile(Expression<Func<ParameterMapOption, IQueryMap>> predicate)
         {
-            var options = new ProcedureMapOption();
+            var options = new ParameterMapOption();
 
             return predicate.Compile().Invoke(options);
         }

@@ -85,34 +85,6 @@ namespace PersistanceMap.QueryProvider
 
         #region ISqlExpression<T> Implementation
 
-        public IEnumerable<T2> Select<T2>()
-        {
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T2>(QueryPartsMap);
-
-            return Context.Execute<T2>(query);
-        }
-
-        public IEnumerable<T> Select()
-        {
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(QueryPartsMap);
-
-            return Context.Execute<T>(query);
-        }
-
-
-
-
-        public T2 Single<T2>()
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
-
         public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
             QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart(predicate));
@@ -141,6 +113,43 @@ namespace PersistanceMap.QueryProvider
         }
 
         public ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<SelectMapOption<T2, T3>, IQueryMap>>[] args)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        //public ISelectQueryProvider<T> Map<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
+        public IEnumerable<T2> Select<T2>()
+        {
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T2>(QueryPartsMap);
+
+            return Context.Execute<T2>(query);
+        }
+
+        public IEnumerable<T> Select()
+        {
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(QueryPartsMap);
+
+            return Context.Execute<T>(query);
+        }
+
+        public IEnumerable<T2> Select<T2>(params Expression<Func<MapOption<T2>, IQueryMap>>[] mappings)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+        public T2 Single<T2>()
         {
             throw new NotImplementedException();
         }

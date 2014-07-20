@@ -3,6 +3,8 @@ using System.Linq;
 using System.Data;
 using System;
 using PersistanceMap.Internals;
+//using PersistanceMap.Extensions.InstanceGeneration;
+using PersistanceMap;
 
 namespace PersistanceMap.Mapping
 {
@@ -15,7 +17,7 @@ namespace PersistanceMap.Mapping
             var rows = new List<T>();
 
             var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
-            var fields = typeof(T).GetFieldDefinitions();
+            var fields = typeof(T).GetFieldDefinitions().ToArray();
 
             while (context.DataReader.Read())
             {
@@ -30,7 +32,7 @@ namespace PersistanceMap.Mapping
             return rows;
         }
 
-        public IEnumerable<Dictionary<string, object>> MapToDictionary(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs)
+        public IEnumerable<Dictionary<string, object>> MapToDictionary(IReaderContext context, ObjectDefinition[] objectDefs)
         {
             context.EnsureArgumentNotNull("context");
 

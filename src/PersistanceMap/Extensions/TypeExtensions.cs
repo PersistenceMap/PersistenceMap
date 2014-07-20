@@ -11,6 +11,9 @@ namespace PersistanceMap
 {
     internal static class TypeExtensions
     {
+        // is used to make the FieldDefinitions thread safe
+        static object _lockobject = new object();
+
         static Dictionary<Type, IEnumerable<FieldDefinition>> fieldDefinitionCache;
         /// <summary>
         /// Cach dictionary that containes all fielddefinitions belonging to a given type
@@ -53,14 +56,18 @@ namespace PersistanceMap
         /// <returns></returns>
         public static IEnumerable<FieldDefinition> GetFieldDefinitions(this Type type)
         {
-            IEnumerable<FieldDefinition> fields = new List<FieldDefinition>();
-            if (!FieldDefinitionCache.TryGetValue(type, out fields))
-            {
-                fields = type.GetSelectionMembers().Select(m => m.ToFieldDefinition());
-                FieldDefinitionCache.Add(type, fields);
-            }
+            //TODO: This lock causes minor performance issues! Find a better way to ensure thread safety!
+            //lock (_lockobject)
+            //{
+                IEnumerable<FieldDefinition> fields = new List<FieldDefinition>();
+                if (!FieldDefinitionCache.TryGetValue(type, out fields))
+                {
+                    fields = type.GetSelectionMembers().Select(m => m.ToFieldDefinition());
+                    FieldDefinitionCache.Add(type, fields);
+                }
 
-            return fields;
+                return fields;
+            //}
         }
 
         private static Dictionary<Type, object> DefaultValueTypes = new Dictionary<Type, object>();

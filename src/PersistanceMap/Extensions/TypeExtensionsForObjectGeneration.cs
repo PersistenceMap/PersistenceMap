@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace PersistanceMap.Internals.Extensions
+namespace PersistanceMap.Extensions.InstanceGeneration
 {
     public delegate EmptyConstructorDelegate EmptyConstructorFactoryDelegate(Type type);
 

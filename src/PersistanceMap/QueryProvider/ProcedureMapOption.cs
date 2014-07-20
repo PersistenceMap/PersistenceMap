@@ -7,7 +7,7 @@ namespace PersistanceMap.QueryProvider
     /// <summary>
     /// MapOption for procedures
     /// </summary>
-    public class ProcedureMapOption
+    public class ParameterMapOption
     {
         public IQueryMap Value<T>(Expression<Func<T>> predicate)
         {

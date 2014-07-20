@@ -36,7 +36,7 @@ namespace PersistanceMap
             return cache;
         }
 
-        public static Dictionary<string, int> CreateFieldIndexCache(this IDataReader reader, IEnumerable<ObjectDefinition> objectDefs)
+        public static Dictionary<string, int> CreateFieldIndexCache(this IDataReader reader, ObjectDefinition[] objectDefs)
         {
             var cache = new Dictionary<string, int>();
 

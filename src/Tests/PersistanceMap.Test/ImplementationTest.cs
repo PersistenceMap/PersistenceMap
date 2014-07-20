@@ -14,16 +14,14 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                /* *Using Output compiles to*
-                
-                declare @p1 int
-                select @p1 = 1
-                declare @p2 varchar(max)
-                select @p2 = 'lol'
-                exec SalesOfYear @date='1980-01-01', @outputparam1=@p1 output, @outputparam2=@p2 output
-                select @p1, @p2
-                
-                */
+                // proc with resultset without parameter names
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
+                    .AddParameter(() => DateTime.Today)
+                    //.Map<SalesByYear>(opt => opt.To(s => s.SpecialSubtotal, "test"))
+                    .Execute<SalesByYear>(opt => opt.MapTo(s => s.SpecialSubtotal, "test"));
+
+                Assert.IsTrue(proc.Any());
             }
         }
 
@@ -34,6 +32,20 @@ namespace PersistanceMap.Test
             using (var context = connection.Open())
             {
                 string brk = "";
+
+                // Map => To
+                var owd = context.From<Orders>()
+                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
+                    //.Map<OrderWithDetail>(opt => opt.To(i => i.SpecialFreight, "Freight"))
+                    .Select<OrderWithDetail>(opt => opt.MapTo(i => i.SpecialFreight, "Freight"));
+
+                //// Map => To this should compile to the same as the upper exression
+                //owd = context.From<Orders>()
+                //    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
+                //    //.Map<OrderWithDetail>(opt => opt.To(i => i.SpecialFreight, "Freight"))
+                //    .Select(opt => opt.To(i => i.SpecialFreight, "Freight"));
+
+
 
                 //WHERE HAS TO ACCEPT PROPER PARAMETERS!
                 var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.On((d, o) => d.OrderID == o.OrderID)).Where(o => o.ShipName != "").Select<OrderDetails>();

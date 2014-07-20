@@ -27,6 +27,8 @@ namespace PersistanceMap.Test.BusinessObjects
 
         public double Freight { get; set; }
 
+        public double SpecialFreight { get; set; }
+
         public string ShipName { get; set; }
 
         public string ShipAddress { get; set; }

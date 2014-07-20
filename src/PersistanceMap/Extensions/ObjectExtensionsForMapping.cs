@@ -9,7 +9,7 @@ namespace PersistanceMap
     /// </summary>
     internal static class ObjectExtensionsForMapping
     {
-        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, IEnumerable<FieldDefinition> fieldDefs, Dictionary<string, int> indexCache)
+        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, /*IEnumerable<FieldDefinition> fieldDefs*/FieldDefinition[] fieldDefs, Dictionary<string, int> indexCache)
         {
             try
             {

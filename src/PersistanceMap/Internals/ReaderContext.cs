@@ -81,7 +81,7 @@ namespace PersistanceMap.Internals
             if (value == null || value is DBNull) 
                 return null;
 
-            var strValue = value as string;
+            //var strValue = value as string;
             //if (strValue != null && OrmLiteConfig.StringFilter != null)
             //{
             //    value = OrmLiteConfig.StringFilter(strValue);
@@ -92,6 +92,7 @@ namespace PersistanceMap.Internals
                 return value;
             }
 
+            var strValue = value as string;
             if (type == typeof(DateTimeOffset))
             {
                 if (strValue != null)

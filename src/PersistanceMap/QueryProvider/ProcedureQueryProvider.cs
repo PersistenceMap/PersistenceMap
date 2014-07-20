@@ -7,7 +7,62 @@ using System.Linq;
 
 namespace PersistanceMap.QueryProvider
 {
-    public class ProcedureQueryProvider : IProcedureQueryProvider, IQueryProvider
+    //public abstract class ProcedureQueryProviderBase : IQueryProvider
+    //{
+    //    public ProcedureQueryProviderBase(IDatabaseContext context, string procName)
+    //        : this(context, procName, null)
+    //    {
+    //    }
+
+    //    public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+    //    //: base(context, procName, queryPartsMap)
+    //    {
+    //        context.EnsureArgumentNotNull("context");
+    //        procName.EnsureArgumentNotNullOrEmpty("procName");
+
+    //        _context = context;
+    //        ProcedureName = procName;
+
+    //        if (queryPartsMap != null)
+    //            _queryPartsMap = queryPartsMap;
+    //    }
+
+    //    #region IQueryProvider Implementation
+
+    //    public string ProcedureName { get; private set; }
+
+    //    readonly IDatabaseContext _context;
+    //    public IDatabaseContext Context
+    //    {
+    //        get
+    //        {
+    //            return _context;
+    //        }
+    //    }
+
+    //    ProcedureQueryPartsMap _queryPartsMap;
+    //    public ProcedureQueryPartsMap QueryPartsMap
+    //    {
+    //        get
+    //        {
+    //            if (_queryPartsMap == null)
+    //                _queryPartsMap = new ProcedureQueryPartsMap(ProcedureName);
+    //            return _queryPartsMap;
+    //        }
+    //    }
+
+    //    IQueryPartsMap IQueryProvider.QueryPartsMap
+    //    {
+    //        get
+    //        {
+    //            return QueryPartsMap;
+    //        }
+    //    }
+
+    //    #endregion
+    //}
+
+    public class ProcedureQueryProvider : /*ProcedureQueryProviderBase,*/ IProcedureQueryProvider, IQueryProvider
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
             : this(context, procName, null)
@@ -63,8 +118,6 @@ namespace PersistanceMap.QueryProvider
 
         #region IProcedureExpression Implementation
 
-
-
         public IProcedureQueryProvider AddParameter<T2>(Expression<Func<T2>> predicate)
         {
             QueryPartsMap.Add(Convert(predicate));
@@ -72,14 +125,14 @@ namespace PersistanceMap.QueryProvider
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
         
-        public IProcedureQueryProvider AddParameter(Expression<Func<ProcedureMapOption, IQueryMap>> part)
+        public IProcedureQueryProvider AddParameter(Expression<Func<ParameterMapOption, IQueryMap>> part)
         {
             QueryPartsMap.Add(Convert(part));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureQueryProvider AddParameter<T2>(Expression<Func<ProcedureMapOption, IQueryMap>> part, Action<T2> callback)
+        public IProcedureQueryProvider AddParameter<T2>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T2> callback)
         {
             var tmp = Convert<T2>(part);
             var cb = tmp as ICallbackQueryPart<T2>;
@@ -90,6 +143,13 @@ namespace PersistanceMap.QueryProvider
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
+
+
+        //public IProcedureQueryProvider<T> Map<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
 
         public void Execute()
         {
@@ -111,6 +171,12 @@ namespace PersistanceMap.QueryProvider
             return values;
         }
 
+        public IEnumerable<T> Execute<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
+        {
+
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Private Implementation
@@ -125,7 +191,7 @@ namespace PersistanceMap.QueryProvider
                     {
                         Name = p.CallbackParameterName,
                         ObjectType = p.CallbackParameterType
-                    });
+                    }).ToArray();
 
             var mapping = mapper.MapToDictionary(reader, objectDefs).FirstOrDefault();
 
@@ -150,7 +216,7 @@ namespace PersistanceMap.QueryProvider
             });
         }
 
-        private IParameterQueryPart Convert<T>(Expression<Func<ProcedureMapOption, IQueryMap>> part)
+        private IParameterQueryPart Convert<T>(Expression<Func<ParameterMapOption, IQueryMap>> part)
         {
             var list = new List<IQueryMap>();
             list.Add(MapOptionCompiler.Compile(part));
@@ -158,7 +224,7 @@ namespace PersistanceMap.QueryProvider
             return new CallbackParameterQueryPart<T>(list);
         }
 
-        private IParameterQueryPart Convert(Expression<Func<ProcedureMapOption, IQueryMap>> part)
+        private IParameterQueryPart Convert(Expression<Func<ParameterMapOption, IQueryMap>> part)
         {
             var list = new List<IQueryMap>();
             list.Add(MapOptionCompiler.Compile(part));
@@ -168,4 +234,22 @@ namespace PersistanceMap.QueryProvider
 
         #endregion
     }
+
+    //public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryProvider<T>, IQueryProvider
+    //{
+    //    public ProcedureQueryProvider(IDatabaseContext context, string procName)
+    //        : base(context, procName, null)
+    //    {
+    //    }
+
+    //    public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+    //        : base(context, procName, queryPartsMap)
+    //    {
+    //    }
+
+    //    public IEnumerable<T> Execute()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }
