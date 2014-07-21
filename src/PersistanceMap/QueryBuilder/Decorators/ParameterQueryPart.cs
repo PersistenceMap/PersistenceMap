@@ -8,7 +8,7 @@ using System.Text;
 using PersistanceMap.Compiler;
 using PersistanceMap.Sql;
 
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, IExpressionQueryPart, IQueryPart
     {

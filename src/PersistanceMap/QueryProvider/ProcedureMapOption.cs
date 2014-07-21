@@ -1,6 +1,7 @@
 ﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Linq.Expressions;
+using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap.QueryProvider
 {

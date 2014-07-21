@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap
 {
@@ -24,7 +25,7 @@ namespace PersistanceMap
             return new JoinQueryPart<TJoin>(type.Name, new List<IQueryMap> { operation });
         }
 
-        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IEnumerable<IQueryMap> parts)
+        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IQueryMap[] parts)
         {
             IEnumerable<IQueryMap> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
             IEnumerable<IQueryMap> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;

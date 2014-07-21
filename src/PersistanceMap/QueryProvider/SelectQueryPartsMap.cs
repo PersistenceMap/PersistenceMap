@@ -2,6 +2,7 @@
 using PersistanceMap.QueryBuilder;
 using System.Collections.Generic;
 using System.Linq;
+using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap
 {
@@ -107,7 +108,35 @@ namespace PersistanceMap
 
         #region IQueryPartsMap Implementation
 
-        
+        public CompiledQuery Compile()
+        {
+            //if (_queryParts == null)
+            //    return null;
+
+            var sb = new StringBuilder(100);
+            sb.Append("select ");
+
+            // add resultset fields
+            foreach (var field in Fields)
+                sb.AppendFormat("{0}{1} ", field.Compile(), Fields.Last() == field ? "" : ",");
+
+            // add from
+            sb.AppendFormat("{0} \r\n", From.Compile());
+
+            // add joins
+            foreach (var join in Joins)
+                sb.Append(join.Compile());
+
+            // where
+
+            // order...
+
+            return new CompiledQuery
+            {
+                QueryString = sb.ToString(),
+                QueryParts = this
+            };
+        }
 
         #endregion
     }

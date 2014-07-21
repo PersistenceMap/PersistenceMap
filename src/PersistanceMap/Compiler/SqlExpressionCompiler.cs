@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap.Compiler
 {
@@ -49,14 +50,16 @@ namespace PersistanceMap.Compiler
             foreach (var field in members.Select(m => m.ToFieldQueryPart(/*from.Identifier*/null, from.Entity)))
                 queryParts.Add(field, false);
 
-            var builder = new SelectQueryCompiler(queryParts);
-            return builder.Compile();
+            //var builder = new SelectQueryCompiler(queryParts);
+            //return builder.Compile();
+            return queryParts.Compile();
         }
 
         public virtual CompiledQuery Compile(ProcedureQueryPartsMap queryParts)
         {
-            var builder = new ProcedureQueryCompiler(queryParts);
-            return builder.Compile();
+            //var builder = new ProcedureQueryCompiler(queryParts);
+            //return builder.Compile();
+            return queryParts.Compile();
         }
 
 

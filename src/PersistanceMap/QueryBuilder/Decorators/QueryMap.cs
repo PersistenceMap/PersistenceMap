@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class QueryMap : IQueryMap, IQueryPart
     {
@@ -29,6 +29,12 @@ namespace PersistanceMap.QueryBuilder
                 return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
 
             return null;
+        }
+
+        public virtual void Register(IQueryProvider provider)
+        {
+            throw new NotImplementedException();
+            //provider.Add(this);
         }
 
         internal void AddIdentifier(Type type, string identifier)

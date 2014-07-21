@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap.QueryProvider
 {
@@ -114,6 +115,11 @@ namespace PersistanceMap.QueryProvider
             }
         }
 
+        //public void Add(IQueryMap map)
+        //{
+        //    QueryPartsMap.Add(map);
+        //}
+
         #endregion
 
         #region IProcedureExpression Implementation
@@ -156,6 +162,8 @@ namespace PersistanceMap.QueryProvider
             var expr = Context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile(QueryPartsMap);
 
+            //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
+            // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
             Context.Execute(query, dr => ReadReturnValues(dr), dr => ReadReturnValues(dr));
         }
 

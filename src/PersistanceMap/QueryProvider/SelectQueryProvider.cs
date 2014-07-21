@@ -94,7 +94,7 @@ namespace PersistanceMap.QueryProvider
 
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
-            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args)));
+            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args).ToArray()));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }

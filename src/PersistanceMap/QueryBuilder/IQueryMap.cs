@@ -11,5 +11,7 @@ namespace PersistanceMap.QueryBuilder
         LambdaExpression Expression { get; }
 
         Dictionary<Type, string> IdentifierMap { get; }
+
+        void Register(IQueryProvider provider);
     }
 }

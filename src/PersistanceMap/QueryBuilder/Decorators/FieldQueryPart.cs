@@ -1,5 +1,5 @@
 ﻿
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class FieldQueryPart : IEntityQueryPart
     {
