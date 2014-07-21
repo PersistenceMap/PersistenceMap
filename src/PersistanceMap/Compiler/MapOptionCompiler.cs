@@ -40,10 +40,10 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        public static void Register(IQueryProvider provider, IQueryMap[] maps)
-        {
-            foreach (var map in maps)
-                map.Register(provider);
-        }
+        //public static void Register(IQueryProvider provider, IQueryMap[] maps)
+        //{
+        //    foreach (var map in maps)
+        //        map.Register(provider);
+        //}
     }
 }

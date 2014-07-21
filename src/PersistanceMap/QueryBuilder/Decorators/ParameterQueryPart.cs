@@ -20,6 +20,8 @@ namespace PersistanceMap.QueryBuilder.Decorators
             Operations = mapOperations.ToList();
         }
 
+        public MapOperationType MapOperationType { get; set; }
+
         #region IExpressionQueryPart Implementation
 
         IEnumerable<IQueryMap> IExpressionQueryPart.Operations

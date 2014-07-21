@@ -50,7 +50,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap On(Expression<Func<T, T2, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.Join, predicate);
+            return new QueryMap(MapOperationType.JoinOn, predicate);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap On(string identifier, Expression<Func<T, T2, bool>> predicate)
         {
-            var part = new QueryMap(MapOperationType.Join, predicate);
+            var part = new QueryMap(MapOperationType.JoinOn, predicate);
             part.AddIdentifier(typeof(T2), identifier);
 
             return part;
@@ -75,7 +75,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap On<T3>(Expression<Func<T, T3, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.Join, predicate);
+            return new QueryMap(MapOperationType.JoinOn, predicate);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap On<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
         {
-            var part = new QueryMap(MapOperationType.Join, predicate);
+            var part = new QueryMap(MapOperationType.JoinOn, predicate);
             part.AddIdentifier(typeof(T3), identifier);
 
             return part;
@@ -104,7 +104,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap And(Expression<Func<T, T2, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.And, predicate);
+            return new QueryMap(MapOperationType.AndOn, predicate);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap And(string identifier, Expression<Func<T, T2, bool>> predicate)
         {
-            var part = new QueryMap(MapOperationType.And, predicate);
+            var part = new QueryMap(MapOperationType.AndOn, predicate);
             part.AddIdentifier(typeof(T2), identifier);
 
             return part;
@@ -129,7 +129,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap And<T3>(Expression<Func<T, T3, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.And, predicate);
+            return new QueryMap(MapOperationType.AndOn, predicate);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap And<T3>(string identifier, Expression<Func<T, T3, bool>> predicate)
         {
-            var part = new QueryMap(MapOperationType.And, predicate);
+            var part = new QueryMap(MapOperationType.AndOn, predicate);
             part.AddIdentifier(typeof(T3), identifier);
 
             return part;
@@ -158,7 +158,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap Or(Expression<Func<T, T2, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.Or, predicate);
+            return new QueryMap(MapOperationType.OrOn, predicate);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns></returns>
         public IQueryMap Or<T3>(Expression<Func<T, T3, bool>> predicate)
         {
-            return new QueryMap(MapOperationType.Or, predicate);
+            return new QueryMap(MapOperationType.OrOn, predicate);
         }
 
         #endregion

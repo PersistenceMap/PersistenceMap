@@ -13,41 +13,99 @@ namespace PersistanceMap
     /// </summary>
     internal static class TypeExtensionsForQueryParts
     {
-        public static FromQueryPart<T> ToFromQueryPart<T>(this Type type)
+        [Obsolete("Change from extension method to factory method or helper!", false)]
+        public static EntityQueryPart<T> ToFromQueryPart<T>(this Type type, IQueryPartsMap queryParts)
         {
-            return new FromQueryPart<T>(type.Name);
+            var entity = new EntityQueryPart<T>(type.Name);
+            entity.MapOperationType = MapOperationType.From;
+
+            queryParts.Add(entity);
+
+            return entity;
         }
 
-        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, Expression<Func<TJoin, T, bool>> predicate)
+        [Obsolete("Change from extension method to factory method or helper!", false)]
+        public static EntityQueryPart<T> ToFromQueryPart<T>(this Type type, IQueryPartsMap queryParts, IQueryMap[] parts)
         {
-            var operation = new QueryMap(MapOperationType.Join, predicate);
+            var entity = type.ToFromQueryPart<T>(queryParts);
 
-            return new JoinQueryPart<TJoin>(type.Name, new List<IQueryMap> { operation });
-        }
+            // first set identifier
+            parts.Where(p => p.MapOperationType == MapOperationType.Identifier)
+                .ForEach(part => entity.Identifier = part.Expression.Compile().DynamicInvoke() as string);
 
-        public static JoinQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IQueryMap[] parts)
-        {
-            IEnumerable<IQueryMap> operationParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Join || p.MapOperationType == MapOperationType.And || p.MapOperationType == MapOperationType.Or).ToList() : null;
-            IEnumerable<IQueryMap> idParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().ToList() : null;
-            IEnumerable<IQueryMap> includeParts = parts != null ? parts.Where(p => p.MapOperationType == MapOperationType.Include).ToList() : null;
-
-            var join = new JoinQueryPart<TJoin>(type.Name, operationParts);
-            if (includeParts != null)
-                join.AddOperations(includeParts);
-
-            if (idParts != null && idParts.Any())
+            // set include
+            parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
-                join.Identifier = idParts.First().Expression.Compile().DynamicInvoke() as string;
-                if (!string.IsNullOrEmpty(join.Identifier))
+                if (part.MapOperationType == MapOperationType.Include)
                 {
-                    foreach (var part in join.Operations)
+                    //fromPart.AddOperation(part);
+                    var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.Identifier) ? entity.Entity : entity.Identifier, entity.Entity)
                     {
-                        part.IdentifierMap.Add(typeof(TJoin), join.Identifier);
+                        MapOperationType = MapOperationType.Include
+                    };
+
+                    queryParts.Add(field);
+                }
+            });
+
+            return entity;
+        }
+
+        [Obsolete("Change from extension method to factory method or helper!", false)]
+        public static EntityQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IQueryPartsMap queryParts, Expression<Func<TJoin, T, bool>> predicate)
+        {
+            var operation = new QueryMap(MapOperationType.JoinOn, predicate);
+
+            var entity = new EntityQueryPart<TJoin>(type.Name, null, new List<IQueryMap> { operation });
+            entity.MapOperationType = MapOperationType.Join;
+
+            queryParts.Add(entity);
+
+            return entity;
+        }
+
+        [Obsolete("Change from extension method to factory method or helper!", false)]
+        public static EntityQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IQueryPartsMap queryParts, IQueryMap[] parts)
+        {
+            var operationParts = parts.Where(p => p.MapOperationType == MapOperationType.JoinOn || p.MapOperationType == MapOperationType.AndOn || p.MapOperationType == MapOperationType.OrOn).ToList();
+            
+            var entity = new EntityQueryPart<TJoin>(type.Name, null, operationParts)
+            {
+                MapOperationType = MapOperationType.Join
+            };
+
+            queryParts.Add(entity);
+
+            // first set identifier
+            var id = parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().FirstOrDefault();
+            if (id != null)
+            {
+                entity.Identifier = id.Expression.Compile().DynamicInvoke() as string;
+                if (!string.IsNullOrEmpty(entity.Identifier))
+                {
+                    foreach (var part in entity.Operations)
+                    {
+                        part.IdentifierMap.Add(typeof(TJoin), entity.Identifier);
                     }
                 }
             }
 
-            return join;
+            // set include
+            parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
+            {
+                if (part.MapOperationType == MapOperationType.Include)
+                {
+                    //fromPart.AddOperation(part);
+                    var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.Identifier) ? entity.Entity : entity.Identifier, entity.Entity)
+                    {
+                        MapOperationType = MapOperationType.Include
+                    };
+
+                    queryParts.Add(field);
+                }
+            });
+
+            return entity;
         }
     }
 }

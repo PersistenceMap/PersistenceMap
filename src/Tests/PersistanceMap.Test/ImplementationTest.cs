@@ -37,7 +37,7 @@ namespace PersistanceMap.Test
                 var owd = context.From<Orders>()
                     .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
                     //.Map<OrderWithDetail>(opt => opt.To(i => i.SpecialFreight, "Freight"))
-                    .Select<OrderWithDetail>(opt => opt.MapTo(i => i.SpecialFreight, "Freight"));
+                    .Select<OrderWithDetailExtended>(opt => opt.MapTo(i => i.SpecialFreight, "Freight"));
 
                 //// Map => To this should compile to the same as the upper exression
                 //owd = context.From<Orders>()

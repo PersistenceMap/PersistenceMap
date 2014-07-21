@@ -27,8 +27,6 @@ namespace PersistanceMap.Test.BusinessObjects
 
         public double Freight { get; set; }
 
-        public double SpecialFreight { get; set; }
-
         public string ShipName { get; set; }
 
         public string ShipAddress { get; set; }
@@ -48,5 +46,10 @@ namespace PersistanceMap.Test.BusinessObjects
         public int Quantity { get; set; }
 
         public double Discount { get; set; }
+    }
+
+    public class OrderWithDetailExtended : OrderWithDetail
+    {
+        public double SpecialFreight { get; set; }
     }
 }

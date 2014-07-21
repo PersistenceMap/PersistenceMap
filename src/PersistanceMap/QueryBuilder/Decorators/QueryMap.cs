@@ -31,11 +31,11 @@ namespace PersistanceMap.QueryBuilder.Decorators
             return null;
         }
 
-        public virtual void Register(IQueryProvider provider)
-        {
-            throw new NotImplementedException();
-            //provider.Add(this);
-        }
+        //public virtual void Register(IQueryProvider provider)
+        //{
+        //    throw new NotImplementedException();
+        //    //provider.Add(this);
+        //}
 
         internal void AddIdentifier(Type type, string identifier)
         {

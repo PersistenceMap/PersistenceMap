@@ -17,6 +17,10 @@ namespace PersistanceMap
 
         #region IQueryPartsMap Implementation
 
+        public void Add(IQueryPart map)
+        {
+            throw new System.NotImplementedException();
+        }
         //public IEnumerable<IQueryMap> Mappings
         //{
         //    get

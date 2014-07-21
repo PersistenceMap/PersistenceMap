@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryBuilder.Decorators;
+using System.Reflection;
+using System.Linq;
+using PersistanceMap.Internals;
 
 namespace PersistanceMap.QueryProvider
 {
@@ -18,6 +22,8 @@ namespace PersistanceMap.QueryProvider
             _context = context;
             _queryPartsMap = container;
         }
+
+        #region IQueryProvider Implementation
 
         readonly IDatabaseContext _context;
         public IDatabaseContext Context
@@ -47,11 +53,15 @@ namespace PersistanceMap.QueryProvider
             }
         }
 
+        #endregion
+
         #region Internal Implementation
 
         internal ISelectQueryProvider<T2> From<T2>()
         {
-            QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>());
+            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
+            typeof(T2).ToFromQueryPart<T>(QueryPartsMap);
+            //QueryPartsMap.Add();
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
@@ -59,24 +69,8 @@ namespace PersistanceMap.QueryProvider
         internal ISelectQueryProvider<T2> From<T2>(params IQueryMap[] parts)
         {
             parts.EnsureArgumentNotNull("part");
-
-            var fromPart = typeof(T2).ToFromQueryPart<T>();
-
-            parts.ForEach(part =>
-            {
-                if (part.MapOperationType != MapOperationType.Identifier && part.MapOperationType != MapOperationType.Include)
-                    throw new ArgumentException("Only IExpressionMapQueryPart of type Identifier or of type Iclude are allowed in a From expression", "parts");
-
-                if (part.MapOperationType == MapOperationType.Identifier)
-                    fromPart.Identifier = part.Expression.Compile().DynamicInvoke() as string;
-
-                if (part.MapOperationType == MapOperationType.Include)
-                {
-                    fromPart.AddOperation(part);
-                }
-            });
-
-            QueryPartsMap.Add(fromPart);
+            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
+            var fromPart = typeof(T2).ToFromQueryPart<T>(QueryPartsMap, parts);
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
@@ -87,14 +81,19 @@ namespace PersistanceMap.QueryProvider
 
         public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart(predicate));
+            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
+            var part = typeof(TJoin).ToJoinQueryPart(QueryPartsMap, predicate);
+
+            //QueryPartsMap.Add(part);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
-            QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args).ToArray()));
+            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
+            typeof(TJoin).ToJoinQueryPart<TJoin, T>(QueryPartsMap, MapOptionCompiler.Compile(args).ToArray());
+            //QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args).ToArray()));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
@@ -117,12 +116,6 @@ namespace PersistanceMap.QueryProvider
             throw new NotImplementedException();
         }
 
-
-
-        //public ISelectQueryProvider<T> Map<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
 
         public IEnumerable<T2> Select<T2>()

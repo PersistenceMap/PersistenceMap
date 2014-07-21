@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    public class SelectQueryPart<T> : ISelectQueryPart
+    public class SelectQueryPart<T> : /*ISelectQueryPart*/IEntityQueryPart, IExpressionQueryPart
     {
         public SelectQueryPart(string entity, IEnumerable<IQueryMap> mapOperations)
             : this(null, entity, mapOperations)
@@ -14,27 +14,27 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public SelectQueryPart(string identifier, string entity, IEnumerable<IQueryMap> mapOperations)
         {
-            // ensure parameter is not null
-            mapOperations.EnsureArgumentNotNull("mapOperations");
+            //// ensure parameter is not null
+            //mapOperations.EnsureArgumentNotNull("mapOperations");
 
-            Operations = mapOperations.ToList();
-            Identifier = identifier;
-            Entity = entity;
+            //Operations = mapOperations.ToList();
+            //Identifier = identifier;
+            //Entity = entity;
         }
 
-        IEnumerable<IQueryMap> IExpressionQueryPart.Operations
-        {
-            get
-            {
-                return Operations;
-            }
-        }
+        //IEnumerable<IQueryMap> IExpressionQueryPart.Operations
+        //{
+        //    get
+        //    {
+        //        return Operations;
+        //    }
+        //}
 
-        public IList<IQueryMap> Operations { get; private set; }
+        //public IList<IQueryMap> Operations { get; private set; }
 
-        public string Entity { get; private set; }
+        //public string Entity { get; private set; }
 
-        public string Identifier { get; set; }
+        //public string Identifier { get; set; }
 
         public virtual string Compile()
         {

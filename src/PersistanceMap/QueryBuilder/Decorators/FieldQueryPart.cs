@@ -1,7 +1,7 @@
 ﻿
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class FieldQueryPart : IEntityQueryPart
+    internal class FieldQueryPart : IEntityQueryPart, IQueryPart
     {
         public FieldQueryPart(string field, string identifier)
             : this(field, identifier, null)
@@ -14,6 +14,8 @@ namespace PersistanceMap.QueryBuilder.Decorators
             Field = field;
             Entity = entity;
         }
+
+        public MapOperationType MapOperationType { get; set; }
 
         public string Entity { get; private set; }
 

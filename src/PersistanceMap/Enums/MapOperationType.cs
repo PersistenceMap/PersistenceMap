@@ -3,6 +3,16 @@ namespace PersistanceMap
 {
     public enum MapOperationType
     {
+        None,
+
+        From,
+
+        Join,
+
+        InnerJoin,
+
+        LeftOuterJoin,
+
         /// <summary>
         /// Defines the Operation as a identifier of a table or a storedprocedure parameter
         /// </summary>
@@ -16,17 +26,17 @@ namespace PersistanceMap
         /// <summary>
         /// defines the operation as a join operation
         /// </summary>
-        Join,
+        JoinOn,
 
         /// <summary>
         /// 
         /// </summary>
-        And,
+        AndOn,
 
         /// <summary>
         /// 
         /// </summary>
-        Or,
+        OrOn,
 
         /// <summary>
         /// defines the value of a storeprocedure parameter
