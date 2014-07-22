@@ -67,11 +67,27 @@ namespace PersistanceMap.QueryBuilder.Decorators
                 case MapOperationType.Join:
                     sb.Append("join");
                     break;
+
+                //case MapOperationType.InnerJoin:
+                //    sb.Append("inner join");
+                //    break;
+
+                case MapOperationType.LeftJoin:
+                    sb.Append("left join");
+                    break;
+
+                case MapOperationType.RightJoin:
+                    sb.Append("right join");
+                    break;
+
+                case MapOperationType.FullJoin:
+                    sb.Append("full join");
+                    break;
             }
 
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(Identifier) ? string.Empty : string.Format(" {0}", Identifier)));
 
-            // compile all mappings that belong to the part
+            // compile all mappings that belong to the part (on, and, or...)
             MapCollection.ForEach(a => sb.Append(a.Compile()));
 
             return sb.ToString();

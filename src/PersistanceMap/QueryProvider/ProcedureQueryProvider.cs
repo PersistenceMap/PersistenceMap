@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
 using PersistanceMap.QueryBuilder.Decorators;
+using PersistanceMap.Sql;
+using System.Text;
 
 namespace PersistanceMap.QueryProvider
 {
@@ -81,13 +83,50 @@ namespace PersistanceMap.QueryProvider
         {
             var cb = QueryPartsFactory.CreateParameterQueryPart<T>(part, callback, QueryPartsMap);
             QueryPartsMap.Add(cb);
+
             if (cb.CanHandleCallback)
             {
+                // get the index of the parameter in the collection to create the name of the out parameter
+                var index = QueryPartsMap.Parts.Where(p => p.MapOperationType == MapOperationType.Parameter).ToList().IndexOf(cb);
+                cb.CallbackName = string.Format("p{0}", index);
+
                 // create output parameters 
-                QueryPartsMap.AddBefore(new ParameterPrefix(MapOperationType.ParameterPrefix), MapOperationType.Parameter);
+                QueryPartsMap.AddBefore(MapOperationType.Parameter,
+                    new PredicateQueryPart(MapOperationType.OutParameterPrefix, () =>
+                    {
+                        if (string.IsNullOrEmpty(cb.CallbackName))
+                            return string.Empty;
+
+                        var valuePredicate = cb.MapCollection.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+
+                        // get the return value of the expression
+                        var value = valuePredicate.Expression.Compile().DynamicInvoke();
+
+                        // set the value into the right format
+                        var quotatedvalue = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+
+                        //
+                        // declare @p1 datetime
+                        // set @p1='2012-01-01 00:00:00'
+                        //
+
+                        var sb = new StringBuilder();
+                        sb.AppendLine(string.Format("declare @{0} {1}", cb.CallbackName, typeof(T).ToSqlDbType()));
+                        sb.AppendLine(string.Format("set @{0}={1}", cb.CallbackName, quotatedvalue ?? value));
+
+                        return sb.ToString();
+                    }));
 
                 // create value for selecting output parameters
-                QueryPartsMap.AddAfter(new ParameterSufix(MapOperationType.ParameterPrefix), MapOperationType.Parameter);
+                QueryPartsMap.AddAfter(MapOperationType.Parameter,
+                    new PredicateQueryPart(MapOperationType.OutParameterSufix, () =>
+                    {
+                        if (string.IsNullOrEmpty(cb.CallbackName))
+                            return string.Empty;
+
+                        // @p1 as p1
+                        return string.Format("@{0} as {0}", cb.CallbackName);
+                    }));
             }
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
@@ -133,8 +172,8 @@ namespace PersistanceMap.QueryProvider
                 .Select(p =>
                     new ObjectDefinition
                     {
-                        Name = p.CallbackParameterName,
-                        ObjectType = p.CallbackParameterType
+                        Name = p.CallbackName,
+                        ObjectType = p.CallbackType
                     }).ToArray();
 
             var mapping = mapper.MapToDictionary(reader, objectDefs).FirstOrDefault();
@@ -145,7 +184,7 @@ namespace PersistanceMap.QueryProvider
             foreach (var param in QueryPartsMap.Parameters.Where(p => p.CanHandleCallback))
             {
                 object value = null;
-                if (!mapping.TryGetValue(param.CallbackParameterName, out value))
+                if (!mapping.TryGetValue(param.CallbackName, out value))
                     continue;
 
                 param.TryHandleCallback(value);

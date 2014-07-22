@@ -82,7 +82,6 @@ namespace PersistanceMap.QueryProvider
         public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
             QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
-            //QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart(predicate));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
@@ -90,7 +89,6 @@ namespace PersistanceMap.QueryProvider
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
             QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, MapOptionCompiler.Compile(args).ToArray(), MapOperationType.Join);
-            //QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args).ToArray()));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }

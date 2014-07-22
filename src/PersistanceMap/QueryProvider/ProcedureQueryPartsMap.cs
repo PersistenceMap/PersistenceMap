@@ -19,9 +19,6 @@ namespace PersistanceMap
 
         public void Add(IQueryPart part)
         {
-            //var tmp = map as IParameterQueryPart;
-            //if (tmp != null)
-            //    Parameters.Add(tmp /*map*/);
             Parts.Add(part);
         }
 
@@ -57,17 +54,12 @@ namespace PersistanceMap
             var sb = new StringBuilder(100);
 
             // prepare outputparameters
-            int i = 1;
-            foreach (var param in Parameters.Where(p => p.CanHandleCallback))
+            foreach (var param in Parts.Where(p => p.MapOperationType == MapOperationType.OutParameterPrefix))
             {
                 // creates a name for the output parameter
-                var definition = param.CompileOutParameter(i);
-                if (!string.IsNullOrEmpty(definition))
-                {
-                    sb.AppendLine(definition);
-
-                    i++;
-                }
+                var value = param.Compile();
+                if (!string.IsNullOrEmpty(value))
+                    sb.AppendLine(value);
             }
 
             // create the exec statement
@@ -84,17 +76,19 @@ namespace PersistanceMap
             }
 
             // add the select for all output parameters
-            var lastCallback = Parameters.LastOrDefault(p => p.CanHandleCallback);
             var selectoutput = string.Empty;
-            foreach (var param in Parameters.Where(p => p.CanHandleCallback))
+            foreach (var param in Parts.Where(p => p.MapOperationType == MapOperationType.OutParameterSufix))
             {
+                bool separator = true;
                 if (string.IsNullOrEmpty(selectoutput))
-                    selectoutput = "select";
-
-                if (!string.IsNullOrEmpty(param.CallbackParameterName))
                 {
-                    selectoutput = string.Format("{0} @{1} as {1}{2}", selectoutput, param.CallbackParameterName, lastCallback == param ? "" : ", ");
+                    selectoutput = "select";
+                    separator = false;
                 }
+
+                var value = param.Compile();
+                if (!string.IsNullOrEmpty(value))
+                    selectoutput = string.Format("{0} {1}{2}", selectoutput, separator ? ", " : "", value);
             }
 
             sb.AppendLine();
@@ -141,16 +135,5 @@ namespace PersistanceMap
         public string ProcedureName { get; private set; }
 
         #endregion
-
-        //#region Add Methods
-
-        //internal void Add(IParameterQueryPart part)
-        //{
-        //    Parameters.Add(part);
-        //    //InternalMap.Add(part);
-        //}
-
-        //#endregion
-
     }
 }

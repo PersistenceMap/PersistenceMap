@@ -81,6 +81,9 @@ namespace PersistanceMap
             {
                 case MapOperationType.From:
                 case MapOperationType.Join:
+                case MapOperationType.LeftJoin:
+                case MapOperationType.RightJoin:
+                case MapOperationType.FullJoin:
                     var entity = map as IEntityQueryPart;
                     entity.EnsureArgumentNotNull("map");
                     Joins.Add(entity);

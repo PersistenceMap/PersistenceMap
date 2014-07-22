@@ -38,9 +38,15 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         #region ICallbackHandlerQueryPart  Implementation
 
-        public string CallbackParameterName { get; protected set; }
+        /// <summary>
+        /// Gets the name of the output parameter
+        /// </summary>
+        public string CallbackName { get; set; }
 
-        public virtual Type CallbackParameterType 
+        /// <summary>
+        /// Gets the type of the output parameter
+        /// </summary>
+        public virtual Type CallbackType
         {
             get
             {
@@ -48,6 +54,9 @@ namespace PersistanceMap.QueryBuilder.Decorators
             }
         }
 
+        /// <summary>
+        /// Gets if the instance containes a registered callback
+        /// </summary>
         public virtual bool CanHandleCallback
         {
             get
@@ -55,14 +64,14 @@ namespace PersistanceMap.QueryBuilder.Decorators
                 return false;
             }
         }
-
-        public virtual string CompileOutParameter(int index)
+        
+        /// <summary>
+        /// Try to handle the callback
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual bool TryHandleCallback(object value)
         {
-            return string.Empty;
-        }
-
-        public virtual void TryHandleCallback(object value)
-        {
+            return false;
         }
 
         #endregion
@@ -101,7 +110,10 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         #region ICallbackHandlerQueryPart  Implementation
 
-        public override Type CallbackParameterType
+        /// <summary>
+        /// Gets the type of the output parameter
+        /// </summary>
+        public override Type CallbackType
         {
             get
             {
@@ -109,6 +121,9 @@ namespace PersistanceMap.QueryBuilder.Decorators
             }
         }
 
+        /// <summary>
+        /// Gets if the instance containes a registered callback
+        /// </summary>
         public override bool CanHandleCallback
         {
             get
@@ -117,42 +132,15 @@ namespace PersistanceMap.QueryBuilder.Decorators
             }
         }
 
-        public override string CompileOutParameter(int index)
+        /// <summary>
+        /// Try to handle the callback
+        /// </summary>
+        /// <param name="value"></param>
+        public override bool TryHandleCallback(object value)
         {
             if (!CanHandleCallback)
-                return string.Empty;
+                return false;
 
-            /* *Using Output compiles to*                
-            declare @p1 datetime
-            set @p1='2012-01-01 00:00:00'
-            exec SalesByYear @Beginning_Date=@p1 output,@Ending_Date='2014-07-15 00:00:00'
-            select @p1                
-            */
-
-            CallbackParameterName = string.Format("p{0}", index);
-
-            var valuePredicate = MapCollection.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
-
-            // get the return value of the expression
-            var value = valuePredicate.Expression.Compile().DynamicInvoke();
-
-            // set the value into the right format
-            value = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
-
-            //
-            // declare @p1 datetime
-            // set @p1='2012-01-01 00:00:00'
-            //
-
-            var sb = new StringBuilder();
-            sb.AppendLine(string.Format("declare @{0} {1}", CallbackParameterName, typeof(T).ToSqlDbType()));
-            sb.AppendLine(string.Format("set @{0}={1}", CallbackParameterName, value ?? base.Compile()));
-
-            return sb.ToString();
-        }
-
-        public override void TryHandleCallback(object value)
-        {
             try
             {
                 Callback((T)value);
@@ -161,14 +149,18 @@ namespace PersistanceMap.QueryBuilder.Decorators
             {
                 Trace.WriteLine(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof (T).Name));
                 Trace.WriteLine(e.Message);
+
+                return false;
             }
+
+            return true;
         }
 
         #endregion
 
         public override string Compile()
         {
-            if (CanHandleCallback && !string.IsNullOrEmpty(CallbackParameterName))
+            if (CanHandleCallback && !string.IsNullOrEmpty(CallbackName))
             {
                 // create output parameter
 
@@ -196,7 +188,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
                     return base.Compile();
                 }
 
-                return string.Format("{0}=@{1} output", name, CallbackParameterName);
+                return string.Format("{0}=@{1} output", name, CallbackName);
             }
 
             // return default

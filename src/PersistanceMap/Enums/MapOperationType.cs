@@ -9,9 +9,13 @@ namespace PersistanceMap
 
         Join,
 
-        InnerJoin,
+        //InnerJoin,
 
-        LeftOuterJoin,
+        LeftJoin,
+
+        RightJoin,
+
+        FullJoin,
 
         /// <summary>
         /// Defines the Operation as a identifier of a table or a storedprocedure parameter
@@ -45,6 +49,8 @@ namespace PersistanceMap
 
         Parameter,
 
-        OutputParameterDefinition,
+        OutParameterPrefix,
+
+        OutParameterSufix
     }
 }
