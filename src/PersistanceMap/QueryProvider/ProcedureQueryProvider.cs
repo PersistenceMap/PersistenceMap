@@ -8,61 +8,6 @@ using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap.QueryProvider
 {
-    //public abstract class ProcedureQueryProviderBase : IQueryProvider
-    //{
-    //    public ProcedureQueryProviderBase(IDatabaseContext context, string procName)
-    //        : this(context, procName, null)
-    //    {
-    //    }
-
-    //    public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-    //    //: base(context, procName, queryPartsMap)
-    //    {
-    //        context.EnsureArgumentNotNull("context");
-    //        procName.EnsureArgumentNotNullOrEmpty("procName");
-
-    //        _context = context;
-    //        ProcedureName = procName;
-
-    //        if (queryPartsMap != null)
-    //            _queryPartsMap = queryPartsMap;
-    //    }
-
-    //    #region IQueryProvider Implementation
-
-    //    public string ProcedureName { get; private set; }
-
-    //    readonly IDatabaseContext _context;
-    //    public IDatabaseContext Context
-    //    {
-    //        get
-    //        {
-    //            return _context;
-    //        }
-    //    }
-
-    //    ProcedureQueryPartsMap _queryPartsMap;
-    //    public ProcedureQueryPartsMap QueryPartsMap
-    //    {
-    //        get
-    //        {
-    //            if (_queryPartsMap == null)
-    //                _queryPartsMap = new ProcedureQueryPartsMap(ProcedureName);
-    //            return _queryPartsMap;
-    //        }
-    //    }
-
-    //    IQueryPartsMap IQueryProvider.QueryPartsMap
-    //    {
-    //        get
-    //        {
-    //            return QueryPartsMap;
-    //        }
-    //    }
-
-    //    #endregion
-    //}
-
     public class ProcedureQueryProvider : /*ProcedureQueryProviderBase,*/ IProcedureQueryProvider, IQueryProvider
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
@@ -71,7 +16,6 @@ namespace PersistanceMap.QueryProvider
         }
 
         public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-            //: base(context, procName, queryPartsMap)
         {
             context.EnsureArgumentNotNull("context");
             procName.EnsureArgumentNotNullOrEmpty("procName");
@@ -115,47 +59,39 @@ namespace PersistanceMap.QueryProvider
             }
         }
 
-        //public void Add(IQueryMap map)
-        //{
-        //    QueryPartsMap.Add(map);
-        //}
-
         #endregion
 
         #region IProcedureExpression Implementation
 
         public IProcedureQueryProvider AddParameter<T2>(Expression<Func<T2>> predicate)
         {
-            QueryPartsMap.Add(Convert(predicate));
+            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(predicate));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
         
         public IProcedureQueryProvider AddParameter(Expression<Func<ParameterMapOption, IQueryMap>> part)
         {
-            QueryPartsMap.Add(Convert(part));
+            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {MapOptionCompiler.Compile(part)}));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureQueryProvider AddParameter<T2>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T2> callback)
+        public IProcedureQueryProvider AddParameter<T>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T> callback)
         {
-            var tmp = Convert<T2>(part);
-            var cb = tmp as ICallbackQueryPart<T2>;
-            if (cb != null)
-                cb.Callback = callback;
+            var cb = QueryPartsFactory.CreateParameterQueryPart<T>(part, callback, QueryPartsMap);
+            QueryPartsMap.Add(cb);
+            if (cb.CanHandleCallback)
+            {
+                // create output parameters 
+                QueryPartsMap.AddBefore(new ParameterPrefix(MapOperationType.ParameterPrefix), MapOperationType.Parameter);
 
-            QueryPartsMap.Add(tmp);
+                // create value for selecting output parameters
+                QueryPartsMap.AddAfter(new ParameterSufix(MapOperationType.ParameterPrefix), MapOperationType.Parameter);
+            }
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
-
-
-        //public IProcedureQueryProvider<T> Map<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
 
         public void Execute()
         {
@@ -216,48 +152,6 @@ namespace PersistanceMap.QueryProvider
             }
         }
 
-        private IParameterQueryPart Convert<T2>(Expression<Func<T2>> predicate)
-        {
-            return new CallbackParameterQueryPart<T2>(new List<QueryMap> 
-            { 
-                new QueryMap(MapOperationType.Value, predicate) 
-            });
-        }
-
-        private IParameterQueryPart Convert<T>(Expression<Func<ParameterMapOption, IQueryMap>> part)
-        {
-            var list = new List<IQueryMap>();
-            list.Add(MapOptionCompiler.Compile(part));
-
-            return new CallbackParameterQueryPart<T>(list);
-        }
-
-        private IParameterQueryPart Convert(Expression<Func<ParameterMapOption, IQueryMap>> part)
-        {
-            var list = new List<IQueryMap>();
-            list.Add(MapOptionCompiler.Compile(part));
-
-            return new ParameterQueryPart(list);
-        }
-
         #endregion
     }
-
-    //public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryProvider<T>, IQueryProvider
-    //{
-    //    public ProcedureQueryProvider(IDatabaseContext context, string procName)
-    //        : base(context, procName, null)
-    //    {
-    //    }
-
-    //    public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-    //        : base(context, procName, queryPartsMap)
-    //    {
-    //    }
-
-    //    public IEnumerable<T> Execute()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
 }

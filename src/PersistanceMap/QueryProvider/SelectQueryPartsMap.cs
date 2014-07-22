@@ -52,6 +52,29 @@ namespace PersistanceMap
 
         #region Add Methods
 
+        internal void Add(FieldQueryPart field, bool replace)
+        {
+            if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field))
+            {
+                if (!replace)
+                    return;
+
+                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).Identifier == field.Identifier))
+                {
+                    // remove existing field map
+                    Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
+                }
+            }
+
+            Fields.Add(field);
+            //TODO: don't use 2 collections!
+            Parts.Add(field);
+        }
+
+        #endregion
+
+        #region IQueryPartsMap Implementation
+
         public void Add(IQueryPart map)
         {
             switch (map.MapOperationType)
@@ -61,6 +84,10 @@ namespace PersistanceMap
                     var entity = map as IEntityQueryPart;
                     entity.EnsureArgumentNotNull("map");
                     Joins.Add(entity);
+                    
+                    //TODO: don't use 2 collections!
+                    Parts.Add(entity);
+
                     break;
 
                 case MapOperationType.Include:
@@ -91,67 +118,47 @@ namespace PersistanceMap
             }
         }
 
-        internal void Add(FieldQueryPart field, bool replace)
+        public void AddBefore(MapOperationType operation, IQueryPart part)
         {
-            if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field))
-            {
-                if (!replace)
-                    return;
+            var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
+            var index = Parts.IndexOf(first);
+            if (index < 0)
+                index = 0;
 
-                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).Identifier == field.Identifier))
-                {
-                    // remove existing field map
-                    Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
-                }
-            }
-
-            Fields.Add(field);
+            Parts.Insert(index, part);
         }
 
-        //internal void Add<T>(EntityQueryPart<T> entity)
-        //{
-        //    if (Joins.Any(j => j.Entity == entity.Entity && j.Identifier == entity.Identifier))
-        //    {
-        //        var entname = entity.Entity;
-        //        entity.Identifier = string.Format("{0}0", entname);
-                
-        //        int id = 1;
-        //        Joins.Where(j => j.Entity == entity.Entity && j.Identifier == entity.Identifier)
-        //            .ToList()
-        //            .ForEach(e => e.Identifier = string.Format("{0}{1}", entname, id++));
-        //    }
+        public void AddAfter(MapOperationType operation, IQueryPart part)
+        {
+            var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
+            var index = Parts.IndexOf(first) + 1;
+            //if (index > Parts.Count)
+            //    index = 0;
 
-        //    From = entity;
-        //}
+            Parts.Insert(index, part);
+        }
 
-        //internal void Add(IEntityQueryPart join)
-        //{
-        //    if ((From != null && From.Entity == join.Entity && From.Identifier == join.Identifier) || Joins.Any(j => j.Entity == join.Entity && j.Identifier == join.Identifier))
-        //    {
-        //        var entname = join.Entity;
+        IEnumerable<IQueryPart> IQueryPartsMap.Parts
+        {
+            get
+            {
+                return Parts;
+            }
+        }
 
-        //        if (From != null && From.Entity == join.Entity && From.Identifier == join.Identifier)
-        //            From.Identifier = string.Format("{0}0", entname);
-
-        //        int id = 1;
-        //        join.Identifier = string.Format("{0}{1}", entname, id++);
-        //        Joins.Where(j => j.Entity == join.Entity && j.Identifier == join.Identifier)
-        //            .ToList()
-        //            .ForEach(e => e.Identifier = string.Format("{0}{1}", entname, id++));
-        //    }
-
-        //    Joins.Add(join);
-        //}
-
-        #endregion
-
-        #region IQueryPartsMap Implementation
-
+        private IList<IQueryPart> _parts;
+        public IList<IQueryPart> Parts
+        {
+            get
+            {
+                if (_parts == null)
+                    _parts = new List<IQueryPart>();
+                return _parts;
+            }
+        }
+        
         public CompiledQuery Compile()
         {
-            //if (_queryParts == null)
-            //    return null;
-
             var sb = new StringBuilder(100);
             sb.Append("select ");
 

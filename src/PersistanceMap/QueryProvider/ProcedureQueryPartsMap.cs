@@ -17,9 +17,32 @@ namespace PersistanceMap
 
         #region IQueryPartsMap Implementation
 
-        public void Add(IQueryPart map)
+        public void Add(IQueryPart part)
         {
-            throw new System.NotImplementedException();
+            //var tmp = map as IParameterQueryPart;
+            //if (tmp != null)
+            //    Parameters.Add(tmp /*map*/);
+            Parts.Add(part);
+        }
+
+        public void AddBefore(MapOperationType operation, IQueryPart part)
+        {
+            var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
+            var index = Parts.IndexOf(first);
+            if (index < 0)
+                index = 0;
+
+            Parts.Insert(index, part);
+        }
+
+        public void AddAfter(MapOperationType operation, IQueryPart part)
+        {
+            var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
+            var index = Parts.IndexOf(first) + 1;
+            //if (index > Parts.Count)
+            //    index = 0;
+
+            Parts.Insert(index, part);
         }
 
         public CompiledQuery Compile()
@@ -88,25 +111,30 @@ namespace PersistanceMap
 
         #region Properties
 
-        //private IList<IQueryMap> _internalMap;
-        //private IList<IQueryMap> InternalMap
-        //{
-        //    get
-        //    {
-        //        if (_internalMap == null)
-        //            _internalMap = new List<IQueryMap>();
-        //        return _internalMap;
-        //    }
-        //}
-
-        IList<IParameterQueryPart> _parameters;
-        internal IList<IParameterQueryPart> Parameters
+        IEnumerable<IQueryPart> IQueryPartsMap.Parts
         {
             get
             {
-                if (_parameters == null)
-                    _parameters = new List<IParameterQueryPart>();
-                return _parameters;
+                return Parts;
+            }
+        }
+
+        private IList<IQueryPart> _parts;
+        public IList<IQueryPart> Parts
+        {
+            get
+            {
+                if (_parts == null)
+                    _parts = new List<IQueryPart>();
+                return _parts;
+            }
+        }
+
+        internal IEnumerable<IParameterQueryPart> Parameters
+        {
+            get
+            {
+                return Parts.Where(p => p is IParameterQueryPart).Cast<IParameterQueryPart>();
             }
         }
 
@@ -114,14 +142,15 @@ namespace PersistanceMap
 
         #endregion
 
-        #region Add Methods
+        //#region Add Methods
 
-        internal void Add(IParameterQueryPart part)
-        {
-            Parameters.Add(part);
-            //InternalMap.Add(part);
-        }
+        //internal void Add(IParameterQueryPart part)
+        //{
+        //    Parameters.Add(part);
+        //    //InternalMap.Add(part);
+        //}
 
-        #endregion
+        //#endregion
+
     }
 }

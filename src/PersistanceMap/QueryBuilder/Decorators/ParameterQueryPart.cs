@@ -12,7 +12,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, IQueryMapCollection, IQueryPart
     {
-        public ParameterQueryPart(IEnumerable<IQueryMap> mapCollection)
+        public ParameterQueryPart(IQueryMap[] mapCollection)
         {
             // ensure parameter is not null
             mapCollection.EnsureArgumentNotNull("mapCollection");
@@ -69,26 +69,26 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public virtual string Compile()
         {
-            var valuePredicate = MapCollection.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
-            if (valuePredicate != null)
+            var valuePart = MapCollection.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+            if (valuePart != null)
             {
                 // compile the part
-                return valuePredicate.Compile();
+                return valuePart.Compile();
             }
 
             return string.Empty;
         }
     }
 
-    internal class CallbackParameterQueryPart<T> : ParameterQueryPart, ICallbackQueryPart<T>, IParameterQueryPart, ICallbackHandlerQueryPart, /*INamedQueryPart,*/ IQueryMapCollection, IQueryPart
+    internal class CallbackParameterQueryPart<T> : ParameterQueryPart, ICallbackQueryPart<T>, IParameterQueryPart, ICallbackHandlerQueryPart, IQueryMapCollection, IQueryPart
     {
-        public CallbackParameterQueryPart(IEnumerable<IQueryMap> mapOperations)
-            : this(mapOperations, null)
+        public CallbackParameterQueryPart(IQueryMap[] mapCollection)
+            : this(mapCollection, null)
         {
         }
 
-        public CallbackParameterQueryPart(IEnumerable<IQueryMap> mapOperations, Action<T> callback)
-            : base(mapOperations)
+        public CallbackParameterQueryPart(IQueryMap[] mapCollection, Action<T> callback)
+            : base(mapCollection)
         {
             Callback = callback;
         }

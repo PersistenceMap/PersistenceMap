@@ -1,9 +1,11 @@
-﻿using PersistanceMap.Internals;
+﻿using PersistanceMap.Compiler;
+using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder;
 using PersistanceMap.QueryBuilder.Decorators;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using PersistanceMap.QueryProvider;
 
 namespace PersistanceMap
 {
@@ -12,6 +14,8 @@ namespace PersistanceMap
     /// </summary>
     internal static class QueryPartsFactory
     {
+        #region EntityQueryPart
+
         public static EntityQueryPart<T> CreateEntityQueryPart<T>(IQueryPartsMap queryParts, MapOperationType maptype)
         {
             var type = typeof(T);
@@ -74,5 +78,32 @@ namespace PersistanceMap
 
             return entity;
         }
+
+        #endregion
+
+        #region ParameterQueryPart
+
+        public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<T>> predicate)
+        {
+            return CreateParameterQueryPart(new IQueryMap[] {new QueryMap(MapOperationType.Value, predicate)});
+        }
+
+        public static /*ICallbackQueryPart<T>*/IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
+        {
+            return new CallbackParameterQueryPart<T>(new IQueryMap[] {MapOptionCompiler.Compile(part)}, callback)
+            {
+                MapOperationType = MapOperationType.Parameter
+            };
+        }
+
+        public static IParameterQueryPart CreateParameterQueryPart(IQueryMap[] querymap)
+        {
+            return new ParameterQueryPart(querymap)
+            {
+                MapOperationType = MapOperationType.Parameter
+            };
+        }
+
+        #endregion
     }
 }

@@ -41,6 +41,10 @@ namespace PersistanceMap
         /// <summary>
         /// defines the value of a storeprocedure parameter
         /// </summary>
-        Value
+        Value,
+
+        Parameter,
+
+        OutputParameterDefinition,
     }
 }

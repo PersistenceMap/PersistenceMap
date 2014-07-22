@@ -8,7 +8,13 @@ namespace PersistanceMap
     {
         //IEnumerable<IQueryMap> Mappings { get; }
 
-        void Add(IQueryPart map);
+        void Add(IQueryPart part);
+
+        void AddBefore(MapOperationType operation, IQueryPart part);
+
+        void AddAfter(MapOperationType operation, IQueryPart part);
+
+        IEnumerable<IQueryPart> Parts { get; }
 
         CompiledQuery Compile();
     }
