@@ -21,24 +21,9 @@ namespace PersistanceMap
         {
             throw new System.NotImplementedException();
         }
-        //public IEnumerable<IQueryMap> Mappings
-        //{
-        //    get
-        //    {
-        //        return InternalMap;
-        //    }
-        //}
-
-        //public void Add(IQueryMap map)
-        //{
-        //    InternalMap.Add(map);
-        //}
 
         public CompiledQuery Compile()
         {
-            //if (_queryParts == null)
-            //    return null;
-
             /* *Using Output compiles to*                
             declare @p1 datetime
             set @p1='2012-01-01 00:00:00'

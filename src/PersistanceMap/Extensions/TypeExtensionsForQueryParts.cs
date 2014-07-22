@@ -65,7 +65,7 @@ namespace PersistanceMap
         }
 
         [Obsolete("Change from extension method to factory method or helper!", false)]
-        public static EntityQueryPart<TJoin> ToJoinQueryPart<TJoin, T>(this Type type, IQueryPartsMap queryParts, IQueryMap[] parts)
+        public static EntityQueryPart<TJoin> ToJoinQueryPart<TJoin>(this Type type, IQueryPartsMap queryParts, IQueryMap[] parts)
         {
             var operationParts = parts.Where(p => p.MapOperationType == MapOperationType.JoinOn || p.MapOperationType == MapOperationType.AndOn || p.MapOperationType == MapOperationType.OrOn).ToList();
             
@@ -95,7 +95,6 @@ namespace PersistanceMap
             {
                 if (part.MapOperationType == MapOperationType.Include)
                 {
-                    //fromPart.AddOperation(part);
                     var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.Identifier) ? entity.Entity : entity.Identifier, entity.Entity)
                     {
                         MapOperationType = MapOperationType.Include

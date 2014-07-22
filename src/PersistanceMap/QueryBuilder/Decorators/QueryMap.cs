@@ -24,18 +24,37 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public virtual string Compile()
         {
-            var value = LambdaExpressionToSqlCompiler.Instance.Compile(this/*Expression*/);
-            if (value != null)
-                return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+            var value = LambdaExpressionToSqlCompiler.Instance.Compile(this);
+            if (value == null)
+                return null;
 
-            return null;
+            string keyword = string.Empty;
+            switch (MapOperationType)
+            {
+                case MapOperationType.JoinOn:
+                    keyword = "on";
+                    break;
+
+                case MapOperationType.AndOn:
+                    keyword = "and";
+                    break;
+
+                case MapOperationType.OrOn:
+                    keyword = "or";
+                    break;
+
+                case MapOperationType.Value:
+                    // just return the quotated value
+                    keyword = string.Empty;
+                    break;
+            }
+
+
+            if (!string.IsNullOrEmpty(keyword))
+                return string.Format("{0} {1}", keyword, value);
+
+            return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
         }
-
-        //public virtual void Register(IQueryProvider provider)
-        //{
-        //    throw new NotImplementedException();
-        //    //provider.Add(this);
-        //}
 
         internal void AddIdentifier(Type type, string identifier)
         {

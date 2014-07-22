@@ -59,9 +59,8 @@ namespace PersistanceMap.QueryProvider
 
         internal ISelectQueryProvider<T2> From<T2>()
         {
-            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
-            typeof(T2).ToFromQueryPart<T>(QueryPartsMap);
-            //QueryPartsMap.Add();
+            QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, MapOperationType.From);
+            //QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>(QueryPartsMap));
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
@@ -69,8 +68,9 @@ namespace PersistanceMap.QueryProvider
         internal ISelectQueryProvider<T2> From<T2>(params IQueryMap[] parts)
         {
             parts.EnsureArgumentNotNull("part");
-            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
-            var fromPart = typeof(T2).ToFromQueryPart<T>(QueryPartsMap, parts);
+
+            QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, parts, MapOperationType.From);
+            //QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>(QueryPartsMap, parts))
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
@@ -81,18 +81,15 @@ namespace PersistanceMap.QueryProvider
 
         public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
-            var part = typeof(TJoin).ToJoinQueryPart(QueryPartsMap, predicate);
-
-            //QueryPartsMap.Add(part);
+            QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
+            //QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart(predicate));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
-            System.Diagnostics.Debug.Assert(false, "Change from extension method to factory method or helper!");
-            typeof(TJoin).ToJoinQueryPart<TJoin, T>(QueryPartsMap, MapOptionCompiler.Compile(args).ToArray());
+            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, MapOptionCompiler.Compile(args).ToArray(), MapOperationType.Join);
             //QueryPartsMap.Add(typeof(TJoin).ToJoinQueryPart<TJoin, T>(MapOptionCompiler.Compile(args).ToArray()));
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);

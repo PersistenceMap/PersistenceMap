@@ -55,7 +55,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Internals\FieldHelper.cs" />
-    <Compile Include="QueryBuilder\IQueryPartDecorator.cs" />
+    <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
     <Compile Include="QueryProvider\MapOption.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
     <Compile Include="QueryProvider\ProcedureMapOption.cs" />
@@ -69,7 +69,7 @@
     <Compile Include="QueryBuilder\ICallbackQueryPart.cs" />
     <Compile Include="QueryBuilder\IQueryMap.cs" />
     <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
-    <Compile Include="QueryBuilder\IExpressionQueryPart.cs" />
+    <Compile Include="QueryBuilder\IQueryMapCollection.cs" />
     <Compile Include="IQueryProvider.cs" />
     <Compile Include="IProcedureQueryProvider.cs" />
     <Compile Include="IQueryPartsMap.cs" />
@@ -98,7 +98,6 @@
     <Compile Include="QueryBuilder\Decorators\ParameterQueryMap.cs" />
     <Compile Include="QueryBuilder\Decorators\FieldQueryPart.cs" />
     <Compile Include="QueryBuilder\Decorators\EntityQueryPart.cs" />
-    <Compile Include="Extensions\TypeExtensionsForQueryParts.cs" />
     <Compile Include="QueryProvider\SelectQueryPartsMap.cs" />
     <Compile Include="ISelectQueryProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

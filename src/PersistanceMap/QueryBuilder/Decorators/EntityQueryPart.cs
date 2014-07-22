@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class EntityQueryPart<T> : /*SelectQueryPart<T>, ISelectQueryPart*/IEntityQueryPart, IExpressionQueryPart
+    internal class EntityQueryPart<T> : IEntityQueryPart, IQueryMapCollection, IQueryPart
     {
         public EntityQueryPart(string entity)
             : this(entity, null)
@@ -14,45 +14,48 @@ namespace PersistanceMap.QueryBuilder.Decorators
         }
 
         public EntityQueryPart(string entity, string identifier)
-            : this(entity, identifier, new List<IQueryMap>())
+            : this(entity, identifier, new IQueryMap[0])
         {
         }
 
-        public EntityQueryPart(string entity, string identifier, IEnumerable<IQueryMap> mapOperations)//: base(identifier, entity, mapOperations)
+        public EntityQueryPart(string entity, string identifier, IQueryMap[] mapCollection)
         {
             // ensure parameter is not null
-            mapOperations.EnsureArgumentNotNull("mapOperations");
+            mapCollection.EnsureArgumentNotNull("mapCollection");
 
-            Operations = mapOperations.ToList();
+            MapCollection = mapCollection.ToList();
             Identifier = identifier;
             Entity = entity;
         }
 
+        #region IQueryMapCollection Implementation
 
-
-        public MapOperationType MapOperationType { get; set; }
-
-        IEnumerable<IQueryMap> IExpressionQueryPart.Operations
+        IEnumerable<IQueryMap> IQueryMapCollection.MapCollection
         {
             get
             {
-                return Operations;
+                return MapCollection;
             }
         }
 
-        public IList<IQueryMap> Operations { get; private set; }
+        public IList<IQueryMap> MapCollection { get; private set; }
+
+        #endregion
+
+        #region IEntityQueryPart Implementation
 
         public string Entity { get; private set; }
 
         public string Identifier { get; set; }
 
+        #endregion
 
+        #region IQueryPart Implementation
 
-
+        public MapOperationType MapOperationType { get; set; }
 
         public virtual string Compile()
         {
-            var conv = new LambdaExpressionToSqlCompiler<T>();
             var sb = new StringBuilder();
 
             switch (MapOperationType)
@@ -66,36 +69,15 @@ namespace PersistanceMap.QueryBuilder.Decorators
                     break;
             }
 
-
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(Identifier) ? string.Empty : string.Format(" {0}", Identifier)));
 
-            //TODO: call operation.Compile!
-            Operations.ForEach(a =>
-            {
-                System.Diagnostics.Debug.Assert(false, "call operation.Compile!");
-                string keyword = "on";
-                if (Operations.First() != a)
-                {
-                    switch (a.MapOperationType)
-                    {
-                        //case MapOperationType.And:
-                        case MapOperationType.JoinOn:
-                            keyword = "and";
-                            break;
-                        case MapOperationType.OrOn:
-                            keyword = "or";
-                            break;
-                        case MapOperationType.Identifier:
-                        case MapOperationType.Include:
-                            return;
-                    }
-                }
-
-                sb.Append(string.Format(" {0} {1}", keyword, conv.Compile(a).ToString()));
-            });
+            // compile all mappings that belong to the part
+            MapCollection.ForEach(a => sb.Append(a.Compile()));
 
             return sb.ToString();
         }
+
+        #endregion
 
         public override string ToString()
         {
@@ -103,14 +85,6 @@ namespace PersistanceMap.QueryBuilder.Decorators
                 return string.Format("Entity: {0} [{0}]", Entity);
 
             return string.Format("Entity: {0} [{0} {1}]", Entity, Identifier);
-        }
-
-        internal void AddOperation(IQueryMap operation)
-        {
-            if (operation.MapOperationType != MapOperationType.Include)
-                throw new ArgumentException("Only MapOperationType.Include is allowed as operation on a from or join expression", "operation");
-
-            Operations.Add(operation);
         }
     }
 }

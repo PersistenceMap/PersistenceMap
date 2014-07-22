@@ -5,7 +5,7 @@ namespace PersistanceMap.QueryBuilder
         /*ICallbackQueryPart,*/
         ICallbackHandlerQueryPart, 
         /*INamedQueryPart, */
-        IExpressionQueryPart, 
+        IQueryMapCollection, 
         IQueryPart
     {
     }
