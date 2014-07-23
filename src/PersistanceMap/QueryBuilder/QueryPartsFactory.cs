@@ -65,15 +65,16 @@ namespace PersistanceMap
             // set include
             parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
-                //if (part.MapOperationType == MapOperationType.Include)
+                //var field = part as FieldQueryPart;
+                //if (field == null)
                 //{
-                    var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+                    var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
                     {
                         MapOperationType = MapOperationType.Include
                     };
-
-                    queryParts.Add(field);
                 //}
+
+                queryParts.Add(field);
             });
 
             return entity;
@@ -85,12 +86,12 @@ namespace PersistanceMap
 
         public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<T>> predicate)
         {
-            return CreateParameterQueryPart(new IQueryMap[] {new QueryMap(MapOperationType.Value, predicate)});
+            return CreateParameterQueryPart(new IQueryMap[] { new QueryMap(MapOperationType.Value, predicate) });
         }
 
-        public static /*ICallbackQueryPart<T>*/IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
+        public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<ProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
         {
-            return new CallbackParameterQueryPart<T>(new IQueryMap[] {MapOptionCompiler.Compile(part)}, callback)
+            return new CallbackParameterQueryPart<T>(new IQueryMap[] { MapOptionCompiler.Compile(part) }, callback)
             {
                 MapOperationType = MapOperationType.Parameter
             };
@@ -105,5 +106,23 @@ namespace PersistanceMap
         }
 
         #endregion
+
+        //public static void AppendIncludes(IQueryPartsMap queryParts, IQueryMap[] parts)
+        //{
+        //    // set include
+        //    parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
+        //    {
+        //        //var field = part as FieldQueryPart;
+        //        //if (field == null)
+        //        //{
+        //        var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+        //        {
+        //            MapOperationType = MapOperationType.Include
+        //        };
+        //        //}
+
+        //        queryParts.Add(field);
+        //    });
+        //}
     }
 }

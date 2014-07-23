@@ -105,7 +105,7 @@ namespace PersistanceMap
                             var id = last != null ? string.IsNullOrEmpty(last.EntityAlias) ? last.Entity : last.EntityAlias : null;
                             var ent = last != null ? last.Entity : null;
 
-                            field = new FieldQueryPart(FieldHelper.ExtractPropertyName(expr.Expression), id, ent)
+                            field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(expr.Expression), id, ent)
                             {
                                 MapOperationType = MapOperationType.Include
                             };

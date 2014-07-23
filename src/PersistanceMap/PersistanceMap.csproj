@@ -57,7 +57,6 @@
     <Compile Include="Internals\FieldHelper.cs" />
     <Compile Include="QueryBuilder\Decorators\PredicateQueryPart.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
-    <Compile Include="QueryProvider\MapOption.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
     <Compile Include="QueryProvider\ProcedureMapOption.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />

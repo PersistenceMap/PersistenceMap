@@ -72,14 +72,14 @@ namespace PersistanceMap.QueryProvider
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
         
-        public IProcedureQueryProvider AddParameter(Expression<Func<ParameterMapOption, IQueryMap>> part)
+        public IProcedureQueryProvider AddParameter(Expression<Func<ProcedureMapOption, IQueryMap>> part)
         {
             QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {MapOptionCompiler.Compile(part)}));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureQueryProvider AddParameter<T>(Expression<Func<ParameterMapOption, IQueryMap>> part, Action<T> callback)
+        public IProcedureQueryProvider AddParameter<T>(Expression<Func<ProcedureMapOption, IQueryMap>> part, Action<T> callback)
         {
             var cb = QueryPartsFactory.CreateParameterQueryPart<T>(part, callback, QueryPartsMap);
             QueryPartsMap.Add(cb);
@@ -154,9 +154,8 @@ namespace PersistanceMap.QueryProvider
             return values;
         }
 
-        public IEnumerable<T> Execute<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings)
+        public IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryPart>>[] mappings)
         {
-
             throw new NotImplementedException();
         }
 

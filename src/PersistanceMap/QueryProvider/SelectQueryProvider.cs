@@ -129,7 +129,7 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        public IEnumerable<T2> Select<T2>(params Expression<Func<MapOption<T2>, IQueryMap>>[] mappings)
+        public IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryPart>>[] mappings)
         {
             throw new NotImplementedException();
         }

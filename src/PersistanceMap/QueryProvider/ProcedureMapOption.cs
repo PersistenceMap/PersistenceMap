@@ -8,7 +8,7 @@ namespace PersistanceMap.QueryProvider
     /// <summary>
     /// MapOption for procedures
     /// </summary>
-    public class ParameterMapOption
+    public class ProcedureMapOption
     {
         public IQueryMap Value<T>(Expression<Func<T>> predicate)
         {
@@ -22,6 +22,20 @@ namespace PersistanceMap.QueryProvider
                 name = string.Format("@{0}", name);
 
             return new ParameterQueryMap(MapOperationType.Value, name, predicate);
+        }
+    }
+
+    public class ProcedureMapOption<T>
+    {
+        public IQueryMap MapTo<TOut>(string source, Expression<Func<T, TOut>> alias)
+        {
+            throw new NotImplementedException();
+
+            //return new PredicateQueryPart(MapOperationType.Include,
+            //    () =>
+            //    {
+            //        return string.Format("{0} as {1}", source, FieldHelper.ExtractPropertyName(alias));
+            //    });
         }
     }
 }

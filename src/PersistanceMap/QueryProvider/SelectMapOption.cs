@@ -10,17 +10,27 @@ namespace PersistanceMap.QueryProvider
     /// MapOption for simple select expressions like From{T}
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SelectMapOption<T>
+    public class SelectMapOption<T> //: MapOption<T>
     {
         /// <summary>
         /// Creates a include expression to mark fields of the curent join that have to be included in the select statement
         /// </summary>
         /// <typeparam name="T2"></typeparam>
-        /// <param name="predicate"></param>
+        /// <param name="field"></param>
         /// <returns></returns>
-        public IQueryMap Include<T2>(Expression<Func<T, T2>> predicate)
+        public IQueryMap Include<T2>(Expression<Func<T, T2>> field)
         {
-            return new QueryMap(MapOperationType.Include, predicate);
+            return new QueryMap(MapOperationType.Include, field);
+        }
+
+        public IQueryMap Include<T2>(Expression<Func<T, T2>> alias, string source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryMap Include<T2, T3, T4>(Expression<Func<T, T2>> alias, Expression<Func<T3, T4>> source)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -31,6 +41,30 @@ namespace PersistanceMap.QueryProvider
         public IQueryMap As(Expression<Func<string>> predicate)
         {
             return new QueryMap(MapOperationType.As, predicate);
+        }
+
+
+
+
+        public IQueryMap MapTo<TOut>(Expression<Func<T, TOut>> source, string alias)
+        {
+            throw new NotImplementedException();
+
+            //return new PredicateQueryPart(MapOperationType.Include,
+            //    () =>
+            //    {
+            //        return string.Format("{0} as {1}", source, FieldHelper.ExtractPropertyName(alias));
+            //    });
+        }
+
+        public IQueryMap MapTo<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
+        {
+            throw new NotImplementedException();
+            //return new PredicateQueryPart(MapOperationType.Include,
+            //    () =>
+            //    {
+            //        return string.Format("{0} as {1}", FieldHelper.ExtractPropertyName(source), FieldHelper.ExtractPropertyName(alias));
+            //    });
         }
     }
 
