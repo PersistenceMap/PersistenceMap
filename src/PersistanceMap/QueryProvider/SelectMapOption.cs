@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using PersistanceMap.QueryBuilder.Decorators;
+using PersistanceMap.Internals;
 
 namespace PersistanceMap.QueryProvider
 {
@@ -48,23 +49,32 @@ namespace PersistanceMap.QueryProvider
 
         public IQueryMap MapTo<TOut>(Expression<Func<T, TOut>> source, string alias)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
 
             //return new PredicateQueryPart(MapOperationType.Include,
             //    () =>
             //    {
             //        return string.Format("{0} as {1}", source, FieldHelper.ExtractPropertyName(alias));
             //    });
+
+
+            Expression<Func<string>> value = () => string.Format("{0} as {1}", FieldHelper.TryExtractPropertyName(source), alias);
+
+            return new QueryMap(MapOperationType.Include, value);
         }
 
         public IQueryMap MapTo<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //return new PredicateQueryPart(MapOperationType.Include,
             //    () =>
             //    {
             //        return string.Format("{0} as {1}", FieldHelper.ExtractPropertyName(source), FieldHelper.ExtractPropertyName(alias));
             //    });
+
+            Expression<Func<string>> value = () => string.Format("{0} as {1}", FieldHelper.TryExtractPropertyName(source), FieldHelper.TryExtractPropertyName(alias));
+
+            return new QueryMap(MapOperationType.Include, value);
         }
     }
 

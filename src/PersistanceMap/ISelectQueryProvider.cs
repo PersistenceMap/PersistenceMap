@@ -24,7 +24,7 @@ namespace PersistanceMap
 
         IEnumerable<T> Select();
 
-        IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryPart>>[] mappings);
+        IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryMap>>[] mappings);
 
         //IEnumerable<T> Select(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings);
 

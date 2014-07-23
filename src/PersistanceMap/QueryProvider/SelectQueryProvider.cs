@@ -129,9 +129,24 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        public IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryPart>>[] mappings)
+        public IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryMap>>[] mappings)
         {
-            throw new NotImplementedException();
+            var parts = MapOptionCompiler.Compile(mappings);
+
+            parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
+            {
+                //var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+                var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), null, null)
+                {
+                    MapOperationType = MapOperationType.Include
+                };
+
+                QueryPartsMap.Add(field);
+            });
+
+
+
+            return Select<T2>();
         }
 
 
