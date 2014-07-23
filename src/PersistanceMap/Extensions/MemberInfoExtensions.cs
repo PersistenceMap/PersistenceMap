@@ -6,9 +6,9 @@ namespace PersistanceMap
 {
     internal static class MemberInfoExtensions
     {
-        public static FieldQueryPart ToFieldQueryPart(this MemberInfo member, string identifier, string entity)
+        public static FieldQueryPart ToFieldQueryPart(this MemberInfo member, string alias, string entity)
         {
-            return new FieldQueryPart(member.Name, identifier, entity);
+            return new FieldQueryPart(member.Name, alias, entity);
         }
 
         //public static FieldQueryPart ToFieldQueryPart(this MemberInfo member, string entity)

@@ -30,7 +30,7 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var products = context.From<Products>(opt => opt.Identifier(() => "prod")).Select<Products>();
+                var products = context.From<Products>(opt => opt.As(() => "prod")).Select<Products>();
 
                 /* *Expected Query*
                  select prod.ProductID, prod.ProductName, prod.SupplierID, prod.CategoryID, prod.QuantityPerUnit, prod.UnitPrice, prod.UnitsInStock, prod.UnitsOnOrder, prod.ReorderLevel, prod.Discontinued 
@@ -49,10 +49,10 @@ namespace PersistanceMap.Test.Integration
             {
                 // join using identifiers in the on expression
                 var orders = context.From<Orders>(
-                        opt => opt.Identifier(() => "orders"), 
+                        opt => opt.As(() => "orders"), 
                         opt => opt.Include(o => o.OrderID))
                     .Join<OrderDetails>(
-                        opt => opt.Identifier(() => "detail"), 
+                        opt => opt.As(() => "detail"), 
                         opt => opt.On("orders", (det, order) => det.OrderID == order.OrderID))
                     .Select<OrderDetails>();
 
@@ -101,7 +101,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // multiple joins using On<T> with include and include-operation in from expression with identifier
                 var orders = context
-                    .From<Orders>(opt => opt.Include(p => p.OrderID), opt => opt.Identifier(() => "ord"))
+                    .From<Orders>(opt => opt.Include(p => p.OrderID), opt => opt.As(() => "ord"))
                     .Join<OrderDetails>(opt => opt.On("ord", (det, order) => det.OrderID == order.OrderID))
                     .Join<Products>(
                         opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID),

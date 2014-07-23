@@ -5,6 +5,6 @@ namespace PersistanceMap.QueryBuilder
     {
         string Entity { get; }
 
-        string Identifier { get; set; }
+        string EntityAlias { get; set; }
     }
 }

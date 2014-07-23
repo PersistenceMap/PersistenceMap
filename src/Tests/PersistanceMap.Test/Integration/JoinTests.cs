@@ -60,7 +60,7 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.Identifier(() => "detail"), opt => opt.On((det, order) => det.OrderID == order.OrderID)).Select<OrderWithDetail>();
+                var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.As(() => "detail"), opt => opt.On((det, order) => det.OrderID == order.OrderID)).Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -75,9 +75,9 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var orders = context.From<Orders>(
-                        opt => opt.Identifier(() => "orders"))
+                        opt => opt.As(() => "orders"))
                     .Join<OrderDetails>(
-                        opt => opt.Identifier(() => "detail"), 
+                        opt => opt.As(() => "detail"), 
                         opt => opt.On("orders", (detail, order) => detail.OrderID == order.OrderID))
                     .Select<OrderWithDetail>();
 

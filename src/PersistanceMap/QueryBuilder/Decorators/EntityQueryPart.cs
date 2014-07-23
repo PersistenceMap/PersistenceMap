@@ -13,18 +13,18 @@ namespace PersistanceMap.QueryBuilder.Decorators
         {
         }
 
-        public EntityQueryPart(string entity, string identifier)
-            : this(entity, identifier, new IQueryMap[0])
+        public EntityQueryPart(string entity, string alias)
+            : this(entity, alias, new IQueryMap[0])
         {
         }
 
-        public EntityQueryPart(string entity, string identifier, IQueryMap[] mapCollection)
+        public EntityQueryPart(string entity, string alias, IQueryMap[] mapCollection)
         {
             // ensure parameter is not null
             mapCollection.EnsureArgumentNotNull("mapCollection");
 
             MapCollection = mapCollection.ToList();
-            Identifier = identifier;
+            EntityAlias = alias;
             Entity = entity;
         }
 
@@ -46,7 +46,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public string Entity { get; private set; }
 
-        public string Identifier { get; set; }
+        public string EntityAlias { get; set; }
 
         #endregion
 
@@ -85,7 +85,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
                     break;
             }
 
-            sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(Identifier) ? string.Empty : string.Format(" {0}", Identifier)));
+            sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(EntityAlias) ? string.Empty : string.Format(" {0}", EntityAlias)));
 
             // compile all mappings that belong to the part (on, and, or...)
             MapCollection.ForEach(a => sb.Append(a.Compile()));
@@ -97,10 +97,10 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(Identifier))
+            if (string.IsNullOrEmpty(EntityAlias))
                 return string.Format("Entity: {0} [{0}]", Entity);
 
-            return string.Format("Entity: {0} [{0} {1}]", Entity, Identifier);
+            return string.Format("Entity: {0} [{0} {1}]", Entity, EntityAlias);
         }
     }
 }

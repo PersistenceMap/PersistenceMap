@@ -20,7 +20,7 @@ namespace PersistanceMap.Compiler
 
         //TODO: useFieldName has to be set as an option!
         bool _useFieldName = true;
-        private Dictionary<Type, string> _identifierMap;
+        private Dictionary<Type, string> _aliasMap;
 
         public bool PrefixFieldWithTableName { get; set; }
 
@@ -39,14 +39,14 @@ namespace PersistanceMap.Compiler
         public LambdaExpressionToSqlCompiler()
         {
             PrefixFieldWithTableName = true;
-            _identifierMap = new Dictionary<Type, string>();
+            _aliasMap = new Dictionary<Type, string>();
         }
 
         #region Compilers
 
         internal virtual object Compile(IQueryMap part)
         {
-            _identifierMap = part.IdentifierMap;
+            _aliasMap = part.AliasMap;
 
             return Compile(part.Expression);
         }
@@ -604,7 +604,7 @@ namespace PersistanceMap.Compiler
                 var fieldName = fd != null ? fd.FieldName : memberName;
 
                 var id = string.Empty;
-                if (!_identifierMap.TryGetValue(fd.EntityType, out id))
+                if (!_aliasMap.TryGetValue(fd.EntityType, out id))
                 {
                     id = fd.EntityName;
                 }

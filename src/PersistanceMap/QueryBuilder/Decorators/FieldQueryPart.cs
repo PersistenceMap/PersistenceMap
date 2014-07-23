@@ -3,14 +3,14 @@ namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class FieldQueryPart : IEntityQueryPart, IQueryPart
     {
-        public FieldQueryPart(string field, string identifier)
-            : this(field, identifier, null)
+        public FieldQueryPart(string field, string entityalias)
+            : this(field, entityalias, null)
         {
         }
 
-        public FieldQueryPart(string field, string identifier, string entity)
+        public FieldQueryPart(string field, string entityalias, string entity)
         {
-            Identifier = identifier;
+            EntityAlias = entityalias;
             Field = field;
             Entity = entity;
         }
@@ -19,21 +19,21 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         public string Entity { get; private set; }
 
-        public string Identifier { get; set; }
+        public string EntityAlias { get; set; }
 
         public string Field { get; private set; }
 
         public string Compile()
         {
-            if (string.IsNullOrEmpty(Identifier))
+            if (string.IsNullOrEmpty(EntityAlias))
                 return Field;
 
-            return string.Format("{0}.{1}", Identifier ?? Entity, Field);
+            return string.Format("{0}.{1}", EntityAlias ?? Entity, Field);
         }
 
         public override string ToString()
         {
-            return string.Format("Entity: {0} Field: {1} [{1}.{2}]", Entity, Identifier ?? Entity, Field);
+            return string.Format("Entity: {0} Field: {1} [{1}.{2}]", Entity, EntityAlias ?? Entity, Field);
         }
     }
 }

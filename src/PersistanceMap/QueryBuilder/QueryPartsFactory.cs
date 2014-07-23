@@ -48,16 +48,16 @@ namespace PersistanceMap
 
             queryParts.Add(entity);
 
-            // first set identifier
-            var id = parts.Where(p => p.MapOperationType == MapOperationType.Identifier).Reverse().FirstOrDefault();
+            // first set alias
+            var id = parts.Where(p => p.MapOperationType == MapOperationType.As).Reverse().FirstOrDefault();
             if (id != null)
             {
-                entity.Identifier = id.Expression.Compile().DynamicInvoke() as string;
-                if (!string.IsNullOrEmpty(entity.Identifier))
+                entity.EntityAlias = id.Expression.Compile().DynamicInvoke() as string;
+                if (!string.IsNullOrEmpty(entity.EntityAlias))
                 {
                     foreach (var part in entity.MapCollection)
                     {
-                        part.IdentifierMap.Add(typeof(T), entity.Identifier);
+                        part.AliasMap.Add(typeof(T), entity.EntityAlias);
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace PersistanceMap
             {
                 //if (part.MapOperationType == MapOperationType.Include)
                 //{
-                    var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.Identifier) ? entity.Entity : entity.Identifier, entity.Entity)
+                    var field = new FieldQueryPart(FieldHelper.ExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
                     {
                         MapOperationType = MapOperationType.Include
                     };

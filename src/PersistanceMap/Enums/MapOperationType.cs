@@ -18,9 +18,9 @@ namespace PersistanceMap
         FullJoin,
 
         /// <summary>
-        /// Defines the Operation as a identifier of a table or a storedprocedure parameter
+        /// Defines the Operation as an alias of a table, a field or a storedprocedure parameter
         /// </summary>
-        Identifier,
+        As,
 
         /// <summary>
         /// Defines the operation that the field is included in the resultset

@@ -13,14 +13,17 @@ namespace PersistanceMap.QueryBuilder.Decorators
             MapOperationType = operationtype;
             Expression = expression;
 
-            IdentifierMap = new Dictionary<Type, string>();
+            AliasMap = new Dictionary<Type, string>();
         }
 
         public MapOperationType MapOperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
 
-        public Dictionary<Type, string> IdentifierMap { get; private set; }
+        /// <summary>
+        /// Defines a mapping for types and the alias that the entity has
+        /// </summary>
+        public Dictionary<Type, string> AliasMap { get; private set; }
 
         public virtual string Compile()
         {
@@ -56,10 +59,10 @@ namespace PersistanceMap.QueryBuilder.Decorators
             return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
         }
 
-        internal void AddIdentifier(Type type, string identifier)
+        internal void AddEntityAlias(Type type, string alias)
         {
-            if (!string.IsNullOrEmpty(identifier))
-                IdentifierMap.Add(type, identifier);
+            if (!string.IsNullOrEmpty(alias))
+                AliasMap.Add(type, alias);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace PersistanceMap
                 if (!replace)
                     return;
 
-                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).Identifier == field.Identifier))
+                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).EntityAlias == field.EntityAlias))
                 {
                     // remove existing field map
                     Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
@@ -102,7 +102,7 @@ namespace PersistanceMap
                         if (expr != null)
                         {
                             var last = Joins.LastOrDefault();
-                            var id = last != null ? string.IsNullOrEmpty(last.Identifier) ? last.Entity : last.Identifier : null;
+                            var id = last != null ? string.IsNullOrEmpty(last.EntityAlias) ? last.Entity : last.EntityAlias : null;
                             var ent = last != null ? last.Entity : null;
 
                             field = new FieldQueryPart(FieldHelper.ExtractPropertyName(expr.Expression), id, ent)

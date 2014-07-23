@@ -10,7 +10,10 @@ namespace PersistanceMap.QueryBuilder
 
         LambdaExpression Expression { get; }
 
-        Dictionary<Type, string> IdentifierMap { get; }
+        /// <summary>
+        /// Defines a mapping for types and the alias that the entity has
+        /// </summary>
+        Dictionary<Type, string> AliasMap { get; }
 
         //void Register(IQueryProvider provider);
     }
