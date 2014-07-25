@@ -49,32 +49,25 @@ namespace PersistanceMap.QueryProvider
 
         public IQueryMap MapTo<TOut>(Expression<Func<T, TOut>> source, string alias)
         {
-            //throw new NotImplementedException();
-
-            //return new PredicateQueryPart(MapOperationType.Include,
-            //    () =>
-            //    {
-            //        return string.Format("{0} as {1}", source, FieldHelper.ExtractPropertyName(alias));
-            //    });
-
-
-            Expression<Func<string>> value = () => string.Format("{0} as {1}", FieldHelper.TryExtractPropertyName(source), alias);
-
-            return new QueryMap(MapOperationType.Include, value);
+            // create a expression that returns the field with a alias
+            var entity = typeof(T).Name;
+            return new FieldQueryPart(FieldHelper.TryExtractPropertyName(source), alias, null /*EntityAlias*/, entity/*, expression*/)
+            {
+                MapOperationType = MapOperationType.Include
+            };
         }
 
         public IQueryMap MapTo<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
-            //throw new NotImplementedException();
-            //return new PredicateQueryPart(MapOperationType.Include,
-            //    () =>
-            //    {
-            //        return string.Format("{0} as {1}", FieldHelper.ExtractPropertyName(source), FieldHelper.ExtractPropertyName(alias));
-            //    });
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
 
-            Expression<Func<string>> value = () => string.Format("{0} as {1}", FieldHelper.TryExtractPropertyName(source), FieldHelper.TryExtractPropertyName(alias));
-
-            return new QueryMap(MapOperationType.Include, value);
+            // create a expression that returns the field with a alias
+            var entity = typeof(T).Name;
+            return new FieldQueryPart(sourceField, aliasField, null /*EntityAlias*/, entity/*, expression*/)
+            {
+                MapOperationType = MapOperationType.Include
+            };
         }
     }
 

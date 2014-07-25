@@ -9,7 +9,7 @@ namespace PersistanceMap
     /// </summary>
     internal static class ObjectExtensionsForMapping
     {
-        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, /*IEnumerable<FieldDefinition> fieldDefs*/FieldDefinition[] fieldDefs, Dictionary<string, int> indexCache)
+        public static T PopulateFromReader<T>(this T objWithProperties, IReaderContext context, FieldDefinition[] fieldDefs, Dictionary<string, int> indexCache)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace PersistanceMap
                     int index;
                     if (indexCache != null)
                     {
-                        if (!indexCache.TryGetValue(fieldDef.Name, out index))
+                        if (!indexCache.TryGetValue(fieldDef.MemberName, out index))
                         {
                             index = context.DataReader.GetColumnIndex(fieldDef.FieldName);
                             //if (index == NotFound)
@@ -26,7 +26,7 @@ namespace PersistanceMap
                             //    index = TryGuessColumnIndex(fieldDef.FieldName, dataReader);
                             //}
 
-                            indexCache.Add(fieldDef.Name, index);
+                            indexCache.Add(fieldDef.MemberName, index);
                         }
                     }
                     else

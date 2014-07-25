@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Compiler;
+using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace PersistanceMap.QueryProvider
         
         public IProcedureQueryProvider AddParameter(Expression<Func<ProcedureMapOption, IQueryMap>> part)
         {
-            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {MapOptionCompiler.Compile(part)}));
+            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {QueryMapCompiler.Compile(part)}));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -154,9 +155,33 @@ namespace PersistanceMap.QueryProvider
             return values;
         }
 
-        public IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryPart>>[] mappings)
+        public IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryMap>>[] mappings)
         {
-            throw new NotImplementedException();
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
+
+            var tmp = QueryMapCompiler.Compile(mappings);
+            foreach( var p in tmp)
+            {
+                var map = p as IFieldQueryMap;
+                if (map == null)
+                    continue;
+
+                var field = fields.FirstOrDefault(f => f.FieldName == map.Field);
+                if (field == null)
+                    continue;
+
+                field.MemberName = map.FieldAlias;
+            }
+
+
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile(QueryPartsMap);
+
+            IEnumerable<T> values = null;
+
+            Context.Execute(query, dr => values = Context.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
+
+            return values;
         }
 
         #endregion

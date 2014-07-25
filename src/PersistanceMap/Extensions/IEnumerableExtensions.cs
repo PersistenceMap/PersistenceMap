@@ -14,6 +14,7 @@ namespace PersistanceMap
                 action(value);
         }
 
+        [DebuggerStepThrough]
         public static T[] ToArray<T>(this IEnumerable<T> enumeration)
         {
             if (enumeration == null)

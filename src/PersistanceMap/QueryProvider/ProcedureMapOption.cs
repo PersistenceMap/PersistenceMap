@@ -1,4 +1,5 @@
-﻿using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.Internals;
+using PersistanceMap.QueryBuilder;
 using System;
 using System.Linq.Expressions;
 using PersistanceMap.QueryBuilder.Decorators;
@@ -29,13 +30,14 @@ namespace PersistanceMap.QueryProvider
     {
         public IQueryMap MapTo<TOut>(string source, Expression<Func<T, TOut>> alias)
         {
-            throw new NotImplementedException();
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
-            //return new PredicateQueryPart(MapOperationType.Include,
-            //    () =>
-            //    {
-            //        return string.Format("{0} as {1}", source, FieldHelper.ExtractPropertyName(alias));
-            //    });
+            // create a new expression that returns the field with a alias
+            var entity = typeof(T).Name;
+            return new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/)
+            {
+                MapOperationType = MapOperationType.Include
+            };
         }
     }
 }

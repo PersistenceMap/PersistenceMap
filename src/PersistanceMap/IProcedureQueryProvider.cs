@@ -21,7 +21,7 @@ namespace PersistanceMap
 
         IEnumerable<T> Execute<T>();
 
-        IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryPart>>[] mappings);
+        IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryMap>>[] mappings);
     }
 
     public interface IProcedureQueryProvider<T>

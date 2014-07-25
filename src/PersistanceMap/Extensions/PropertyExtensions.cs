@@ -56,28 +56,5 @@ namespace PersistanceMap
 
             return Expression.Lambda<PropertySetterDelegate>(setterCall, instance, argument).Compile();
         }
-
-        public static FieldDefinition ToFieldDefinition(this PropertyInfo propertyInfo)
-        {
-            var isNullableType = propertyInfo.PropertyType.IsNullableType();
-
-            var isNullable = !propertyInfo.PropertyType.IsValueType /*&& !propertyInfo.HasAttributeNamed(typeof(RequiredAttribute).Name))*/ || isNullableType;
-
-            var propertyType = isNullableType ? Nullable.GetUnderlyingType(propertyInfo.PropertyType) : propertyInfo.PropertyType;
-
-            //propertyInfo.DeclaringType
-            return new FieldDefinition
-            {
-                FieldName = propertyInfo.Name,
-                Name = propertyInfo.Name/*.ToLower()*/,
-                EntityName = propertyInfo.DeclaringType.Name,
-                FieldType = propertyType,
-                EntityType = propertyInfo.DeclaringType,
-                IsNullable = isNullable,
-                PropertyInfo = propertyInfo,
-                GetValueFunction = propertyInfo.GetPropertyGetter(),
-                SetValueFunction = propertyInfo.GetPropertySetter(),
-            };
-        }
     }
 }

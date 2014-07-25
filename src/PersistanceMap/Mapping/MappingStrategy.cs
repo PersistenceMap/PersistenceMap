@@ -10,18 +10,17 @@ namespace PersistanceMap.Mapping
 {
     public class MappingStrategy
     {
-        public IEnumerable<T> Map<T>(IReaderContext context)
+        public IEnumerable<T> Map<T>(IReaderContext context, FieldDefinition[] fields)
         {
             context.EnsureArgumentNotNull("context");
+            fields.EnsureArgumentNotNull("fields");
 
             var rows = new List<T>();
 
             var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
-            var fields = typeof(T).GetFieldDefinitions().ToArray();
 
             while (context.DataReader.Read())
             {
-                //var row = (T)typeof(T).CreateInstance<T>();
                 var row = InstanceFactory.CreateInstance<T>();
 
                 row.PopulateFromReader(context, fields, indexCache);
@@ -30,6 +29,13 @@ namespace PersistanceMap.Mapping
             }
 
             return rows;
+        }
+
+        public IEnumerable<T> Map<T>(IReaderContext context)
+        {
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToArray();
+
+            return Map<T>(context, fields);
         }
 
         public IEnumerable<Dictionary<string, object>> MapToDictionary(IReaderContext context, ObjectDefinition[] objectDefs)

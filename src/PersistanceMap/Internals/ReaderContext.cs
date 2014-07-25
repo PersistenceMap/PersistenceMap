@@ -30,7 +30,7 @@ namespace PersistanceMap.Internals
             if (HandledDbNullValue(fieldDef, colIndex, instance)) 
                 return;
 
-            var convertedValue = ConvertDatabaseValueToTypeValue(DataReader.GetValue(colIndex), fieldDef.FieldType);
+            var convertedValue = ConvertDatabaseValueToTypeValue(DataReader.GetValue(colIndex), fieldDef.MemberType);
             try
             {
                 fieldDef.SetValueFunction(instance, convertedValue);
@@ -59,7 +59,7 @@ namespace PersistanceMap.Internals
                 }
                 else
                 {
-                    fieldDef.SetValueFunction(instance, fieldDef.FieldType.GetDefaultValue());
+                    fieldDef.SetValueFunction(instance, fieldDef.MemberType.GetDefaultValue());
                 }
 
                 return true;
@@ -75,8 +75,13 @@ namespace PersistanceMap.Internals
             return false;
         }
 
-
-        public virtual object ConvertDatabaseValueToTypeValue(object value, Type type)
+        /// <summary>
+        /// Converts a database value to a .net type
+        /// </summary>
+        /// <param name="value">The value to convert</param>
+        /// <param name="memberType">The type to cast the value to</param>
+        /// <returns>The value as a .net value type</returns>
+        public virtual object ConvertDatabaseValueToTypeValue(object value, Type memberType)
         {
             if (value == null || value is DBNull) 
                 return null;
@@ -87,13 +92,13 @@ namespace PersistanceMap.Internals
             //    value = OrmLiteConfig.StringFilter(strValue);
             //}
 
-            if (value.GetType() == type)
+            if (value.GetType() == memberType)
             {
                 return value;
             }
 
             var strValue = value as string;
-            if (type == typeof(DateTimeOffset))
+            if (memberType == typeof(DateTimeOffset))
             {
                 if (strValue != null)
                 {
@@ -105,9 +110,9 @@ namespace PersistanceMap.Internals
                 }
             }
 
-            if (!type.IsEnum)
+            if (!memberType.IsEnum)
             {
-                var typeCode = type.GetUnderlyingTypeCode();
+                var typeCode = memberType.GetUnderlyingTypeCode();
                 switch (typeCode)
                 {
                     case TypeCode.Int16:
@@ -135,7 +140,7 @@ namespace PersistanceMap.Internals
                         return value is decimal ? value : Convert.ToDecimal(value);
                 }
 
-                if (type == typeof(TimeSpan))
+                if (memberType == typeof(TimeSpan))
                 {
                     return TimeSpan.FromTicks((long)value);
                 }

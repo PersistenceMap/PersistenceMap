@@ -54,16 +54,12 @@ namespace PersistanceMap
 
         internal void Add(FieldQueryPart field, bool replace)
         {
-            if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field))
+            if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field))
             {
                 if (!replace)
                     return;
 
-                if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field && ((FieldQueryPart)f).Entity == field.Entity && ((FieldQueryPart)f).EntityAlias == field.EntityAlias))
-                {
-                    // remove existing field map
-                    Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field));
-                }
+                Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field));
             }
 
             Fields.Add(field);

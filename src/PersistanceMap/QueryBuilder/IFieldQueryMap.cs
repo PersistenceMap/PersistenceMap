@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public interface IQueryPartDecorator : IQueryPart
+    public interface IFieldQueryMap : IEntityQueryPart, IQueryMap, IQueryPart
     {
-        void Add(IQueryPart queryPart);
+        string Field { get; }
+
+        string FieldAlias { get; }
     }
 }

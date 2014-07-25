@@ -3,6 +3,10 @@ using System.Data;
 
 namespace PersistanceMap.QueryBuilder
 {
+    /// <summary>
+    /// Callback implementation had to be placed in two interfaces to prevent the base interface to be generic. 
+    /// This interface is placed into a collection witch doesn't allow generic type refernce because each entry has its own type.
+    /// </summary>
     public interface ICallbackHandlerQueryPart
     {
         /// <summary>
@@ -19,9 +23,7 @@ namespace PersistanceMap.QueryBuilder
         /// Gets if the instance containes a registered callback
         /// </summary>
         bool CanHandleCallback { get; }
-
-        //string CompileOutParameter(int index);
-
+        
         /// <summary>
         /// Try to handle the callback
         /// </summary>

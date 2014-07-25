@@ -16,7 +16,15 @@ namespace PersistanceMap.Internals
             {
                 //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
                 Trace.WriteLine("Property is not a MemberAccessExpression");
-                return propertyExpression.Compile().DynamicInvoke().ToString();//    .Body.ToString();
+                try
+                {
+                    return propertyExpression.Compile().DynamicInvoke().ToString(); //    .Body.ToString();
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e);
+                    return propertyExpression.ToString();
+                }
             }
 
             var propertyInfo = memberExpression.Member as PropertyInfo;

@@ -11,18 +11,18 @@ namespace PersistanceMap.Compiler
     {
         public virtual CompiledQuery Compile<T>(SelectQueryPartsMap queryParts)
         {
-            var from = queryParts.Joins.FirstOrDefault(j => j.MapOperationType == MapOperationType.From);
-            if (from == null)
-            {
-                from = QueryPartsFactory.CreateEntityQueryPart<T>(queryParts, MapOperationType.From);
-            }
+            //var from = queryParts.Joins.FirstOrDefault(j => j.MapOperationType == MapOperationType.From);
+            //if (from == null)
+            //{
+            //    from = QueryPartsFactory.CreateEntityQueryPart<T>(queryParts, MapOperationType.From);
+            //}
 
             // get all members on the type to be composed
             var members = typeof(T).GetSelectionMembers();
 
             // don't set entity alias to prevent fields being set with a default alias of the from expression
             //TODO: should entity also not be set?
-            foreach (var field in members.Select(m => m.ToFieldQueryPart(null, from.Entity)))
+            foreach (var field in members.Select(m => m.ToFieldQueryPart(null, null/*from.Entity*/)))
                 queryParts.Add(field, false);
 
             return queryParts.Compile();

@@ -88,7 +88,7 @@ namespace PersistanceMap.QueryProvider
 
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, MapOptionCompiler.Compile(args).ToArray(), MapOperationType.Join);
+            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(args).ToArray(), MapOperationType.Join);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
@@ -131,15 +131,19 @@ namespace PersistanceMap.QueryProvider
 
         public IEnumerable<T2> Select<T2>(params Expression<Func<SelectMapOption<T2>, IQueryMap>>[] mappings)
         {
-            var parts = MapOptionCompiler.Compile(mappings);
+            var parts = QueryMapCompiler.Compile(mappings);
 
             parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
-                //var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
-                var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), null, null)
+                var field = part as IFieldQueryMap;
+                if (field == null)
                 {
-                    MapOperationType = MapOperationType.Include
-                };
+                    //var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+                    field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), null, null)
+                    {
+                        MapOperationType = MapOperationType.Include
+                    };
+                }
 
                 QueryPartsMap.Add(field);
             });

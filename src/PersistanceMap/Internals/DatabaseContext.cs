@@ -49,9 +49,27 @@ namespace PersistanceMap.Internals
             }
         }
 
+        /// <summary>
+        /// Maps the output from the reader
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext reader)
         {
             return Mapper.Map<T>(reader);
+        }
+
+        /// <summary>
+        /// Maps the output from the reader to the provided fields
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public IEnumerable<T> Map<T>(IReaderContext reader, FieldDefinition[] fields)
+        {
+            return Mapper.Map<T>(reader, fields);
         }
 
         private MappingStrategy _mapper;

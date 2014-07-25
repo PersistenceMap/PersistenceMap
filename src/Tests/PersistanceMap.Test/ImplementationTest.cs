@@ -15,14 +15,7 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                // proc with resultset without parameter names
-                var proc = context.Procedure("SalesByYear")
-                    .AddParameter(() => new DateTime(1970, 1, 1))
-                    .AddParameter(() => DateTime.Today)
-                    //.Map<SalesByYear>(opt => opt.To(s => s.SpecialSubtotal, "test"))
-                    .Execute<SalesByYear>(opt => opt.MapTo("test", alias => alias.SpecialSubtotal));
 
-                Assert.IsTrue(proc.Any());
             }
         }
 
@@ -55,31 +48,9 @@ namespace PersistanceMap.Test
                 //    // map the property from the resultset to the Property in the result type
                 //    .Select<OrderWithDetailExtended>(opt => opt.MapTo("Freight", alias => alias.SpecialFreight));
 
-                
-
-
-                // Map => To in join with string
-                var owd = context.From<Orders>(
-                        // map the property from this join to the Property in the result type
-                        opt => opt.MapTo(source => source.Freight, "SpecialFreight"))
-                    .Join<OrderDetails>(
-                        opt => opt.On((detail, order) => detail.OrderID == order.OrderID), 
-                        opt => opt.Include(i => i.OrderID))
-                    .Select<OrderWithDetailExtended>();
-
-                // Map => To in join with predicate
-                owd = context.From<Orders>(
-                        // map the property from this join to the Property in the result type
-                        opt => opt.MapTo<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight))
-                    .Join<OrderDetails>(
-                        opt => opt.On((detail, order) => detail.OrderID == order.OrderID),
-                        opt => opt.Include(i => i.OrderID))
-                    .Select<OrderWithDetailExtended>();
-
-
 
                 // Map => To => THIS IS WRONG!!!!! source and alias need to be mapped the other way round
-                owd = context.From<Orders>()
+                var owd = context.From<Orders>()
                     .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
                     // map a property from a joni to a property in the result type
                     .Select<OrderWithDetailExtended>(opt => opt.MapTo<Orders, double>(source => source.SpecialFreight, alias => alias.Freight));

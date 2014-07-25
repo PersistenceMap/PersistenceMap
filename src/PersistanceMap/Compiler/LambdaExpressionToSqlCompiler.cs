@@ -1,4 +1,5 @@
-﻿using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.Internals;
+using PersistanceMap.QueryBuilder;
 using PersistanceMap.Sql;
 using System;
 using System.Collections;
@@ -145,7 +146,7 @@ namespace PersistanceMap.Compiler
                     }
                 }
 
-                var fieldDefinitions = modelType.GetFieldDefinitions();//.GetModelDefinition();
+                var fieldDefinitions = modelType.GetFieldDefinitions();
                 if (propertyInfo.PropertyType.IsEnum)
                     return new EnumMemberAccess(GetQuotedColumnName(fieldDefinitions, m.Member.Name), propertyInfo.PropertyType);
 
@@ -600,7 +601,7 @@ namespace PersistanceMap.Compiler
         {
             if (_useFieldName)
             {
-                var fd = tableDef.FirstOrDefault(x => x.Name == memberName);
+                var fd = tableDef.FirstOrDefault(x => x.MemberName == memberName);
                 var fieldName = fd != null ? fd.FieldName : memberName;
 
                 var id = string.Empty;
@@ -757,7 +758,7 @@ namespace PersistanceMap.Compiler
         protected override bool IsFieldName(object quotedExp)
         {
             //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
-            FieldDefinition fd = typeof(T).GetFieldDefinitions().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
+            FieldDefinition fd = TypeDefinitionFactory.GetFieldDefinitions<T>().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
             return (fd != default(FieldDefinition));
         }
 

@@ -65,14 +65,14 @@ namespace PersistanceMap
             // set include
             parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
-                //var field = part as FieldQueryPart;
-                //if (field == null)
-                //{
-                    var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+                var field = part as IFieldQueryMap;
+                if (field == null)
+                {
+                    field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
                     {
                         MapOperationType = MapOperationType.Include
                     };
-                //}
+                }
 
                 queryParts.Add(field);
             });
@@ -91,7 +91,7 @@ namespace PersistanceMap
 
         public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<ProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
         {
-            return new CallbackParameterQueryPart<T>(new IQueryMap[] { MapOptionCompiler.Compile(part) }, callback)
+            return new CallbackParameterQueryPart<T>(new IQueryMap[] { QueryMapCompiler.Compile(part) }, callback)
             {
                 MapOperationType = MapOperationType.Parameter
             };
