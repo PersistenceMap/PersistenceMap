@@ -13,7 +13,7 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>().Join<OrderDetails>((det, order) => det.OrderID == order.OrderID).Select<OrderWithDetail>();
+                var orders = context.From<Orders>().JoinOn<OrderDetails>((det, order) => det.OrderID == order.OrderID).Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));

@@ -79,19 +79,28 @@ namespace PersistanceMap.QueryProvider
 
         #region ISqlExpression<T> Implementation
 
-        public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
-        {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
-
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
-        }
-
         public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args)
         {
             QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(args).ToArray(), MapOperationType.Join);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
+
+        public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>> option)
+        {
+            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(option).ToArray(), MapOperationType.Join);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+        }
+
+        public ISelectQueryProvider<T> JoinOn<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
+        {
+            QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+        }
+
+        
 
 
 

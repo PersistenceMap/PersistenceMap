@@ -38,7 +38,7 @@ namespace PersistanceMap
         {
             return new SelectQueryProvider<T>(context)
                 .From<T>()
-                .Join<TJoin>(predicate);
+                .JoinOn<TJoin>(predicate);
         }
 
         #endregion

@@ -93,6 +93,17 @@ namespace PersistanceMap.QueryProvider
         /// <summary>
         /// Provides an expression to mark the fields that have to be joined together
         /// </summary>
+        /// <typeparam name="T3"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public IQueryMap On<T3>(Expression<Func<T, T3, bool>> predicate)
+        {
+            return new QueryMap(MapOperationType.JoinOn, predicate);
+        }
+
+        /// <summary>
+        /// Provides an expression to mark the fields that have to be joined together
+        /// </summary>
         /// <param name="alias"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
@@ -102,17 +113,6 @@ namespace PersistanceMap.QueryProvider
             part.AddEntityAlias(typeof(T2), alias);
 
             return part;
-        }
-
-        /// <summary>
-        /// Provides an expression to mark the fields that have to be joined together
-        /// </summary>
-        /// <typeparam name="T3"></typeparam>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public IQueryMap On<T3>(Expression<Func<T, T3, bool>> predicate)
-        {
-            return new QueryMap(MapOperationType.JoinOn, predicate);
         }
 
         /// <summary>

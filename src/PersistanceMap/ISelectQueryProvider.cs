@@ -8,9 +8,11 @@ namespace PersistanceMap
 {
     public interface ISelectQueryProvider<T> : IQueryProvider
     {
-        ISelectQueryProvider<T> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
-
         ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>>[] args);
+
+        ISelectQueryProvider<T> Join<TJoin>(Expression<Func<SelectMapOption<TJoin, T>, IQueryMap>> option);
+
+        ISelectQueryProvider<T> JoinOn<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
 
         ISelectQueryProvider<T> Where(Expression<Func<T, bool>> predicate);
 
