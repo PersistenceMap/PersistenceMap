@@ -63,5 +63,28 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.Any());
             }
         }
+
+        [Test]
+        public void SelectWithMapping()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // Map => To 
+                var owd = context.From<Orders>()
+                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
+                    // map a property from a joni to a property in the result type
+                    .Select<OrderWithDetailExtended>(opt => opt.MapTo<Orders, double>(source => source.Freight, alias => alias.SpecialFreight));
+
+                /* *Expected Query*
+                select ..., Orders.Freight as SpecialFreight, ... 
+                from Orders 
+                join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
+                */
+
+                Assert.IsTrue(owd.Any());
+                Assert.IsTrue(owd.First().SpecialFreight > 0);
+            }
+        }
     }
 }

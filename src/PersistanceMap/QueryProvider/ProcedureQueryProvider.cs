@@ -73,14 +73,14 @@ namespace PersistanceMap.QueryProvider
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
         
-        public IProcedureQueryProvider AddParameter(Expression<Func<ProcedureMapOption, IQueryMap>> part)
+        public IProcedureQueryProvider AddParameter(Expression<Func<IProcedureMapOption, IQueryMap>> part)
         {
             QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {QueryMapCompiler.Compile(part)}));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
 
-        public IProcedureQueryProvider AddParameter<T>(Expression<Func<ProcedureMapOption, IQueryMap>> part, Action<T> callback)
+        public IProcedureQueryProvider AddParameter<T>(Expression<Func<IProcedureMapOption, IQueryMap>> part, Action<T> callback)
         {
             var cb = QueryPartsFactory.CreateParameterQueryPart<T>(part, callback, QueryPartsMap);
             QueryPartsMap.Add(cb);
@@ -155,7 +155,7 @@ namespace PersistanceMap.QueryProvider
             return values;
         }
 
-        public IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryMap>>[] mappings)
+        public IEnumerable<T> Execute<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] mappings)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 

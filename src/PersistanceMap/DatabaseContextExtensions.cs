@@ -28,7 +28,7 @@ namespace PersistanceMap
                 .From<T>();
         }
 
-        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<SelectMapOption<T>, IQueryMap>>[] parts)
+        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] parts)
         {
             return new SelectQueryProvider<T>(context)
                 .From<T>(QueryMapCompiler.Compile<T>(parts).ToArray());

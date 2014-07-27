@@ -11,9 +11,9 @@ namespace PersistanceMap
         IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate);
 
         //IProcedureExpression AddParameter(params Expression<Func<ProcedureMapOption, IMapQueryPart>>[] args);
-        IProcedureQueryProvider AddParameter(Expression<Func<ProcedureMapOption, IQueryMap>> arg);
+        IProcedureQueryProvider AddParameter(Expression<Func<IProcedureMapOption, IQueryMap>> arg);
 
-        IProcedureQueryProvider AddParameter<T>(Expression<Func<ProcedureMapOption, IQueryMap>> arg, Action<T> callback);
+        IProcedureQueryProvider AddParameter<T>(Expression<Func<IProcedureMapOption, IQueryMap>> arg, Action<T> callback);
 
         //IProcedureQueryProvider<T> Map<T>(params Expression<Func<MapOption<T>, IQueryMap>>[] mappings);
 
@@ -21,7 +21,7 @@ namespace PersistanceMap
 
         IEnumerable<T> Execute<T>();
 
-        IEnumerable<T> Execute<T>(params Expression<Func<ProcedureMapOption<T>, IQueryMap>>[] mappings);
+        IEnumerable<T> Execute<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] mappings);
     }
 
     public interface IProcedureQueryProvider<T>

@@ -59,8 +59,11 @@
     <Compile Include="QueryBuilder\Decorators\PredicateQueryPart.cs" />
     <Compile Include="QueryBuilder\IFieldQueryMap.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
+    <Compile Include="QueryProvider\MapOptions\IJoinMapOption.cs" />
+    <Compile Include="QueryProvider\MapOptions\IProcedureMapOption.cs" />
+    <Compile Include="QueryProvider\MapOptions\ISelectMapOption.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
-    <Compile Include="QueryProvider\ProcedureMapOption.cs" />
+    <Compile Include="QueryProvider\MapOptions\ProcedureMapOption.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
@@ -83,7 +86,7 @@
     <Compile Include="QueryBuilder\IEntityQueryPart.cs" />
     <Compile Include="Internals\ReaderContext.cs" />
     <Compile Include="Internals\SqlContextReader.cs" />
-    <Compile Include="QueryProvider\SelectMapOption.cs" />
+    <Compile Include="QueryProvider\MapOptions\SelectMapOption.cs" />
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="Compiler\SqlExpressionCompiler.cs" />

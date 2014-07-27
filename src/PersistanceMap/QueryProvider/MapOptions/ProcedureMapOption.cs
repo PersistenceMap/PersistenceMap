@@ -9,7 +9,7 @@ namespace PersistanceMap.QueryProvider
     /// <summary>
     /// MapOption for procedures
     /// </summary>
-    public class ProcedureMapOption
+    internal class ProcedureMapOption : IProcedureMapOption
     {
         public IQueryMap Value<T>(Expression<Func<T>> predicate)
         {
@@ -26,7 +26,7 @@ namespace PersistanceMap.QueryProvider
         }
     }
 
-    public class ProcedureMapOption<T>
+    internal class ProcedureMapOption<T> : IProcedureMapOption<T>
     {
         public IQueryMap MapTo<TOut>(string source, Expression<Func<T, TOut>> alias)
         {

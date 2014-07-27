@@ -11,8 +11,10 @@ namespace PersistanceMap.QueryProvider
     /// MapOption for simple select expressions like From{T}
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SelectMapOption<T> //: MapOption<T>
+    internal class SelectMapOption<T> : IJoinMapOption<T>, ISelectMapOption<T>
     {
+        #region Include
+
         /// <summary>
         /// Creates a include expression to mark fields of the curent join that have to be included in the select statement
         /// </summary>
@@ -34,6 +36,10 @@ namespace PersistanceMap.QueryProvider
             throw new NotImplementedException();
         }
 
+        #endregion
+
+        #region As
+
         /// <summary>
         /// Adds an alias for the entity to the fields of the curent join
         /// </summary>
@@ -44,8 +50,9 @@ namespace PersistanceMap.QueryProvider
             return new QueryMap(MapOperationType.As, predicate);
         }
 
+        #endregion
 
-
+        #region MapTo
 
         public IQueryMap MapTo<TOut>(Expression<Func<T, TOut>> source, string alias)
         {
@@ -69,6 +76,21 @@ namespace PersistanceMap.QueryProvider
                 MapOperationType = MapOperationType.Include
             };
         }
+
+        public IQueryMap MapTo<TAlias, TOut>(Expression<Func<TAlias, TOut>> source, Expression<Func<T, TOut>> alias)
+        {
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
+
+            // create a expression that returns the field with a alias
+            var entity = typeof(TAlias).Name;
+            return new FieldQueryPart(sourceField, aliasField, null /*EntityAlias*/, entity/*, expression*/)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -76,7 +98,7 @@ namespace PersistanceMap.QueryProvider
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    public class SelectMapOption<T, T2> : SelectMapOption<T>
+    internal class SelectMapOption<T, T2> : SelectMapOption<T>, IJoinMapOption<T, T2>, IJoinMapOption<T>
     {
         #region On
 

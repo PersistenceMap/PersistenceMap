@@ -11,14 +11,14 @@ namespace PersistanceMap.Compiler
     /// </summary>
     internal static class QueryMapCompiler
     {
-        public static IQueryMap Compile(Expression<Func<ProcedureMapOption, IQueryMap>> predicate)
+        public static IQueryMap Compile(Expression<Func<IProcedureMapOption, IQueryMap>> predicate)
         {
             var options = new ProcedureMapOption();
 
             return predicate.Compile().Invoke(options);
         }
 
-        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<ProcedureMapOption<T>, IQueryMap>>[] predicates)
+        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] predicates)
         {
             var parts = new List<IQueryMap>();
             var options = new ProcedureMapOption<T>();
@@ -29,7 +29,7 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<SelectMapOption<T>, IQueryMap>>[] predicates)
+        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] predicates)
         {
             var parts = new List<IQueryMap>();
             var options = new SelectMapOption<T>();
@@ -40,7 +40,7 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        public static IEnumerable<IQueryMap> Compile<T, T2>(params Expression<Func<SelectMapOption<T, T2>, IQueryMap>>[] predicates)
+        public static IEnumerable<IQueryMap> Compile<T, T2>(params Expression<Func<IJoinMapOption<T, T2>, IQueryMap>>[] predicates)
         {
             var parts = new List<IQueryMap>();
             var options = new SelectMapOption<T, T2>();
@@ -51,10 +51,15 @@ namespace PersistanceMap.Compiler
             return parts;
         }
 
-        //public static void Register(IQueryProvider provider, IQueryMap[] maps)
-        //{
-        //    foreach (var map in maps)
-        //        map.Register(provider);
-        //}
+        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<ISelectMapOption<T>, IQueryMap>>[] predicates)
+        {
+            var parts = new List<IQueryMap>();
+            var options = new SelectMapOption<T>();
+
+            foreach (var predicate in predicates)
+                parts.Add(predicate.Compile().Invoke(options));
+
+            return parts;
+        }
     }
 }
