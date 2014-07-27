@@ -25,5 +25,19 @@ namespace PersistanceMap.Test.Integration
                     .Select<OrderWithDetailExtended>();
             }
         }
+
+        [Test]
+        public void JoinWithIndexerInMember()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+
+                // product with indexer (this[string])
+                var products = context.From<Products>().Select<ProductsWithIndexer>();
+
+                Assert.IsTrue(products.Any());
+            }
+        }
     }
 }

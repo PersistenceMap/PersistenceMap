@@ -345,5 +345,20 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(proc.First().SpecialSubtotal > 0);
             }
         }
+
+        [Test]
+        public void ProcedureWithResultAndIndexerFieldInMember()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                var products = context.Procedure("GetProducts")
+                    .AddParameter(p => p.Value("minprice", () => 17.50))
+                    .AddParameter(p => p.Value("maxprice", () => 40.50))
+                    .Execute<ProductsWithIndexer>();
+
+                Assert.IsTrue(products.Any());
+            }
+        }
     }
 }

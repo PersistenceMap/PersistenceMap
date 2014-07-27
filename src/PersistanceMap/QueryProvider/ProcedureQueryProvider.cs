@@ -160,7 +160,7 @@ namespace PersistanceMap.QueryProvider
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
             var tmp = QueryMapCompiler.Compile(mappings);
-            foreach( var p in tmp)
+            foreach (var p in tmp.Where(pr => pr.MapOperationType == MapOperationType.Include))
             {
                 var map = p as IFieldQueryMap;
                 if (map == null)

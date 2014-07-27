@@ -47,6 +47,9 @@ GO
 if exists (select * from sysobjects where id = object_id('dbo.TenMostExpensiveProducts') and sysstat & 0xf = 4)
 	drop procedure "dbo"."TenMostExpensiveProducts"
 GO
+if exists (select * from sysobjects where id = object_id('dbo.GetProducts') and sysstat & 0xf = 4)
+	drop procedure dbo.GetProducts
+GO
 if exists (select * from sysobjects where id = object_id('dbo.CategorySalesFor1997') and sysstat & 0xf = 2)
 	drop view "dbo"."CategorySalesFor1997"
 GO
@@ -509,6 +512,14 @@ SELECT Products.ProductName AS TenMostExpensiveProducts, Products.UnitPrice
 FROM Products
 ORDER BY Products.UnitPrice DESC
 GO
+
+create procedure GetProducts
+@minprice decimal(5,2),
+@maxprice decimal(5,2)
+as
+select * from Products
+where UnitPrice >= @minprice and UnitPrice <= @maxprice
+go
 
 create procedure "EmployeeSalesByCountry" 
 @Beginning_Date DateTime, @Ending_Date DateTime AS

@@ -75,6 +75,9 @@ namespace PersistanceMap.Internals
 
             var propertyType = isNullableType ? Nullable.GetUnderlyingType(propertyInfo.PropertyType) : propertyInfo.PropertyType;
 
+            var getter = propertyInfo.GetPropertyGetter();
+            var setter = propertyInfo.GetPropertySetter();
+
             return new FieldDefinition
             {
                 FieldName = propertyInfo.Name,

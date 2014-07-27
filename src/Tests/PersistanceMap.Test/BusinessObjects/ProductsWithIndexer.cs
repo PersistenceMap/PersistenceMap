@@ -1,8 +1,19 @@
 ﻿
 namespace PersistanceMap.Test.BusinessObjects
 {
-    public class Products
+    public class ProductsWithIndexer
     {
+        public string this[string id]
+        {
+            get
+            {
+                return "";
+            }
+            set
+            {
+            }
+        }
+
         public int ProductID { get; set; }
 
         public string ProductName { get; set; }

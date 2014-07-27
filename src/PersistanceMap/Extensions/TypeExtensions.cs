@@ -36,7 +36,7 @@ namespace PersistanceMap
         /// <returns></returns>
         public static IEnumerable<PropertyInfo> GetSelectionMembers(this Type type)
         {
-            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).Where(p => !Attribute.IsDefined(p, typeof(IgnoreAttribute)));
+            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).Where(p => !Attribute.IsDefined(p, typeof(IgnoreAttribute)) && p.GetIndexParameters().Length == 0);
         }
 
         /// <summary>
