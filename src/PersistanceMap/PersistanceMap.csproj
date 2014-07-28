@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\IgnoreAttribute.cs" />
-    <Compile Include="Compiler\QueryMapCompiler.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Enums\MapOperationType.cs" />
@@ -59,8 +58,6 @@
     <Compile Include="QueryBuilder\Decorators\PredicateQueryPart.cs" />
     <Compile Include="QueryBuilder\IFieldQueryMap.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
-    <Compile Include="QueryProvider\MapOptions\IJoinMapOption.cs" />
-    <Compile Include="QueryProvider\MapOptions\ISelectMapOption.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
@@ -84,7 +81,6 @@
     <Compile Include="QueryBuilder\IEntityQueryPart.cs" />
     <Compile Include="Internals\ReaderContext.cs" />
     <Compile Include="Internals\SqlContextReader.cs" />
-    <Compile Include="QueryProvider\MapOptions\SelectMapOption.cs" />
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="Compiler\SqlExpressionCompiler.cs" />
@@ -118,6 +114,9 @@
     <None Include="..\PersistanceMap.snk">
       <Link>Properties\PersistanceMap.snk</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="QueryProvider\MapOptions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

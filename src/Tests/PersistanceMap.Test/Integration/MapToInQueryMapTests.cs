@@ -18,12 +18,11 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // Map => To in join with string
-                var owd = context.From<Orders>(
+                var owd = context.From<Orders>()
                     // map the property from this join to the Property in the result type
-                        opt => opt.MapTo(source => source.Freight, "SpecialFreight"))
-                    .Join<OrderDetails>(
-                        opt => opt.On((detail, order) => detail.OrderID == order.OrderID),
-                        opt => opt.Include(i => i.OrderID))
+                    .Map(source => source.Freight, "SpecialFreight")
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .Include(i => i.OrderID)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.IsTrue(owd.Any());
@@ -37,12 +36,11 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // Map => To in join with predicate
-                var owd = context.From<Orders>(
+                var owd = context.From<Orders>()
                     // map the property from this join to the Property in the result type
-                        opt => opt.MapTo<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight))
-                    .Join<OrderDetails>(
-                        opt => opt.On((detail, order) => detail.OrderID == order.OrderID),
-                        opt => opt.Include(i => i.OrderID))
+                    .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .Include(i => i.OrderID)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.IsTrue(owd.Any());

@@ -60,16 +60,29 @@ namespace PersistanceMap.QueryProvider
         internal ISelectQueryProvider<T2> From<T2>()
         {
             QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, MapOperationType.From);
-            //QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>(QueryPartsMap));
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
 
-        internal ISelectQueryProvider<T2> From<T2>(params IQueryMap[] parts)
-        {
-            parts.EnsureArgumentNotNull("part");
+        //internal ISelectQueryProvider<T2> From<T2>(params IQueryMap[] parts)
+        //{
+        //    parts.EnsureArgumentNotNull("part");
 
-            QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, parts, MapOperationType.From);
+        //    QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, parts, MapOperationType.From);
+        //    //QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>(QueryPartsMap, parts))
+
+        //    return new SelectQueryProvider<T2>(Context, QueryPartsMap);
+        //}
+
+        internal ISelectQueryProvider<T2> From<T2>(string alias)
+        {
+            alias.EnsureArgumentNotNullOrEmpty("alias");
+
+            //new QueryMap(MapOperationType.As, predicate)
+
+            var part = QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, MapOperationType.From);
+            part.EntityAlias = alias;
+
             //QueryPartsMap.Add(typeof(T2).ToFromQueryPart<T>(QueryPartsMap, parts))
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
@@ -79,46 +92,85 @@ namespace PersistanceMap.QueryProvider
 
         #region ISqlExpression<T> Implementation
 
-        public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>>[] maps)
-        {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(maps).ToArray(), MapOperationType.Join);
-
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
-        }
-
-        public ISelectQueryProvider<T> Join<TJoin>(Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>> option)
-        {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(option).ToArray(), MapOperationType.Join);
-
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
-        }
-
-        public ISelectQueryProvider<T> JoinOn<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
+        public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
             QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new JoinQueryProvider<TJoin>(Context, QueryPartsMap);
         }
 
-        
-
-
-
-
-        public ISelectQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
+        public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, Expression<Func<TJoin, T, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public ISelectQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate)
+        public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, string source, Expression<Func<TJoin, T, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<IJoinMapOption<T2, T3>, IQueryMap>>[] maps)
+        public IJoinQueryProvider<TJoin> Join<TJoin, T1>(Expression<Func<TJoin, T1, bool>> predicate)
         {
             throw new NotImplementedException();
         }
+
+
+
+
+        public ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
+
+        public IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IWhereQueryProvider<T> Where<T2>(Expression<Func<T, T2, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<IJoinMapOption<T2, T3>, IQueryMap>>[] maps)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
 
 
@@ -138,35 +190,79 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        public IEnumerable<T2> Select<T2>(params Expression<Func<ISelectMapOption<T2>, IQueryMap>>[] maps)
-        {
-            var parts = QueryMapCompiler.Compile(maps);
+        //public IEnumerable<T2> Select<T2>(params Expression<Func<ISelectMapOption<T2>, IQueryMap>>[] maps)
+        //{
+        //    var parts = QueryMapCompiler.Compile(maps);
 
-            parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
-            {
-                var field = part as IFieldQueryMap;
-                if (field == null)
-                {
-                    //var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
-                    field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), null, null)
-                    {
-                        MapOperationType = MapOperationType.Include
-                    };
-                }
+        //    parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
+        //    {
+        //        var field = part as IFieldQueryMap;
+        //        if (field == null)
+        //        {
+        //            //var field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+        //            field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), null, null)
+        //            {
+        //                MapOperationType = MapOperationType.Include
+        //            };
+        //        }
 
-                QueryPartsMap.Add(field);
-            });
+        //        QueryPartsMap.Add(field);
+        //    });
 
-            return Select<T2>();
-        }
-
-
-
+        //    return Select<T2>();
+        //}
 
         public T2 Single<T2>()
         {
             throw new NotImplementedException();
         }
+
+
+
+
+        /// <summary>
+        /// Compiles the Query to a sql statement
+        /// </summary>
+        /// <returns>The sql string</returns>
+        public string CompileQuery()
+        {
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(QueryPartsMap);
+
+            return query.QueryString;
+        }
+
+        #endregion
+    }
+
+    internal class JoinQueryProvider<T> : SelectQueryProvider<T>, IJoinQueryProvider<T>
+    {
+        public JoinQueryProvider(IDatabaseContext context, SelectQueryPartsMap container)
+            : base(context, container)
+        {
+        }
+
+        #region IJoinQueryProvider Implementation
+
+        public IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public IJoinQueryProvider<TJoin> Include<TJoin, T>(Expression<Func<TJoin, T>> predicate)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public IJoinQueryProvider<T> Map<TMap>(Expression<Func<T, TMap, bool>> predicate)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         #endregion
     }

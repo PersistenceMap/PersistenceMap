@@ -28,17 +28,23 @@ namespace PersistanceMap
                 .From<T>();
         }
 
-        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] parts)
+        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, string alias)
         {
             return new SelectQueryProvider<T>(context)
-                .From<T>(QueryMapCompiler.Compile<T>(parts).ToArray());
+                .From<T>(alias);
         }
 
-        public static ISelectQueryProvider<T> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
+        //public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] parts)
+        //{
+        //    return new SelectQueryProvider<T>(context)
+        //        .From<T>(QueryMapCompiler.Compile<T>(parts).ToArray());
+        //}
+
+        public static ISelectQueryProvider<TJoin> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
         {
-            return new SelectQueryProvider<T>(context)
+            return new SelectQueryProvider<TJoin>(context)
                 .From<T>()
-                .JoinOn<TJoin>(predicate);
+                .Join<TJoin>(predicate);
         }
 
         #endregion

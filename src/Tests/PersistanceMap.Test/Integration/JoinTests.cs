@@ -13,7 +13,9 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>().JoinOn<OrderDetails>((det, order) => det.OrderID == order.OrderID).Select<OrderWithDetail>();
+                var orders = context.From<Orders>()
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -27,7 +29,8 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders, OrderDetails>((det, order) => det.OrderID == order.OrderID).Select<OrderWithDetail>();
+                var orders = context.From<Orders, OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Select<OrderWithDetail>();
                 /* *Expected Query*
                 select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount 
                 from Orders 
@@ -46,7 +49,9 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID)).Select<OrderWithDetail>();
+                var orders = context.From<Orders>()
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -60,7 +65,9 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>().Join<OrderDetails>(opt => opt.As(() => "detail"), opt => opt.On((det, order) => det.OrderID == order.OrderID)).Select<OrderWithDetail>();
+                var orders = context.From<Orders>()
+                    .Join<OrderDetails>("detail", (det, order) => det.OrderID == order.OrderID)
+                    .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -74,11 +81,8 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>(
-                        opt => opt.As(() => "orders"))
-                    .Join<OrderDetails>(
-                        opt => opt.As(() => "detail"), 
-                        opt => opt.On("orders", (detail, order) => detail.OrderID == order.OrderID))
+                var orders = context.From<Orders>("orders")
+                    .Join<OrderDetails>("detail", "orders", (detail, order) => detail.OrderID == order.OrderID)
                     .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
@@ -95,7 +99,8 @@ namespace PersistanceMap.Test.Integration
             {
                 //TODO: Or allways returns false! create connection that realy works!
                 var orders = context.From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.Or((detail, order) => false))
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .Or<Orders>((detail, order) => false)
                     .Select<OrderWithDetail>();
 
                 //TODO: Or allways returns false! create connection that realy works!
@@ -115,7 +120,8 @@ namespace PersistanceMap.Test.Integration
             {
                 //TODO: And allways returns false! create connection that realy works!
                 var orders = context.From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((detail, order) => detail.OrderID == order.OrderID), opt => opt.And((detail, order) => false))
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .And<Orders>((detail, order) => false)
                     .Select<OrderWithDetail>();
 
                 //TODO: And allways returns false! create connection that realy works!
@@ -136,7 +142,8 @@ namespace PersistanceMap.Test.Integration
                 // join using include
                 var orders = context
                     .From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID), opt => opt.Include(i => i.OrderID))
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Include(i => i.OrderID)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
@@ -160,11 +167,10 @@ namespace PersistanceMap.Test.Integration
                 // multiple joins using On<T> with include
                 var orders = context
                     .From<Orders>()
-                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID))
-                    .Join<Products>(
-                        opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID),
-                        opt => opt.Include(p => p.ProductID),
-                        opt => opt.Include(p => p.UnitPrice))
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Join<Products>((product, det) => product.ProductID == det.ProductID)
+                    .Include(p => p.ProductID)
+                    .Include(p => p.UnitPrice)
                     .Select<OrderWithDetail>();
 
                 /* *Expected Query*

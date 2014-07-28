@@ -13,12 +13,15 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var prsAbt = context.From<Products>().Select<Products>();
+                var query = context.From<Products>();
 
                 /* *Expected Query*
                 select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued 
                 from Products 
                 */
+                Assert.AreEqual(query.CompileQuery().Flatten(), "select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products ");
+
+                var prsAbt = query.Select<Products>();               
 
                 Assert.IsTrue(prsAbt.Any());
             }
@@ -30,12 +33,15 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var products = context.From<Products>(opt => opt.As(() => "prod")).Select<Products>();
+                var query = context.From<Products>("prod");
 
                 /* *Expected Query*
                  select prod.ProductID, prod.ProductName, prod.SupplierID, prod.CategoryID, prod.QuantityPerUnit, prod.UnitPrice, prod.UnitsInStock, prod.UnitsOnOrder, prod.ReorderLevel, prod.Discontinued 
                  from Products prod 
                 */
+                Assert.AreSame(query.CompileQuery().Flatten(), "select prod.ProductID, prod.ProductName, prod.SupplierID, prod.CategoryID, prod.QuantityPerUnit, prod.UnitPrice, prod.UnitsInStock, prod.UnitsOnOrder, prod.ReorderLevel, prod.Discontinued from Products prod ");
+
+                var products = query.Select<Products>();
 
                 Assert.IsTrue(products.Any());
             }
@@ -48,12 +54,9 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 // join using identifiers in the on expression
-                var orders = context.From<Orders>(
-                        opt => opt.As(() => "orders"), 
-                        opt => opt.Include(o => o.OrderID))
-                    .Join<OrderDetails>(
-                        opt => opt.As(() => "detail"), 
-                        opt => opt.On("orders", (det, order) => det.OrderID == order.OrderID))
+                var orders = context.From<Orders>("orders")
+                    .Include(o => o.OrderID)
+                    .Join<OrderDetails>("detail", "orders", (det, order) => det.OrderID == order.OrderID)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
@@ -74,12 +77,12 @@ namespace PersistanceMap.Test.Integration
             {
                 // multiple joins using On<T> with include and includeoperation in from expression
                 var orders = context
-                    .From<Orders>(opt => opt.Include(p => p.OrderID))
-                    .Join<OrderDetails>(opt => opt.On((det, order) => det.OrderID == order.OrderID))
-                    .Join<Products>(
-                        opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID),
-                        opt => opt.Include(p => p.ProductID),
-                        opt => opt.Include(p => p.UnitPrice))
+                    .From<Orders>()
+                    .Include(p => p.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Join<Products>((product, det) => product.ProductID == det.ProductID)
+                    .Include(p => p.ProductID)
+                    .Include(p => p.UnitPrice)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
@@ -101,12 +104,12 @@ namespace PersistanceMap.Test.Integration
             {
                 // multiple joins using On<T> with include and include-operation in from expression with identifier
                 var orders = context
-                    .From<Orders>(opt => opt.Include(p => p.OrderID), opt => opt.As(() => "ord"))
-                    .Join<OrderDetails>(opt => opt.On("ord", (det, order) => det.OrderID == order.OrderID))
-                    .Join<Products>(
-                        opt => opt.On<OrderDetails>((product, det) => product.ProductID == det.ProductID),
-                        opt => opt.Include(p => p.ProductID),
-                        opt => opt.Include(p => p.UnitPrice))
+                    .From<Orders>()
+                    .Include(p => p.OrderID, "ord")
+                    .Join<OrderDetails>("ord", (det, order) => det.OrderID == order.OrderID)
+                    .Join<Products>((product, det) => product.ProductID == det.ProductID)
+                    .Include(p => p.ProductID)
+                    .Include(p => p.UnitPrice)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
