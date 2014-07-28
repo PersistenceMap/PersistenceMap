@@ -36,8 +36,8 @@ namespace PersistanceMap.Test.Integration
             {
                 // proc with resultset with parameter names
                 var proc = context.Procedure("SalesByYear")
-                    .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter(p => p.Value("EndDate", () => DateTime.Today))
+                    .AddParameter("BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("EndDate", () => DateTime.Today)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
@@ -52,8 +52,8 @@ namespace PersistanceMap.Test.Integration
             {
                 // proc with resultset with parameter names and @ before name
                 var proc = context.Procedure("SalesByYear")
-                    .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter(p => p.Value("@EndDate", () => DateTime.Today))
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
@@ -82,8 +82,8 @@ namespace PersistanceMap.Test.Integration
             {
                 // proc without resultset with parameter names
                 context.Procedure("SalesByYear")
-                    .AddParameter(p => p.Value("BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter(p => p.Value("EndDate", () => DateTime.Today))
+                    .AddParameter("BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("EndDate", () => DateTime.Today)
                     .Execute();
             }
         }
@@ -96,8 +96,8 @@ namespace PersistanceMap.Test.Integration
             {
                 // proc without resultset with parameter names and @ before name
                 context.Procedure("SalesByYear")
-                    .AddParameter(p => p.Value("@BeginDate", () => new DateTime(1970, 1, 1)))
-                    .AddParameter(p => p.Value("@EndDate", () => DateTime.Today))
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
                     .Execute();
             }
         }
@@ -123,9 +123,9 @@ namespace PersistanceMap.Test.Integration
 
                 // proc without resultset with output parameter with names
                 var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
+                    .AddParameter("Date", () => new DateTime(1998, 1, 1))
+                    .AddParameter("outputparam1", () => returnvalue1, r => returnvalue1 = r)
+                    .AddParameter("outputparam2", () => returnvalue2, r => returnvalue2 = r)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
@@ -155,9 +155,9 @@ namespace PersistanceMap.Test.Integration
 
                 // proc without resultset with output parameter with names
                 context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("outputparam1", () => returnvalue1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("outputparam2", () => returnvalue2), r => returnvalue2 = r)
+                    .AddParameter("Date", () => new DateTime(1998, 1, 1))
+                    .AddParameter("outputparam1", () => returnvalue1, r => returnvalue1 = r)
+                    .AddParameter("outputparam2", () => returnvalue2, r => returnvalue2 = r)
                     .Execute();
 
                 Assert.IsTrue(returnvalue1 != 1);
@@ -186,9 +186,9 @@ namespace PersistanceMap.Test.Integration
 
                 // proc without resultset with output parameter with names and @ before name
                 var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
+                    .AddParameter("@Date", () => new DateTime(1998, 1, 1))
+                    .AddParameter("@outputparam1", () => 1, r => returnvalue1 = r)
+                    .AddParameter("@outputparam2", () => returnvalue2, r => returnvalue2 = r)
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
@@ -217,9 +217,9 @@ namespace PersistanceMap.Test.Integration
 
                 // proc without resultset with output parameter with names and @ before name
                 context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value("@outputparam1", () => 1), r => returnvalue1 = r)
-                    .AddParameter<string>(p => p.Value("@outputparam2", () => returnvalue2), r => returnvalue2 = r)
+                    .AddParameter("@Date", () => new DateTime(1998, 1, 1))
+                    .AddParameter("@outputparam1", () => 1, r => returnvalue1 = r)
+                    .AddParameter("@outputparam2", () => returnvalue2, r => returnvalue2 = r)
                     .Execute();
 
                 Assert.IsTrue(returnvalue1 != 1);
@@ -227,110 +227,110 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        [Test]
-        [ExpectedException(typeof(SqlException))]
-        public void ProcedureFailWithResultWithRetval()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                int returnvalue = 1;
-                string returnvalue2 = "tmp";
+        //[Test]
+        //[ExpectedException(typeof(SqlException))]
+        //public void ProcedureFailWithResultWithRetval()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        int returnvalue = 1;
+        //        string returnvalue2 = "tmp";
 
-                // name parameter is not supplied => exception
-                // proc with resultset with output parameter with names
-                var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value(() => 1), r => returnvalue = r)
-                    .AddParameter<string>(p => p.Value(() => returnvalue2), r => returnvalue2 = r)
-                    .Execute<SalesByYear>();
+        //        // name parameter is not supplied => exception
+        //        // proc with resultset with output parameter with names
+        //        var proc = context.Procedure("SalesOfYear")
+        //            .AddParameter("Date", () => new DateTime(1998, 1, 1))
+        //            .AddParameter<int>(() => 1, r => returnvalue = r)
+        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
+        //            .Execute<SalesByYear>();
 
-                /* Expected Result *
-                declare @p1 int
-                set @p1=1
+        //        /* Expected Result *
+        //        declare @p1 int
+        //        set @p1=1
 
-                declare @p2 varchar(max)
-                set @p2='tmp'
+        //        declare @p2 varchar(max)
+        //        set @p2='tmp'
 
-                exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
-                select @p1 as p1,  @p2 as p2
-                */
+        //        exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
+        //        select @p1 as p1,  @p2 as p2
+        //        */
 
-                Assert.IsTrue(proc.Any());
-                Assert.IsTrue(returnvalue == 1);
-            }
-        }
+        //        Assert.IsTrue(proc.Any());
+        //        Assert.IsTrue(returnvalue == 1);
+        //    }
+        //}
 
-        [Test]
-        [ExpectedException(typeof(SqlException))]
-        public void ProcedureFailWithoutResultWithRetvalContainingAt()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                int returnvalue = 1;
-                string returnvalue2 = "tmp";
+        //[Test]
+        //[ExpectedException(typeof(SqlException))]
+        //public void ProcedureFailWithoutResultWithRetvalContainingAt()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        int returnvalue = 1;
+        //        string returnvalue2 = "tmp";
 
-                // name parameter is not supplied => exception
-                // proc without resultset with output parameter with names and @ before name
-                context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value("@Date", () => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value(() => 1), r => returnvalue = r)
-                    .AddParameter<string>(p => p.Value(() => returnvalue2), r => returnvalue2 = r)
-                    .Execute();
+        //        // name parameter is not supplied => exception
+        //        // proc without resultset with output parameter with names and @ before name
+        //        context.Procedure("SalesOfYear")
+        //            .AddParameter("@Date", () => new DateTime(1998, 1, 1))
+        //            .AddParameter<int>(() => 1, r => returnvalue = r)
+        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
+        //            .Execute();
 
-                /* Expected Result *
-                declare @p1 int
-                set @p1=1
+        //        /* Expected Result *
+        //        declare @p1 int
+        //        set @p1=1
 
-                declare @p2 varchar(max)
-                set @p2='tmp'
+        //        declare @p2 varchar(max)
+        //        set @p2='tmp'
 
-                exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
-                select @p1 as p1,  @p2 as p2
-                */
+        //        exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
+        //        select @p1 as p1,  @p2 as p2
+        //        */
 
-                Assert.IsTrue(returnvalue == 1);
-            }
-        }
+        //        Assert.IsTrue(returnvalue == 1);
+        //    }
+        //}
 
-        [Test]
-        public void ProcedureWithResultWithRetvalWithoutParameterNames()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                int returnvalue = 1;
-                string returnvalue2 = "tmp";
+        //[Test]
+        //public void ProcedureWithResultWithRetvalWithoutParameterNames()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        int returnvalue = 1;
+        //        string returnvalue2 = "tmp";
 
-                // name parameter is not supplied => exception
-                // proc with resultset with output parameter with names
-                var proc = context.Procedure("SalesOfYear")
-                    .AddParameter(p => p.Value(() => new DateTime(1998, 1, 1)))
-                    .AddParameter<int>(p => p.Value(() => 1), r => returnvalue = r)
-                    .AddParameter<string>(p => p.Value(() => returnvalue2), r => returnvalue2 = r)
-                    .Execute<SalesByYear>();
+        //        // name parameter is not supplied => exception
+        //        // proc with resultset with output parameter with names
+        //        var proc = context.Procedure("SalesOfYear")
+        //            .AddParameter(() => new DateTime(1998, 1, 1))
+        //            .AddParameter<int>(() => 1, r => returnvalue = r)
+        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
+        //            .Execute<SalesByYear>();
 
-                /* *Using Output compiles to*
+        //        /* *Using Output compiles to*
                 
-                declare @p1 int
-                set @p1=1
-                declare @p2 varchar(max)
-                set @p2='tmp'
-                exec SalesByYear '2012-01-01 00:00:00',1,'tmp'
-                select @p1 as p1, @p2 as p2     
-                */
+        //        declare @p1 int
+        //        set @p1=1
+        //        declare @p2 varchar(max)
+        //        set @p2='tmp'
+        //        exec SalesByYear '2012-01-01 00:00:00',1,'tmp'
+        //        select @p1 as p1, @p2 as p2     
+        //        */
 
-                Assert.IsTrue(proc.Any());
+        //        Assert.IsTrue(proc.Any());
 
-                // values did not change!
-                Assert.IsTrue(returnvalue == 1);
-                Assert.IsTrue(returnvalue2 == "tmp");
-            }
-        }
+        //        // values did not change!
+        //        Assert.IsTrue(returnvalue == 1);
+        //        Assert.IsTrue(returnvalue2 == "tmp");
+        //    }
+        //}
 
         [Test]
-        public void ProcedureWithResultAndFieldMappings()
+        public void ProcedureWithResultAndFieldMappingsWithFor()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -339,7 +339,27 @@ namespace PersistanceMap.Test.Integration
                 var proc = context.Procedure("SalesByYear")
                     .AddParameter(() => new DateTime(1970, 1, 1))
                     .AddParameter(() => DateTime.Today)
-                    .Execute<SalesByYear>(opt => opt.MapTo("Subtotal", alias => alias.SpecialSubtotal));
+                    .For<SalesByYear>()
+                    .Map("Subtotal", alias => alias.SpecialSubtotal)
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+                Assert.IsTrue(proc.First().SpecialSubtotal > 0);
+            }
+        }
+
+        [Test]
+        public void ProcedureWithResultAndFieldMappingsWithoutFor()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // proc with resultset without parameter names
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
+                    .AddParameter(() => DateTime.Today)
+                    .Map<SalesByYear, double>("Subtotal", alias => alias.SpecialSubtotal)
+                    .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
                 Assert.IsTrue(proc.First().SpecialSubtotal > 0);
@@ -353,8 +373,8 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 var products = context.Procedure("GetProducts")
-                    .AddParameter(p => p.Value("minprice", () => 17.50))
-                    .AddParameter(p => p.Value("maxprice", () => 40.50))
+                    .AddParameter("minprice", () => 17.50)
+                    .AddParameter("maxprice", () => 40.50)
                     .Execute<ProductsWithIndexer>();
 
                 Assert.IsTrue(products.Any());

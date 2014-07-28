@@ -89,9 +89,17 @@ namespace PersistanceMap
             return CreateParameterQueryPart(new IQueryMap[] { new QueryMap(MapOperationType.Value, predicate) });
         }
 
-        public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<IProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
+        //public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<IProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
+        //{
+        //    return new CallbackParameterQueryPart<T>(new IQueryMap[] { QueryMapCompiler.Compile(part) }, callback)
+        //    {
+        //        MapOperationType = MapOperationType.Parameter
+        //    };
+        //}
+
+        public static IParameterQueryPart CreateParameterQueryPart<T>(IQueryMap map, Action<T> callback, ProcedureQueryPartsMap queryParts)
         {
-            return new CallbackParameterQueryPart<T>(new IQueryMap[] { QueryMapCompiler.Compile(part) }, callback)
+            return new CallbackParameterQueryPart<T>(new IQueryMap[] { map }, callback)
             {
                 MapOperationType = MapOperationType.Parameter
             };

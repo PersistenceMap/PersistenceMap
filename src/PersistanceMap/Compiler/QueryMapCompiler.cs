@@ -11,23 +11,23 @@ namespace PersistanceMap.Compiler
     /// </summary>
     internal static class QueryMapCompiler
     {
-        public static IQueryMap Compile(Expression<Func<IProcedureMapOption, IQueryMap>> predicate)
-        {
-            var options = new ProcedureMapOption();
+        //public static IQueryMap Compile(Expression<Func<IProcedureMapOption, IQueryMap>> predicate)
+        //{
+        //    var options = new ProcedureMapOption();
 
-            return predicate.Compile().Invoke(options);
-        }
+        //    return predicate.Compile().Invoke(options);
+        //}
 
-        public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] predicates)
-        {
-            var parts = new List<IQueryMap>();
-            var options = new ProcedureMapOption<T>();
+        //public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] predicates)
+        //{
+        //    var parts = new List<IQueryMap>();
+        //    var options = new ProcedureMapOption<T>();
 
-            foreach (var predicate in predicates)
-                parts.Add(predicate.Compile().Invoke(options));
+        //    foreach (var predicate in predicates)
+        //        parts.Add(predicate.Compile().Invoke(options));
 
-            return parts;
-        }
+        //    return parts;
+        //}
 
         public static IEnumerable<IQueryMap> Compile<T>(params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] predicates)
         {

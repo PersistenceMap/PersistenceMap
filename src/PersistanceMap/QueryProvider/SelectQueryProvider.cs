@@ -79,9 +79,9 @@ namespace PersistanceMap.QueryProvider
 
         #region ISqlExpression<T> Implementation
 
-        public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>>[] args)
+        public ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>>[] maps)
         {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(args).ToArray(), MapOperationType.Join);
+            QueryPartsFactory.CreateEntityQueryPart<TJoin>(QueryPartsMap, QueryMapCompiler.Compile(maps).ToArray(), MapOperationType.Join);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
@@ -115,7 +115,7 @@ namespace PersistanceMap.QueryProvider
             throw new NotImplementedException();
         }
 
-        public ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<IJoinMapOption<T2, T3>, IQueryMap>>[] args)
+        public ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<IJoinMapOption<T2, T3>, IQueryMap>>[] maps)
         {
             throw new NotImplementedException();
         }
@@ -138,9 +138,9 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        public IEnumerable<T2> Select<T2>(params Expression<Func<ISelectMapOption<T2>, IQueryMap>>[] mappings)
+        public IEnumerable<T2> Select<T2>(params Expression<Func<ISelectMapOption<T2>, IQueryMap>>[] maps)
         {
-            var parts = QueryMapCompiler.Compile(mappings);
+            var parts = QueryMapCompiler.Compile(maps);
 
             parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
@@ -156,8 +156,6 @@ namespace PersistanceMap.QueryProvider
 
                 QueryPartsMap.Add(field);
             });
-
-
 
             return Select<T2>();
         }

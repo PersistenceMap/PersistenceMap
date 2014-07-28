@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryProvider
 {
-    public interface IProcedureMapOption
-    {
-        IQueryMap Value<T>(Expression<Func<T>> predicate);
+    //public interface IProcedureMapOption
+    //{
+    //    IQueryMap Value<T>(Expression<Func<T>> predicate);
 
-        IQueryMap Value<T>(string name, Expression<Func<T>> predicate);
-    }
+    //    IQueryMap Value<T>(string name, Expression<Func<T>> predicate);
+    //}
 
     public interface IProcedureMapOption<T>
     {

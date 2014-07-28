@@ -60,10 +60,8 @@
     <Compile Include="QueryBuilder\IFieldQueryMap.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
     <Compile Include="QueryProvider\MapOptions\IJoinMapOption.cs" />
-    <Compile Include="QueryProvider\MapOptions\IProcedureMapOption.cs" />
     <Compile Include="QueryProvider\MapOptions\ISelectMapOption.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
-    <Compile Include="QueryProvider\MapOptions\ProcedureMapOption.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
