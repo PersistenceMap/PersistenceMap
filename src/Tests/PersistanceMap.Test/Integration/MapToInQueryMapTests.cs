@@ -18,14 +18,21 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // Map => To in join with string
-                var owd = context.From<Orders>()
+                var query = context.From<Orders>()
                     // map the property from this join to the Property in the result type
                     .Map(source => source.Freight, "SpecialFreight")
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Map(i => i.OrderID)
-                    .Select<OrderWithDetailExtended>();
+                    .Map(i => i.OrderID);
 
-                Assert.IsTrue(owd.Any());
+                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetailExtended>();
+
+                Assert.IsTrue(orders.Any());
             }
         }
 
@@ -36,14 +43,21 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // Map => To in join with predicate
-                var owd = context.From<Orders>()
+                var query = context.From<Orders>()
                     // map the property from this join to the Property in the result type
                     .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Map(i => i.OrderID)
-                    .Select<OrderWithDetailExtended>();
+                    .Map(i => i.OrderID);
 
-                Assert.IsTrue(owd.Any());
+                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetailExtended>();
+
+                Assert.IsTrue(orders.Any());
             }
         }
     }

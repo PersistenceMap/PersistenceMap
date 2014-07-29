@@ -42,7 +42,7 @@ namespace PersistanceMap
 
         public static ISelectQueryProvider<TJoin> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
         {
-            return new SelectQueryProvider<TJoin>(context)
+            return new SelectQueryProvider<T>(context)
                 .From<T>()
                 .Join<TJoin>(predicate);
         }

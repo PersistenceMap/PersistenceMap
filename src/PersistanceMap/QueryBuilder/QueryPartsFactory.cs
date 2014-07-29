@@ -52,6 +52,8 @@ namespace PersistanceMap
             var id = parts.Where(p => p.MapOperationType == MapOperationType.As).Reverse().FirstOrDefault();
             if (id != null)
             {
+                throw new NotImplementedException("Test if this is still needed!");
+
                 entity.EntityAlias = id.Expression.Compile().DynamicInvoke() as string;
                 if (!string.IsNullOrEmpty(entity.EntityAlias))
                 {
@@ -65,6 +67,8 @@ namespace PersistanceMap
             // set include
             parts.Where(p => p.MapOperationType == MapOperationType.Include).ForEach(part =>
             {
+                throw new NotImplementedException("Test if this is still needed!");
+
                 var field = part as IFieldQueryMap;
                 if (field == null)
                 {
@@ -78,6 +82,19 @@ namespace PersistanceMap
             });
 
             return entity;
+        }
+
+
+        public static IFieldQueryMap AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
+        {
+            var part = new FieldQueryPart(field, alias, null /*EntityAlias*/, entity)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+
+            queryParts.Add(part);
+
+            return part;
         }
 
         #endregion

@@ -8,32 +8,78 @@ namespace PersistanceMap
 {
     public interface IProcedureQueryProvider : IQueryProvider
     {
+        /// <summary>
+        /// Adds a parameter containing the value of the expression
+        /// </summary>
+        /// <typeparam name="T2">The Type returned by the expression</typeparam>
+        /// <param name="predicate">The Expression containing the value</param>
+        /// <returns>IProcedureQueryProvider</returns>
         IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate);
 
-        //IProcedureQueryProvider AddParameter(Expression<Func<IProcedureMapOption, IQueryMap>> arg);
-
-        //IProcedureQueryProvider AddParameter<T>(Expression<Func<IProcedureMapOption, IQueryMap>> arg, Action<T> callback);
-
+        /// <summary>
+        /// Adds a named parameter containing the value of the expression
+        /// </summary>
+        /// <typeparam name="T">The Type returned by the expression</typeparam>
+        /// <param name="name">The name of the parameter</param>
+        /// <param name="predicate">The Expression containing the value</param>
+        /// <returns>IProcedureQueryProvider</returns>
         IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate);
 
+        /// <summary>
+        /// Adds a named output parameter containing the value of the expression. The output is returned in the callback
+        /// </summary>
+        /// <typeparam name="T">The Type returned by the expression</typeparam>
+        /// <param name="name">The name of the parameter</param>
+        /// <param name="predicate">The Expression containing the value</param>
+        /// <param name="callback">The callback for returning the output value</param>
+        /// <returns>IProcedureQueryProvider</returns>
         IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback);
 
+        /// <summary>
+        /// Creates a Type safe expression for the return value of the procedure call
+        /// </summary>
+        /// <typeparam name="T">The returned type</typeparam>
+        /// <returns>A typesage IProcedureQueryProvider</returns>
         IProcedureQueryProvider<T> For<T>();
 
+        /// <summary>
+        /// Map a Property from the mapped type that is included in the result
+        /// </summary>
+        /// <typeparam name="T">The returned Type</typeparam>
+        /// <typeparam name="TOut">The Property Type</typeparam>
+        /// <param name="source">The name of the element in the resultset</param>
+        /// <param name="alias">The Property to map to</param>
+        /// <returns>IProcedureQueryProvider</returns>
         IProcedureQueryProvider Map<T, TOut>(string source, Expression<Func<T, TOut>> alias);
 
+        /// <summary>
+        /// Execute the Procedure without reading the resultset
+        /// </summary>
         void Execute();
 
+        /// <summary>
+        /// Execute the Procedure
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<T> Execute<T>();
-
-        //IEnumerable<T> Execute<T>(params Expression<Func<IProcedureMapOption<T>, IQueryMap>>[] mappings);
-        //IEnumerable<T> Execute<T>(params Expression<Func<T>>[] mappings);
     }
 
     public interface IProcedureQueryProvider<T>
     {
-        IProcedureQueryProvider<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias); 
+        /// <summary>
+        /// Map a Property from the mapped type that is included in the result
+        /// </summary>
+        /// <typeparam name="T">The returned Type</typeparam>
+        /// <typeparam name="TOut">The Property Type</typeparam>
+        /// <param name="source">The name of the element in the resultset</param>
+        /// <param name="alias">The Property to map to</param>
+        /// <returns>IProcedureQueryProvider</returns>
+        IProcedureQueryProvider<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias);
 
+        /// <summary>
+        /// Execute the Procedure
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<T> Execute();
     }
 }

@@ -54,7 +54,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
 
             if (!string.IsNullOrEmpty(keyword))
-                return string.Format("{0} {1}", keyword, value);
+                return string.Format("{0} {1} ", keyword, value);
 
             return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
         }

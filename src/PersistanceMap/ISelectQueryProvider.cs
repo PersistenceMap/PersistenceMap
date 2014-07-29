@@ -8,12 +8,6 @@ namespace PersistanceMap
 {
     public interface ISelectQueryProvider<T> : IQueryProvider
     {
-        //ISelectQueryProvider<T> Join<TJoin>(params Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>>[] maps);
-
-        //ISelectQueryProvider<T> Join<TJoin>(Expression<Func<IJoinMapOption<TJoin, T>, IQueryMap>> option);
-
-        //ISelectQueryProvider<T> JoinOn<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
-
         IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
 
         IJoinQueryProvider<TJoin> Join<TJoin>(string alias, Expression<Func<TJoin, T, bool>> predicate);
@@ -26,11 +20,22 @@ namespace PersistanceMap
 
 
 
-
+        /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type
+        /// </summary>
+        /// <typeparam name="T2">The Property</typeparam>
+        /// <param name="predicate">The expression that returns the Property</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryProvider<T> Map<T2>(Expression<Func<T, T2>> predicate);
 
-        //ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias);
-
+        /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
+        /// </summary>
+        /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
+        /// <typeparam name="TOut">The alias Type</typeparam>
+        /// <param name="source">The source expression returning the source property</param>
+        /// <param name="alias">The select expression returning the alias property</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias);
 
         ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias);
@@ -47,7 +52,6 @@ namespace PersistanceMap
         IWhereQueryProvider<T> Where<T2>(Expression<Func<T, T2, bool>> predicate);
 
         IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
-        //ISelectQueryProvider<T> Where<T2, T3>(params Expression<Func<IJoinMapOption<T2, T3>, IQueryMap>>[] maps);
 
 
 
@@ -66,8 +70,9 @@ namespace PersistanceMap
         /// <summary>
         /// Compiles the Query to a sql statement
         /// </summary>
+        /// <typeparam name="T">The select type</typeparam>
         /// <returns>The sql string</returns>
-        string CompileQuery();
+        string CompileQuery<T>();
     }
 
     public interface IJoinQueryProvider<T> : ISelectQueryProvider<T>, IQueryProvider

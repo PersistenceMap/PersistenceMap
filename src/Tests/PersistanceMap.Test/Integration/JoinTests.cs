@@ -29,13 +29,15 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders, OrderDetails>((det, order) => det.OrderID == order.OrderID)
-                    .Select<OrderWithDetail>();
-                /* *Expected Query*
-                select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount 
-                from Orders 
-                join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
-                */
+                var query = context.From<Orders, OrderDetails>((det, order) => det.OrderID == order.OrderID);
+
+                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -65,9 +67,16 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>()
-                    .Join<OrderDetails>("detail", (det, order) => det.OrderID == order.OrderID)
-                    .Select<OrderWithDetail>();
+                var query = context.From<Orders>()
+                    .Join<OrderDetails>("detail", (det, order) => det.OrderID == order.OrderID);
+
+                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail on (detail.OrderID = Orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -81,9 +90,17 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var orders = context.From<Orders>("orders")
-                    .Join<OrderDetails>("detail", "orders", (detail, order) => detail.OrderID == order.OrderID)
-                    .Select<OrderWithDetail>();
+                var query = context.From<Orders>("orders")
+                    .Map(o => o.OrderID)
+                    .Join<OrderDetails>("detail", "orders", (detail, order) => detail.OrderID == order.OrderID);
+
+                var sql = "select orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
