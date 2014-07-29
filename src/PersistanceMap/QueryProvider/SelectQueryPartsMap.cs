@@ -10,7 +10,7 @@ using PersistanceMap.Internals;
 
 namespace PersistanceMap
 {
-    public class SelectQueryPartsMap : IQueryPartsMap
+    public class SelectQueryPartsMap : QueryPartsMap, IQueryPartsMap
     {
         #region Properties
 
@@ -71,7 +71,7 @@ namespace PersistanceMap
 
         #region IQueryPartsMap Implementation
 
-        public void Add(IQueryPart map)
+        public override void Add(IQueryPart map)
         {
             switch (map.MapOperationType)
             {
@@ -113,50 +113,50 @@ namespace PersistanceMap
                     break;
                     
                 default:
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
             }
         }
 
-        public void AddBefore(MapOperationType operation, IQueryPart part)
-        {
-            var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
-            var index = Parts.IndexOf(first);
-            if (index < 0)
-                index = 0;
+        //public void AddBefore(MapOperationType operation, IQueryPart part)
+        //{
+        //    var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
+        //    var index = Parts.IndexOf(first);
+        //    if (index < 0)
+        //        index = 0;
 
-            Parts.Insert(index, part);
-        }
+        //    Parts.Insert(index, part);
+        //}
 
-        public void AddAfter(MapOperationType operation, IQueryPart part)
-        {
-            var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
-            var index = Parts.IndexOf(first) + 1;
-            //if (index > Parts.Count)
-            //    index = 0;
+        //public void AddAfter(MapOperationType operation, IQueryPart part)
+        //{
+        //    var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
+        //    var index = Parts.IndexOf(first) + 1;
+        //    //if (index > Parts.Count)
+        //    //    index = 0;
 
-            Parts.Insert(index, part);
-        }
+        //    Parts.Insert(index, part);
+        //}
 
-        IEnumerable<IQueryPart> IQueryPartsMap.Parts
-        {
-            get
-            {
-                return Parts;
-            }
-        }
+        //IEnumerable<IQueryPart> IQueryPartsMap.Parts
+        //{
+        //    get
+        //    {
+        //        return Parts;
+        //    }
+        //}
 
-        private IList<IQueryPart> _parts;
-        public IList<IQueryPart> Parts
-        {
-            get
-            {
-                if (_parts == null)
-                    _parts = new List<IQueryPart>();
-                return _parts;
-            }
-        }
+        //private IList<IQueryPart> _parts;
+        //public IList<IQueryPart> Parts
+        //{
+        //    get
+        //    {
+        //        if (_parts == null)
+        //            _parts = new List<IQueryPart>();
+        //        return _parts;
+        //    }
+        //}
         
-        public CompiledQuery Compile()
+        public override CompiledQuery Compile()
         {
             var sb = new StringBuilder(100);
             sb.Append("select ");

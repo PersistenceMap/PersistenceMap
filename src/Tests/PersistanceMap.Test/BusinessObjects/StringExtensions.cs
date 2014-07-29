@@ -13,7 +13,8 @@ namespace PersistanceMap.Test
             return value
                 .Replace("\t", "")
                 .Replace("\n", "")
-                .Replace("\r", "");
+                .Replace("\r", "")
+                .TrimEnd();
         }
     }
 }

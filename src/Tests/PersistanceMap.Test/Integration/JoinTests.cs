@@ -143,7 +143,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = context
                     .From<Orders>()
                     .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
-                    .Include(i => i.OrderID)
+                    .Map(i => i.OrderID)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
@@ -169,8 +169,8 @@ namespace PersistanceMap.Test.Integration
                     .From<Orders>()
                     .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
-                    .Include(p => p.ProductID)
-                    .Include(p => p.UnitPrice)
+                    .Map(p => p.ProductID)
+                    .Map(p => p.UnitPrice)
                     .Select<OrderWithDetail>();
 
                 /* *Expected Query*

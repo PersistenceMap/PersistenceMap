@@ -19,7 +19,7 @@ namespace PersistanceMap
         IJoinQueryProvider<TJoin> Join<TJoin>(string alias, Expression<Func<TJoin, T, bool>> predicate);
 
         IJoinQueryProvider<TJoin> Join<TJoin>(string alias, string source, Expression<Func<TJoin, T, bool>> predicate);
-
+        
         IJoinQueryProvider<TJoin> Join<TJoin, T1>(Expression<Func<TJoin, T1, bool>> predicate);
 
 
@@ -27,9 +27,9 @@ namespace PersistanceMap
 
 
 
-        ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate);
+        ISelectQueryProvider<T> Map<T2>(Expression<Func<T, T2>> predicate);
 
-        ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias);
+        //ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias);
 
         ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias);
 

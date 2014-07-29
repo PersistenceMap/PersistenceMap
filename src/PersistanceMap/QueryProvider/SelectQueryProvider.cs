@@ -117,29 +117,87 @@ namespace PersistanceMap.QueryProvider
 
 
 
-        public ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate)
+        public ISelectQueryProvider<T> Map<T2>(Expression<Func<T, T2>> predicate)
         {
-            throw new NotImplementedException();
+            var part = FieldHelper.TryExtractPropertyName(predicate);
+            var entity = typeof(T).Name;
+
+            var field = new FieldQueryPart(part, entity, entity)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+
+            QueryPartsMap.Add(field);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
-        public ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias)
-        {
-            throw new NotImplementedException();
-        }
+        //public ISelectQueryProvider<T> Include<T2>(Expression<Func<T, T2>> predicate, string alias)
+        //{
+        //    alias.EnsureArgumentNotNullOrEmpty("alias");
+
+        //    var part = FieldHelper.TryExtractPropertyName(predicate);
+        //    var entity = typeof(T).Name;
+
+        //    var field = new FieldQueryPart(part, alias, entity)
+        //    {
+        //        MapOperationType = MapOperationType.Include
+        //    };
+
+        //    QueryPartsMap.Add(field);
+
+        //    return new SelectQueryProvider<T>(Context, QueryPartsMap);
+        //}
 
         public ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
-            throw new NotImplementedException();
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
+
+            // create a expression that returns the field with a alias
+            var entity = typeof(T).Name;
+            var field = new FieldQueryPart(sourceField, aliasField, null /*EntityAlias*/, entity)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+
+            QueryPartsMap.Add(field);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         public ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
-            throw new NotImplementedException();
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
+
+            // create a expression that returns the field with a alias
+            var entity = typeof(T).Name;
+            var field = new FieldQueryPart(sourceField, aliasField, null /*EntityAlias*/, entity)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+
+            QueryPartsMap.Add(field);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         public ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias)
         {
-            throw new NotImplementedException();
+            alias.EnsureArgumentNotNullOrEmpty("alias");
+
+            var part = FieldHelper.TryExtractPropertyName(source);
+            var entity = typeof(T).Name;
+
+            var field = new FieldQueryPart(part, alias, entity)
+            {
+                MapOperationType = MapOperationType.Include
+            };
+
+            QueryPartsMap.Add(field);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
 

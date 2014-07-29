@@ -15,12 +15,10 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context.From<Products>();
 
-                /* *Expected Query*
-                select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued 
-                from Products 
-                */
-                Assert.AreEqual(query.CompileQuery().Flatten(), "select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products ");
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery().Flatten(), "select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products");
 
+                // execute the query
                 var prsAbt = query.Select<Products>();               
 
                 Assert.IsTrue(prsAbt.Any());
@@ -35,12 +33,10 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context.From<Products>("prod");
 
-                /* *Expected Query*
-                 select prod.ProductID, prod.ProductName, prod.SupplierID, prod.CategoryID, prod.QuantityPerUnit, prod.UnitPrice, prod.UnitsInStock, prod.UnitsOnOrder, prod.ReorderLevel, prod.Discontinued 
-                 from Products prod 
-                */
-                Assert.AreSame(query.CompileQuery().Flatten(), "select prod.ProductID, prod.ProductName, prod.SupplierID, prod.CategoryID, prod.QuantityPerUnit, prod.UnitPrice, prod.UnitsInStock, prod.UnitsOnOrder, prod.ReorderLevel, prod.Discontinued from Products prod ");
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery().Flatten(), "select ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products prod");
 
+                // execute the query
                 var products = query.Select<Products>();
 
                 Assert.IsTrue(products.Any());
@@ -54,16 +50,21 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 // join using identifiers in the on expression
-                var orders = context.From<Orders>("orders")
-                    .Include(o => o.OrderID)
-                    .Join<OrderDetails>("detail", "orders", (det, order) => det.OrderID == order.OrderID)
-                    .Select<OrderDetails>();
+                var query = context.From<Orders>("orders")
+                    .Map(o => o.OrderID)
+                    .Join<OrderDetails>("detail", "orders", (det, order) => det.OrderID == order.OrderID);
 
                 /* *Expected Query*
                 select orders.OrderID, ProductID, UnitPrice, Quantity, Discount 
                 from Orders orders 
                 join OrderDetails detail on (detail.OrderID = orders.OrderID)
                 */
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery().Flatten(), "");
+
+                // execute the query
+                var orders = query.Select<OrderDetails>();
 
                 Assert.IsTrue(orders.Any());
             }
@@ -76,14 +77,13 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 // multiple joins using On<T> with include and includeoperation in from expression
-                var orders = context
+                var query = context
                     .From<Orders>()
-                    .Include(p => p.OrderID)
+                    .Map(p => p.OrderID)
                     .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
-                    .Include(p => p.ProductID)
-                    .Include(p => p.UnitPrice)
-                    .Select<OrderDetails>();
+                    .Map(p => p.ProductID)
+                    .Map(p => p.UnitPrice);
 
                 /* *Expected Query*
                  select Products.ProductID, Products.UnitPrice, Orders.OrderID, Quantity, Discount 
@@ -91,6 +91,11 @@ namespace PersistanceMap.Test.Integration
                  join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
                  join Products on (Products.ProductID = OrderDetails.ProductID)
                 */
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery().Flatten(), "");
+
+                // execute the query
+                var orders = query.Select<OrderDetails>();
 
                 Assert.IsTrue(orders.Any());
             }
@@ -103,21 +108,22 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 // multiple joins using On<T> with include and include-operation in from expression with identifier
-                var orders = context
-                    .From<Orders>()
-                    .Include(p => p.OrderID, "ord")
-                    .Join<OrderDetails>("ord", (det, order) => det.OrderID == order.OrderID)
+                var query = context
+                    .From<Orders>("ord")
+                    //TODO: Include has to check the previous for the alias! "ord"
+                    .Map(p => p.OrderID)
+                    //TODO: Join has to check the previous for the alias! "ord"
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
-                    .Include(p => p.ProductID)
-                    .Include(p => p.UnitPrice)
-                    .Select<OrderDetails>();
+                    .Map(p => p.ProductID)
+                    .Map(p => p.UnitPrice);
 
-                /* *Expected Query*
-                select Products.ProductID, Products.UnitPrice, ord.OrderID, Quantity, Discount 
-                from Orders ord 
-                join OrderDetails on (OrderDetails.OrderID = ord.OrderID)
-                join Products on (Products.ProductID = OrderDetails.ProductID)
-                */
+                // check the compiled sql
+                //TODO: query output is not same!
+                Assert.AreEqual(query.CompileQuery().Flatten(), "select Products.ProductID, Products.UnitPrice, ord.OrderID, Quantity, Discount from Orders ord join OrderDetails on (OrderDetails.OrderID = ord.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)");
+
+                // execute the query
+                var orders = query.Select<OrderDetails>();
 
                 Assert.IsTrue(orders.Any());
             }

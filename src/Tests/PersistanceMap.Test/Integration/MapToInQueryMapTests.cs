@@ -22,7 +22,7 @@ namespace PersistanceMap.Test.Integration
                     // map the property from this join to the Property in the result type
                     .Map(source => source.Freight, "SpecialFreight")
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Include(i => i.OrderID)
+                    .Map(i => i.OrderID)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.IsTrue(owd.Any());
@@ -40,7 +40,7 @@ namespace PersistanceMap.Test.Integration
                     // map the property from this join to the Property in the result type
                     .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Include(i => i.OrderID)
+                    .Map(i => i.OrderID)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.IsTrue(owd.Any());

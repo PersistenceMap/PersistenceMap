@@ -50,7 +50,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var orders = context.From<Orders>()
-                    .Include(o => o.OrderID)
+                    .Map(o => o.OrderID)
                     .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
                     .Select();
 
@@ -72,12 +72,17 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // Map => To 
-                var owd = context.From<Orders>()
+                var query = context.From<Orders>()
                     .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Include(i => i.OrderID)                    
                     // map a property from a joni to a property in the result type
-                    .Select<OrderWithDetailExtended>();
+                    .Map(i => i.OrderID);
+
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery().Flatten(), "");
+
+                // execute the query
+                var orders = query.Select<OrderWithDetailExtended>();
 
                 /* *Expected Query*
                 select ..., Orders.Freight as SpecialFreight, ... 
@@ -85,8 +90,8 @@ namespace PersistanceMap.Test.Integration
                 join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
                 */
 
-                Assert.IsTrue(owd.Any());
-                Assert.IsTrue(owd.First().SpecialFreight > 0);
+                Assert.IsTrue(orders.Any());
+                Assert.IsTrue(orders.First().SpecialFreight > 0);
             }
         }
 
@@ -99,7 +104,7 @@ namespace PersistanceMap.Test.Integration
                 // Map => To 
                 var owd = context.From<Orders>()
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Include(i => i.OrderID)
+                    .Map(i => i.OrderID)
                     // map a property from a joni to a property in the result type
                     .Map<Orders, OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
                     .Select<OrderWithDetailExtended>();

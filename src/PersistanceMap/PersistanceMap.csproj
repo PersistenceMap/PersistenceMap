@@ -84,6 +84,7 @@
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="Compiler\SqlExpressionCompiler.cs" />
+    <Compile Include="QueryProvider\QueryPartsMap.cs" />
     <Compile Include="QueryProvider\SelectQueryProvider.cs" />
     <Compile Include="Extensions\EnsureExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />

@@ -23,7 +23,7 @@ namespace PersistanceMap.Test.Integration
                 var tmp = context.From<Orders>()
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     // this has to fail!
-                    .Include(i => i.OrderID != 1)
+                    .Map(i => i.OrderID != 1)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.Fail("This part should not have been reached!");
