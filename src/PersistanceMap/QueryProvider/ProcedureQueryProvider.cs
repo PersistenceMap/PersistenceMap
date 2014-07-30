@@ -170,7 +170,7 @@ namespace PersistanceMap.QueryProvider
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
 
-                        var valuePredicate = cb.MapCollection.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+                        var valuePredicate = cb.Parts.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
 
                         // get the return value of the expression
                         var value = valuePredicate.Expression.Compile().DynamicInvoke();

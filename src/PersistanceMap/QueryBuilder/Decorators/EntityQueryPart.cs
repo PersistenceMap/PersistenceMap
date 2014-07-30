@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class EntityQueryPart<T> : IEntityQueryPart, IQueryMapCollection, IQueryPart
+    internal class EntityQueryPart<T> : IEntityQueryPart, /*IQueryMapCollection,*/ IQueryPartDecorator, IQueryPart
     {
         public EntityQueryPart(string entity)
             : this(entity, null)
@@ -18,27 +18,57 @@ namespace PersistanceMap.QueryBuilder.Decorators
         {
         }
 
-        public EntityQueryPart(string entity, string alias, IQueryMap[] mapCollection)
+        public EntityQueryPart(string entity, string alias, IQueryPart[] parts)
         {
             // ensure parameter is not null
-            mapCollection.EnsureArgumentNotNull("mapCollection");
+            parts.EnsureArgumentNotNull("parts");
 
-            MapCollection = mapCollection.ToList();
+            Parts = parts.ToList();
             EntityAlias = alias;
             Entity = entity;
         }
 
         #region IQueryMapCollection Implementation
 
-        IEnumerable<IQueryMap> IQueryMapCollection.MapCollection
+        //IEnumerable<IQueryMap> IQueryMapCollection.MapCollection
+        //{
+        //    get
+        //    {
+        //        return MapCollection;
+        //    }
+        //}
+
+        //public IList<IQueryMap> MapCollection { get; private set; }
+
+        #endregion
+
+        #region IQueryPartDecorator Implementation
+
+        public void Add(IQueryPart part)
+        {
+            Parts.Add(part);
+        }
+
+        public void AddToLast(IQueryPart part, MapOperationType operation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        IEnumerable<IQueryPart> IQueryPartDecorator.Parts
         {
             get
             {
-                return MapCollection;
+                return Parts;
             }
         }
 
-        public IList<IQueryMap> MapCollection { get; private set; }
+        public IList<IQueryPart> Parts { get; private set; }
 
         #endregion
 
@@ -84,7 +114,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(EntityAlias) ? string.Empty : string.Format(" {0}", EntityAlias)));
 
             // compile all mappings that belong to the part (on, and, or...)
-            MapCollection.ForEach(a => sb.Append(a.Compile()));
+            Parts.ForEach(a => sb.Append(a.Compile()));
 
             return sb.ToString();
         }

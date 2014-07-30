@@ -57,7 +57,7 @@ namespace PersistanceMap
                 entity.EntityAlias = id.Expression.Compile().DynamicInvoke() as string;
                 if (!string.IsNullOrEmpty(entity.EntityAlias))
                 {
-                    foreach (var part in entity.MapCollection)
+                    foreach (var part in entity.Parts)
                     {
                         part.AliasMap.Add(typeof(T), entity.EntityAlias);
                     }

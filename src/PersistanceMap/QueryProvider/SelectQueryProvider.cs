@@ -76,6 +76,7 @@ namespace PersistanceMap.QueryProvider
 
         internal ISelectQueryProvider<T> Map(string source, string alias, string entity, string entityalias)
         {
+            //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
             var last = QueryPartsMap.Parts.Last(l => l.MapOperationType == MapOperationType.From || l.MapOperationType == MapOperationType.Join) as IEntityQueryPart;
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
@@ -104,7 +105,7 @@ namespace PersistanceMap.QueryProvider
             var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
             part.EntityAlias = alias;
 
-            foreach (var itm in part.MapCollection)
+            foreach (var itm in part.Parts)
             {
                 // add aliases to mapcollections
                 itm.AliasMap.Add(typeof(TJoin), alias);
@@ -118,7 +119,7 @@ namespace PersistanceMap.QueryProvider
             var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
             part.EntityAlias = alias;
 
-            foreach (var itm in part.MapCollection)
+            foreach (var itm in part.Parts)
             {
                 // add aliases to mapcollections
                 itm.AliasMap.Add(typeof(T), source);
