@@ -184,7 +184,7 @@ namespace PersistanceMap.Compiler
 
                 if (left as PartialSqlString == null && right as PartialSqlString == null)
                 {
-                    var result = System.Linq.Expressions.Expression.Lambda(expression).Compile().DynamicInvoke();
+                    var result = Expression.Lambda(expression).Compile().DynamicInvoke();
                     return new PartialSqlString(DialectProvider.Instance.GetQuotedValue(result, result.GetType()));
                 }
 
@@ -504,39 +504,33 @@ namespace PersistanceMap.Compiler
                 case "StartsWith":
                     if (!Configuration.StripUpperInLike)
                     {
-                        statement = string.Format("upper({0}) like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue(wildcardArg.ToUpper() + "%"), escapeSuffix);
+                        statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue(wildcardArg.ToUpper() + "%"), escapeSuffix);
                     }
                     else
                     {
-                        statement = string.Format("{0} like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue(wildcardArg + "%"), escapeSuffix);
+                        statement = string.Format("{0} like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue(wildcardArg + "%"), escapeSuffix);
                     }
                     break;
 
                 case "EndsWith":
                     if (!Configuration.StripUpperInLike)
                     {
-                        statement = string.Format("upper({0}) like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper()), escapeSuffix);
+                        statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper()), escapeSuffix);
                     }
                     else
                     {
-                        statement = string.Format("{0} like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg), escapeSuffix);
+                        statement = string.Format("{0} like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg), escapeSuffix);
                     }
                     break;
 
                 case "Contains":
                     if (!Configuration.StripUpperInLike)
                     {
-                        statement = string.Format("upper({0}) like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper() + "%"), escapeSuffix);
+                        statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper() + "%"), escapeSuffix);
                     }
                     else
                     {
-                        statement = string.Format("{0} like {1}{2}",
-                            quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg + "%"), escapeSuffix);
+                        statement = string.Format("{0} like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg + "%"), escapeSuffix);
                     }
                     break;
 
@@ -753,25 +747,25 @@ namespace PersistanceMap.Compiler
         }
     }
 
-    public class LambdaExpressionToSqlCompiler<T> : LambdaExpressionToSqlCompiler
-    {
-        protected override bool IsFieldName(object quotedExp)
-        {
-            //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
-            FieldDefinition fd = TypeDefinitionFactory.GetFieldDefinitions<T>().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
-            return (fd != default(FieldDefinition));
-        }
+    //public class LambdaExpressionToSqlCompiler<T> : LambdaExpressionToSqlCompiler
+    //{
+    //    protected override bool IsFieldName(object quotedExp)
+    //    {
+    //        //FieldDefinition fd = modelDef.FieldDefinitions.FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
+    //        FieldDefinition fd = TypeDefinitionFactory.GetFieldDefinitions<T>().FirstOrDefault(x => DialectProvider.Instance.GetQuotedColumnName(x.FieldName) == quotedExp.ToString());
+    //        return (fd != default(FieldDefinition));
+    //    }
 
-        protected override bool IsColumnAccess(MethodCallExpression m)
-        {
-            if (m.Object != null && m.Object as MethodCallExpression != null)
-                return IsColumnAccess(m.Object as MethodCallExpression);
+    //    protected override bool IsColumnAccess(MethodCallExpression m)
+    //    {
+    //        if (m.Object != null && m.Object as MethodCallExpression != null)
+    //            return IsColumnAccess(m.Object as MethodCallExpression);
 
-            var exp = m.Object as MemberExpression;
-            return exp != null
-                && exp.Expression != null
-                && exp.Expression.Type == typeof(T)
-                && exp.Expression.NodeType == ExpressionType.Parameter;
-        }
-    }
+    //        var exp = m.Object as MemberExpression;
+    //        return exp != null
+    //            && exp.Expression != null
+    //            && exp.Expression.Type == typeof(T)
+    //            && exp.Expression.NodeType == ExpressionType.Parameter;
+    //    }
+    //}
 }

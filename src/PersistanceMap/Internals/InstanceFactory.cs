@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading;
 
@@ -133,6 +134,27 @@ namespace PersistanceMap.Internals
             {
                 EmptyCtorFunction = GetConstructorMethodToCache(typeof(T));
             }
+        }
+
+        #endregion
+
+        #region Extension Methods
+
+        public static ConstructorInfo GetEmptyConstructor(this Type type)
+        {
+            return type.GetConstructor(Type.EmptyTypes);
+        }
+
+        public static bool HasGenericType(this Type type)
+        {
+            while (type != null)
+            {
+                if (type.IsGenericType)
+                    return true;
+
+                type = type.BaseType;
+            }
+            return false;
         }
 
         #endregion

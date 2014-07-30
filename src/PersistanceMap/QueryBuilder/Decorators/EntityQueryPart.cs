@@ -68,10 +68,6 @@ namespace PersistanceMap.QueryBuilder.Decorators
                     sb.Append("join");
                     break;
 
-                //case MapOperationType.InnerJoin:
-                //    sb.Append("inner join");
-                //    break;
-
                 case MapOperationType.LeftJoin:
                     sb.Append("left join");
                     break;
@@ -98,9 +94,9 @@ namespace PersistanceMap.QueryBuilder.Decorators
         public override string ToString()
         {
             if (string.IsNullOrEmpty(EntityAlias))
-                return string.Format("Entity: {0} [{0}]", Entity);
+                return string.Format("Entity: [{0}] Operation: [{1}]", Entity, MapOperationType);
 
-            return string.Format("Entity: {0} [{0} {1}]", Entity, EntityAlias);
+            return string.Format("Entity: [{0} {1}] Operation: [{2}]", Entity, EntityAlias, MapOperationType);
         }
     }
 }

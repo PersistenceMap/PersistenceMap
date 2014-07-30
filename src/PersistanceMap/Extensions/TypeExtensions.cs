@@ -11,24 +11,6 @@ namespace PersistanceMap
 {
     internal static class TypeExtensions
     {
-        //// is used to make the FieldDefinitions thread safe
-        //static object _lockobject = new object();
-
-        //static Dictionary<Type, IEnumerable<FieldDefinition>> fieldDefinitionCache;
-        ///// <summary>
-        ///// Cach dictionary that containes all fielddefinitions belonging to a given type
-        ///// </summary>
-        //internal static Dictionary<Type, IEnumerable<FieldDefinition>> FieldDefinitionCache
-        //{
-        //    get
-        //    {
-        //        if (fieldDefinitionCache == null)
-        //            fieldDefinitionCache = new Dictionary<Type, IEnumerable<FieldDefinition>>();
-        //        return fieldDefinitionCache;
-        //    }
-        //}
-
-
         /// <summary>
         /// Creates a list of MemberInfo containing all properties of the type that don't have the Ignore Attribute
         /// </summary>
@@ -48,27 +30,6 @@ namespace PersistanceMap
         {
             return type.GetSelectionMembers().Select(t => t.Name);
         }
-
-        ///// <summary>
-        ///// Gets all fielddefinitions that can be created by the type
-        ///// </summary>
-        ///// <param name="type"></param>
-        ///// <returns></returns>
-        //public static IEnumerable<FieldDefinition> GetFieldDefinitions(this Type type)
-        //{
-        //    //TODO: This lock causes minor performance issues! Find a better way to ensure thread safety!
-        //    //lock (_lockobject)
-        //    //{
-        //        IEnumerable<FieldDefinition> fields = new List<FieldDefinition>();
-        //        if (!FieldDefinitionCache.TryGetValue(type, out fields))
-        //        {
-        //            fields = type.GetSelectionMembers().Select(m => m.ToFieldDefinition());
-        //            FieldDefinitionCache.Add(type, fields);
-        //        }
-
-        //        return fields;
-        //    //}
-        //}
 
         private static Dictionary<Type, object> DefaultValueTypes = new Dictionary<Type, object>();
 
@@ -107,24 +68,7 @@ namespace PersistanceMap
             }
             return null;
         }
-
-        public static bool HasGenericType(this Type type)
-        {
-            while (type != null)
-            {
-                if (type.IsGenericType)
-                    return true;
-
-                type = type.BaseType;
-            }
-            return false;
-        }
-
-        public static ConstructorInfo GetEmptyConstructor(this Type type)
-        {
-            return type.GetConstructor(Type.EmptyTypes);
-        }
-
+        
         public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
         {
             foreach (var genericTypeDefinition in genericTypeDefinitions)

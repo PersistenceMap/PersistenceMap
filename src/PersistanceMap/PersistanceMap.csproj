@@ -53,10 +53,12 @@
     <Compile Include="Extensions\ObjectExtensionsForMapping.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Internals\ExpressionFactory.cs" />
     <Compile Include="Internals\FieldHelper.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />
     <Compile Include="QueryBuilder\Decorators\PredicateQueryPart.cs" />
     <Compile Include="QueryBuilder\IFieldQueryMap.cs" />
+    <Compile Include="QueryBuilder\IQueryPartDecorator.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />
     <Compile Include="QueryProvider\ProcedureQueryProvider.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />

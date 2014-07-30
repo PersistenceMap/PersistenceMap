@@ -6,7 +6,8 @@ using PersistanceMap.Internals;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class FieldQueryPart : IFieldQueryMap, IEntityQueryPart, IQueryPart
+    //TODO: remove interface IQueryMap! It is not needed!
+    internal class FieldQueryPart : IFieldQueryMap, IEntityQueryPart, IQueryMap, IQueryPart
     {
         public FieldQueryPart(string field, string entityalias)
             : this(field, entityalias, null)
@@ -34,6 +35,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
             AliasMap = new Dictionary<Type, string>();
         }
 
+        //TODO: remove interface IQueryMap! It is not needed!
         #region IFieldQueryMap Implementation
 
         public LambdaExpression Expression { get; private set; }
