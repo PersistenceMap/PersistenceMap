@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.QueryBuilder;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,9 +17,9 @@ namespace PersistanceMap
             Parts.Add(part);
         }
 
-        public virtual void AddBefore(MapOperationType operation, IQueryPart part)
+        public virtual void AddBefore(IQueryPart part, OperationType operation)
         {
-            var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
+            var first = Parts.FirstOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first);
             if (index < 0)
                 index = 0;
@@ -26,14 +27,23 @@ namespace PersistanceMap
             Parts.Insert(index, part);
         }
 
-        public virtual void AddAfter(MapOperationType operation, IQueryPart part)
+        public virtual void AddAfter(IQueryPart part, OperationType operation)
         {
-            var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
+            var first = Parts.LastOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first) + 1;
             //if (index > Parts.Count)
             //    index = 0;
 
             Parts.Insert(index, part);
+        }
+
+        public void AddToLast(IQueryPart part, OperationType operation)
+        {
+            var last = Parts.Last(p => p.OperationType == operation && p is IQueryPartDecorator) as IQueryPartDecorator;
+            if (last == null)
+                return;
+
+            last.Add(part);
         }
 
         IEnumerable<IQueryPart> IQueryPartsMap.Parts

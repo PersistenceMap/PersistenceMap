@@ -3,7 +3,7 @@ namespace PersistanceMap.QueryBuilder
 {
     public interface IQueryPart
     {
-        MapOperationType MapOperationType { get; }
+        OperationType OperationType { get; }
 
         string Compile();
     }

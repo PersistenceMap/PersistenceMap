@@ -10,7 +10,7 @@ namespace PersistanceMap.QueryBuilder
     {
         void Add(IQueryPart part);
 
-        void AddToLast(IQueryPart part, MapOperationType operation);
+        void AddToLast(IQueryPart part, OperationType operation);
 
         void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
 

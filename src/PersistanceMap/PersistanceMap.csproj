@@ -49,7 +49,7 @@
     <Compile Include="Attributes\IgnoreAttribute.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseConnection.cs" />
-    <Compile Include="Enums\MapOperationType.cs" />
+    <Compile Include="Enums\OperationType.cs" />
     <Compile Include="Extensions\ObjectExtensionsForMapping.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -57,6 +57,8 @@
     <Compile Include="Internals\FieldHelper.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />
     <Compile Include="QueryBuilder\Decorators\PredicateQueryPart.cs" />
+    <Compile Include="QueryBuilder\Decorators\QueryPartDecorator.cs" />
+    <Compile Include="QueryBuilder\Decorators\SelectMapQueryPart.cs" />
     <Compile Include="QueryBuilder\IFieldQueryMap.cs" />
     <Compile Include="QueryBuilder\IQueryPartDecorator.cs" />
     <Compile Include="QueryBuilder\QueryPartsFactory.cs" />

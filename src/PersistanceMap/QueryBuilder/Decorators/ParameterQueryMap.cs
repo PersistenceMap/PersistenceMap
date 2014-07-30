@@ -5,12 +5,12 @@ namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class ParameterQueryMap : QueryMap, INamedQueryPart
     {
-        public ParameterQueryMap(MapOperationType operationtype, LambdaExpression expression)
+        public ParameterQueryMap(OperationType operationtype, LambdaExpression expression)
             : this(operationtype, null, expression)
         {
         }
 
-        public ParameterQueryMap(MapOperationType operationtype, string name, LambdaExpression expression)
+        public ParameterQueryMap(OperationType operationtype, string name, LambdaExpression expression)
             : base(operationtype, expression)
         {
             Name = name;

@@ -8,15 +8,15 @@ namespace PersistanceMap.QueryBuilder.Decorators
 {
     internal class QueryMap : IQueryMap, IQueryPart
     {
-        public QueryMap(MapOperationType operationtype, LambdaExpression expression)
+        public QueryMap(OperationType operationtype, LambdaExpression expression)
         {
-            MapOperationType = operationtype;
+            OperationType = operationtype;
             Expression = expression;
 
             AliasMap = new Dictionary<Type, string>();
         }
 
-        public MapOperationType MapOperationType { get; private set; }
+        public OperationType OperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
 
@@ -32,21 +32,21 @@ namespace PersistanceMap.QueryBuilder.Decorators
                 return null;
 
             string keyword = string.Empty;
-            switch (MapOperationType)
+            switch (OperationType)
             {
-                case MapOperationType.JoinOn:
+                case OperationType.JoinOn:
                     keyword = "on";
                     break;
 
-                case MapOperationType.AndOn:
+                case OperationType.AndOn:
                     keyword = "and";
                     break;
 
-                case MapOperationType.OrOn:
+                case OperationType.OrOn:
                     keyword = "or";
                     break;
 
-                case MapOperationType.Value:
+                case OperationType.Value:
                     // just return the quotated value
                     keyword = string.Empty;
                     break;

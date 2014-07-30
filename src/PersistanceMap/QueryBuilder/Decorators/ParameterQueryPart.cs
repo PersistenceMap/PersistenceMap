@@ -10,61 +10,12 @@ using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class ParameterQueryPart : IParameterQueryPart, ICallbackHandlerQueryPart, /*IQueryMapCollection,*/ IQueryPartDecorator, IQueryPart
+    internal class ParameterQueryPart : QueryPartDecorator, IParameterQueryPart, ICallbackHandlerQueryPart, IQueryPartDecorator, IQueryPart
     {
-        public ParameterQueryPart(IQueryPart[] mapCollection)
+        public ParameterQueryPart(IQueryPart[] parts)
+            : base(parts)
         {
-            // ensure parameter is not null
-            mapCollection.EnsureArgumentNotNull("mapCollection");
-
-            Parts = mapCollection.ToList();
         }
-
-        public MapOperationType MapOperationType { get; set; }
-
-        #region IQueryMapCollection Implementation
-
-        //IEnumerable<IQueryMap> IQueryMapCollection.MapCollection
-        //{
-        //    get
-        //    {
-        //        return MapCollection;
-        //    }
-        //}
-
-        //public IList<IQueryMap> MapCollection { get; private set; }
-
-        #endregion
-
-        #region IQueryPartDecorator Implementation
-
-        public void Add(IQueryPart part)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToLast(IQueryPart part, MapOperationType operation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        IEnumerable<IQueryPart> IQueryPartDecorator.Parts
-        {
-            get
-            {
-                return Parts;
-            }
-        }
-
-        public IList<IQueryPart> Parts { get; private set; }
-
-        #endregion
 
         #region ICallbackHandlerQueryPart  Implementation
 
@@ -106,9 +57,9 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         #endregion
 
-        public virtual string Compile()
+        public override string Compile()
         {
-            var valuePart = Parts.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+            var valuePart = Parts.FirstOrDefault(o => o.OperationType == OperationType.Value);
             if (valuePart != null)
             {
                 // compile the part
@@ -121,13 +72,13 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
     internal class CallbackParameterQueryPart<T> : ParameterQueryPart, ICallbackQueryPart<T>, IParameterQueryPart, ICallbackHandlerQueryPart, /*IQueryMapCollection,*/ IQueryPartDecorator, IQueryPart
     {
-        public CallbackParameterQueryPart(IQueryMap[] mapCollection)
-            : this(mapCollection, null)
+        public CallbackParameterQueryPart(IQueryMap[] parts)
+            : this(parts, null)
         {
         }
 
-        public CallbackParameterQueryPart(IQueryMap[] mapCollection, Action<T> callback)
-            : base(mapCollection)
+        public CallbackParameterQueryPart(IQueryMap[] parts, Action<T> callback)
+            : base(parts)
         {
             Callback = callback;
         }
@@ -207,7 +158,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
                 string name = "";
 
-                var valuePredicate = Parts.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value) as INamedQueryPart;
+                var valuePredicate = Parts.FirstOrDefault(o => o.OperationType == OperationType.Value) as INamedQueryPart;
                 if (valuePredicate != null)
                     name = valuePredicate.Name;
 

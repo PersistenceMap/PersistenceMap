@@ -73,7 +73,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
         #region IQueryPart Implementation
 
-        public MapOperationType MapOperationType { get; set; }
+        public OperationType OperationType { get; set; }
 
         public string Compile()
         {

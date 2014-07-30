@@ -22,9 +22,9 @@ namespace PersistanceMap
         //    Parts.Add(part);
         //}
 
-        //public void AddBefore(MapOperationType operation, IQueryPart part)
+        //public void AddBefore(OperationType operation, IQueryPart part)
         //{
-        //    var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
+        //    var first = Parts.FirstOrDefault(p => p.OperationType == operation);
         //    var index = Parts.IndexOf(first);
         //    if (index < 0)
         //        index = 0;
@@ -32,9 +32,9 @@ namespace PersistanceMap
         //    Parts.Insert(index, part);
         //}
 
-        //public void AddAfter(MapOperationType operation, IQueryPart part)
+        //public void AddAfter(OperationType operation, IQueryPart part)
         //{
-        //    var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
+        //    var first = Parts.LastOrDefault(p => p.OperationType == operation);
         //    var index = Parts.IndexOf(first) + 1;
         //    //if (index > Parts.Count)
         //    //    index = 0;
@@ -54,7 +54,7 @@ namespace PersistanceMap
             var sb = new StringBuilder(100);
 
             // prepare outputparameters
-            foreach (var param in Parts.Where(p => p.MapOperationType == MapOperationType.OutParameterPrefix))
+            foreach (var param in Parts.Where(p => p.OperationType == OperationType.OutParameterPrefix))
             {
                 // creates a name for the output parameter
                 var value = param.Compile();
@@ -77,7 +77,7 @@ namespace PersistanceMap
 
             // add the select for all output parameters
             var selectoutput = string.Empty;
-            foreach (var param in Parts.Where(p => p.MapOperationType == MapOperationType.OutParameterSufix))
+            foreach (var param in Parts.Where(p => p.OperationType == OperationType.OutParameterSufix))
             {
                 bool separator = true;
                 if (string.IsNullOrEmpty(selectoutput))

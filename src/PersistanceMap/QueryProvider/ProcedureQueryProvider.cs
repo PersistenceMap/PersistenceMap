@@ -131,7 +131,7 @@ namespace PersistanceMap.QueryProvider
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
 
-            var map = new ParameterQueryMap(MapOperationType.Value, name, predicate);
+            var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
             QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {map}));
 
@@ -152,7 +152,7 @@ namespace PersistanceMap.QueryProvider
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
 
-            var map = new ParameterQueryMap(MapOperationType.Value, name, predicate);
+            var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
             var cb = QueryPartsFactory.CreateParameterQueryPart(map, callback, QueryPartsMap);
             QueryPartsMap.Add(cb);
@@ -160,20 +160,22 @@ namespace PersistanceMap.QueryProvider
             if (cb.CanHandleCallback)
             {
                 // get the index of the parameter in the collection to create the name of the out parameter
-                var index = QueryPartsMap.Parts.Where(p => p.MapOperationType == MapOperationType.Parameter).ToList().IndexOf(cb);
+                var index = QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Parameter).ToList().IndexOf(cb);
                 cb.CallbackName = string.Format("p{0}", index);
 
                 // create output parameters 
-                QueryPartsMap.AddBefore(MapOperationType.Parameter,
-                    new PredicateQueryPart(MapOperationType.OutParameterPrefix, () =>
+                QueryPartsMap.AddBefore(
+                    new PredicateQueryPart(OperationType.OutParameterPrefix, () =>
                     {
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
 
-                        var valuePredicate = cb.Parts.FirstOrDefault(o => o.MapOperationType == MapOperationType.Value);
+                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IQueryMap) as IQueryMap;
+                        if (queryMap == null)
+                            return null;
 
                         // get the return value of the expression
-                        var value = valuePredicate.Expression.Compile().DynamicInvoke();
+                        var value = queryMap.Expression.Compile().DynamicInvoke();
 
                         // set the value into the right format
                         var quotatedvalue = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
@@ -188,18 +190,17 @@ namespace PersistanceMap.QueryProvider
                         sb.AppendLine(string.Format("set @{0}={1}", cb.CallbackName, quotatedvalue ?? value));
 
                         return sb.ToString();
-                    }));
+                    }), OperationType.Parameter);
 
                 // create value for selecting output parameters
-                QueryPartsMap.AddAfter(MapOperationType.Parameter,
-                    new PredicateQueryPart(MapOperationType.OutParameterSufix, () =>
+                QueryPartsMap.AddAfter(new PredicateQueryPart(OperationType.OutParameterSufix, () =>
                     {
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
 
                         // @p1 as p1
                         return string.Format("@{0} as {0}", cb.CallbackName);
-                    }));
+                    }), OperationType.Parameter);
             }
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
@@ -231,7 +232,7 @@ namespace PersistanceMap.QueryProvider
             var entity = typeof(T).Name;
             var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/)
             {
-                MapOperationType = MapOperationType.Include
+                OperationType = OperationType.Include
             };
 
             QueryPartsMap.Add(field);
@@ -261,7 +262,7 @@ namespace PersistanceMap.QueryProvider
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
             // merge fields that were defined with Maps
-            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.MapOperationType == MapOperationType.Include))
+            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
             {
                 var map = p as IFieldQueryMap;
                 if (map == null)
@@ -318,7 +319,7 @@ namespace PersistanceMap.QueryProvider
             var entity = typeof(T).Name;
             var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/)
             {
-                MapOperationType = MapOperationType.Include
+                OperationType = OperationType.Include
             };
 
             QueryPartsMap.Add(field);
@@ -334,7 +335,7 @@ namespace PersistanceMap.QueryProvider
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.MapOperationType == MapOperationType.Include))
+            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
             {
                 var map = p as IFieldQueryMap;
                 if (map == null)

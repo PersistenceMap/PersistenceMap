@@ -7,9 +7,11 @@ namespace PersistanceMap
     {
         void Add(IQueryPart part);
 
-        void AddBefore(MapOperationType operation, IQueryPart part);
+        void AddBefore(IQueryPart part, OperationType operation);
 
-        void AddAfter(MapOperationType operation, IQueryPart part);
+        void AddAfter(IQueryPart part, OperationType operation);
+
+        void AddToLast(IQueryPart part, OperationType operation);
 
         IEnumerable<IQueryPart> Parts { get; }
 

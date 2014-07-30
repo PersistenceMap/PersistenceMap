@@ -14,7 +14,10 @@ namespace PersistanceMap
         public static IEnumerable<T> Select<T>(this IDatabaseContext context)
         {
             var queryParts = new SelectQueryPartsMap();
-            QueryPartsFactory.CreateEntityQueryPart<T>(queryParts, MapOperationType.From);
+            
+            QueryPartsFactory.CreateSelectMapQueryPart(queryParts, OperationType.SelectMap);
+
+            QueryPartsFactory.CreateEntityQueryPart<T>(queryParts, OperationType.From);
 
             var expr = context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile<T>(queryParts);
@@ -33,12 +36,6 @@ namespace PersistanceMap
             return new SelectQueryProvider<T>(context)
                 .From<T>(alias);
         }
-
-        //public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, params Expression<Func<IJoinMapOption<T>, IQueryMap>>[] parts)
-        //{
-        //    return new SelectQueryProvider<T>(context)
-        //        .From<T>(QueryMapCompiler.Compile<T>(parts).ToArray());
-        //}
 
         public static ISelectQueryProvider<TJoin> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
         {

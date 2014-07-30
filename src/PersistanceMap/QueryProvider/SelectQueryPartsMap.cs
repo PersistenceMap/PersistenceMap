@@ -14,57 +14,14 @@ namespace PersistanceMap
     {
         #region Properties
 
-        IList<IEntityQueryPart> _fields;
-        public IList<IEntityQueryPart> Fields
+        public IEnumerable<IEntityQueryPart> Joins
         {
             get
             {
-                if (_fields == null)
-                    _fields = new List<IEntityQueryPart>();
-                return _fields;
+                return Parts.Where(p => 
+                    (p.OperationType == OperationType.From || p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.FullJoin)
+                    && p is IEntityQueryPart).Cast<IEntityQueryPart>();
             }
-        }
-
-        //TODO: Rename to Expressions or statements or something else. Joins is wrong because ist From, Joins, Wheres,...
-        IList<IEntityQueryPart> _joins;
-        public IList<IEntityQueryPart> Joins
-        {
-            get
-            {
-                if (_joins == null)
-                    _joins = new List<IEntityQueryPart>();
-                return _joins;
-            }
-        }
-
-        //public IEntityQueryPart From { get; private set; }
-
-        //public IQueryPart Where { get; private set; }
-
-        //public IQueryPart Order { get; private set; }
-
-        ///// <summary>
-        ///// Indicates if the resultset is a distinct set of fields provided by a 'For' expression
-        ///// </summary>
-        //internal bool IsResultSetComplete { get; private set; }
-
-        #endregion
-
-        #region Add Methods
-
-        internal void Add(FieldQueryPart field, bool replace)
-        {
-            if (Fields.Any(f => ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field))
-            {
-                if (!replace)
-                    return;
-
-                Fields.Remove(Fields.First(f => ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field));
-            }
-
-            Fields.Add(field);
-            //TODO: don't use 2 collections!
-            Parts.Add(field);
         }
 
         #endregion
@@ -73,23 +30,21 @@ namespace PersistanceMap
 
         public override void Add(IQueryPart map)
         {
-            switch (map.MapOperationType)
+            switch (map.OperationType)
             {
-                case MapOperationType.From:
-                case MapOperationType.Join:
-                case MapOperationType.LeftJoin:
-                case MapOperationType.RightJoin:
-                case MapOperationType.FullJoin:
+                case OperationType.From:
+                case OperationType.Join:
+                case OperationType.LeftJoin:
+                case OperationType.RightJoin:
+                case OperationType.FullJoin:
                     var entity = map as IEntityQueryPart;
                     entity.EnsureArgumentNotNull("map");
-                    Joins.Add(entity);
-                    
-                    //TODO: don't use 2 collections!
+
                     Parts.Add(entity);
 
                     break;
 
-                case MapOperationType.Include:
+                case OperationType.Include:
                     var field = map as FieldQueryPart;
                     if (field == null)
                     {
@@ -103,72 +58,32 @@ namespace PersistanceMap
 
                             field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(expr.Expression), id, ent)
                             {
-                                MapOperationType = MapOperationType.Include
+                                OperationType = OperationType.Include
                             };
                         }
                     }
 
                     if (field != null)
-                        Add(field, true);
+                    {
+                        // add the field to the last QueryPart of type SelectionMap (select a,b,c...)
+                        AddToLast(field, OperationType.SelectMap);
+                    }
                     break;
                     
                 default:
-                    throw new NotImplementedException();
+                    Parts.Add(map);
+                    break;
             }
         }
 
-        //public void AddBefore(MapOperationType operation, IQueryPart part)
-        //{
-        //    var first = Parts.FirstOrDefault(p => p.MapOperationType == operation);
-        //    var index = Parts.IndexOf(first);
-        //    if (index < 0)
-        //        index = 0;
-
-        //    Parts.Insert(index, part);
-        //}
-
-        //public void AddAfter(MapOperationType operation, IQueryPart part)
-        //{
-        //    var first = Parts.LastOrDefault(p => p.MapOperationType == operation);
-        //    var index = Parts.IndexOf(first) + 1;
-        //    //if (index > Parts.Count)
-        //    //    index = 0;
-
-        //    Parts.Insert(index, part);
-        //}
-
-        //IEnumerable<IQueryPart> IQueryPartsMap.Parts
-        //{
-        //    get
-        //    {
-        //        return Parts;
-        //    }
-        //}
-
-        //private IList<IQueryPart> _parts;
-        //public IList<IQueryPart> Parts
-        //{
-        //    get
-        //    {
-        //        if (_parts == null)
-        //            _parts = new List<IQueryPart>();
-        //        return _parts;
-        //    }
-        //}
-        
         public override CompiledQuery Compile()
         {
             var sb = new StringBuilder(100);
-            sb.Append("select ");
 
-            // add resultset fields
-            foreach (var field in Fields)
-                sb.AppendFormat("{0}{1} ", field.Compile(), Fields.Last() == field ? "" : ",");
-
-            // add joins
-            foreach (var join in Joins)
+            // loop all parts and compile
+            foreach (var part in Parts)
             {
-                sb.AppendLine(join.Compile());
+                sb.AppendLine(part.Compile());
             }
 
             // where

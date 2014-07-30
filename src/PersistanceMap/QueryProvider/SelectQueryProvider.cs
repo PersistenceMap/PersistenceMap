@@ -59,7 +59,11 @@ namespace PersistanceMap.QueryProvider
 
         internal ISelectQueryProvider<T2> From<T2>()
         {
-            QueryPartsFactory.CreateEntityQueryPart<T2>(QueryPartsMap, MapOperationType.From);
+            // create the begining for the select operation
+            QueryPartsFactory.CreateSelectMapQueryPart(QueryPartsMap, OperationType.SelectMap);
+
+            // add the from operation
+            QueryPartsFactory.CreateEntityQueryPart<T2>(QueryPartsMap, OperationType.From);
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
@@ -68,7 +72,11 @@ namespace PersistanceMap.QueryProvider
         {
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
-            var part = QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, MapOperationType.From);
+            // create the begining for the select operation
+            QueryPartsFactory.CreateSelectMapQueryPart(QueryPartsMap, OperationType.SelectMap);
+
+            // add the from operation with a alias
+            var part = QueryPartsFactory.CreateEntityQueryPart<T>(QueryPartsMap, OperationType.From);
             part.EntityAlias = alias;
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
@@ -78,7 +86,7 @@ namespace PersistanceMap.QueryProvider
         {
             //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
-            var last = QueryPartsMap.Parts.Last(l => l.MapOperationType == MapOperationType.From || l.MapOperationType == MapOperationType.Join) as IEntityQueryPart;
+            var last = QueryPartsMap.Parts.Last(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
                 entity = last.EntityAlias;
 
@@ -95,20 +103,24 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
+            QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
 
             return new JoinQueryProvider<TJoin>(Context, QueryPartsMap);
         }
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
+            var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
             part.EntityAlias = alias;
 
             foreach (var itm in part.Parts)
             {
+                var map = itm as IQueryMap;
+                if (map == null)
+                    continue;
+
                 // add aliases to mapcollections
-                itm.AliasMap.Add(typeof(TJoin), alias);
+                map.AliasMap.Add(typeof(TJoin), alias);
             }
 
             return new JoinQueryProvider<TJoin>(Context, QueryPartsMap);
@@ -116,14 +128,18 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, string source, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, MapOperationType.Join);
+            var part = QueryPartsFactory.CreateEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
             part.EntityAlias = alias;
 
             foreach (var itm in part.Parts)
             {
+                var map = itm as IQueryMap;
+                if (map == null)
+                    continue;
+
                 // add aliases to mapcollections
-                itm.AliasMap.Add(typeof(T), source);
-                itm.AliasMap.Add(typeof(TJoin), alias);
+                map.AliasMap.Add(typeof(T), source);
+                map.AliasMap.Add(typeof(TJoin), alias);
             }
 
             return new JoinQueryProvider<TJoin>(Context, QueryPartsMap);
