@@ -49,7 +49,7 @@ namespace PersistanceMap
                     if (field == null)
                     {
                         // try to create a field query part
-                        var expr = map as IQueryMap;
+                        var expr = map as IExpressionQueryPart;
                         if (expr != null)
                         {
                             var last = Joins.LastOrDefault();

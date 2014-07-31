@@ -1,70 +1,84 @@
 ﻿
+using System;
+
 namespace PersistanceMap
 {
+    //[Flags]
     public enum OperationType
     {
-        None,
+        None = 0,
 
         /// <summary>
         /// defines the operation to be the begining of a select operation (select a, b, c)
         /// </summary>
-        SelectMap,
+        SelectMap = 1,
 
         /// <summary>
         /// defines the operation as a from operation
         /// </summary>
-        From,
+        From = 2,
 
         /// <summary>
         /// defines the operation as a inner join operation
         /// </summary>
-        Join,
+        Join = 3,
 
-        LeftJoin,
+        LeftJoin = 4,
 
-        RightJoin,
+        RightJoin = 5,
 
-        FullJoin,
+        FullJoin = 6,
+
+        Where = 7,
+
+
+
 
         /// <summary>
         /// defines the operation as an alias of a table, a field or a storedprocedure parameter
         /// </summary>
-        As,
+        As = 20,
 
-        AliasMap,
+        //AliasMap,
 
         /// <summary>
         /// defines the operation that the field is included in the resultset
         /// </summary>
-        Include,
+        Include = 21,
 
         /// <summary>
-        /// defines the operation as a join operation
+        /// defines the operation that maps the expression needed for a join operation
         /// </summary>
-        JoinOn,
+        On = 22,
 
-        AndOn,
+        And = 24,
 
-        OrOn,
+        Or = 25,
+
+
+
+
+
+
 
         /// <summary>
         /// defines the value of a storeprocedure parameter
         /// </summary>
-        Value,
+        Value = 40,
 
         /// <summary>
         /// defines the operation to be a parameter
         /// </summary>
-        Parameter,
+        Parameter = 41,
 
         /// <summary>
         /// defines the operation as the prefix of a out parameter (declare @outparam)
         /// </summary>
-        OutParameterPrefix,
+        OutParameterPrefix = 42,
 
         /// <summary>
         /// defines the operation as a sufix of a out parameter (select @outparam)
         /// </summary>
-        OutParameterSufix
+        OutParameterSufix = 43
     }
 }

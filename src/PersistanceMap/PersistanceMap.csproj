@@ -71,7 +71,7 @@
     <Compile Include="Internals\InstanceFactory.cs" />
     <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryBuilder\ICallbackQueryPart.cs" />
-    <Compile Include="QueryBuilder\IQueryMap.cs" />
+    <Compile Include="QueryBuilder\IExpressionQueryPart.cs" />
     <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
     <Compile Include="IQueryProvider.cs" />
     <Compile Include="IProcedureQueryProvider.cs" />
@@ -79,7 +79,7 @@
     <Compile Include="QueryProvider\ProcedureQueryPartsMap.cs" />
     <Compile Include="QueryBuilder\INamedQueryPart.cs" />
     <Compile Include="QueryBuilder\IParameterQueryPart.cs" />
-    <Compile Include="QueryBuilder\Decorators\QueryMap.cs" />
+    <Compile Include="QueryBuilder\Decorators\ExpressionQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="QueryBuilder\IEntityQueryPart.cs" />
     <Compile Include="Internals\ReaderContext.cs" />

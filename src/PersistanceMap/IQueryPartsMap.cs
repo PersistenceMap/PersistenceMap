@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
@@ -12,6 +13,8 @@ namespace PersistanceMap
         void AddAfter(IQueryPart part, OperationType operation);
 
         void AddToLast(IQueryPart part, OperationType operation);
+
+        void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
 
         IEnumerable<IQueryPart> Parts { get; }
 

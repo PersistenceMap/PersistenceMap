@@ -72,12 +72,14 @@ namespace PersistanceMap
         /// </summary>
         /// <typeparam name="T">The select type</typeparam>
         /// <returns>The sql string</returns>
-        string CompileQuery<T>();
+        string CompileQuery<T2>();
     }
 
     public interface IJoinQueryProvider<T> : ISelectQueryProvider<T>, IQueryProvider
     {
         IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate);
+
+        IJoinQueryProvider<T> And<TAnd>(string source, string reference, Expression<Func<T, TAnd, bool>> predicate);
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate);
 

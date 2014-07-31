@@ -38,5 +38,10 @@ namespace PersistanceMap.QueryBuilder
 
             return sb.ToString();
         }
+
+        public override string ToString()
+        {
+            return string.Format("SelectMap Operation: [{0}]", OperationType);
+        }
     }
 }

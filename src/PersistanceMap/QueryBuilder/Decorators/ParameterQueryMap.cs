@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class ParameterQueryMap : QueryMap, INamedQueryPart
+    internal class ParameterQueryMap : ExpressionQueryPart, INamedQueryPart
     {
         public ParameterQueryMap(OperationType operationtype, LambdaExpression expression)
             : this(operationtype, null, expression)

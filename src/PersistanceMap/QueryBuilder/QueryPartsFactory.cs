@@ -16,7 +16,7 @@ namespace PersistanceMap
     {
         #region EntityQueryPart
 
-        public static IQueryPart CreateSelectMapQueryPart(IQueryPartsMap queryParts, OperationType operation)
+        public static IQueryPart AppendSelectMapQueryPart(IQueryPartsMap queryParts, OperationType operation)
         {
             var part = new SelectMapQueryPart(operation);
 
@@ -25,7 +25,7 @@ namespace PersistanceMap
             return part;
         }
 
-        public static IQueryPart CreateQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
+        public static IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
         {
             var part = new PredicateQueryPart(operation, predicate);
 
@@ -34,7 +34,7 @@ namespace PersistanceMap
             return part;
         }
 
-        public static EntityQueryPart<T> CreateEntityQueryPart<T>(IQueryPartsMap queryParts, OperationType operation)
+        public static EntityQueryPart<T> AppendEntityQueryPart<T>(IQueryPartsMap queryParts, OperationType operation)
         {
             var type = typeof(T);
             var entity = new EntityQueryPart<T>(type.Name)
@@ -47,16 +47,16 @@ namespace PersistanceMap
             return entity;
         }
 
-        public static EntityQueryPart<T> CreateEntityQueryPart<T, T2>(IQueryPartsMap queryParts, Expression<Func<T, T2, bool>> predicate, OperationType maptype)
+        public static EntityQueryPart<T> AppendEntityQueryPart<T, T2>(IQueryPartsMap queryParts, Expression<Func<T, T2, bool>> predicate, OperationType maptype)
         {
-            var operation = new QueryMap(OperationType.JoinOn, predicate);
+            var operation = new ExpressionQueryPart(OperationType.On, predicate);
 
-            return CreateEntityQueryPart<T>(queryParts, new IQueryMap[] { operation }, maptype);
+            return AppendEntityQueryPart<T>(queryParts, new IExpressionQueryPart[] { operation }, maptype);
         }
 
-        public static EntityQueryPart<T> CreateEntityQueryPart<T>(IQueryPartsMap queryParts, IQueryMap[] parts, OperationType maptype)
+        public static EntityQueryPart<T> AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart[] parts, OperationType maptype)
         {
-            var operationParts = parts.Where(p => p.OperationType == OperationType.JoinOn || p.OperationType == OperationType.AndOn || p.OperationType == OperationType.OrOn).ToArray();
+            var operationParts = parts.Where(p => p.OperationType == OperationType.On || p.OperationType == OperationType.And || p.OperationType == OperationType.Or).ToArray();
 
             var type = typeof(T);
             var entity = new EntityQueryPart<T>(type.Name, null, operationParts)
@@ -67,41 +67,41 @@ namespace PersistanceMap
             queryParts.Add(entity);
 
             // first set alias
-            var id = parts.Where(p => p.OperationType == OperationType.As).Reverse().FirstOrDefault();
-            if (id != null)
-            {
-                throw new NotImplementedException("Test if this is still needed!");
+            //var id = parts.Where(p => p.OperationType == OperationType.As).Reverse().FirstOrDefault();
+            //if (id != null)
+            //{
+            //    throw new NotImplementedException("Test if this is still needed!");
 
-                entity.EntityAlias = id.Expression.Compile().DynamicInvoke() as string;
-                if (!string.IsNullOrEmpty(entity.EntityAlias))
-                {
-                    foreach (var part in entity.Parts)
-                    {
-                        var map = part as IQueryMap;
-                        if (map == null)
-                            continue;
+            //    entity.EntityAlias = id.Expression.Compile().DynamicInvoke() as string;
+            //    if (!string.IsNullOrEmpty(entity.EntityAlias))
+            //    {
+            //        foreach (var part in entity.Parts)
+            //        {
+            //            var map = part as IExpressionQueryPart;
+            //            if (map == null)
+            //                continue;
 
-                        map.AliasMap.Add(typeof(T), entity.EntityAlias);
-                    }
-                }
-            }
+            //            map.AliasMap.Add(typeof(T), entity.EntityAlias);
+            //        }
+            //    }
+            //}
 
-            // set include
-            parts.Where(p => p.OperationType == OperationType.Include).ForEach(part =>
-            {
-                throw new NotImplementedException("Test if this is still needed!");
+            //// set include
+            //parts.Where(p => p.OperationType == OperationType.Include).ForEach(part =>
+            //{
+            //    throw new NotImplementedException("Test if this is still needed!");
 
-                var field = part as IFieldQueryMap;
-                if (field == null)
-                {
-                    field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
-                    {
-                        OperationType = OperationType.Include
-                    };
-                }
+            //    var field = part as IFieldQueryMap;
+            //    if (field == null)
+            //    {
+            //        field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(part.Expression), string.IsNullOrEmpty(entity.EntityAlias) ? entity.Entity : entity.EntityAlias, entity.Entity)
+            //        {
+            //            OperationType = OperationType.Include
+            //        };
+            //    }
 
-                queryParts.Add(field);
-            });
+            //    queryParts.Add(field);
+            //});
 
             return entity;
         }
@@ -125,7 +125,7 @@ namespace PersistanceMap
 
         public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<T>> predicate)
         {
-            return CreateParameterQueryPart(new IQueryMap[] { new QueryMap(OperationType.Value, predicate) });
+            return CreateParameterQueryPart(new IExpressionQueryPart[] { new ExpressionQueryPart(OperationType.Value, predicate) });
         }
 
         //public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<IProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
@@ -136,15 +136,15 @@ namespace PersistanceMap
         //    };
         //}
 
-        public static IParameterQueryPart CreateParameterQueryPart<T>(IQueryMap map, Action<T> callback, ProcedureQueryPartsMap queryParts)
+        public static IParameterQueryPart CreateParameterQueryPart<T>(IExpressionQueryPart map, Action<T> callback, ProcedureQueryPartsMap queryParts)
         {
-            return new CallbackParameterQueryPart<T>(new IQueryMap[] { map }, callback)
+            return new CallbackParameterQueryPart<T>(new IExpressionQueryPart[] { map }, callback)
             {
                 OperationType = OperationType.Parameter
             };
         }
 
-        public static IParameterQueryPart CreateParameterQueryPart(IQueryMap[] querymap)
+        public static IParameterQueryPart CreateParameterQueryPart(IExpressionQueryPart[] querymap)
         {
             return new ParameterQueryPart(querymap)
             {

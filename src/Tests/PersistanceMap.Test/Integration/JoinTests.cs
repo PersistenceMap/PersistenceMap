@@ -109,7 +109,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinWithOnAndOrWithProjectionTest()
+        public void SimpleJoin_WithOr_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -130,23 +130,79 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinWithOnAndAndWithProjectionTest()
+        public void SimpleJoin_WithOnAndInJoin_WithProjection()
+        {
+            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = dbConnection.Open())
+            {
+                var query = context.From<Orders>()
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID && detail.Quantity > 5);
+
+                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on ((OrderDetails.OrderID = Orders.OrderID) AND (OrderDetails.Quantity > 5))";
+                var output = query.CompileQuery<OrderWithDetail>().Flatten();
+
+                // check the compiled sql
+                Assert.AreEqual(output, sql);
+
+                // execute the query
+                var orders = query.Select<OrderWithDetail>();
+
+                Assert.IsTrue(orders.Any());
+                Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
+                Assert.IsTrue(orders.First().ProductID > 0);
+            }
+        }
+
+        [Test]
+        public void SimpleJoin_WithAnd_WithProjection()
+        {
+            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = dbConnection.Open())
+            {
+                // get all customers that are employees and have ordered
+                var query = context.From<Customers>()
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
+                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID)
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode);
+                
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<Employees>().Flatten(), "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) and (Employees.EmployeeID = Customers.EmployeeID)");
+
+                // execute the query
+                var emloyees = query.Select<Employees>();
+                
+                Assert.IsTrue(emloyees.Any());
+            }
+        }
+
+        [Test]
+        public void SimpleJoin_WithAnd_WithAlias_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
                 //TODO: And allways returns false! create connection that realy works!
-                var orders = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .And<Orders>((detail, order) => false)
-                    .Select<OrderWithDetail>();
+                var query = context.From<EmployeeTerritories>("et1")
+                    .Join<Employees>("e1", "et1", (e1, et1) => e1.EmployeeID == et1.EmployeeID)
+                    .Join<Employees>("e2", "e1", (e2, e1) => e2.ReportsTo == e1.EmployeeID)
+                    .Join<EmployeeTerritories>("et2", "e2", (et2, e2) => et2.EmployeeID == e2.EmployeeID)
+                    .And<EmployeeTerritories>("et2", "et1", (et2, et1) => et2.TerritoryID == et1.TerritoryID);
 
-                //TODO: And allways returns false! create connection that realy works!
-                Assert.Fail();
+                var sql = "";
 
-                Assert.IsTrue(orders.Any());
-                Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
-                Assert.IsTrue(orders.First().ProductID > 0);
+                // check the compiled sql
+                Assert.AreEqual(query.CompileQuery<Employees>().Flatten(), sql);
+
+                // execute the query
+                var employees = query.Select<Employees>();
+
+                Assert.IsTrue(employees.Any());
+                //Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
+                //Assert.IsTrue(orders.First().ProductID > 0);
             }
         }
 

@@ -14,7 +14,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
         }
 
         public EntityQueryPart(string entity, string alias)
-            : this(entity, alias, new IQueryMap[0])
+            : this(entity, alias, new IExpressionQueryPart[0])
         {
         }
 

@@ -45,7 +45,7 @@ namespace PersistanceMap.Compiler
 
         #region Compilers
 
-        internal virtual object Compile(IQueryMap part)
+        internal virtual object Compile(IExpressionQueryPart part)
         {
             _aliasMap = part.AliasMap;
 

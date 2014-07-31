@@ -46,6 +46,15 @@ namespace PersistanceMap
             last.Add(part);
         }
 
+        public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
+        {
+            var last = Parts.Where(p => p is IQueryPartDecorator).Last(predicate) as IQueryPartDecorator;
+            if (last == null)
+                return;
+
+            last.Add(part);
+        }
+
         IEnumerable<IQueryPart> IQueryPartsMap.Parts
         {
             get

@@ -133,7 +133,7 @@ namespace PersistanceMap.QueryProvider
 
             var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
-            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IQueryMap[] {map}));
+            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IExpressionQueryPart[] {map}));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -170,7 +170,7 @@ namespace PersistanceMap.QueryProvider
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
 
-                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IQueryMap) as IQueryMap;
+                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IExpressionQueryPart) as IExpressionQueryPart;
                         if (queryMap == null)
                             return null;
 

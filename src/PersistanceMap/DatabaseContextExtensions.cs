@@ -15,9 +15,9 @@ namespace PersistanceMap
         {
             var queryParts = new SelectQueryPartsMap();
             
-            QueryPartsFactory.CreateSelectMapQueryPart(queryParts, OperationType.SelectMap);
+            QueryPartsFactory.AppendSelectMapQueryPart(queryParts, OperationType.SelectMap);
 
-            QueryPartsFactory.CreateEntityQueryPart<T>(queryParts, OperationType.From);
+            QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
 
             var expr = context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile<T>(queryParts);

@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class QueryMap : IQueryMap, IQueryPart
+    internal class ExpressionQueryPart : IExpressionQueryPart, IQueryPart
     {
-        public QueryMap(OperationType operationtype, LambdaExpression expression)
+        public ExpressionQueryPart(OperationType operationtype, LambdaExpression expression)
         {
             OperationType = operationtype;
             Expression = expression;
@@ -34,15 +34,15 @@ namespace PersistanceMap.QueryBuilder.Decorators
             string keyword = string.Empty;
             switch (OperationType)
             {
-                case OperationType.JoinOn:
+                case OperationType.On:
                     keyword = "on";
                     break;
 
-                case OperationType.AndOn:
+                case OperationType.And:
                     keyword = "and";
                     break;
 
-                case OperationType.OrOn:
+                case OperationType.Or:
                     keyword = "or";
                     break;
 
