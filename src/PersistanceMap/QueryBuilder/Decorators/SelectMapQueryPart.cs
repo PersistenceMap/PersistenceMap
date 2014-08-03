@@ -36,7 +36,7 @@ namespace PersistanceMap.QueryBuilder
                 sb.AppendFormat("{0}{1} ", value, Parts.Last() == part ? "" : ",");
             }
 
-            return sb.ToString();
+            return sb.ToString().RemoveLineBreak();
         }
 
         public override string ToString()

@@ -76,7 +76,7 @@ namespace PersistanceMap.QueryBuilder
                 sb.AppendLine(value);
             }
 
-            return sb.ToString();
+            return sb.ToString().RemoveLineBreak();
         }
 
         #endregion

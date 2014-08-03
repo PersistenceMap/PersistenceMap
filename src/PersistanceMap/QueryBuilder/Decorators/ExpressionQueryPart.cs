@@ -3,10 +3,11 @@ using PersistanceMap.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace PersistanceMap.QueryBuilder.Decorators
 {
-    internal class ExpressionQueryPart : IExpressionQueryPart, IQueryPart
+    internal class ExpressionQueryPart : QueryPartDecorator, IExpressionQueryPart, IQueryPartDecorator, IQueryPart
     {
         public ExpressionQueryPart(OperationType operationtype, LambdaExpression expression)
         {
@@ -50,19 +51,41 @@ namespace PersistanceMap.QueryBuilder.Decorators
                     // just return the quotated value
                     keyword = string.Empty;
                     break;
+
+                case OperationType.Where:
+                    keyword = "where";
+                    break;
             }
 
+            var sb = new StringBuilder();
 
             if (!string.IsNullOrEmpty(keyword))
-                return string.Format("{0} {1} ", keyword, value);
+            {
+                sb.AppendLine(string.Format("{0} {1} ", keyword, value));
+            }
+            else
+                sb.AppendLine(DialectProvider.Instance.GetQuotedValue(value, value.GetType()));
 
-            return DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+
+            var partsValue = base.Compile();
+            if (!string.IsNullOrEmpty(partsValue))
+                sb.AppendLine(partsValue);
+
+            return sb.ToString().RemoveLineBreak();
         }
 
         internal void AddEntityAlias(Type type, string alias)
         {
             if (!string.IsNullOrEmpty(alias))
                 AliasMap.Add(type, alias);
+        }
+
+        public override string ToString()
+        {
+            if (Expression == null)
+                return string.Format("Expression with Operation: [{0}]", OperationType);
+
+            return string.Format("Expression: [{0}] Operation: [{1}]", Expression, OperationType);
         }
     }
 }

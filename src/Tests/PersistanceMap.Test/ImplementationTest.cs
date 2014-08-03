@@ -24,32 +24,10 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-
-
-                //context.From<Orders>().Join<OrderDetails>((od,o)=>od.OrderID==o.OrderID).And<OrderWithDetail>((od,owd)=>od.OrderID==owd.ProductID).Join<
-
-
-
-                //context.From<Orders>().Join<OrderDetails>(opt => opt.On((d, o) => d.OrderID == o.OrderID)).Where<Orders, OrderDetails>(opt=>opt.
-                //WHERE HAS TO ACCEPT PROPER PARAMETERS!
-                //var orders = context.From<Orders>()
-                //    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
-                //    .Where<OrderDetails>(o => o.Quantity != "")
-                //    .Select<OrderDetails>();
-
-                var orders5 = context.From<Orders>()
-                    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
-                    .Where<OrderDetails>(o => o.Discount > 0)
-                    .Select<OrderDetails>();
-
-                var orders3 = context.From<Orders>().Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
-                    .Where<Orders, OrderDetails>((a,b) => a.OrderID == b.OrderID)
-                    .And<OrderDetails>((a, b) => true)
-                    .Select();
-
                 // join using on and or
                 //TODO: Or allways returns false! create connection that realy works!
                 var orders1 = context.From<Orders>()
+                    .Map(o => o.OrderID)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     .Or<OrderDetails>((detail, order) => false)
                     .Select<OrderWithDetail>();
@@ -57,6 +35,7 @@ namespace PersistanceMap.Test
                 // join using on and and
                 //TODO: And allways returns false! create connection that realy works!
                 var orders2 = context.From<Orders>()
+                    .Map(o => o.OrderID)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     .And<OrderDetails>((detail, order) => true)
                     .Select<OrderWithDetail>();

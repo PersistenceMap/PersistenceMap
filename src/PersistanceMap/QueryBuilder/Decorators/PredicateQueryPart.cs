@@ -30,7 +30,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
             if (!string.IsNullOrEmpty(value))
                 sb.Append(string.Format("{0} ", value));
 
-            return sb.ToString();
+            return sb.ToString().RemoveLineBreak();
         }
 
         #endregion

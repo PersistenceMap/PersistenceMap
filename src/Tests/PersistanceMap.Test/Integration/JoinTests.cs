@@ -70,13 +70,14 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Orders>()
                     .Join<OrderDetails>("detail", (det, order) => det.OrderID == order.OrderID);
 
-                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail on (detail.OrderID = Orders.OrderID)";
-
-                // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
-
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
+
+                var sql = query.CompileQuery<OrderWithDetail>().Flatten();
+                var expected = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail on (detail.OrderID = Orders.OrderID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
 
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
@@ -94,10 +95,8 @@ namespace PersistanceMap.Test.Integration
                     .Map(o => o.OrderID)
                     .Join<OrderDetails>("detail", "orders", (detail, order) => detail.OrderID == order.OrderID);
 
-                var sql = "select orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)";
-
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
+                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), "select orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)");
 
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
@@ -188,6 +187,8 @@ namespace PersistanceMap.Test.Integration
                 //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<EmployeeTerritories>("et1")
                     .Join<Employees>("e1", "et1", (e1, et1) => e1.EmployeeID == et1.EmployeeID)
+                    //TODO: because of AliasMap in Join a type can't join to the same type
+                    //TODO: IJoinQueryProvider<Employees>.Join<Employees>()....
                     .Join<Employees>("e2", "e1", (e2, e1) => e2.ReportsTo == e1.EmployeeID)
                     .Join<EmployeeTerritories>("et2", "e2", (et2, e2) => et2.EmployeeID == e2.EmployeeID)
                     .And<EmployeeTerritories>("et2", "et1", (et2, et1) => et2.TerritoryID == et1.TerritoryID);
@@ -201,13 +202,11 @@ namespace PersistanceMap.Test.Integration
                 var employees = query.Select<Employees>();
 
                 Assert.IsTrue(employees.Any());
-                //Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
-                //Assert.IsTrue(orders.First().ProductID > 0);
             }
         }
 
         [Test]
-        public void SimpleJoinWithOnAndIncludeTest()
+        public void SimpleJoin_WithOn_WithMapTest()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())

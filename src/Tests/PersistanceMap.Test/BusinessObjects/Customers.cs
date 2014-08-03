@@ -3,7 +3,7 @@ namespace PersistanceMap.Test.BusinessObjects
 {
     public class Customers
     {
-        public int CustomerID { get; set; }
+        public string CustomerID { get; set; }
 
         public string CompanyName { get; set; }
 

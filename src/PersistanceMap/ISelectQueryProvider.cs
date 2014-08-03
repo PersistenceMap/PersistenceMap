@@ -49,7 +49,7 @@ namespace PersistanceMap
 
         IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate);
 
-        IWhereQueryProvider<T> Where<T2>(Expression<Func<T, T2, bool>> predicate);
+        //IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, T, bool>> predicate);
 
         IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
 
@@ -92,6 +92,7 @@ namespace PersistanceMap
         //IEnumerable<T> Select();
 
         //T2 Single<T2>();
+
     }
 
     public interface IWhereQueryProvider<T> : IQueryProvider
@@ -101,6 +102,8 @@ namespace PersistanceMap
         IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate);
 
         IJoinQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate);
+
+        IJoinQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate);
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate);
 
@@ -115,5 +118,12 @@ namespace PersistanceMap
         IEnumerable<T> Select();
 
         T2 Single<T2>();
+
+        /// <summary>
+        /// Compiles the Query to a sql statement
+        /// </summary>
+        /// <typeparam name="T">The select type</typeparam>
+        /// <returns>The sql string</returns>
+        string CompileQuery<T2>();
     }
 }

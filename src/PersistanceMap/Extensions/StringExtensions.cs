@@ -8,9 +8,17 @@ namespace PersistanceMap
 {
     internal static class StringExtensions
     {
-        public static string AppendFormat(this string str, string[] args)
+        public static string RemoveLineBreak(this string str)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(str))
+                return str;
+
+            while (str.EndsWith("\r\n"))
+            {
+                str = str.Substring(0, str.Length - 2);
+            }
+
+            return str;
         }
     }
 }
