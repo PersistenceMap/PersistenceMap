@@ -44,6 +44,16 @@ namespace PersistanceMap
                 .Join<TJoin>(predicate);
         }
 
+        public static IEnumerable<T> Select<T>(this IDatabaseContext context, string queryString)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            return context.Execute<T>(query);
+        }
+
         #endregion
 
         #region Procedure Expressions

@@ -24,13 +24,8 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                // join using on and or
-                //TODO: Or allways returns false! create connection that realy works!
-                var orders1 = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Or<OrderDetails>((detail, order) => false)
-                    .Select<OrderWithDetail>();
+                // select with string select statement
+                var orders = context.Select<Orders>("Select * from Orders");
 
                 // join using on and and
                 //TODO: And allways returns false! create connection that realy works!
@@ -51,6 +46,9 @@ namespace PersistanceMap.Test
                 
 
                 var personen = context.From<Orders>().Where(p => p.CustomerID.StartsWith("P"));
+
+
+                
 
             }
         }

@@ -11,7 +11,12 @@ namespace PersistanceMap.QueryProvider
     public partial class SelectQueryProvider<T> : IWhereQueryProvider<T>, IQueryProvider
     {
         #region IWhereQueryProvider Implementation
-        
+
+        public IJoinQueryProvider<T> And(Expression<Func<T, bool>> predicate)
+        {
+            return AddExpressionPartToLast(OperationType.And, predicate);
+        }
+
         public IJoinQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate)
         {
             return AddExpressionPartToLast(OperationType.And, predicate);
@@ -26,11 +31,15 @@ namespace PersistanceMap.QueryProvider
         {
             return AddExpressionPartToLast(OperationType.And, predicate);
         }
-        
+
+
+        public IJoinQueryProvider<T> Or(Expression<Func<T, bool>> predicate)
+        {
+            return AddExpressionPartToLast(OperationType.Or, predicate);
+        }
+
         public IJoinQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate)
         {
-            throw new NotImplementedException();
-
             return AddExpressionPartToLast(OperationType.Or, predicate);
         }
 

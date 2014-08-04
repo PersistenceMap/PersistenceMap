@@ -97,11 +97,16 @@ namespace PersistanceMap
 
     public interface IWhereQueryProvider<T> : IQueryProvider
     {
+        IJoinQueryProvider<T> And(Expression<Func<T, bool>> predicate);
+
         IJoinQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate);
 
         IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate);
 
         IJoinQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate);
+
+
+        IJoinQueryProvider<T> Or(Expression<Func<T, bool>> predicate);
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate);
 

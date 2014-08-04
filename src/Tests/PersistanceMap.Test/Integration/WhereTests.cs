@@ -94,8 +94,33 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [Description("select statement with where operation and a simple and operation")]
+        [Description("select statement with a where and a simple and operation")]
         public void Join_WithWhere_WithSimpleAnd()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("se"))
+                    .And(o => o.ShipCity == "London");
+
+                // execute the query
+                var orders = query.Select<Orders>();
+
+                var sql = query.CompileQuery<Orders>().Flatten();
+                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with where operation and a simple generic and operation")]
+        public void Join_WithWhere_WithGenericAnd()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -142,6 +167,124 @@ namespace PersistanceMap.Test.Integration
 
                 var sql = query.CompileQuery<Orders>().Flatten();
                 var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where and a simple or operation")]
+        public void Join_WithWhere_WithSimpleOr()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("P"))
+                    .Or(o => o.ShipCity == "London");
+
+                // execute the query
+                var orders = query.Select<Orders>();
+
+                var sql = query.CompileQuery<Orders>().Flatten();
+                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris')";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where and a simple or operation")]
+        public void Join_WithWhere_WithSimpleGenericOr()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("P"))
+                    .Or<Orders>(o => o.ShipCity == "Paris");
+
+                // execute the query
+                var orders = query.Select<Orders>();
+
+                var sql = query.CompileQuery<Orders>().Flatten();
+                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris')";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where and a simple or operation")]
+        public void Join_WithWhere_WithSimpleGenericOr2()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Employees>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(o => o.Region)
+                    .Map(o => o.CustomerID)
+                    .Map(o => o.Country)
+                    .Where<Employees, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Or<Orders>(o => o.Freight > 0);
+
+                // execute the query
+                var orders = query.Select<Customers>();
+
+                var sql = query.CompileQuery<Customers>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID = Customers.EmployeeID) or (Orders.Freight > '0')";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where and a or operation containing two entities")]
+        public void Join_WithWhere_WithComplexGenericOr()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Employees>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(o => o.Region)
+                    .Map(o => o.CustomerID)
+                    .Map(o => o.Country)
+                    .Where<Employees, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Or<Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+
+                // execute the query
+                var orders = query.Select<Customers>();
+
+                var sql = query.CompileQuery<Customers>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID = Customers.EmployeeID) or (Customers.EmployeeID = Employees.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);

@@ -106,28 +106,7 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.First().ProductID > 0);
             }
         }
-
-        [Test]
-        public void SimpleJoin_WithOr_WithProjection()
-        {
-            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = dbConnection.Open())
-            {
-                //TODO: Or allways returns false! create connection that realy works!
-                var orders = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Or<Orders>((detail, order) => false)
-                    .Select<OrderWithDetail>();
-
-                //TODO: Or allways returns false! create connection that realy works!
-                Assert.Fail();
-
-                Assert.IsTrue(orders.Any());
-                Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
-                Assert.IsTrue(orders.First().ProductID > 0);
-            }
-        }
-
+        
         [Test]
         public void SimpleJoin_WithOnAndInJoin_WithProjection()
         {
@@ -255,6 +234,39 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.Any());
                 Assert.IsFalse(string.IsNullOrEmpty(orders.First().ShipName));
                 Assert.IsTrue(orders.First().ProductID > 0);
+            }
+        }
+
+        [Test]
+        [Description("A select statemenent with a join and a or operation")]
+        public void Join_WithGenericOr()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and or
+                var query = context.From<Employees>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Or<Employees>((c, e) => c.EmployeeID == e.EmployeeID)
+                    .Map(o => o.Region)
+                    .Map(o => o.CustomerID)
+                    .Map(o => o.Country);
+
+                // execute the query
+                var customers = query.Select<Customers>();
+
+                var sql = query.CompileQuery<Customers>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) or (Customers.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(customers.Any());
             }
         }
     }

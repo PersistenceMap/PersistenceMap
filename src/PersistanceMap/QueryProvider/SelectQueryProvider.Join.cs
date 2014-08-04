@@ -24,8 +24,6 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate)
         {
-            throw new NotImplementedException();
-
             return AddExpressionPartToLast(OperationType.Or, predicate);
         }
 
