@@ -120,5 +120,18 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.First().SpecialFreight > 0);
             }
         }
+
+        [Test]
+        public void Select_WithStringSelectStatement()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select with string select statement
+                var orders = context.Select<Orders>("Select * from Orders");
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
     }
 }

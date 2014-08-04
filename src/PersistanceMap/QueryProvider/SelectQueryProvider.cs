@@ -82,7 +82,7 @@ namespace PersistanceMap.QueryProvider
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
 
-        internal ISelectQueryProvider<T> Map(string source, string alias, string entity, string entityalias)
+        protected ISelectQueryProvider<T> Map(string source, string alias, string entity, string entityalias)
         {
             //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
@@ -102,7 +102,7 @@ namespace PersistanceMap.QueryProvider
         /// <param name="operation">The operationtype for the new querypart</param>
         /// <param name="predicate">The predicate containing the expression to execute</param>
         /// <returns>A new instance of selectqueryprovider containing a cumlated view of the complete expression</returns>
-        internal SelectQueryProvider<T> AddExpressionPartToLast(OperationType operation, LambdaExpression predicate)
+        protected SelectQueryProvider<T> AddExpressionPartToLast(OperationType operation, LambdaExpression predicate)
         {
             var part = new ExpressionQueryPart(operation, predicate);
             QueryPartsMap.AddToLast(part, p => p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.FullJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.Where);

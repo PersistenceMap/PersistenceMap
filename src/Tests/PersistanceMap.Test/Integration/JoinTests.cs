@@ -8,7 +8,7 @@ namespace PersistanceMap.Test.Integration
     public class JoinTests : TestBase
     {
         [Test]
-        public void SimpleJoinWithProjectionTest()
+        public void Select_Join()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -24,7 +24,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinInFromWithProjectionTest()
+        public void Select_Join_InFrom()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -46,7 +46,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinWithOnWithProjectionTest()
+        public void Select_Join_WithOn_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -62,7 +62,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinWithOnAndIdentifierOptionWithProjectionTest()
+        public void Select_Join_WithAlias_WithMaps_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -86,7 +86,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoinWithOnAndIdentifiersWithProjectionTest()
+        public void Select_Join_WithAliasInFrom_WithMaps_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -108,7 +108,7 @@ namespace PersistanceMap.Test.Integration
         }
         
         [Test]
-        public void SimpleJoin_WithOnAndInJoin_WithProjection()
+        public void Select_Join_WithOnAndInJoin_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -132,7 +132,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoin_WithAnd_WithProjection()
+        public void Select_Join_WithAnd_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -158,24 +158,26 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoin_WithAnd_WithAlias_WithProjection()
+        public void Select_Join_WithAnd_WithAlias_WithProjection()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
                 //TODO: And allways returns false! create connection that realy works!
-                var query = context.From<EmployeeTerritories>("et1")
-                    .Join<Employees>("e1", "et1", (e1, et1) => e1.EmployeeID == et1.EmployeeID)
-                    //TODO: because of AliasMap in Join a type can't join to the same type
-                    //TODO: IJoinQueryProvider<Employees>.Join<Employees>()....
-                    .Join<Employees>("e2", "e1", (e2, e1) => e2.ReportsTo == e1.EmployeeID)
-                    .Join<EmployeeTerritories>("et2", "e2", (et2, e2) => et2.EmployeeID == e2.EmployeeID)
-                    .And<EmployeeTerritories>("et2", "et1", (et2, et1) => et2.TerritoryID == et1.TerritoryID);
+                var query = context.From<Customers>("customer")
+                    .Join<Orders>("ord", "customer", (o, c) => o.EmployeeID == c.EmployeeID)
+                    .Join<Employees>("empl", "ord", (e, o) => e.EmployeeID == o.EmployeeID)
+                    .And<Customers>("empl", "customer", (c, e) => c.EmployeeID == e.EmployeeID)
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode);
 
-                var sql = "";
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers customer join Orders ord on (ord.EmployeeID = customer.EmployeeID) join Employees empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = customer.EmployeeID)";
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Employees>().Flatten(), sql);
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var employees = query.Select<Employees>();
@@ -185,7 +187,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleJoin_WithOn_WithMapTest()
+        public void Select_Join_WithOn_WithMap()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -210,7 +212,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void MultipleJoinsWithOnAndIncludeTest()
+        public void Select_Joins_WithOn_WithMaps()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -239,7 +241,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("A select statemenent with a join and a or operation")]
-        public void Join_WithGenericOr()
+        public void Select_Join_WithGenericOr()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())

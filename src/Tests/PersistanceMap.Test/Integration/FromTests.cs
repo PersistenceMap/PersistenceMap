@@ -8,7 +8,7 @@ namespace PersistanceMap.Test.Integration
     public class FromTests : TestBase
     {
         [Test]
-        public void SimpleFromTest()
+        public void Select_From_Direct()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -26,7 +26,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void FromWithIdentifierTest()
+        public void Select_From_WithAliasInFrom()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -44,7 +44,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void FromWithJoinAndIdentifiersTest()
+        public void Select_FromW_ithJoin_WithAlias()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -67,7 +67,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void FromWithIncludeTest()
+        public void Select_From_WithAlias()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
@@ -81,10 +81,11 @@ namespace PersistanceMap.Test.Integration
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice);
 
-                var sql = "select Orders.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)";
+                var sql = query.CompileQuery<OrderDetails>().Flatten();
+                var expected = "select Orders.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var orders = query.Select<OrderDetails>();
@@ -94,26 +95,26 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void FromWithIncludeAndIdentifierTest()
+        [Description("A select statement where the map takes the alias from the previous operation")]
+        public void From_WithInclude_WithAlias_MapWithoutAlias()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                // multiple joins using On<T> with include and include-operation in from expression with identifier
                 var query = context
                     .From<Orders>("ord")
                     .Map(p => p.OrderID)
-                    //TODO: Join has to check the previous for the alias! "ord"
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    //TODO: Join has to check the previous for the alias? "ord"
+                    .Join<OrderDetails>(null, "ord", (det, order) => det.OrderID == order.OrderID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice);
 
-                //TODO: complete test!
-                var sql = "";
+                var sql = query.CompileQuery<OrderDetails>().Flatten();
+                var expected = "select ord.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders ord join OrderDetails on (OrderDetails.OrderID = ord.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var orders = query.Select<OrderDetails>();
@@ -121,5 +122,35 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.Any());
             }
         }
+
+        //[Test]
+        //[Description("A select statement with the aliases that are defined in only the first map")]
+        //public void FromWithIncludeAndIdentifierTest()
+        //{
+        //    var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = dbConnection.Open())
+        //    {
+        //        // multiple joins using On<T> with include and include-operation in from expression with identifier
+        //        var query = context
+        //            .From<Orders>("ord")
+        //            .Map(p => p.OrderID)
+        //            //TODO: Join has to check the previous for the alias! "ord"
+        //            .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+        //            .Join<Products>((product, det) => product.ProductID == det.ProductID)
+        //            .Map(p => p.ProductID)
+        //            .Map(p => p.UnitPrice);
+
+        //        //TODO: complete test!
+        //        var sql = "";
+
+        //        // check the compiled sql
+        //        Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
+
+        //        // execute the query
+        //        var orders = query.Select<OrderDetails>();
+
+        //        Assert.IsTrue(orders.Any());
+        //    }
+        //}
     }
 }

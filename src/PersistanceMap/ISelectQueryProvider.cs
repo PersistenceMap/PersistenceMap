@@ -112,7 +112,7 @@ namespace PersistanceMap
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate);
 
-        IJoinQueryProvider<T> Or<TSource, TOr>(Expression<Func<T, TOr, bool>> predicate);
+        IJoinQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate);
 
 
 

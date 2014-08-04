@@ -598,11 +598,14 @@ namespace PersistanceMap.Compiler
                 var fd = tableDef.FirstOrDefault(x => x.MemberName == memberName);
                 var fieldName = fd != null ? fd.FieldName : memberName;
 
+                // get the prefix from the maptable
                 var id = string.Empty;
                 if (!_aliasMap.TryGetValue(fd.EntityType, out id))
-                {
                     id = fd.EntityName;
-                }
+
+                // set the entityname as prefix
+                if(string.IsNullOrEmpty(id))
+                    id = fd.EntityName;
 
                 return PrefixFieldWithTableName
                     ? DialectProvider.Instance.GetQuotedColumnName(id, fieldName)

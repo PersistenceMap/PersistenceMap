@@ -13,7 +13,7 @@ namespace PersistanceMap.Test.Integration
     {
         [Test]
         [Description("Select statement with a simple where operation")]
-        public void SimpleJoin_WithWhere()
+        public void Select_Where()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -39,7 +39,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with where operation for generic type")]
-        public void Join_WithWhereForGenericType()
+        public void Select_WhereForGenericType()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -65,7 +65,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with where operation for multiple generic types")]
-        public void Join_WithWhereForMultipeGnenericTypes()
+        public void Select_WhereForMultipeGnenericTypes()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -95,7 +95,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a simple and operation")]
-        public void Join_WithWhere_WithSimpleAnd()
+        public void Select_Where_WithSimpleAnd()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -120,7 +120,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with where operation and a simple generic and operation")]
-        public void Join_WithWhere_WithGenericAnd()
+        public void Select_Where_WithGenericAnd()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -148,7 +148,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where operationion and a and operation mapped to 2 differen types")]
-        public void Join_WithWhere_WithMultyGenericAnd()
+        public void Select_Where_WithMultyGenericAnd()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -177,7 +177,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a simple or operation")]
-        public void Join_WithWhere_WithSimpleOr()
+        public void Select_Where_WithSimpleOr()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -191,7 +191,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris')";
+                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -202,7 +202,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a simple or operation")]
-        public void Join_WithWhere_WithSimpleGenericOr()
+        public void Select_Where_WithSimpleGenericOr()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -227,7 +227,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a simple or operation")]
-        public void Join_WithWhere_WithSimpleGenericOr2()
+        public void Select_Where_WithSimpleGenericOr2()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -261,7 +261,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a or operation containing two entities")]
-        public void Join_WithWhere_WithComplexGenericOr()
+        public void Select_Where_WithSimpleComplexGenericOr()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
@@ -285,6 +285,38 @@ namespace PersistanceMap.Test.Integration
 
                 var sql = query.CompileQuery<Customers>().Flatten();
                 var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID = Customers.EmployeeID) or (Customers.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where operation and a or operation that has two genereic parameters")]
+        public void Select_Where_WithComplexGenericOr()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // join using on and and
+                //TODO: And allways returns false! create connection that realy works!
+                var query = context.From<Customers>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
+                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Where(e => e.FirstName.Contains("Davolio"))
+                    .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+
+                // execute the query
+                var orders = query.Select<Employees>();
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (Customers.EmployeeID = Employees.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
