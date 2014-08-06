@@ -154,6 +154,31 @@ namespace PersistanceMap.QueryProvider
 
         #endregion
 
+        #region OrderBy Expressions
+
+        public IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate)
+        {
+            return AddExpressionQueryPart<T>(OperationType.OrderBy, predicate);
+        }
+
+        public IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        {
+            return AddExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
+        }
+
+        public IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
+        {
+            return AddExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
+        }
+
+        public IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        {
+            return AddExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
+        }
+
+        #endregion
+
+
         #region Select Expressions
 
         public IEnumerable<T2> Select<T2>()

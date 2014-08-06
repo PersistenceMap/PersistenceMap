@@ -10,7 +10,7 @@ using PersistanceMap.Internals;
 
 namespace PersistanceMap.QueryProvider
 {
-    public partial class SelectQueryProvider<T> : ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryProvider<T> : ISelectQueryExpression<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IQueryProvider
     {
         public SelectQueryProvider(IDatabaseContext context)
         {
@@ -102,12 +102,19 @@ namespace PersistanceMap.QueryProvider
         /// <param name="operation">The operationtype for the new querypart</param>
         /// <param name="predicate">The predicate containing the expression to execute</param>
         /// <returns>A new instance of selectqueryprovider containing a cumlated view of the complete expression</returns>
-        protected SelectQueryProvider<T> AddExpressionPartToLast(OperationType operation, LambdaExpression predicate)
+        protected SelectQueryProvider<T> AddExpressionQueryPartToLast(OperationType operation, LambdaExpression predicate)
         {
             var part = new ExpressionQueryPart(operation, predicate);
             QueryPartsMap.AddToLast(part, p => p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.FullJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.Where);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
+        }
+
+        public SelectQueryProvider<T2> AddExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
+        {
+            QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, operation);
+
+            return new SelectQueryProvider<T2>(Context, QueryPartsMap);
         }
 
         #endregion

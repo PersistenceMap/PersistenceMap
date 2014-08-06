@@ -123,7 +123,8 @@ namespace PersistanceMap.Compiler
                 if (m.Expression != null)
                 {
                     string r = CompileMemberAccess(m).ToString();
-                    return string.Format("{0}={1}", r, GetQuotedTrueValue());
+                    //return string.Format("{0}={1}", r, GetQuotedTrueValue());
+                    return r;
                 }
             }
 

@@ -15,7 +15,7 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate)
         {
-            return AddExpressionPartToLast(OperationType.And, predicate);
+            return AddExpressionQueryPartToLast(OperationType.And, predicate);
         }
 
         public IJoinQueryProvider<T> And<TAnd>(string source, string reference, Expression<Func<T, TAnd, bool>> predicate)
@@ -32,7 +32,7 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate)
         {
-            return AddExpressionPartToLast(OperationType.Or, predicate);
+            return AddExpressionQueryPartToLast(OperationType.Or, predicate);
         }
 
         #endregion

@@ -6,7 +6,23 @@ using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {
-    public interface ISelectQueryProvider<T> : IQueryProvider
+    public interface ISelectQueryExpression<T> : IQueryProvider
+    {
+        IEnumerable<T2> Select<T2>();
+
+        IEnumerable<T> Select();
+
+        T2 Single<T2>();
+        
+        /// <summary>
+        /// Compiles the Query to a sql statement
+        /// </summary>
+        /// <typeparam name="T">The select type</typeparam>
+        /// <returns>The sql string</returns>
+        string CompileQuery<T2>();
+    }
+
+    public interface ISelectQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
     {
         IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate);
 
@@ -55,24 +71,16 @@ namespace PersistanceMap
 
 
 
+
+        IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate);
+
+        IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+
+        IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
+
+        IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+
         
-
-
-        //TODO: Create base interface!
-        IEnumerable<T2> Select<T2>();
-
-        IEnumerable<T> Select();
-
-        T2 Single<T2>();
-
-
-
-        /// <summary>
-        /// Compiles the Query to a sql statement
-        /// </summary>
-        /// <typeparam name="T">The select type</typeparam>
-        /// <returns>The sql string</returns>
-        string CompileQuery<T2>();
     }
 
     public interface IJoinQueryProvider<T> : ISelectQueryProvider<T>, IQueryProvider
@@ -82,20 +90,9 @@ namespace PersistanceMap
         IJoinQueryProvider<T> And<TAnd>(string source, string reference, Expression<Func<T, TAnd, bool>> predicate);
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate);
-
-
-
-
-
-        //IEnumerable<T2> Select<T2>();
-
-        //IEnumerable<T> Select();
-
-        //T2 Single<T2>();
-
     }
 
-    public interface IWhereQueryProvider<T> : IQueryProvider
+    public interface IWhereQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
     {
         IJoinQueryProvider<T> And(Expression<Func<T, bool>> predicate);
 
@@ -116,19 +113,23 @@ namespace PersistanceMap
 
 
 
+        IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate);
 
-        //TODO: Create base interface!
-        IEnumerable<T2> Select<T2>();
+        IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
 
-        IEnumerable<T> Select();
+        IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
 
-        T2 Single<T2>();
+        IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+    }
 
-        /// <summary>
-        /// Compiles the Query to a sql statement
-        /// </summary>
-        /// <typeparam name="T">The select type</typeparam>
-        /// <returns>The sql string</returns>
-        string CompileQuery<T2>();
+    public interface IOrderQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
+    {
+        IOrderQueryProvider<T> ThenBy<TOrder>(Expression<Func<T, TOrder>> predicate);
+
+        IOrderQueryProvider<T> ThenBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+
+        IOrderQueryProvider<T> ThenByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
+
+        IOrderQueryProvider<T> ThenByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
     }
 }

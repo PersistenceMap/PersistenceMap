@@ -90,7 +90,7 @@ namespace PersistanceMap
 
         public static IExpressionQueryPart AppendExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
         {
-            var part = new ExpressionQueryPart(OperationType.Where, predicate);
+            var part = new ExpressionQueryPart(operation, predicate);
             queryParts.Add(part);
 
             return part;

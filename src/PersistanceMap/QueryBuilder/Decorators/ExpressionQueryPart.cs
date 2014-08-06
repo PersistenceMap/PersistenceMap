@@ -32,40 +32,73 @@ namespace PersistanceMap.QueryBuilder.Decorators
             if (value == null)
                 return null;
 
-            string keyword = string.Empty;
+            string prefix = string.Empty;
+            string sufix = string.Empty;
             switch (OperationType)
             {
                 case OperationType.On:
-                    keyword = "on";
+                    prefix = "on";
                     break;
 
                 case OperationType.And:
-                    keyword = "and";
+                    prefix = "and";
                     break;
 
                 case OperationType.Or:
-                    keyword = "or";
+                    prefix = "or";
                     break;
 
                 case OperationType.Value:
                     // just return the quotated value
-                    keyword = string.Empty;
+                    prefix = string.Empty;
                     break;
 
                 case OperationType.Where:
-                    keyword = "where";
+                    prefix = "where";
+                    break;
+
+                case OperationType.OrderBy:
+                    prefix = "order by";
+                    sufix = "asc";
+                    break;
+
+                case OperationType.OrderByDesc:
+                    prefix = "order by";
+                    sufix = "desc";
+                    break;
+
+                case OperationType.ThenBy:
+                    // just return the quotated value
+                    prefix = ", ";
+                    sufix = "asc";
+                    break;
+
+                case OperationType.ThenByDesc:
+                    // just return the quotated value
+                    prefix = ", ";
+                    sufix = "desc";
                     break;
             }
 
             var sb = new StringBuilder();
+            string expression = string.Empty;
 
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrEmpty(prefix))
             {
-                sb.AppendLine(string.Format("{0} {1} ", keyword, value));
+                //sb.AppendLine(string.Format("{0} {1} ", prefix, value));
+                expression = string.Format("{0} {1} ", prefix, value);
             }
             else
-                sb.AppendLine(DialectProvider.Instance.GetQuotedValue(value, value.GetType()));
+            {
+                //sb.AppendLine(DialectProvider.Instance.GetQuotedValue(value, value.GetType()));
+                expression = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+            }
 
+            if (!string.IsNullOrEmpty(sufix))
+                expression = string.Format("{0} {1} ", expression, sufix);
+
+            //TODO: AppendLine or just append? Check what should happen when a child part is added!
+            sb.AppendLine(expression);
 
             var partsValue = base.Compile();
             if (!string.IsNullOrEmpty(partsValue))

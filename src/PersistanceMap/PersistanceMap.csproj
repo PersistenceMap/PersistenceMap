@@ -106,12 +106,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DatabaseContextExtensions.cs" />
     <Compile Include="QueryBuilder\Decorators\ParameterQueryPart.cs" />
-    <Compile Include="QueryProvider\SelectQueryProvider.Join.cs" >
-		<DependentUpon>SelectQueryProvider.cs</DependentUpon>
-	</Compile>
-    <Compile Include="QueryProvider\SelectQueryProvider.Select.cs" >
-		<DependentUpon>SelectQueryProvider.cs</DependentUpon>
-	</Compile>
+    <Compile Include="QueryProvider\SelectQueryProvider.Join.cs">
+      <DependentUpon>SelectQueryProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryProvider\SelectQueryProvider.Order.cs">
+      <DependentUpon>SelectQueryProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryProvider\SelectQueryProvider.Select.cs">
+      <DependentUpon>SelectQueryProvider.cs</DependentUpon>
+    </Compile>
     <Compile Include="QueryProvider\SelectQueryProvider.Where.cs">
       <DependentUpon>SelectQueryProvider.cs</DependentUpon>
     </Compile>

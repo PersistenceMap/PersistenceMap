@@ -56,8 +56,13 @@ namespace PersistanceMap
         Or = 25,
 
 
+        OrderBy = 26,
 
+        OrderByDesc = 27,
 
+        ThenBy = 28,
+
+        ThenByDesc = 29,
 
 
 
