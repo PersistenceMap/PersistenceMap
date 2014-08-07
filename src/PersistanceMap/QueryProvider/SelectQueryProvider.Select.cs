@@ -17,53 +17,103 @@ namespace PersistanceMap.QueryProvider
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
-            QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
+            //QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
 
-            return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            return CreateEntityQueryPart(predicate, OperationType.Join);
         }
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
-            part.EntityAlias = alias;
+            //TODO: Code is implemented multiple times!
+            //var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
+            //part.EntityAlias = alias;
 
-            foreach (var itm in part.Parts)
-            {
-                var map = itm as IExpressionQueryPart;
-                if (map == null)
-                    continue;
+            //foreach (var itm in part.Parts)
+            //{
+            //    var map = itm as IExpressionQueryPart;
+            //    if (map == null)
+            //        continue;
 
-                // add aliases to mapcollections
-                map.AliasMap.Add(typeof(TJoin), alias);
-            }
+            //    // add aliases to mapcollections
+            //    map.AliasMap.Add(typeof(TJoin), alias);
+            //}
 
-            return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias);
         }
 
         public IJoinQueryProvider<TJoin> Join<TJoin>(string alias, string source, Expression<Func<TJoin, T, bool>> predicate)
         {
-            var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
-            part.EntityAlias = alias;
+            //TODO: Code is implemented multiple times!
+            //var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, T>(QueryPartsMap, predicate, OperationType.Join);
+            //part.EntityAlias = alias;
 
-            foreach (var itm in part.Parts)
-            {
-                var map = itm as IExpressionQueryPart;
-                if (map == null)
-                    continue;
+            //foreach (var itm in part.Parts)
+            //{
+            //    var map = itm as IExpressionQueryPart;
+            //    if (map == null)
+            //        continue;
 
-                // add aliases to mapcollections
-                map.AliasMap.Add(typeof(T), source);
-                map.AliasMap.Add(typeof(TJoin), alias);
-            }
+            //    // add aliases to mapcollections
+            //    map.AliasMap.Add(typeof(T), source);
+            //    map.AliasMap.Add(typeof(TJoin), alias);
+            //}
 
-            return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
 
-        public IJoinQueryProvider<TJoin> Join<TJoin, T1>(Expression<Func<TJoin, T1, bool>> predicate)
+
+
+        public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate)
         {
-            QueryPartsFactory.AppendEntityQueryPart<TJoin, T1>(QueryPartsMap, predicate, OperationType.Join);
+            //QueryPartsFactory.AppendEntityQueryPart<TJoin, TOrig>(QueryPartsMap, predicate, OperationType.Join);
             
-            return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            return CreateEntityQueryPart(predicate, OperationType.Join);
+        }
+
+        public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(string alias, Expression<Func<TJoin, TOrig, bool>> predicate)
+        {
+            //TODO: Code is implemented multiple times!
+            //var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, TOrig>(QueryPartsMap, predicate, OperationType.Join);
+            //part.EntityAlias = alias;
+
+            //foreach (var itm in part.Parts)
+            //{
+            //    var map = itm as IExpressionQueryPart;
+            //    if (map == null)
+            //        continue;
+
+            //    // add aliases to mapcollections
+            //    map.AliasMap.Add(typeof(TJoin), alias);
+            //}
+
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias);
+        }
+
+        public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(string alias, string source, Expression<Func<TJoin, TOrig, bool>> predicate)
+        {
+            //TODO: Code is implemented multiple times!
+            //var part = QueryPartsFactory.AppendEntityQueryPart<TJoin, TOrig>(QueryPartsMap, predicate, OperationType.Join);
+            //part.EntityAlias = alias;
+
+            //foreach (var itm in part.Parts)
+            //{
+            //    var map = itm as IExpressionQueryPart;
+            //    if (map == null)
+            //        continue;
+
+            //    // add aliases to mapcollections
+            //    map.AliasMap.Add(typeof(TOrig), source);
+            //    map.AliasMap.Add(typeof(TJoin), alias);
+            //}
+
+            //return new SelectQueryProvider<TJoin>(Context, QueryPartsMap);
+
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
 
         #endregion
@@ -158,22 +208,22 @@ namespace PersistanceMap.QueryProvider
 
         public IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
         }
 
         #endregion

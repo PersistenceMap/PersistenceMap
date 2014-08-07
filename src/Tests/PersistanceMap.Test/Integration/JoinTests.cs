@@ -271,5 +271,92 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(customers.Any());
             }
         }
+        
+        [Test]
+        [Description("select with a join that connects to a other table than the previous")]
+        public void Select_Join_ToOtherTable()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select with a join that connects to a other table than the previous
+                var query = context.From<Employees>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+
+                // execute the query
+                var customers = query.Select<Employees>();
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(customers.Any());
+            }
+        }
+
+        [Test]
+        [Description("select with a join that contains a alias connects to a other table than the previous")]
+        public void Select_Join_WithAlias_ToOtherTable()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select with a join that contains a alias connects to a other table than the previous
+                var query = context.From<Employees>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers, Employees>("cust", (c, e) => c.EmployeeID == e.EmployeeID);
+
+                // execute the query
+                var customers = query.Select<Employees>();
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers cust on (cust.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(customers.Any());
+            }
+        }
+
+        [Test]
+        [Description("select with a join that containes an alias and connects to a other table than the previous that also contains an alias")]
+        public void Select_Join_WithAlias_ToOtherTable_WithAlias()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select with a join that containes an alias and connects to a other table than the previous that also contains an alias
+                var query = context.From<Employees>("emp")
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>(null, "emp", (o, e) => o.EmployeeID == e.EmployeeID)
+                    .Join<Customers, Employees>("cust", "emp", (c, e) => c.EmployeeID == e.EmployeeID);
+
+                // execute the query
+                var customers = query.Select<Employees>();
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select emp.EmployeeID, emp.Address, emp.City, emp.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers cust on (cust.EmployeeID = emp.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(customers.Any());
+            }
+        }
     }
 }

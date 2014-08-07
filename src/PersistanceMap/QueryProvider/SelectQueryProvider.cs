@@ -110,11 +110,34 @@ namespace PersistanceMap.QueryProvider
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
-        public SelectQueryProvider<T2> AddExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
+        protected SelectQueryProvider<T2> CreateExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
         {
             QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, operation);
 
             return new SelectQueryProvider<T2>(Context, QueryPartsMap);
+        }
+
+        protected IJoinQueryProvider<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
+        {
+            var part = QueryPartsFactory.AppendEntityQueryPart(QueryPartsMap, predicate, operation);
+            if (!string.IsNullOrEmpty(alias))
+                part.EntityAlias = alias;
+
+            foreach (var itm in part.Parts)
+            {
+                var map = itm as IExpressionQueryPart;
+                if (map == null)
+                    continue;
+
+                // add aliases to mapcollections
+                if (!string.IsNullOrEmpty(source))
+                    map.AliasMap.Add(typeof(T2), source);
+
+                if (!string.IsNullOrEmpty(alias))
+                    map.AliasMap.Add(typeof(T1), alias);
+            }
+
+            return new SelectQueryProvider<T1>(Context, QueryPartsMap);
         }
 
         #endregion

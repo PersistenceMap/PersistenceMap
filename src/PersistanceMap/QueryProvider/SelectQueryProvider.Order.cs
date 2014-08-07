@@ -13,22 +13,22 @@ namespace PersistanceMap.QueryProvider
 
         public IOrderQueryProvider<T> ThenBy<TOrder>(Expression<Func<T, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
         }
 
         public IOrderQueryProvider<T> ThenBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
         }
 
         public IOrderQueryProvider<T> ThenByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
         }
 
         public IOrderQueryProvider<T> ThenByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
         {
-            return AddExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
         }
 
         #endregion
