@@ -102,12 +102,12 @@ namespace PersistanceMap.QueryProvider
         /// <param name="operation">The operationtype for the new querypart</param>
         /// <param name="predicate">The predicate containing the expression to execute</param>
         /// <returns>A new instance of selectqueryprovider containing a cumlated view of the complete expression</returns>
-        protected SelectQueryProvider<T> AddExpressionQueryPartToLast(OperationType operation, LambdaExpression predicate)
+        protected IExpressionQueryPart AppendExpressionQueryPartToLast(OperationType operation, LambdaExpression predicate)
         {
             var part = new ExpressionQueryPart(operation, predicate);
             QueryPartsMap.AddToLast(part, p => p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.FullJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.Where);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return part;
         }
 
         protected SelectQueryProvider<T2> CreateExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)

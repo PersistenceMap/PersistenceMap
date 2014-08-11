@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
+using System.Collections;
 using System.Linq;
 
 namespace PersistanceMap.Test.Integration
@@ -52,7 +53,7 @@ namespace PersistanceMap.Test.Integration
                 // join using identifiers in the on expression
                 var query = context.From<Orders>("orders")
                     .Map(o => o.OrderID)
-                    .Join<OrderDetails>("detail", "orders", (det, order) => det.OrderID == order.OrderID);
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, "detail", "orders");
 
                 var sql = "select orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)";
 
@@ -105,7 +106,7 @@ namespace PersistanceMap.Test.Integration
                     .From<Orders>("ord")
                     .Map(p => p.OrderID)
                     //TODO: Join has to check the previous for the alias? "ord"
-                    .Join<OrderDetails>(null, "ord", (det, order) => det.OrderID == order.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, source: "ord")
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice);
@@ -123,34 +124,34 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        //[Test]
-        //[Description("A select statement with the aliases that are defined in only the first map")]
-        //public void FromWithIncludeAndIdentifierTest()
+        //[Test, TestCaseSource(typeof(SelectFromTestCases), "TestCases")]
+        //public string SelectFromTest(IOrderQueryProvider<Orders> query)
         //{
-        //    var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = dbConnection.Open())
-        //    {
-        //        // multiple joins using On<T> with include and include-operation in from expression with identifier
-        //        var query = context
-        //            .From<Orders>("ord")
-        //            .Map(p => p.OrderID)
-        //            //TODO: Join has to check the previous for the alias! "ord"
-        //            .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
-        //            .Join<Products>((product, det) => product.ProductID == det.ProductID)
-        //            .Map(p => p.ProductID)
-        //            .Map(p => p.UnitPrice);
+        //    // execute the query
+        //    var orders = query.Select();
 
-        //        //TODO: complete test!
-        //        var sql = "";
+        //    Assert.IsTrue(orders.Any());
 
-        //        // check the compiled sql
-        //        Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
-
-        //        // execute the query
-        //        var orders = query.Select<OrderDetails>();
-
-        //        Assert.IsTrue(orders.Any());
-        //    }
+        //    // return the query string
+        //    return query.CompileQuery<Orders>().Flatten();
         //}
     }
+
+    //class SelectFromTestCases : TestBase
+    //{
+    //    public IEnumerable TestCases
+    //    {
+    //        get
+    //        {
+    //            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+    //            using (var context = connection.Open())
+    //            {
+    //                yield return new TestCaseData(null)
+    //                    .Returns("")
+    //                    .SetDescription("select ord.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders ord join OrderDetails on (OrderDetails.OrderID = ord.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)");
+    //            }
+    //        }
+    //    }
+    //}
+
 }

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
+using System.Collections;
 using System.Linq;
 
 namespace PersistanceMap.Test.Integration
@@ -68,7 +69,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>("detail", (det, order) => det.OrderID == order.OrderID);
+                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, "detail");
 
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
@@ -93,7 +94,7 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context.From<Orders>("orders")
                     .Map(o => o.OrderID)
-                    .Join<OrderDetails>("detail", "orders", (detail, order) => detail.OrderID == order.OrderID);
+                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID, "detail", "orders");
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), "select orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)");
@@ -106,7 +107,7 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.First().ProductID > 0);
             }
         }
-        
+
         [Test]
         public void Select_Join_WithOnAndInJoin_WithProjection()
         {
@@ -146,13 +147,13 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode);
-                
+
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<Employees>().Flatten(), "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) and (Employees.EmployeeID = Customers.EmployeeID)");
 
                 // execute the query
                 var emloyees = query.Select<Employees>();
-                
+
                 Assert.IsTrue(emloyees.Any());
             }
         }
@@ -165,9 +166,9 @@ namespace PersistanceMap.Test.Integration
             {
                 //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<Customers>("customer")
-                    .Join<Orders>("ord", "customer", (o, c) => o.EmployeeID == c.EmployeeID)
-                    .Join<Employees>("empl", "ord", (e, o) => e.EmployeeID == o.EmployeeID)
-                    .And<Customers>("empl", "customer", (c, e) => c.EmployeeID == e.EmployeeID)
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord", "customer")
+                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
+                    .And<Customers>((c, e) => c.EmployeeID == e.EmployeeID, "customer", "empl")
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
@@ -271,7 +272,7 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(customers.Any());
             }
         }
-        
+
         [Test]
         [Description("select with a join that connects to a other table than the previous")]
         public void Select_Join_ToOtherTable()
@@ -315,7 +316,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
-                    .Join<Customers, Employees>("cust", (c, e) => c.EmployeeID == e.EmployeeID);
+                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust");
 
                 // execute the query
                 var customers = query.Select<Employees>();
@@ -343,8 +344,8 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
-                    .Join<Orders>(null, "emp", (o, e) => o.EmployeeID == e.EmployeeID)
-                    .Join<Customers, Employees>("cust", "emp", (c, e) => c.EmployeeID == e.EmployeeID);
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID, source: "emp")
+                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp");
 
                 // execute the query
                 var customers = query.Select<Employees>();
@@ -358,5 +359,101 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(customers.Any());
             }
         }
+
+        [Test]
+        [Description("select expression containing a and with an alias for the source table")]
+        public void Select_Join_WithAnd_WithOnlySourceAlias_WithProjection()
+        {
+            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = dbConnection.Open())
+            {
+                //TODO: And allways returns false! create connection that realy works!
+                var query = context.From<Customers>()
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord")
+                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
+                    .And<Customers>((c, e) => c.EmployeeID == e.EmployeeID, source: "empl")
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode);
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ord on (ord.EmployeeID = Customers.EmployeeID) join Employees empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = Customers.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                // execute the query
+                var employees = query.Select<Employees>();
+
+                Assert.IsTrue(employees.Any());
+            }
+        }
+
+        [Test]
+        [Description("select expression containing a and with an alias for the joined table")]
+        public void Select_Join_WithAnd_WithOnlyAlias_WithProjection()
+        {
+            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = dbConnection.Open())
+            {
+                //TODO: And allways returns false! create connection that realy works!
+                var query = context.From<Customers>("cust")
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord", "cust")
+                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, source: "ord")
+                    .And<Customers>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust")
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode);
+
+                var sql = query.CompileQuery<Employees>().Flatten();
+                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders ord on (ord.EmployeeID = cust.EmployeeID) join Employees on (Employees.EmployeeID = ord.EmployeeID) and (Employees.EmployeeID = cust.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                // execute the query
+                var employees = query.Select<Employees>();
+
+                Assert.IsTrue(employees.Any());
+            }
+        }
+
+        //[Test, TestCaseSource(typeof(SelectJoinTestCases), "TestCases")]
+        //public string SelectFromTest<T>(IOrderQueryProvider<T> query)
+        //{
+        //    // execute the query
+        //    var orders = query.Select<T>();
+
+        //    Assert.IsTrue(orders.Any());
+
+        //    // return the query string
+        //    return query.CompileQuery<Orders>().Flatten();
+        //}
     }
+
+    //class SelectJoinTestCases : TestBase
+    //{
+    //    public IEnumerable TestCases
+    //    {
+    //        get
+    //        {
+    //            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+    //            using (var context = connection.Open())
+    //            {
+    //                yield return new TestCaseData(context.From<Customers>()
+    //                .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord")
+    //                .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
+    //                .And<Customers>((c, e) => c.EmployeeID == e.EmployeeID, source: "empl")
+    //                .Map(e => e.EmployeeID)
+    //                .Map(e => e.Address)
+    //                .Map(e => e.City)
+    //                .Map(e => e.PostalCode))
+    //                    .Returns("select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ord on (ord.EmployeeID = Customers.EmployeeID) join Employees empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = Customers.EmployeeID)")
+    //                    .SetDescription("Select with and expression containing alias for the source");
+    //            }
+    //        }
+    //    }
+    //}
 }

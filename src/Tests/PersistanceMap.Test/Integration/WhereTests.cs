@@ -142,7 +142,6 @@ namespace PersistanceMap.Test.Integration
                 Assert.AreEqual(sql, expected);
 
                 Assert.IsTrue(orderdetails.Any());
-
             }
         }
 
@@ -317,6 +316,64 @@ namespace PersistanceMap.Test.Integration
 
                 var sql = query.CompileQuery<Employees>().Flatten();
                 var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (Customers.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias")]
+        public void Select_Where_WithMultyGenericAnd_WithAlias()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // where operation with and
+                var query = context.From<Employees>()
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                    .Map(o => o.EmployeeID)
+                    .Map(o => o.CustomerID)
+                    .Join<Customers>((c, o) => o.CustomerID == o.CustomerID, alias: "cust")
+                    .Where(c => c.ContactName.Contains("a"))
+                    .And<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust");
+
+                // execute the query
+                var orders = query.Select<Orders>();
+
+                var sql = query.CompileQuery<Orders>().Flatten();
+                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers cust on (Orders.CustomerID = Orders.CustomerID) where cust.ContactName like '%a%' and (cust.EmployeeID = Employees.EmployeeID)";
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias for the source")]
+        public void Select_Where_WithMultyGenericAnd_WithAliasForSource()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // where operation with and
+                var query = context.From<Employees>("emp")
+                    .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID, source: "emp")
+                    .Map(o => o.EmployeeID)
+                    .Map(o => o.CustomerID)
+                    .Join<Customers>((c, o) => o.CustomerID == o.CustomerID)
+                    .Where(c => c.ContactName.Contains("a"))
+                    .And<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp");
+
+                // execute the query
+                var orders = query.Select<Orders>();
+
+                var sql = query.CompileQuery<Orders>().Flatten();
+                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = emp.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);

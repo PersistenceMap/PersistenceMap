@@ -13,26 +13,32 @@ namespace PersistanceMap.QueryProvider
     {
         #region IJoinQueryProvider Implementation
 
-        public IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate)
-        {
-            return AddExpressionQueryPartToLast(OperationType.And, predicate);
-        }
+        //public IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate)
+        //{
+        //    AppendExpressionQueryPartToLast(OperationType.And, predicate);
 
-        public IJoinQueryProvider<T> And<TAnd>(string source, string reference, Expression<Func<T, TAnd, bool>> predicate)
+        //    return new SelectQueryProvider<T>(Context, QueryPartsMap);
+        //}
+
+        public IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
         {
-            var part = new ExpressionQueryPart(OperationType.And, predicate);
-            QueryPartsMap.AddToLast(part, p => p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.FullJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.Where);
+            var part = AppendExpressionQueryPartToLast(OperationType.And, predicate);
 
             // add aliases to mapcollections
-            part.AliasMap.Add(typeof(T), source);
-            part.AliasMap.Add(typeof(TAnd), reference);
+            if (!string.IsNullOrEmpty(source))
+                part.AliasMap.Add(typeof(T), source);
+
+            if (!string.IsNullOrEmpty(alias))
+                part.AliasMap.Add(typeof(TAnd), alias);
 
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         public IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate)
         {
-            return AddExpressionQueryPartToLast(OperationType.Or, predicate);
+            AppendExpressionQueryPartToLast(OperationType.Or, predicate);
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
         #endregion
