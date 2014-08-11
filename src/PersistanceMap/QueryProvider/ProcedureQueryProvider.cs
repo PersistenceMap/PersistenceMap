@@ -111,9 +111,9 @@ namespace PersistanceMap.QueryProvider
         /// <typeparam name="T2">The Type returned by the expression</typeparam>
         /// <param name="predicate">The Expression containing the value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider AddParameter<T2>(Expression<Func<T2>> predicate)
+        public IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate)
         {
-            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(predicate));
+            QueryPartsFactory.AppendParameterQueryPart(QueryPartsMap, predicate);
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -127,13 +127,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate)
         {
-            // parameters have to start with @
-            if (!name.StartsWith("@"))
-                name = string.Format("@{0}", name);
-
-            var map = new ParameterQueryMap(OperationType.Value, name, predicate);
-
-            QueryPartsMap.Add(QueryPartsFactory.CreateParameterQueryPart(new IExpressionQueryPart[] {map}));
+            QueryPartsFactory.AppendParameterQueryPart(QueryPartsMap, predicate, name);
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -154,7 +148,7 @@ namespace PersistanceMap.QueryProvider
 
             var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
-            var cb = QueryPartsFactory.CreateParameterQueryPart(map, callback, QueryPartsMap);
+            var cb = QueryPartsFactory.AppendParameterQueryPart(QueryPartsMap, map, callback);
             QueryPartsMap.Add(cb);
 
             if (cb.CanHandleCallback)

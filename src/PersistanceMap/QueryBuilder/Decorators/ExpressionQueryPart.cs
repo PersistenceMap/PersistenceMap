@@ -17,7 +17,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
             AliasMap = new Dictionary<Type, string>();
         }
 
-        public OperationType OperationType { get; private set; }
+        //public OperationType OperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
 
@@ -26,7 +26,7 @@ namespace PersistanceMap.QueryBuilder.Decorators
         /// </summary>
         public Dictionary<Type, string> AliasMap { get; private set; }
 
-        public virtual string Compile()
+        public override string Compile()
         {
             var value = LambdaExpressionToSqlCompiler.Instance.Compile(this);
             if (value == null)

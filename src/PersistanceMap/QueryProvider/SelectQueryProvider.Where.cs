@@ -32,10 +32,10 @@ namespace PersistanceMap.QueryProvider
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
-        IJoinQueryProvider<T> IWhereQueryProvider<T>.And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
-        {
-            return And<TAnd>(predicate, alias, source);
-        }
+        //IJoinQueryProvider<T> IWhereQueryProvider<T>.And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
+        //{
+        //    return And<TAnd>(predicate, alias, source);
+        //}
 
         public IJoinQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null)
         {

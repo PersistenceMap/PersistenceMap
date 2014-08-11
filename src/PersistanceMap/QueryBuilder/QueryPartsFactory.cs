@@ -100,33 +100,35 @@ namespace PersistanceMap
 
         #region ParameterQueryPart
 
-        public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<T>> predicate)
+        public static IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T>> predicate, string name = null)
         {
-            return CreateParameterQueryPart(new IExpressionQueryPart[] { new ExpressionQueryPart(OperationType.Value, predicate) });
-        }
+            if (!string.IsNullOrEmpty(name))
+            {
+                // parameters have to start with @
+                if (!name.StartsWith("@"))
+                    name = string.Format("@{0}", name);
+            }
 
-        //public static IParameterQueryPart CreateParameterQueryPart<T>(Expression<Func<IProcedureMapOption, IQueryMap>> part, Action<T> callback, ProcedureQueryPartsMap queryParts)
-        //{
-        //    return new CallbackParameterQueryPart<T>(new IQueryMap[] { QueryMapCompiler.Compile(part) }, callback)
-        //    {
-        //        OperationType = OperationType.Parameter
-        //    };
-        //}
-
-        public static IParameterQueryPart CreateParameterQueryPart<T>(IExpressionQueryPart map, Action<T> callback, ProcedureQueryPartsMap queryParts)
-        {
-            return new CallbackParameterQueryPart<T>(new IExpressionQueryPart[] { map }, callback)
+            var part = new ParameterQueryPart(new IExpressionQueryPart[] { new ParameterQueryMap(OperationType.Value, name, predicate) })
             {
                 OperationType = OperationType.Parameter
             };
+
+            queryParts.Add(part);
+
+            return part;
         }
 
-        public static IParameterQueryPart CreateParameterQueryPart(IExpressionQueryPart[] querymap)
+        public static IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart map, Action<T> callback)
         {
-            return new ParameterQueryPart(querymap)
+            var part = new CallbackParameterQueryPart<T>(new IExpressionQueryPart[] { map }, callback)
             {
                 OperationType = OperationType.Parameter
             };
+
+            queryParts.Add(part);
+
+            return part;
         }
 
         #endregion
