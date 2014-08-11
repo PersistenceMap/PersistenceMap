@@ -69,13 +69,13 @@ namespace PersistanceMap.QueryBuilder.Decorators
 
                 case OperationType.ThenBy:
                     // just return the quotated value
-                    prefix = ", ";
+                    prefix = ",";
                     sufix = "asc";
                     break;
 
                 case OperationType.ThenByDesc:
                     // just return the quotated value
-                    prefix = ", ";
+                    prefix = ",";
                     sufix = "desc";
                     break;
             }
@@ -95,10 +95,10 @@ namespace PersistanceMap.QueryBuilder.Decorators
             }
 
             if (!string.IsNullOrEmpty(sufix))
-                expression = string.Format("{0} {1} ", expression, sufix);
+                expression = string.Format("{0} {1} ", expression.TrimEnd(), sufix);
 
             //TODO: AppendLine or just append? Check what should happen when a child part is added!
-            sb.AppendLine(expression);
+            sb.Append(expression);
 
             var partsValue = base.Compile();
             if (!string.IsNullOrEmpty(partsValue))

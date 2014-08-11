@@ -83,12 +83,36 @@ namespace PersistanceMap
             // loop all parts and compile
             foreach (var part in Parts)
             {
-                sb.AppendLine(part.Compile());
+                switch (part.OperationType)
+                {
+                    case OperationType.OrderBy:
+                    case OperationType.OrderByDesc:
+
+                        var index = Parts.IndexOf(part);
+                        if (index + 1 < Parts.Count)
+                        {
+                            var item = Parts[index + 1];
+                            if (item.OperationType == OperationType.ThenBy || item.OperationType == OperationType.ThenByDesc)
+                            {
+                                sb.Append(part.Compile());
+                            }
+                            else
+                                sb.AppendLine(part.Compile());
+                        }
+                        else
+                            sb.AppendLine(part.Compile());
+                        break;
+
+                    case OperationType.ThenBy:
+                    case OperationType.ThenByDesc:
+                        sb.Append(part.Compile());
+                        break;
+
+                    default:
+                        sb.AppendLine(part.Compile());
+                        break;
+                }
             }
-
-            // where
-
-            // order...
 
             return new CompiledQuery
             {
