@@ -6,7 +6,7 @@ using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {
-    public interface ISelectQueryExpression<T> : IQueryProvider
+    public interface ISelectQueryProviderBase<T> : IQueryProvider
     {
         IEnumerable<T2> Select<T2>();
 
@@ -22,7 +22,7 @@ namespace PersistanceMap
         string CompileQuery<T2>();
     }
 
-    public interface ISelectQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
+    public interface ISelectQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
         IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null);
 
@@ -84,7 +84,7 @@ namespace PersistanceMap
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate);
     }
 
-    public interface IWhereQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
+    public interface IWhereQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
         IJoinQueryProvider<T> And(Expression<Func<T, bool>> predicate);
 
@@ -114,7 +114,7 @@ namespace PersistanceMap
         IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
     }
 
-    public interface IOrderQueryProvider<T> : ISelectQueryExpression<T>, IQueryProvider
+    public interface IOrderQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
         IOrderQueryProvider<T> ThenBy<TOrder>(Expression<Func<T, TOrder>> predicate);
 

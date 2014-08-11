@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryProvider
 {
-    public partial class SelectQueryProvider<T> : IOrderQueryProvider<T>, ISelectQueryExpression<T>, IQueryProvider
+    public partial class SelectQueryProvider<T> : IOrderQueryProvider<T>, ISelectQueryProviderBase<T>, IQueryProvider
     {
         #region OrderBy Expressions
 

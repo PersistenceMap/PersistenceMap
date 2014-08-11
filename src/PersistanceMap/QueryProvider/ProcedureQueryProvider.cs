@@ -149,8 +149,6 @@ namespace PersistanceMap.QueryProvider
             var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
             var cb = QueryPartsFactory.AppendParameterQueryPart(QueryPartsMap, map, callback);
-            QueryPartsMap.Add(cb);
-
             if (cb.CanHandleCallback)
             {
                 // get the index of the parameter in the collection to create the name of the out parameter

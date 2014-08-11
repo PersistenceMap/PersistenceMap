@@ -10,7 +10,7 @@ using PersistanceMap.Internals;
 
 namespace PersistanceMap.QueryProvider
 {
-    public partial class SelectQueryProvider<T> : ISelectQueryExpression<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryProvider<T> : ISelectQueryProviderBase<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IQueryProvider
     {
         public SelectQueryProvider(IDatabaseContext context)
         {
