@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections;
+using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
 using System;
 using System.Collections.Generic;
@@ -300,7 +301,6 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // join using on and and
-                //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<Customers>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
@@ -379,6 +379,140 @@ namespace PersistanceMap.Test.Integration
                 Assert.AreEqual(sql, expected);
 
                 Assert.IsTrue(orders.Any());
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        //[Test]
+        //[Description("select statement with a where operation and a or operation that has two genereic parameters")]
+        //public void Select_Where_WithComplexGenericOr()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // join using on and and
+        //        var query = context.From<Customers>()
+        //            .Map(e => e.EmployeeID)
+        //            .Map(e => e.Address)
+        //            .Map(e => e.City)
+        //            .Map(e => e.PostalCode)
+        //            .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
+        //            .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+        //            .Where(e => e.FirstName.Contains("Davolio"))
+        //            .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+
+        //        // execute the query
+        //        var orders = query.Select<Employees>();
+
+        //        var sql = query.CompileQuery<Employees>().Flatten();
+        //        var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (Customers.EmployeeID = Employees.EmployeeID)";
+
+        //        // check the compiled sql
+        //        Assert.AreEqual(sql, expected);
+
+        //        Assert.IsTrue(orders.Any());
+        //    }
+        //}
+
+        [Test, TestCaseSource(typeof(SelectWhereTestCases), "EmployeesTestCases")]
+        public string WhereTest(IOrderQueryProvider<Employees> query)
+        {
+            // execute the query
+            var orders = query.Select();
+
+            Assert.IsTrue(orders.Any());
+
+            // return the query string
+            return query.CompileQuery<Orders>().Flatten();
+        }
+
+        [Test, TestCaseSource(typeof(SelectWhereTestCases), "OrdersTestCases")]
+        public string WhereTest(IOrderQueryProvider<Orders> query)
+        {
+            // execute the query
+            var orders = query.Select();
+
+            Assert.IsTrue(orders.Any());
+
+            // return the query string
+            return query.CompileQuery<Orders>().Flatten();
+        }
+    }
+
+    class SelectWhereTestCases : TestBase
+    {
+        public IEnumerable EmployeesTestCases
+        {
+            get
+            {
+                var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+                using (var context = connection.Open())
+                {
+                    yield return new TestCaseData(context.From<Customers>("cust")
+                        .Map(e => e.EmployeeID)
+                        .Map(e => e.Address)
+                        .Map(e => e.City)
+                        .Map(e => e.PostalCode)
+                        .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
+                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                        .Where(e => e.FirstName.Contains("Davolio"))
+                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp"))
+                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employees emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
+                        .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and alias for both types")
+                        .SetName("Where expression with Or containing aliases");
+
+                    yield return new TestCaseData(context.From<Customers>()
+                        .Map(e => e.EmployeeID)
+                        .Map(e => e.Address)
+                        .Map(e => e.City)
+                        .Map(e => e.PostalCode)
+                        .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
+                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                        .Where(e => e.FirstName.Contains("Davolio"))
+                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp"))
+                        .Returns("select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)")
+                        .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the source type")
+                        .SetName("Where expression with Or containing source alias");
+
+                    yield return new TestCaseData(context.From<Customers>("cust")
+                        .Map(e => e.EmployeeID)
+                        .Map(e => e.Address)
+                        .Map(e => e.City)
+                        .Map(e => e.PostalCode)
+                        .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
+                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                        .Where(e => e.FirstName.Contains("Davolio"))
+                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust"))
+                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (cust.EmployeeID = Employees.EmployeeID)")
+                        .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the type")
+                        .SetName("Where expression with Or containing aliase");
+                }
+            }
+        }
+
+        public IEnumerable OrdersTestCases
+        {
+            get
+            {
+                var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+                using (var context = connection.Open())
+                {
+                    yield return new TestCaseData(context.From<Orders>("ord")
+                        .Where(p => p.CustomerID.StartsWith("P"))
+                        .Or<Orders>(o => o.ShipCity == "London", "ord"))
+                        .Returns("")
+                        .SetDescription("")
+                        .SetName("");
+
+                }
             }
         }
     }

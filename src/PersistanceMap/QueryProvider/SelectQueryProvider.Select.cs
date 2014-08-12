@@ -15,11 +15,28 @@ namespace PersistanceMap.QueryProvider
 
         #region Join Expressions
 
+        /// <summary>
+        /// Joines a new entity type to the last entity
+        /// </summary>
+        /// <typeparam name="TJoin">The type to join</typeparam>
+        /// <param name="predicate">The expression that defines the connection</param>
+        /// <param name="alias">The alias of the joining entity</param>
+        /// <param name="source">The alias of the source entity</param>
+        /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
             return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
 
+        /// <summary>
+        /// Joines a new entity type to a previous entity
+        /// </summary>
+        /// <typeparam name="TJoin">The type to join</typeparam>
+        /// <typeparam name="TOrig">The type of the previous entity to join to</typeparam>
+        /// <param name="predicate">The expression that defines the connection</param>
+        /// <param name="alias">The alias of the joining entity</param>
+        /// <param name="source">The alias of the source entity</param>
+        /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
         {
             return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
@@ -44,6 +61,23 @@ namespace PersistanceMap.QueryProvider
         }
 
         /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
+        /// </summary>
+        /// <typeparam name="TOut">The Property</typeparam>
+        /// <param name="source">The expression that returns the Property</param>
+        /// <param name="alias">The alias name the field will get (... as Alias)</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        public ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias)
+        {
+            alias.EnsureArgumentNotNullOrEmpty("alias");
+
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
+            var entity = typeof(T).Name;
+
+            return Map(sourceField, alias, entity, null);
+        }
+
+        /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
@@ -53,13 +87,18 @@ namespace PersistanceMap.QueryProvider
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
-            var aliasField = FieldHelper.TryExtractPropertyName(alias);
-            var sourceField = FieldHelper.TryExtractPropertyName(source);
-            var entity = typeof(T).Name;
-
-            return Map(sourceField, aliasField, entity, null);
+            return Map<T, TAlias, TOut>(source, alias);
         }
 
+        /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
+        /// </summary>
+        /// <typeparam name="TSource">The select type containig the source alias property</typeparam>
+        /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
+        /// <typeparam name="TOut">The alias Type</typeparam>
+        /// <param name="source">The source expression returning the source property</param>
+        /// <param name="alias">The select expression returning the alias property</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
@@ -67,16 +106,6 @@ namespace PersistanceMap.QueryProvider
             var entity = typeof(TSource).Name;
 
             return Map(sourceField, aliasField, entity, null);
-        }
-
-        public ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias)
-        {
-            alias.EnsureArgumentNotNullOrEmpty("alias");
-
-            var sourceField = FieldHelper.TryExtractPropertyName(source);
-            var entity = typeof(T).Name;
-
-            return Map(sourceField, alias, entity, null);
         }
 
         #endregion
