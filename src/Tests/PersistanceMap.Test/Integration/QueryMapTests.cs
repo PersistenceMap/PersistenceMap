@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;

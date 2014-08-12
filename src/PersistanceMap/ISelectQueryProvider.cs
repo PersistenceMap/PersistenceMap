@@ -14,6 +14,8 @@ namespace PersistanceMap
 
         T2 Single<T2>();
         
+        IAfterMapQueryProvider<T2> For<T2>();
+
         /// <summary>
         /// Compiles the Query to a sql statement
         /// </summary>
@@ -152,5 +154,10 @@ namespace PersistanceMap
         IOrderQueryProvider<T> ThenByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
 
         IOrderQueryProvider<T> ThenByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+    }
+
+    public interface IAfterMapQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
+    {
+        IAfterMapQueryProvider<T> AfterMap(Action<T> predicate);
     }
 }

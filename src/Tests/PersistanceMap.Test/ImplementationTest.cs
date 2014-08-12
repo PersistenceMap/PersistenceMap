@@ -24,6 +24,13 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
+                var people = context.From<Employees>()
+                    .For<Person>()
+                    .AfterMap(p => p.State = "ok")
+                    .Select();
+
+                Assert.IsTrue(people.Any());
+                Assert.IsTrue(people.First().State == "ok");
             }
         }
     }

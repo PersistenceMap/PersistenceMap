@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PersistanceMap.Test.BusinessObjects;
+using System.Collections;
 
 namespace PersistanceMap.Test.Integration
 {
@@ -58,6 +59,36 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<OrderWithDetailExtended>();
 
                 Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test, TestCaseSource(typeof(MapToTestCases), "MapTestCases")]
+        public string WhereTest(IOrderQueryProvider<Orders> query)
+        {
+            // execute the query
+            var orders = query.Select();
+
+            Assert.IsTrue(orders.Any());
+
+            // return the query string
+            return query.CompileQuery<Orders>().Flatten();
+        }
+    }
+
+    class MapToTestCases : TestBase
+    {
+        public IEnumerable MapTestCases
+        {
+            get
+            {
+                var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+                using (var context = connection.Open())
+                {
+                    yield return new TestCaseData()
+                        .Returns("")
+                        .SetDescription("")
+                        .SetName("");
+                }
             }
         }
     }
