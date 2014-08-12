@@ -90,8 +90,6 @@ namespace PersistanceMap
 
         IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate);
 
-        //IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, T, bool>> predicate);
-
         IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
 
 
@@ -110,8 +108,6 @@ namespace PersistanceMap
 
     public interface IJoinQueryProvider<T> : ISelectQueryProvider<T>, IQueryProvider
     {
-        //IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate);
-
         IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
 
         IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
@@ -119,22 +115,22 @@ namespace PersistanceMap
 
     public interface IWhereQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
-        IJoinQueryProvider<T> And(Expression<Func<T, bool>> predicate);
+        IWhereQueryProvider<T> And(Expression<Func<T, bool>> predicate);
 
-        IJoinQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null);
+        IWhereQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null);
 
-        IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
 
-        IJoinQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null);
 
 
-        IJoinQueryProvider<T> Or(Expression<Func<T, bool>> predicate);
+        IWhereQueryProvider<T> Or(Expression<Func<T, bool>> predicate);
 
-        IJoinQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null);
+        IWhereQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null);
 
-        IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
 
-        IJoinQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null);
 
 
 

@@ -1,43 +1,13 @@
-﻿using System.Collections;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
-using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.Test.Integration
 {
     [TestFixture]
     public class WhereTests : TestBase
     {
-        [Test]
-        [Description("Select statement with a simple where operation")]
-        public void Select_Where()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // where operation on previous type
-                var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
-                    .Where(o => o.Discount > 0);
-
-                // execute the query
-                var orders = query.Select<OrderDetails>();
-
-                var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) where (OrderDetails.Discount > '0')";
-
-                // check the compiled sql
-                Assert.AreEqual(sql, expected);
-
-                Assert.IsTrue(orders.Any());
-            }
-        }
-
         [Test]
         [Description("select statement with where operation for generic type")]
         public void Select_WhereForGenericType()
@@ -93,32 +63,7 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(employees.Any());
             }
         }
-
-        [Test]
-        [Description("select statement with a where and a simple and operation")]
-        public void Select_Where_WithSimpleAnd()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // join using on and or
-                var query = context.From<Orders>()
-                    .Where(p => p.CustomerID.StartsWith("se"))
-                    .And(o => o.ShipCity == "London");
-
-                // execute the query
-                var orders = query.Select<Orders>();
-
-                var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
-
-                // check the compiled sql
-                Assert.AreEqual(sql, expected);
-
-                Assert.IsTrue(orders.Any());
-            }
-        }
-
+        
         [Test]
         [Description("select statement with where operation and a simple generic and operation")]
         public void Select_Where_WithGenericAnd()
@@ -167,56 +112,6 @@ namespace PersistanceMap.Test.Integration
 
                 var sql = query.CompileQuery<Orders>().Flatten();
                 var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = Employees.EmployeeID)";
-
-                // check the compiled sql
-                Assert.AreEqual(sql, expected);
-
-                Assert.IsTrue(orders.Any());
-            }
-        }
-
-        [Test]
-        [Description("select statement with a where and a simple or operation")]
-        public void Select_Where_WithSimpleOr()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // join using on and or
-                var query = context.From<Orders>()
-                    .Where(p => p.CustomerID.StartsWith("P"))
-                    .Or(o => o.ShipCity == "London");
-
-                // execute the query
-                var orders = query.Select<Orders>();
-
-                var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')";
-
-                // check the compiled sql
-                Assert.AreEqual(sql, expected);
-
-                Assert.IsTrue(orders.Any());
-            }
-        }
-
-        [Test]
-        [Description("select statement with a where and a simple or operation")]
-        public void Select_Where_WithSimpleGenericOr()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // join using on and or
-                var query = context.From<Orders>()
-                    .Where(p => p.CustomerID.StartsWith("P"))
-                    .Or<Orders>(o => o.ShipCity == "Paris");
-
-                // execute the query
-                var orders = query.Select<Orders>();
-
-                var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -384,44 +279,6 @@ namespace PersistanceMap.Test.Integration
 
 
 
-
-
-
-
-
-
-
-        //[Test]
-        //[Description("select statement with a where operation and a or operation that has two genereic parameters")]
-        //public void Select_Where_WithComplexGenericOr()
-        //{
-        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = connection.Open())
-        //    {
-        //        // join using on and and
-        //        var query = context.From<Customers>()
-        //            .Map(e => e.EmployeeID)
-        //            .Map(e => e.Address)
-        //            .Map(e => e.City)
-        //            .Map(e => e.PostalCode)
-        //            .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
-        //            .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
-        //            .Where(e => e.FirstName.Contains("Davolio"))
-        //            .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
-
-        //        // execute the query
-        //        var orders = query.Select<Employees>();
-
-        //        var sql = query.CompileQuery<Employees>().Flatten();
-        //        var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (Customers.EmployeeID = Employees.EmployeeID)";
-
-        //        // check the compiled sql
-        //        Assert.AreEqual(sql, expected);
-
-        //        Assert.IsTrue(orders.Any());
-        //    }
-        //}
-
         [Test, TestCaseSource(typeof(SelectWhereTestCases), "EmployeesTestCases")]
         public string WhereTest(IOrderQueryProvider<Employees> query)
         {
@@ -449,6 +306,8 @@ namespace PersistanceMap.Test.Integration
 
     class SelectWhereTestCases : TestBase
     {
+        #region EmployeesTestCases
+
         public IEnumerable EmployeesTestCases
         {
             get
@@ -498,6 +357,10 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
+        #endregion
+
+        #region OrdersTestCases
+
         public IEnumerable OrdersTestCases
         {
             get
@@ -505,15 +368,48 @@ namespace PersistanceMap.Test.Integration
                 var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
                 using (var context = connection.Open())
                 {
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Map(o => o.OrderID)
+                        .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
+                        .Where(o => o.Discount > 0)
+                        .Rebase<OrderDetails, Orders>())
+                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) where (OrderDetails.Discount > '0')")
+                        .SetDescription("Select statement with a simple where operation")
+                        .SetName("Join expression with simple WHERE");
+
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Where(p => p.CustomerID.StartsWith("P"))
+                        .Or<Orders>(o => o.ShipCity == "London"))
+                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')")
+                        .SetDescription("select statement with a where and a simple or operation")
+                        .SetName("Where expression with generic OR");
+
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Where(p => p.CustomerID.StartsWith("P"))
+                        .Or<Orders>(o => o.ShipCity == "Paris")
+                        .Or<Orders>(o => o.ShipCity == "London"))
+                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')")
+                        .SetDescription("select statement with a where and a simple or operation")
+                        .SetName("Where expression with two generic OR");
+
                     yield return new TestCaseData(context.From<Orders>("ord")
                         .Where(p => p.CustomerID.StartsWith("P"))
                         .Or<Orders>(o => o.ShipCity == "London", "ord"))
-                        .Returns("")
-                        .SetDescription("")
-                        .SetName("");
+                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')")
+                        .SetDescription("Select statement with a where and a generic OR operation")
+                        .SetName("Where expression with generic OR with alias");
+
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Where(p => p.CustomerID.StartsWith("se"))
+                        .And(o => o.ShipCity == "London"))
+                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')")
+                        .SetDescription("select statement with a where and a simple and operation")
+                        .SetName("Where expression with simple And");
 
                 }
             }
         }
+
+        #endregion
     }
 }

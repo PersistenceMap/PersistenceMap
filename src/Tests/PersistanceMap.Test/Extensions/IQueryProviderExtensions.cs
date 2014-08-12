@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PersistanceMap.Test.Extensions
+namespace PersistanceMap.Test
 {
     internal static class IQueryProviderExtensions
     {
