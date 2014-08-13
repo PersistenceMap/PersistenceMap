@@ -81,6 +81,34 @@
         <IgnoredElement>
           <TextualIdentifier>9630152221674996753</TextualIdentifier>
         </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>13961556439889315246</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>5909893955093449194</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>11300304121106621291</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>15553053416792132383</TextualIdentifier>
+        </IgnoredElement>
+      </FilePath>
+      <FilePath>
+        <FileRelativePath>src/PersistanceMap/QueryProvider/SelectQueryProvider.AfterMap.cs</FileRelativePath>
+        <ProjectRelativePath>src/PersistanceMap/PersistanceMap.csproj</ProjectRelativePath>
+        <IgnoredElement>
+          <TextualIdentifier>17747557395262658596</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>6015625969148983576</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>4915646942422834621</TextualIdentifier>
+        </IgnoredElement>
+        <IgnoredElement>
+          <TextualIdentifier>13008166135851698985</TextualIdentifier>
+        </IgnoredElement>
       </FilePath>
     </IgnoredErrorsAndWarnings>
   </IgnoredErrorsAndWarningsSettings>

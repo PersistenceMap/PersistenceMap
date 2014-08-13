@@ -196,6 +196,14 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
+        public IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym)
+        {
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<TAno>(QueryPartsMap);
+
+            return Context.Execute<TAno>(query);
+        }
+
         public T2 Single<T2>()
         {
             throw new NotImplementedException();

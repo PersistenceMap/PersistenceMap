@@ -12,6 +12,8 @@ namespace PersistanceMap
 
         IEnumerable<T> Select();
 
+        IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym);
+
         T2 Single<T2>();
 
         IAfterMapQueryProvider<TNew> For<TNew>();

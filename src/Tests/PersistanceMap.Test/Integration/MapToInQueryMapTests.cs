@@ -62,34 +62,34 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        [Test, TestCaseSource(typeof(MapToTestCases), "MapTestCases")]
-        public string WhereTest(IOrderQueryProvider<Orders> query)
-        {
-            // execute the query
-            var orders = query.Select();
+        //[Test, TestCaseSource(typeof(MapToTestCases), "MapTestCases")]
+        //public string WhereTest(IOrderQueryProvider<Orders> query)
+        //{
+        //    // execute the query
+        //    var orders = query.Select();
 
-            Assert.IsTrue(orders.Any());
+        //    Assert.IsTrue(orders.Any());
 
-            // return the query string
-            return query.CompileQuery<Orders>().Flatten();
-        }
+        //    // return the query string
+        //    return query.CompileQuery<Orders>().Flatten();
+        //}
     }
 
-    class MapToTestCases : TestBase
-    {
-        public IEnumerable MapTestCases
-        {
-            get
-            {
-                var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-                using (var context = connection.Open())
-                {
-                    yield return new TestCaseData()
-                        .Returns("")
-                        .SetDescription("")
-                        .SetName("");
-                }
-            }
-        }
-    }
+    //class MapToTestCases : TestBase
+    //{
+    //    public IEnumerable MapTestCases
+    //    {
+    //        get
+    //        {
+    //            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+    //            using (var context = connection.Open())
+    //            {
+    //                yield return new TestCaseData()
+    //                    .Returns("")
+    //                    .SetDescription("")
+    //                    .SetName("");
+    //            }
+    //        }
+    //    }
+    //}
 }
