@@ -13,8 +13,8 @@ namespace PersistanceMap
         IEnumerable<T> Select();
 
         T2 Single<T2>();
-        
-        IAfterMapQueryProvider<T2> For<T2>();
+
+        IAfterMapQueryProvider<TNew> For<TNew>();
 
         /// <summary>
         /// Compiles the Query to a sql statement
@@ -159,5 +159,7 @@ namespace PersistanceMap
     public interface IAfterMapQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
         IAfterMapQueryProvider<T> AfterMap(Action<T> predicate);
+
+        IAfterMapQueryProvider<T> Ignore<TIgnore>(Expression<Func<T, TIgnore>> predicate);
     }
 }

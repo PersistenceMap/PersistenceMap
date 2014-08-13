@@ -201,6 +201,11 @@ namespace PersistanceMap.QueryProvider
             throw new NotImplementedException();
         }
 
+        public IAfterMapQueryProvider<TNew> For<TNew>()
+        {
+            return new SelectQueryProvider<TNew>(Context, QueryPartsMap);
+        }
+
         /// <summary>
         /// Compiles the Query to a sql statement
         /// </summary>
