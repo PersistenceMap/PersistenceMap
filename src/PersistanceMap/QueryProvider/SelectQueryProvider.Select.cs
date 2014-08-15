@@ -196,12 +196,17 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        public IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym)
-        {
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<TAno>(QueryPartsMap);
+        //public IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym)
+        //{
+        //    var expr = Context.ContextProvider.ExpressionCompiler;
+        //    var query = expr.Compile<TAno>(QueryPartsMap);
 
-            return Context.Execute<TAno>(query);
+        //    return Context.Execute<TAno>(query);
+        //}
+
+        public IEnumerable<TSelect> Select<TAno, TSelect>(Expression<Func<TAno, TSelect>> anonym)
+        {
+            throw new NotImplementedException();
         }
 
         public T2 Single<T2>()
@@ -212,6 +217,11 @@ namespace PersistanceMap.QueryProvider
         public IAfterMapQueryProvider<TNew> For<TNew>()
         {
             return new SelectQueryProvider<TNew>(Context, QueryPartsMap);
+        }
+
+        public IAfterMapQueryProvider<TAno> For<TAno>(Expression<Func<TAno>> anonym)
+        {
+            return new SelectQueryProvider<TAno>(Context, QueryPartsMap);
         }
 
         /// <summary>

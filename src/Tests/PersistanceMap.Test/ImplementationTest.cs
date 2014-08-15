@@ -37,23 +37,18 @@ namespace PersistanceMap.Test
 
                 Assert.IsTrue(anonymobjects.Any());
 
+
+
                 // select only the properties that are defined in the anony object
-                anonymobjects = context.From<Orders>()
+                var anonymobjects2 = context.From<Orders>()
                     .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    .Select(() => new OrderDetails
+                    .Select<OrderWithDetail>(od => new OrderWithDetail
                     {
                         // only select the properties defined
-                        ProductID = 0,
-                        Quantity = 0
+                        ProductID = od.ProductID,
+                        Quantity = od.Quantity
                     });
-
-                var lst = new List<OrderDetails>().Select(tmp => new
-                    {
-                        ProductID = 0,
-                        Quantity = 0.0
-                    }).Select(tmp => new OrderDetails { ProductID = tmp.ProductID });
-
-
+                
                 var people = context.From<Employees>()
                     .Map(e => e.FirstName.Contains("an") ? "True" : "False", "State")
                     .Select<Person>();
@@ -61,6 +56,32 @@ namespace PersistanceMap.Test
                 Assert.IsTrue(people.Any());
 
 
+
+
+
+
+
+
+                // select only the properties that are defined in the anony object
+                anonymobjects = context.From<Orders>()
+                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                    // define a anonymous type to deliver the resultset
+                    .For(() => new
+                    {
+                        ProductID = 0,
+                        Quantity = 0
+                    })
+                    .Select(tmp => new OrderDetails { ProductID = tmp.ProductID, Quantity = tmp.Quantity });
+
+                Assert.IsTrue(anonymobjects.Any());
+
+
+
+
+
+
+
+                // for with aftermap
                 people = context.From<Employees>()
                     .For<Person>()
                     .AfterMap(p => p.State = "ok")
@@ -70,8 +91,28 @@ namespace PersistanceMap.Test
                 Assert.IsTrue(people.First().State == "ok");
 
 
+                // select for with anonymous type in for
+                // failes because expression wont work with result as person!
+                people = context.From<Employees>()
+                    .For(() => new
+                    {
+                        LastName = "",
+                        FirstName = "",
+                        Title = "",
+                        State = ""
+                    })
+                    //.AfterMap(p => p.State = "ok")
+                    .Select<Person>();
+
+                //var lst = new List<OrderDetails>().Select(tmp => new
+                //{
+                //    ProductID = 0,
+                //    Quantity = 0.0
+                //}).Select(tmp => new OrderDetails { ProductID = tmp.ProductID });
 
 
+
+                // ignore fields
                 people = context.From<Employees>()
                     .For<Person>()
                     .Ignore(p => p.LastName)
