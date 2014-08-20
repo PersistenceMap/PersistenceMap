@@ -25,64 +25,8 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                // select only the properties that are defined in the anony object
-                var anonymobjects = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    .Select(() => new
-                    {
-                        ProductID = 0,
-                        Quantity = 0
-                    })
-                    .Select(tmp => new OrderDetails { ProductID = tmp.ProductID, Quantity = tmp.Quantity });
-
-                Assert.IsTrue(anonymobjects.Any());
-
-
-
-                // select only the properties that are defined in the anony object
-                var anonymobjects2 = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    .Select<OrderWithDetail>(od => new OrderWithDetail
-                    {
-                        // only select the properties defined
-                        ProductID = od.ProductID,
-                        Quantity = od.Quantity
-                    });
-                
-                var people = context.From<Employees>()
-                    .Map(e => e.FirstName.Contains("an") ? "True" : "False", "State")
-                    .Select<Person>();
-
-                Assert.IsTrue(people.Any());
-
-
-
-
-
-
-
-
-                // select only the properties that are defined in the anony object
-                anonymobjects = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    // define a anonymous type to deliver the resultset
-                    .For(() => new
-                    {
-                        ProductID = 0,
-                        Quantity = 0
-                    })
-                    .Select(tmp => new OrderDetails { ProductID = tmp.ProductID, Quantity = tmp.Quantity });
-
-                Assert.IsTrue(anonymobjects.Any());
-
-
-
-
-
-
-
                 // for with aftermap
-                people = context.From<Employees>()
+                var people = context.From<Employees>()
                     .For<Person>()
                     .AfterMap(p => p.State = "ok")
                     .Select();
@@ -122,13 +66,15 @@ namespace PersistanceMap.Test
                 Assert.IsTrue(people.Any());
                 Assert.IsFalse(people.Any(p => !string.IsNullOrEmpty(p.FirstName)));
                 Assert.IsFalse(people.Any(p => !string.IsNullOrEmpty(p.LastName)));
+
+
+
+                people = context.From<Employees>()
+                    .Map(e => e.FirstName.Contains("an") ? "True" : "False", "State")
+                    .Select<Person>();
+
+                Assert.IsTrue(people.Any());
             }
         }
     }
-
-    
-
-    
-
-    
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PersistanceMap.Internals;
+using PersistanceMap.QueryBuilder;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,7 +18,20 @@ namespace PersistanceMap.QueryProvider
 
         public IAfterMapQueryProvider<T> Ignore<TIgnore>(Expression<Func<T, TIgnore>> predicate)
         {
-            throw new NotImplementedException();
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            {
+                var map = part as IQueryPartDecorator;
+                if (map == null)
+                    continue;
+
+                var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+
+                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryMap && ((IFieldQueryMap)f).Field == fieldName || ((IFieldQueryMap)f).FieldAlias == fieldName);
+                if (subpart != null)
+                    map.Remove(subpart);
+            }
+
+            return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
     }
 }

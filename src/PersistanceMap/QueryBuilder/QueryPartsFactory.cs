@@ -96,6 +96,24 @@ namespace PersistanceMap
             return part;
         }
 
+        public static void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryMap[] fields)
+        {
+            foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            {
+                var map = part as IQueryPartDecorator;
+                if (map == null)
+                    continue;
+
+                foreach (var field in fields)
+                {
+                    if (map.Parts.Any(f => f is IFieldQueryMap && ((IFieldQueryMap)f).Field == field.Field || ((IFieldQueryMap)f).FieldAlias == field.Field))
+                        continue;
+
+                    map.Add(field);
+                }
+            }
+        }
+
         #endregion
 
         #region ParameterQueryPart

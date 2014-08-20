@@ -25,11 +25,17 @@ namespace PersistanceMap.QueryBuilder
 
         public virtual void Add(IQueryPart part)
         {
+            if (IsSealded)
+                return;
+
             Parts.Add(part);
         }
 
         public virtual void AddToLast(IQueryPart part, OperationType operation)
         {
+            if (IsSealded)
+                return;
+
             var last = Parts.Last(p => p.OperationType == operation && p is IQueryPartDecorator) as IQueryPartDecorator;
             if (last == null)
                 return;
@@ -39,6 +45,9 @@ namespace PersistanceMap.QueryBuilder
 
         public virtual void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
         {
+            if (IsSealded)
+                return;
+
             var last = Parts.Last(predicate) as IQueryPartDecorator;
             if (last == null)
                 return;
@@ -46,6 +55,11 @@ namespace PersistanceMap.QueryBuilder
             last.Add(part);
         }
 
+        public void Remove(IQueryPart part)
+        {
+            if (Parts.Contains(part))
+                Parts.Remove(part);
+        }
 
         IEnumerable<IQueryPart> IQueryPartDecorator.Parts
         {
@@ -56,6 +70,11 @@ namespace PersistanceMap.QueryBuilder
         }
 
         public IList<IQueryPart> Parts { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating if parts can be added to the decorator
+        /// </summary>
+        public bool IsSealded { get; set; }
 
         #endregion
 

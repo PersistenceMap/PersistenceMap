@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace PersistanceMap
 {
@@ -78,6 +80,51 @@ namespace PersistanceMap
                 Trace.WriteLine(ex);
             }
         }
+
+        //public static void AddSetters<T>(this object anonymous)
+        //{
+        //    //http://stackoverflow.com/questions/123540/modifying-existing-net-assemblies
+        //    //One important point: if the assembly is signed, any changes will fail and you'll end up with a dud.
+
+        //    var properties = typeof(T).GetProperties();
+        //    foreach (var prop in properties)
+        //    {
+        //        //prop.PropertyType
+        //        PropertyBuilder pbNewProp = tb.DefineProperty(prop.Name, PropertyAttributes.HasDefault, prop.PropertyType, null);
+        //        MethodAttributes getSetAttr = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
+        //        //// Define the "get" accessor method
+        //        //MethodBuilder mbNewPropGetAccessor = tb.DefineMethod(
+        //        //    "get_NewProp",
+        //        //    getSetAttr,
+        //        //    typeof(int),
+        //        //    Type.EmptyTypes);
+
+        //        //ILGenerator NewPropGetIL = mbNewPropGetAccessor.GetILGenerator();
+        //        //NewPropGetIL.Emit(OpCodes.Ldarg_0);
+        //        //NewPropGetIL.Emit(OpCodes.Ldc_I4_1);
+        //        //NewPropGetIL.Emit(OpCodes.Call, typeof(Test).GetMethod("GetVal"));
+        //        //NewPropGetIL.Emit(OpCodes.Ret);
+
+        //        // Define the "set" accessor method 
+        //        MethodBuilder mbNewPropSetAccessor = tb.DefineMethod(
+        //            "set_NewProp",
+        //            getSetAttr,
+        //            null,
+        //            new Type[] { typeof(int) });
+
+        //        ILGenerator NewPropSetIL = mbNewPropSetAccessor.GetILGenerator();
+        //        NewPropSetIL.Emit(OpCodes.Ldarg_0);
+        //        NewPropSetIL.Emit(OpCodes.Ldc_I4_1);
+        //        NewPropSetIL.Emit(OpCodes.Ldarg_1);
+        //        NewPropSetIL.Emit(OpCodes.Call, typeof(T).GetMethod("SetVal"));
+        //        NewPropSetIL.Emit(OpCodes.Ret);
+
+        //        // Map the accessor methods
+        //        //pbNewProp.SetGetMethod(mbNewPropGetAccessor);
+        //        pbNewProp.SetSetMethod(mbNewPropSetAccessor);
+        //    }
+        //}
 
         /*
         private static int TryGuessColumnIndex(string fieldName, IDataReader dataReader)

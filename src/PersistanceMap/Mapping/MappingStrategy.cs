@@ -19,13 +19,36 @@ namespace PersistanceMap.Mapping
 
             var indexCache = context.DataReader.CreateFieldIndexCache(typeof(T));
 
-            while (context.DataReader.Read())
+            if (typeof(T).IsAnonymousType())
             {
-                var row = InstanceFactory.CreateInstance<T>();
+                while (context.DataReader.Read())
+                {
+                    //http://stackoverflow.com/questions/478013/how-do-i-create-and-access-a-new-instance-of-an-anonymous-class-passed-as-a-para
+                    var objectDefs = fields.Select(f => new ObjectDefinition
+                    {
+                        Name = f.FieldName,
+                        ObjectType = f.MemberType
+                    });
 
-                row.PopulateFromReader(context, fields, indexCache);
+                    var dict = new Dictionary<string, object>();
 
-                rows.Add(row);
+                    dict.PopulateFromReader(context, objectDefs, indexCache);
+
+                    var args = dict.Values;
+                    var row = (T)Activator.CreateInstance(typeof(T), args.ToArray());
+                    rows.Add(row);
+                }
+            }
+            else
+            {
+                while (context.DataReader.Read())
+                {
+                    var row = InstanceFactory.CreateInstance<T>();
+
+                    row.PopulateFromReader(context, fields, indexCache);
+
+                    rows.Add(row);
+                }
             }
 
             return rows;

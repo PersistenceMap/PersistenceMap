@@ -137,13 +137,6 @@ namespace PersistanceMap.QueryProvider
             return new SelectQueryProvider<T>(Context, QueryPartsMap);
         }
 
-        //public IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, T, bool>> predicate)
-        //{
-        //    QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
-
-        //    return new SelectQueryProvider<T>(Context, QueryPartsMap);
-        //}
-
         public IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
         {
             QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
@@ -196,17 +189,26 @@ namespace PersistanceMap.QueryProvider
             return Context.Execute<T>(query);
         }
 
-        //public IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym)
-        //{
-        //    var expr = Context.ContextProvider.ExpressionCompiler;
-        //    var query = expr.Compile<TAno>(QueryPartsMap);
-
-        //    return Context.Execute<TAno>(query);
-        //}
-
-        public IEnumerable<TSelect> Select<TAno, TSelect>(Expression<Func<TAno, TSelect>> anonym)
+        public IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym)
         {
-            throw new NotImplementedException();
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<TSelect>(QueryPartsMap);
+
+            return Context.Execute<TSelect>(query);
+        }
+
+        public IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym)
+        {
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(QueryPartsMap);
+
+            var elements = Context.Execute<T>(query);
+            var expression = anonym.Compile();
+
+            foreach (var item in elements)
+            {
+                yield return expression.Invoke(item);
+            }
         }
 
         public T2 Single<T2>()
@@ -216,16 +218,31 @@ namespace PersistanceMap.QueryProvider
 
         public IAfterMapQueryProvider<TNew> For<TNew>()
         {
+            var members = typeof(TNew).GetSelectionMembers();
+            var fields = members.Select(m => m.ToFieldQueryPart(null, null));
+
+            QueryPartsFactory.AddFiedlParts(QueryPartsMap, fields.ToArray());
+
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            {
+                // seal part to disalow other parts to be added to selectmaps
+                var map = part as IQueryPartDecorator;
+                if (map != null)
+                    map.IsSealded = true;
+            }
+
             return new SelectQueryProvider<TNew>(Context, QueryPartsMap);
         }
 
         public IAfterMapQueryProvider<TAno> For<TAno>(Expression<Func<TAno>> anonym)
         {
-            return new SelectQueryProvider<TAno>(Context, QueryPartsMap);
+            //throw new NotImplementedException("For has to make sure that the resultset values equals the defined type");
+            //return new SelectQueryProvider<TAno>(Context, QueryPartsMap);
+            return For<TAno>();
         }
 
         /// <summary>
-        /// Compiles the Query to a sql statement
+        /// Compiles the Query to a sql statement for the given type
         /// </summary>
         /// <typeparam name="T">The select type</typeparam>
         /// <returns>The sql string</returns>
@@ -235,6 +252,15 @@ namespace PersistanceMap.QueryProvider
             var query = expr.Compile<T2>(QueryPartsMap);
 
             return query.QueryString;
+        }
+
+        /// <summary>
+        /// Compiles the Query to a sql statement
+        /// </summary>
+        /// <returns>The sql string</returns>
+        public string CompileQuery()
+        {
+            return CompileQuery<T>();
         }
 
         #endregion

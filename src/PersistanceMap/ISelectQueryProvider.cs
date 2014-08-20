@@ -12,7 +12,8 @@ namespace PersistanceMap
 
         IEnumerable<T> Select();
 
-        //IEnumerable<TAno> Select<TAno>(Expression<Func<TAno>> anonym);
+        IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym);
+
         IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym);
 
         T2 Single<T2>();
@@ -27,6 +28,12 @@ namespace PersistanceMap
         /// <typeparam name="T">The select type</typeparam>
         /// <returns>The sql string</returns>
         string CompileQuery<T2>();
+
+        /// <summary>
+        /// Compiles the Query to a sql statement
+        /// </summary>
+        /// <returns>The sql string</returns>
+        string CompileQuery();
     }
 
     public interface ISelectQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
