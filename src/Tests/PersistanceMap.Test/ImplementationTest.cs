@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-using NUnit.Framework;
-using PersistanceMap.QueryProvider;
+﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace PersistanceMap.Test
 {

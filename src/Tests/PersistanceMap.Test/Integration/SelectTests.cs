@@ -354,7 +354,6 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
                     .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
                     .For<Orders>()
                     .Ignore(o => o.OrderID)

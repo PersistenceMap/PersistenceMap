@@ -7,7 +7,7 @@ namespace PersistanceMap.Internals
     /// <summary>
     /// Base class providing common implementation for IReaderContext
     /// </summary>
-    internal class ReaderContext : IReaderContext
+    public class ReaderContext : IReaderContext
     {
         protected const int NotFound = -1;
 
@@ -171,7 +171,7 @@ namespace PersistanceMap.Internals
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
         /// </summary>
-        internal bool IsDisposed { get; private set; }
+        protected bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

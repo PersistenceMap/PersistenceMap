@@ -86,7 +86,7 @@
     <Compile Include="Internals\SqlContextReader.cs" />
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
-    <Compile Include="Compiler\SqlExpressionCompiler.cs" />
+    <Compile Include="Compiler\ExpressionCompiler.cs" />
     <Compile Include="QueryBuilder\QueryPartsMap.cs" />
     <Compile Include="QueryProvider\SelectQueryProvider.AfterMap.cs">
       <DependentUpon>SelectQueryProvider.cs</DependentUpon>

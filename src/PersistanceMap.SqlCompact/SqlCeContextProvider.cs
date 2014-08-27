@@ -1,16 +1,19 @@
 ﻿using PersistanceMap.Compiler;
-using PersistanceMap.Internals;
 using System;
-using System.Data.SqlClient;
+using System.Data.SqlServerCe;
 using System.Diagnostics;
 
 namespace PersistanceMap
 {
-    public class SqlContextProvider : IContextProvider
+    /// <summary>
+    /// Sql Context provider for SQL Server Compact
+    /// </summary>
+    public class SqlCeContextProvider : IContextProvider
     {
-        public SqlContextProvider(string connectionstring)
+        public SqlCeContextProvider(string connectionstring)
         {
-            connectionstring.EnsureArgumentNotNullOrEmpty(connectionstring);
+            if (string.IsNullOrEmpty(connectionstring))
+                throw new ArgumentNullException("connectionString");
 
             ConnectionString = connectionstring;
         }
@@ -31,16 +34,16 @@ namespace PersistanceMap
 
         public virtual IReaderContext Execute(string query)
         {
-            SqlConnection connection;
-            SqlCommand command;
+            SqlCeConnection connection;
+            SqlCeCommand command;
 
-            connection = new SqlConnection(ConnectionString);
+            connection = new SqlCeConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCommand(query, connection);
+                command = new SqlCeCommand(query, connection);
                 
-                return new SqlContextReader(command.ExecuteReader(), connection, command);
+                return new SqlCeContextReader(command.ExecuteReader(), connection, command);
             }
             catch (Exception ex)
             {
@@ -55,18 +58,18 @@ namespace PersistanceMap
         /// <param name="query"></param>
         public IReaderContext ExecuteNonQuery(string query)
         {
-            SqlConnection connection;
-            SqlCommand command;
+            SqlCeConnection connection;
+            SqlCeCommand command;
 
-            connection = new SqlConnection(ConnectionString);
+            connection = new SqlCeConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCommand(query, connection);
+                command = new SqlCeCommand(query, connection);
                 
                 command.ExecuteNonQuery();
 
-                return new SqlContextReader(null, connection, command);
+                return new SqlCeContextReader(null, connection, command);
 
             }
             catch (Exception ex)
