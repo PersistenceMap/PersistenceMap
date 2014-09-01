@@ -87,7 +87,7 @@
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="Compiler\ExpressionCompiler.cs" />
-    <Compile Include="QueryBuilder\QueryPartsMap.cs" />
+    <Compile Include="QueryProvider\QueryPartsMap.cs" />
     <Compile Include="QueryProvider\SelectQueryProvider.AfterMap.cs">
       <DependentUpon>SelectQueryProvider.cs</DependentUpon>
     </Compile>

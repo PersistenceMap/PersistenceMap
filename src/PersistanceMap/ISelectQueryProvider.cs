@@ -95,7 +95,6 @@ namespace PersistanceMap
 
 
 
-
         IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate);
 
         IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate);
@@ -168,20 +167,19 @@ namespace PersistanceMap
     {
         IAfterMapQueryProvider<T> AfterMap(Action<T> predicate);
 
-        //IAfterMapQueryProvider<T> Ignore<T2>(Expression<Func<T, T2>> predicate);
+        /// <summary>
+        /// Marks the provided field as ignored. The field will not be included in the select.
+        /// </summary>
+        /// <param name="predicate">Marks the member to ignore</param>
+        /// <returns>IAfterMapQueryProvider{T}</returns>
         IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate);
-
-        //IAfterMapQueryProvider<T> ForMember(Expression<Func<T, object>> predicate, Action<IMemberConfiguration<T>> action);
-
-        //IAfterMapQueryProvider<T> ForMember<TType, TMember>(Expression<Func<TType, TMember>> predicate, Action<IMemberConfiguration<T>> action);
+        
+        /// <summary>
+        /// Maps the provided field to a specific table. This helps to avoid Ambiguous column errors.
+        /// </summary>
+        /// <typeparam name="TSource">The source Table to map the member from</typeparam>
+        /// <param name="predicate">Marks the member to be mapped</param>
+        /// <returns>IAfterMapQueryProvider{T}</returns>
+        IAfterMapQueryProvider<T> Map<TSource>(Expression<Func<TSource, object>> predicate);
     }
-
-
-
-    //public interface IMemberConfiguration<TSource>
-    //{
-    //    void Ignore();
-
-    //    void Map();
-    //}
 }

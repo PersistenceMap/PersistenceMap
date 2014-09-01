@@ -107,6 +107,20 @@ namespace PersistanceMap.QueryProvider
 
         #endregion
 
+        //#region For Member
+
+        //public ISelectQueryProvider<T> ForMember(Expression<Func<T, object>> predicate, Action<IMemberConfiguration> memberExpression)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public ISelectQueryProvider<T> ForMember<TType>(Expression<Func<TType, object>> predicate, Action<IMemberConfiguration> memberExpression)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //#endregion
+
         #region Where Expressions
 
         public IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
