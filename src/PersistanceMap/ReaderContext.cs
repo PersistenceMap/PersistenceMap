@@ -2,7 +2,7 @@
 using System.Data;
 using System.Globalization;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap
 {
     /// <summary>
     /// Base class providing common implementation for IReaderContext

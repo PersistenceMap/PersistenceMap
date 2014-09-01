@@ -25,7 +25,7 @@ namespace PersistanceMap
         /// <summary>
         /// Compiles the Query to a sql statement
         /// </summary>
-        /// <typeparam name="T">The select type</typeparam>
+        /// <typeparam name="T2">The select type</typeparam>
         /// <returns>The sql string</returns>
         string CompileQuery<T2>();
 
@@ -62,40 +62,36 @@ namespace PersistanceMap
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type
         /// </summary>
-        /// <typeparam name="TOut">The Property</typeparam>
         /// <param name="predicate">The expression that returns the Property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> predicate);
+        ISelectQueryProvider<T> Map(Expression<Func<T, object>> predicate);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
         /// </summary>
-        /// <typeparam name="TOut">The Property</typeparam>
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias);
+        ISelectQueryProvider<T> Map(Expression<Func<T, object>> source, string alias);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
-        /// <typeparam name="TOut">The alias Type</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias);
+        ISelectQueryProvider<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>
         /// <typeparam name="TSource">The select type containig the source alias property</typeparam>
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
-        /// <typeparam name="TOut">The alias Type</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias);
+        ISelectQueryProvider<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias);
 
 
 
@@ -109,13 +105,13 @@ namespace PersistanceMap
 
 
 
-        IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
 
-        IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
 
         
     }
@@ -148,30 +144,44 @@ namespace PersistanceMap
 
 
 
-        IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
 
-        IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
     public interface IOrderQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
-        IOrderQueryProvider<T> ThenBy<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> ThenBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T> ThenBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T> ThenBy<T2>(Expression<Func<T2, object>> predicate);
 
-        IOrderQueryProvider<T> ThenByDesc<TOrder>(Expression<Func<T, TOrder>> predicate);
+        IOrderQueryProvider<T> ThenByDesc(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T> ThenByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate);
+        IOrderQueryProvider<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
     public interface IAfterMapQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
     {
         IAfterMapQueryProvider<T> AfterMap(Action<T> predicate);
 
-        IAfterMapQueryProvider<T> Ignore<TIgnore>(Expression<Func<T, TIgnore>> predicate);
+        //IAfterMapQueryProvider<T> Ignore<T2>(Expression<Func<T, T2>> predicate);
+        IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate);
+
+        //IAfterMapQueryProvider<T> ForMember(Expression<Func<T, object>> predicate, Action<IMemberConfiguration<T>> action);
+
+        //IAfterMapQueryProvider<T> ForMember<TType, TMember>(Expression<Func<TType, TMember>> predicate, Action<IMemberConfiguration<T>> action);
     }
+
+
+
+    //public interface IMemberConfiguration<TSource>
+    //{
+    //    void Ignore();
+
+    //    void Map();
+    //}
 }

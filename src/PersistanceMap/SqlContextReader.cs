@@ -1,13 +1,12 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap
 {
     /// <summary>
     /// Implementation of IReaderContext for SQL Databases
     /// </summary>
-    internal class SqlContextReader : ReaderContext, IReaderContext
+    public class SqlContextReader : ReaderContext, IReaderContext
     {
         readonly SqlConnection _connection;
         readonly SqlCommand _command;

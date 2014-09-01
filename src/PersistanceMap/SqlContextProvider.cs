@@ -31,14 +31,11 @@ namespace PersistanceMap
 
         public virtual IReaderContext Execute(string query)
         {
-            SqlConnection connection;
-            SqlCommand command;
-
-            connection = new SqlConnection(ConnectionString);
+            var connection = new SqlConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCommand(query, connection);
+                var command = new SqlCommand(query, connection);
                 
                 return new SqlContextReader(command.ExecuteReader(), connection, command);
             }
@@ -55,14 +52,11 @@ namespace PersistanceMap
         /// <param name="query"></param>
         public IReaderContext ExecuteNonQuery(string query)
         {
-            SqlConnection connection;
-            SqlCommand command;
-
-            connection = new SqlConnection(ConnectionString);
+            var connection = new SqlConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCommand(query, connection);
+                var command = new SqlCommand(query, connection);
                 
                 command.ExecuteNonQuery();
 

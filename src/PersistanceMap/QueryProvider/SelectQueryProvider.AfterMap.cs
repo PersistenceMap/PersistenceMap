@@ -16,7 +16,7 @@ namespace PersistanceMap.QueryProvider
             throw new NotImplementedException();
         }
 
-        public IAfterMapQueryProvider<T> Ignore<TIgnore>(Expression<Func<T, TIgnore>> predicate)
+        public IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate)
         {
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
             {

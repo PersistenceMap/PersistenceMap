@@ -1,12 +1,11 @@
-﻿using PersistanceMap.Internals;
-using System.Data;
+﻿using System.Data;
 
 namespace PersistanceMap
 {
     /// <summary>
     /// Implementation of IReaderContext for SQL Server Compact Databases
     /// </summary>
-    internal class SqlCeContextReader : ReaderContext, IReaderContext
+    public class SqlCeContextReader : ReaderContext, IReaderContext
     {
         readonly IDbConnection _connection;
         readonly IDbCommand _command;

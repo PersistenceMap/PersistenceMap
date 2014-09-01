@@ -43,7 +43,7 @@
     <Compile Include="SqlCeContextReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\PersistanceMap\PersistanceMap.csproj">
+    <ProjectReference Include="..\PersistanceMap\PersistanceMap.csproj">
       <Project>{4160375c-5e51-484f-b07b-85a5eb9169f8}</Project>
       <Name>PersistanceMap</Name>
     </ProjectReference>

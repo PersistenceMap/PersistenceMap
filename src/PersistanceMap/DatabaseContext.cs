@@ -3,12 +3,12 @@ using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap
 {
     /// <summary>
     /// Internal implementation of the Database Context
     /// </summary>
-    internal class DatabaseContext : IDatabaseContext
+    public class DatabaseContext : IDatabaseContext
     {
         public DatabaseContext(IContextProvider provider)
         {

@@ -77,7 +77,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // Map => To 
                 var query = context.From<Orders>()
-                    .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
+                    .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     // map a property from a joni to a property in the result type
                     .Map(i => i.OrderID);
@@ -106,7 +106,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     .Map(i => i.OrderID)
                     // map a property from a joni to a property in the result type
-                    .Map<Orders, OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight);
+                    .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
 
                 var sql = "select OrderDetails.OrderID, Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
 

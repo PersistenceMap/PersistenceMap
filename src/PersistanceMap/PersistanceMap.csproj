@@ -82,8 +82,8 @@
     <Compile Include="QueryBuilder\Decorators\ExpressionQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="QueryBuilder\IEntityQueryPart.cs" />
-    <Compile Include="Internals\ReaderContext.cs" />
-    <Compile Include="Internals\SqlContextReader.cs" />
+    <Compile Include="ReaderContext.cs" />
+    <Compile Include="SqlContextReader.cs" />
     <Compile Include="Mapping\MappingStrategy.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="Compiler\ExpressionCompiler.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="IDatabaseContext.cs" />
-    <Compile Include="Internals\DatabaseContext.cs" />
+    <Compile Include="DatabaseContext.cs" />
     <Compile Include="QueryBuilder\IQueryPart.cs" />
     <Compile Include="QueryBuilder\Decorators\ParameterQueryMap.cs" />
     <Compile Include="QueryBuilder\Decorators\FieldQueryPart.cs" />
