@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.BusinessObjects;
+using System.Collections;
 using System.Linq;
 
 namespace PersistanceMap.Test.Integration
@@ -26,27 +27,6 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleNongenericSelectTest()
-        {
-            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = dbConnection.Open())
-            {
-                var query = context.From<Orders>();
-
-                var sql = "select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders";
-
-                // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Orders>().Flatten(), sql);
-
-                // execute the query
-                var orders = query.Select();
-
-                Assert.IsNotNull(orders);
-                Assert.IsTrue(orders.Any());
-            }
-        }
-
-        [Test]
         public void SimpleNongenericSelectWithJoinTest()
         {
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
@@ -59,7 +39,7 @@ namespace PersistanceMap.Test.Integration
                 var sql = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
+                Assert.AreEqual(query.CompileQuery().Flatten(), sql);
 
                 // execute the query
                 var orders = query.Select();
@@ -77,7 +57,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // Map => To 
                 var query = context.From<Orders>()
-                    .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
+                    .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     // map a property from a joni to a property in the result type
                     .Map(i => i.OrderID);
@@ -106,7 +86,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     .Map(i => i.OrderID)
                     // map a property from a joni to a property in the result type
-                    .Map<Orders, OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight);
+                    .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
 
                 var sql = "select OrderDetails.OrderID, Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
 
@@ -296,28 +276,6 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
-        public void Select_For_DefinedType()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    .For<Orders>();
-
-                var anonymous = query.Select();
-
-                var sql = query.CompileQuery().Flatten();
-                var expected = "select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
-
-                Assert.AreEqual(sql, expected);
-                Assert.IsTrue(anonymous.Any());
-            }
-        }
-
-        [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type using a delegate")]
         public void Select_For_Anonym_CastTo_DefinedType_Delegate()
         {
@@ -346,27 +304,69 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        [Test]
-        [Description("select statement with a FOR expression and ignoring fields in the resultset")]
-        public void Select_For_DefinedType_IgnoreFields()
+
+
+
+        [Test, TestCaseSource(typeof(SelectTestCases), "SelectTestCasesForOrders")]
+        public string SelectTestForOrders(IOrderQueryProvider<Orders> query)
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            // execute the query
+            var orders = query.Select();
+
+            Assert.IsTrue(orders.Any());
+
+            // return the query string
+            return query.CompileQuery<Orders>().Flatten();
+        }
+    }
+
+    internal class SelectTestCases : TestBase
+    {
+        public IEnumerable SelectTestCasesForOrders
+        {
+            get
             {
-                var query = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
-                    .For<Orders>()
-                    .Ignore(o => o.OrderID)
-                    .Ignore(o => o.OrderDate)
-                    .Ignore(o => o.RequiredDate);
+                var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+                using (var context = connection.Open())
+                {
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .For<Orders>()
+                        .Map<Orders>(o => o.OrderID))
+                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .SetDescription("select statement with a FOR expression and mapping members/fields to a specific table")
+                        .SetName("select statement with a FOR expression and mappings");
 
-                var anonymous = query.Select();
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .For<Orders>()
+                        .Ignore(o => o.OrderID)
+                        .Ignore(o => o.OrderDate)
+                        .Ignore(o => o.RequiredDate))
+                        .Returns("select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .SetDescription("select statement with a FOR expression and ignoring fields in the resultset")
+                        .SetName("select statement with a FOR expression and ignoring fields in the resultset");
 
-                var sql = query.CompileQuery().Flatten();
-                var expected = "select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                    yield return new TestCaseData(context.From<Orders>()
+                        .Map(o => o.OrderID)
+                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .For<Orders>())
+                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .SetDescription("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")
+                        .SetName("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type");
 
-                Assert.AreEqual(sql, expected);
-                Assert.IsTrue(anonymous.Any());
+                    yield return new TestCaseData(context.From<Orders>())
+                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders")
+                        .SetDescription("simple select from statement")
+                        .SetName("simple select from statement");
+
+                    /*
+                    yield return new TestCaseData()
+                        .Returns("")
+                        .SetDescription("")
+                        .SetName("");
+                     */
+                }
             }
         }
     }

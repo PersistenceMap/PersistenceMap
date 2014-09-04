@@ -124,24 +124,24 @@ namespace PersistanceMap.QueryProvider
 
         #region OrderBy Expressions
 
-        IOrderQueryProvider<T> IWhereQueryProvider<T>.OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate)
+        IOrderQueryProvider<T> IWhereQueryProvider<T>.OrderBy(Expression<Func<T, object>> predicate)
         {
-            return OrderBy<TOrder>(predicate);
+            return OrderBy(predicate);
         }
 
-        IOrderQueryProvider<T2> IWhereQueryProvider<T>.OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        IOrderQueryProvider<T2> IWhereQueryProvider<T>.OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return OrderBy<T2, TOrder>(predicate);
+            return OrderBy<T2>(predicate);
         }
 
-        IOrderQueryProvider<T> IWhereQueryProvider<T>.OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
+        IOrderQueryProvider<T> IWhereQueryProvider<T>.OrderByDesc(Expression<Func<T, object>> predicate)
         {
-            return OrderByDesc<TOrder>(predicate);
+            return OrderByDesc(predicate);
         }
 
-        IOrderQueryProvider<T2> IWhereQueryProvider<T>.OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        IOrderQueryProvider<T2> IWhereQueryProvider<T>.OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            return OrderByDesc<T2, TOrder>(predicate);
+            return OrderByDesc<T2>(predicate);
         }
         
         #endregion

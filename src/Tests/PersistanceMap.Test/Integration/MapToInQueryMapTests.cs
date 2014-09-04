@@ -46,7 +46,7 @@ namespace PersistanceMap.Test.Integration
                 // Map => To in join with predicate
                 var query = context.From<Orders>()
                     // map the property from this join to the Property in the result type
-                    .Map<OrderWithDetailExtended, double>(source => source.Freight, alias => alias.SpecialFreight)
+                    .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
                     .Map(i => i.OrderID);
 

@@ -49,10 +49,9 @@ namespace PersistanceMap.QueryProvider
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type
         /// </summary>
-        /// <typeparam name="T2">The Property</typeparam>
         /// <param name="predicate">The expression that returns the Property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<T2>(Expression<Func<T, T2>> predicate)
+        public ISelectQueryProvider<T> Map(Expression<Func<T, object>> predicate)
         {
             var source = FieldHelper.TryExtractPropertyName(predicate);
             var entity = typeof(T).Name;
@@ -63,11 +62,10 @@ namespace PersistanceMap.QueryProvider
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
         /// </summary>
-        /// <typeparam name="TOut">The Property</typeparam>
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<TOut>(Expression<Func<T, TOut>> source, string alias)
+        public ISelectQueryProvider<T> Map(Expression<Func<T, object>> source, string alias)
         {
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
@@ -81,13 +79,12 @@ namespace PersistanceMap.QueryProvider
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
-        /// <typeparam name="TOut">The alias Type</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<TAlias, TOut>(Expression<Func<T, TOut>> source, Expression<Func<TAlias, TOut>> alias)
+        public ISelectQueryProvider<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias)
         {
-            return Map<T, TAlias, TOut>(source, alias);
+            return Map<T, TAlias>(source, alias);
         }
 
         /// <summary>
@@ -99,7 +96,7 @@ namespace PersistanceMap.QueryProvider
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<TSource, TAlias, TOut>(Expression<Func<TSource, TOut>> source, Expression<Func<TAlias, TOut>> alias)
+        public ISelectQueryProvider<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
             var sourceField = FieldHelper.TryExtractPropertyName(source);
@@ -109,6 +106,20 @@ namespace PersistanceMap.QueryProvider
         }
 
         #endregion
+
+        //#region For Member
+
+        //public ISelectQueryProvider<T> ForMember(Expression<Func<T, object>> predicate, Action<IMemberConfiguration> memberExpression)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public ISelectQueryProvider<T> ForMember<TType>(Expression<Func<TType, object>> predicate, Action<IMemberConfiguration> memberExpression)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //#endregion
 
         #region Where Expressions
 
@@ -148,22 +159,22 @@ namespace PersistanceMap.QueryProvider
 
         #region OrderBy Expressions
 
-        public IOrderQueryProvider<T> OrderBy<TOrder>(Expression<Func<T, TOrder>> predicate)
+        public IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
         }
 
-        public IOrderQueryProvider<T2> OrderBy<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        public IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
         }
 
-        public IOrderQueryProvider<T> OrderByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
+        public IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
         }
 
-        public IOrderQueryProvider<T2> OrderByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        public IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
         }

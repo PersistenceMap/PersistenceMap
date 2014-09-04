@@ -14,16 +14,24 @@ namespace PersistanceMap.Internals
             var memberExpression = propertyExpression.Body as MemberExpression;
             if (memberExpression == null)
             {
-                //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
-                Trace.WriteLine("Property is not a MemberAccessExpression");
-                try
+                // try get the member from the operand of the unaryexpression
+                var unary = propertyExpression.Body as UnaryExpression;
+                if (unary != null)
+                    memberExpression = unary.Operand as MemberExpression;
+
+                if (memberExpression == null)
                 {
-                    return propertyExpression.Compile().DynamicInvoke().ToString(); //    .Body.ToString();
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                    return propertyExpression.ToString();
+                    //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
+                    Trace.WriteLine("Property is not a MemberAccessExpression");
+                    try
+                    {
+                        return propertyExpression.Compile().DynamicInvoke().ToString(); //    .Body.ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.WriteLine(e);
+                        return propertyExpression.ToString();
+                    }
                 }
             }
 

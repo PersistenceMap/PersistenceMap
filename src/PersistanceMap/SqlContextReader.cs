@@ -1,16 +1,17 @@
 ﻿using System.Data;
+using System.Data.SqlClient;
 
 namespace PersistanceMap
 {
     /// <summary>
-    /// Implementation of IReaderContext for SQL Server Compact Databases
+    /// Implementation of IReaderContext for SQL Databases
     /// </summary>
-    public class SqlCeContextReader : ReaderContext, IReaderContext
+    public class SqlContextReader : ReaderContext, IReaderContext
     {
-        readonly IDbConnection _connection;
-        readonly IDbCommand _command;
+        readonly SqlConnection _connection;
+        readonly SqlCommand _command;
 
-        public SqlCeContextReader(IDataReader reader, IDbConnection connection, IDbCommand command)
+        public SqlContextReader(IDataReader reader, SqlConnection connection, SqlCommand command)
             : base(reader)
         {
             _connection = connection;
