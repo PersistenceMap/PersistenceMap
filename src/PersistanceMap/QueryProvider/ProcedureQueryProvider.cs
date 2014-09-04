@@ -209,6 +209,17 @@ namespace PersistanceMap.QueryProvider
         }
 
         /// <summary>
+        /// Creates a Type safe expression for the return value of the procedure call. The type is defined as a instance object passed as parameter.
+        /// </summary>
+        /// <typeparam name="T">The returned type</typeparam>
+        /// <param name="anonymous">The instance defining the type. this can be a anonym object</param>
+        /// <returns>A typesafe IProcedureQueryProvider</returns>
+        public IProcedureQueryProvider<T> For<T>(Expression<Func<T>> anonymous)
+        {
+            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
+        }
+
+        /// <summary>
         /// Map a Property from the mapped type that is included in the result
         /// </summary>
         /// <typeparam name="T">The returned Type</typeparam>
@@ -347,6 +358,48 @@ namespace PersistanceMap.QueryProvider
             IEnumerable<T> values = null;
 
             Context.Execute(query, dr => values = Context.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
+
+            return values;
+        }
+
+        /// <summary>
+        /// Execute the Procedure
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TOut> Execute<TOut>()
+        {
+            var mapfields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
+
+            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
+            {
+                var map = p as IFieldQueryMap;
+                if (map == null)
+                    continue;
+
+                var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
+                if (field == null)
+                    continue;
+
+                field.MemberName = map.FieldAlias;
+            }
+
+            var fields = new List<FieldDefinition>();
+            foreach (var field in TypeDefinitionFactory.GetFieldDefinitions<TOut>())
+            {
+                var tmp = mapfields.FirstOrDefault(f => f.FieldName == field.FieldName);
+                if (tmp == null)
+                    continue;
+
+                field.MemberName = tmp.MemberName;
+                fields.Add(field);
+            }
+
+            var expr = Context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile(QueryPartsMap);
+
+            IEnumerable<TOut> values = null;
+
+            Context.Execute(query, dr => values = Context.Map<TOut>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
 
             return values;
         }

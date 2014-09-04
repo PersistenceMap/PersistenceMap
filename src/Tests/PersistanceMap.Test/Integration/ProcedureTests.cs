@@ -376,5 +376,30 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(products.Any());
             }
         }
+
+        [Test]
+        [Description("Executes a procedure to a anonym object")]
+        public void ProcedureWithResultToAnonymObject()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                var products = context.Procedure("GetProducts")
+                    .AddParameter("minprice", () => 17.50)
+                    .AddParameter("maxprice", () => 40.50)
+                    .For(() => new
+                    {
+                        ProductID = 0,
+                        ProductName = "",
+                        SupplierID = 0,
+                        UnitPrice = 0.0
+                    })
+                    .Execute<ProductsWithIndexer>();
+
+                Assert.IsTrue(products.Any());
+                Assert.IsTrue(products.First().ProductID > 0);
+                Assert.IsNull(products.First().QuantityPerUnit);
+            }
+        }
     }
 }

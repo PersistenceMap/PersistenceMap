@@ -39,8 +39,16 @@ namespace PersistanceMap
         /// Creates a Type safe expression for the return value of the procedure call
         /// </summary>
         /// <typeparam name="T">The returned type</typeparam>
-        /// <returns>A typesage IProcedureQueryProvider</returns>
+        /// <returns>A typesafe IProcedureQueryProvider</returns>
         IProcedureQueryProvider<T> For<T>();
+
+        /// <summary>
+        /// Creates a Type safe expression for the return value of the procedure call. The type is defined as a instance object passed as parameter.
+        /// </summary>
+        /// <typeparam name="T">The returned type</typeparam>
+        /// <param name="anonymous">The instance defining the type. this can be a anonym object</param>
+        /// <returns>A typesafe IProcedureQueryProvider</returns>
+        IProcedureQueryProvider<T> For<T>(Expression<Func<T>> anonymous);
 
         /// <summary>
         /// Map a Property from the mapped type that is included in the result
@@ -81,5 +89,11 @@ namespace PersistanceMap
         /// </summary>
         /// <returns></returns>
         IEnumerable<T> Execute();
+
+        /// <summary>
+        /// Execute the Procedure
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<TOut> Execute<TOut>();
     }
 }
