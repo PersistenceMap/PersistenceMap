@@ -344,11 +344,12 @@ namespace PersistanceMap.QueryProvider
                 if (map == null)
                     continue;
 
-                var field = fields.FirstOrDefault(f => f.FieldName == map.Field);
+                var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
                 if (field == null)
                     continue;
 
-                field.MemberName = map.FieldAlias;
+                //field.MemberName = map.FieldAlias;
+                field.FieldName = map.Field;
             }
 
 

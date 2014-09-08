@@ -81,6 +81,7 @@
     <Compile Include="BusinessObjects\ProductsWithIndexer.cs" />
     <Compile Include="BusinessObjects\Products.cs" />
     <Compile Include="BusinessObjects\SalesByYear.cs" />
+    <Compile Include="BusinessObjects\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Integration\MapToInQueryMapTests.cs" />

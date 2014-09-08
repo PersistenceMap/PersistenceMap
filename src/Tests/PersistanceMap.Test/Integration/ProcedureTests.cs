@@ -401,5 +401,31 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsNull(products.First().QuantityPerUnit);
             }
         }
+
+        [Test]
+        public void ProcedureWithResultWithMappings()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // proc with resultset with parameter names and @ before name
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .For<SimpleSalesByYear>()
+                    .Map("ShippedDate", s => s.ShippedDte)
+                    .Map("OrderID", s => s.OrdID)
+                    .Map("Subtotal", s => s.Total)
+                    .Map("SpecialSubtotal", s => s.SpecTotal)
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+                Assert.IsTrue(proc.First().ShippedDte > DateTime.MinValue);
+                Assert.IsTrue(proc.First().OrdID > 0);
+                Assert.IsTrue(proc.First().Total > 0);
+                //Assert.IsTrue(proc.First().SpecTotal > 0);
+                Assert.IsTrue(proc.First().Year > 0);
+            }
+        }
     }
 }
