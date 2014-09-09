@@ -16,9 +16,9 @@ namespace PersistanceMap
     {
         #region EntityQueryPart
 
-        public static IQueryPart AppendSelectMapQueryPart(IQueryPartsMap queryParts, OperationType operation)
+        public static IQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
         {
-            var part = new SelectMapQueryPart(operation);
+            var part = new SimpleQueryPart(operation);
 
             queryParts.Add(part);
 
@@ -98,7 +98,7 @@ namespace PersistanceMap
 
         public static void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryMap[] fields)
         {
-            foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 var map = part as IQueryPartDecorator;
                 if (map == null)

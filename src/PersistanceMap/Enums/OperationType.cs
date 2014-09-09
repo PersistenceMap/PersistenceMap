@@ -11,7 +11,7 @@ namespace PersistanceMap
         /// <summary>
         /// defines the operation to be the begining of a select operation (select a, b, c)
         /// </summary>
-        SelectMap = 1,
+        Select = 1,
 
         /// <summary>
         /// defines the operation as a from operation
@@ -31,7 +31,10 @@ namespace PersistanceMap
 
         Where = 7,
 
-
+        /// <summary>
+        /// Defines the operation to be the beginning of a delete operation 
+        /// </summary>
+        Delete = 10,
 
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns>IAfterMapQueryProvider{T}</returns>
         public IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 var map = part as IQueryPartDecorator;
                 if (map == null)
@@ -47,7 +47,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns>IAfterMapQueryProvider{T}</returns>
         public IAfterMapQueryProvider<T> Map<TSource>(Expression<Func<TSource, object>> predicate)
         {
-            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 var map = part as IQueryPartDecorator;
                 if (map == null)

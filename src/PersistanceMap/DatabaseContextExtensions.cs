@@ -15,7 +15,7 @@ namespace PersistanceMap
         {
             var queryParts = new SelectQueryPartsMap();
             
-            QueryPartsFactory.AppendSelectMapQueryPart(queryParts, OperationType.SelectMap);
+            QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Select);
 
             QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
 
@@ -52,6 +52,40 @@ namespace PersistanceMap
             };
 
             return context.Execute<T>(query);
+        }
+
+        #endregion
+
+        #region Delete Expressions
+
+        public static void Delete<T>(this IDatabaseContext context)
+        {
+            var queryParts = new SelectQueryPartsMap();
+
+            QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Delete);
+
+            QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
+
+            var expr = context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(queryParts);
+
+            context.Execute(query);
+        }
+
+        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> predicate)
+        {
+            var queryParts = new SelectQueryPartsMap();
+
+            QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Delete);
+
+            QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
+
+            QueryPartsFactory.AppendExpressionQueryPart(queryParts, predicate, OperationType.Where);
+
+            var expr = context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(queryParts);
+
+            context.Execute(query);
         }
 
         #endregion

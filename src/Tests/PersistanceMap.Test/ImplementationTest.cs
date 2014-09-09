@@ -8,6 +8,19 @@ namespace PersistanceMap.Test
     public class ImplementationTest : TestBase
     {
         [Test]
+        public void DeleteImplementationTestMethod()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // for with aftermap
+                context.Delete<Employees>();
+
+                context.Delete<Employees>(e => e.EmployeeID == 1);
+            }
+        }
+
+        [Test]
         public void SelectImplementationTestMethod()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));

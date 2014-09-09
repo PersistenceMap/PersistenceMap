@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryBuilder
 {
-    internal class SelectMapQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
+    internal class SimpleQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {
-        public SelectMapQueryPart(OperationType operation)
+        public SimpleQueryPart(OperationType operation)
         {
             OperationType = operation;
         }
@@ -19,8 +17,12 @@ namespace PersistanceMap.QueryBuilder
 
             switch (OperationType)
             {
-                case PersistanceMap.OperationType.SelectMap:
+                case PersistanceMap.OperationType.Select:
                     sb.Append("select ");
+                    break;
+
+                case PersistanceMap.OperationType.Delete:
+                    sb.Append("DELETE ");
                     break;
 
                 default:

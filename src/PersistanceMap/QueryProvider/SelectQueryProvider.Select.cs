@@ -234,7 +234,7 @@ namespace PersistanceMap.QueryProvider
 
             QueryPartsFactory.AddFiedlParts(QueryPartsMap, fields.ToArray());
 
-            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.SelectMap))
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 // seal part to disalow other parts to be added to selectmaps
                 var map = part as IQueryPartDecorator;

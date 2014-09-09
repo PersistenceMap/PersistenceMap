@@ -84,15 +84,11 @@
     <Compile Include="BusinessObjects\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Integration\MapToInQueryMapTests.cs" />
-    <Compile Include="Integration\OrderTests.cs" />
+    <Compile Include="Integration\DeleteTests.cs" />
     <Compile Include="Integration\ProcedureTests.cs" />
-    <Compile Include="Integration\QueryMapTests.cs" />
     <Compile Include="Integration\SelectTests.cs" />
-    <Compile Include="Integration\FromTests.cs" />
-    <Compile Include="Integration\JoinTests.cs" />
     <Compile Include="ImplementationTest.cs" />
-    <Compile Include="Integration\WhereTests.cs" />
+    <Compile Include="MockSqlContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

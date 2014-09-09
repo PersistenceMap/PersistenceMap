@@ -60,7 +60,7 @@ namespace PersistanceMap.QueryProvider
         internal ISelectQueryProvider<T2> From<T2>()
         {
             // create the begining for the select operation
-            QueryPartsFactory.AppendSelectMapQueryPart(QueryPartsMap, OperationType.SelectMap);
+            QueryPartsFactory.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
 
             // add the from operation
             QueryPartsFactory.AppendEntityQueryPart<T2>(QueryPartsMap, OperationType.From);
@@ -73,7 +73,7 @@ namespace PersistanceMap.QueryProvider
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            QueryPartsFactory.AppendSelectMapQueryPart(QueryPartsMap, OperationType.SelectMap);
+            QueryPartsFactory.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
 
             // add the from operation with a alias
             var part = QueryPartsFactory.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);

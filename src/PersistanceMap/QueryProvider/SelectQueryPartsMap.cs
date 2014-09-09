@@ -66,7 +66,7 @@ namespace PersistanceMap
                     if (field != null)
                     {
                         // add the field to the last QueryPart of type SelectionMap (select a,b,c...)
-                        AddToLast(field, OperationType.SelectMap);
+                        AddToLast(field, OperationType.Select);
                     }
                     break;
                     

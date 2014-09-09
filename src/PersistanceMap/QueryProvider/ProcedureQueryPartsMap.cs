@@ -17,31 +17,6 @@ namespace PersistanceMap
 
         #region IQueryPartsMap Implementation
 
-        //public void Add(IQueryPart part)
-        //{
-        //    Parts.Add(part);
-        //}
-
-        //public void AddBefore(OperationType operation, IQueryPart part)
-        //{
-        //    var first = Parts.FirstOrDefault(p => p.OperationType == operation);
-        //    var index = Parts.IndexOf(first);
-        //    if (index < 0)
-        //        index = 0;
-
-        //    Parts.Insert(index, part);
-        //}
-
-        //public void AddAfter(OperationType operation, IQueryPart part)
-        //{
-        //    var first = Parts.LastOrDefault(p => p.OperationType == operation);
-        //    var index = Parts.IndexOf(first) + 1;
-        //    //if (index > Parts.Count)
-        //    //    index = 0;
-
-        //    Parts.Insert(index, part);
-        //}
-
         public override CompiledQuery Compile()
         {
             /* *Using Output compiles to*                
