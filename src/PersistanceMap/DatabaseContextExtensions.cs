@@ -60,7 +60,7 @@ namespace PersistanceMap
 
         public static void Delete<T>(this IDatabaseContext context)
         {
-            var queryParts = new SelectQueryPartsMap();
+            var queryParts = new QueryPartsMap();
 
             QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Delete);
 
@@ -74,7 +74,7 @@ namespace PersistanceMap
 
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> predicate)
         {
-            var queryParts = new SelectQueryPartsMap();
+            var queryParts = new QueryPartsMap();
 
             QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Delete);
 
@@ -90,13 +90,19 @@ namespace PersistanceMap
 
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> anonym)
         {
+            // find the property called ID or {objectname}ID and delete the item according to the id
             throw new NotImplementedException();
         }
 
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
+            // delete item that matches all properties set in the object
             throw new NotImplementedException();
         }
+
+        #endregion
+
+        #region Update Expressions
 
         public static void Update<T>(this IDatabaseContext context, Expression<Func<T>> anonym, Expression<Func<T, bool>> predicate)
         {

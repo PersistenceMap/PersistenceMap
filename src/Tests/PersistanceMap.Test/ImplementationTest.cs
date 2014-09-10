@@ -27,7 +27,7 @@ namespace PersistanceMap.Test
         [Test]
         public void UpdateImplementationTestMethod()
         {
-            var provider = new MockSqlContextProvider(ConnectionString);
+            var provider = new ComparingContextProvider(ConnectionString);
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {

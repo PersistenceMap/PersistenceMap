@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace PersistanceMap
 {
     /// <summary>
     /// Base Class for IQueryPartsMap implementations
     /// </summary>
-    public abstract class QueryPartsMap : IQueryPartsMap
+    public class QueryPartsMap : IQueryPartsMap
     {
         #region IQueryPartsMap Implementation
 
@@ -74,7 +75,29 @@ namespace PersistanceMap
             }
         }
 
-        public abstract CompiledQuery Compile();
+        //public abstract CompiledQuery Compile();
+
+        public virtual CompiledQuery Compile()
+        {
+            var sb = new StringBuilder(100);
+
+            // loop all parts and compile
+            foreach (var part in Parts)
+            {
+                switch (part.OperationType)
+                {
+                    default:
+                        sb.Append(part.Compile());
+                        break;
+                }
+            }
+
+            return new CompiledQuery
+            {
+                QueryString = sb.ToString(),
+                QueryParts = this
+            };
+        }
 
         #endregion
     }

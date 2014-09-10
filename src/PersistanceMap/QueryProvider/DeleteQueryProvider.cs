@@ -11,7 +11,7 @@ namespace PersistanceMap.QueryProvider
             _context = context;
         }
 
-        public DeleteQueryProvider(IDatabaseContext context, SelectQueryPartsMap container)
+        public DeleteQueryProvider(IDatabaseContext context, QueryPartsMap container)
         {
             _context = context;
             _queryPartsMap = container;

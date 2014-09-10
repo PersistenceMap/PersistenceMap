@@ -3,14 +3,17 @@ using PersistanceMap.Compiler;
 
 namespace PersistanceMap.Test
 {
-    public class MockSqlContextProvider : IContextProvider
+    /// <summary>
+    /// Represents a IContextProvider that only compares the generated sql string to a expected sql string withou executing to a database
+    /// </summary>
+    public class ComparingContextProvider : IContextProvider
     {
-        public MockSqlContextProvider(string connectionString)
+        public ComparingContextProvider(string connectionString)
             : this(connectionString, null)
         {
         }
 
-        public MockSqlContextProvider(string connectionString, string expectedResult)
+        public ComparingContextProvider(string connectionString, string expectedResult)
         {
             Assert.IsNotNullOrEmpty(connectionString);
             ConnectionString = connectionString;
