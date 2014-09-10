@@ -88,7 +88,7 @@ namespace PersistanceMap.QueryProvider
             // if there is a alias on the last item it has to be used with the map
 
             var last = QueryPartsMap.Parts.Last(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
-            if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
+            if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
                 entity = last.EntityAlias;
 
             QueryPartsFactory.AppendFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);

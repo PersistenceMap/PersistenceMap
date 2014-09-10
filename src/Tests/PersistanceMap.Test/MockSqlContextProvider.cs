@@ -5,6 +5,11 @@ namespace PersistanceMap.Test
 {
     public class MockSqlContextProvider : IContextProvider
     {
+        public MockSqlContextProvider(string connectionString)
+            : this(connectionString, null)
+        {
+        }
+
         public MockSqlContextProvider(string connectionString, string expectedResult)
         {
             Assert.IsNotNullOrEmpty(connectionString);

@@ -88,6 +88,29 @@ namespace PersistanceMap
             context.Execute(query);
         }
 
+        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> anonym)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Update<T>(this IDatabaseContext context, Expression<Func<T>> anonym, Expression<Func<T, bool>> predicate)
+        {
+            // update all except the key elements used in the reference expression
+            throw new NotImplementedException();
+        }
+
+        public static void Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> predicate)
+        {
+            // update all fields defined in the anonym object
+            throw new NotImplementedException();
+        }
+
+
         #endregion
 
         #region Procedure Expressions
