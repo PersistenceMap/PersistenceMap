@@ -63,7 +63,7 @@ namespace PersistanceMap.QueryProvider
 
         protected void ReadReturnValues(IReaderContext reader)
         {
-            var mapper = new Mapping.MappingStrategy();
+            var kernel = new QueryKernel();
 
             var objectDefs = QueryPartsMap.Parameters.Where(p => p.CanHandleCallback)
                 .Select(p =>
@@ -73,7 +73,7 @@ namespace PersistanceMap.QueryProvider
                         ObjectType = p.CallbackType
                     }).ToArray();
 
-            var mapping = mapper.MapToDictionary(reader, objectDefs).FirstOrDefault();
+            var mapping = kernel.MapToDictionary(reader, objectDefs).FirstOrDefault();
 
             if (mapping == null || !mapping.Any())
                 return;

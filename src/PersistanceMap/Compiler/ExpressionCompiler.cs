@@ -1,14 +1,15 @@
 ﻿using PersistanceMap.QueryBuilder;
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap.Compiler
 {
     public class ExpressionCompiler : IExpressionCompiler
     {
+        public virtual CompiledQuery Compile<T>(IQueryPartsMap queryParts)
+        {
+            return queryParts.Compile();
+        }
+
         public virtual CompiledQuery Compile<T>(SelectQueryPartsMap queryParts)
         {
             // get all members on the type to be composed

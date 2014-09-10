@@ -10,9 +10,5 @@ namespace PersistanceMap
         //void Open();
 
         void Close();
-
-        void SetValue(FieldDefinition fieldDef, int colIndex, object instance);
-
-        object GetValue(ObjectDefinition objectDef, int colIndex);
     }
 }

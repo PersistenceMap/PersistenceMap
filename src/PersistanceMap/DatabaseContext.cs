@@ -1,5 +1,4 @@
-﻿using PersistanceMap.Mapping;
-using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 
@@ -57,7 +56,7 @@ namespace PersistanceMap
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext reader)
         {
-            return Mapper.Map<T>(reader);
+            return Kernel.Map<T>(reader);
         }
 
         /// <summary>
@@ -69,21 +68,21 @@ namespace PersistanceMap
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext reader, FieldDefinition[] fields)
         {
-            return Mapper.Map<T>(reader, fields);
+            return Kernel.Map<T>(reader, fields);
         }
 
-        private MappingStrategy _mapper;
+        private QueryKernel _kernel;
         /// <summary>
         /// Gets or sets a MappingStrategy
         /// </summary>
-        public MappingStrategy Mapper
+        public QueryKernel Kernel
         {
             get
             {
-                if (_mapper == null)
-                    _mapper = new MappingStrategy();
+                if (_kernel == null)
+                    _kernel = new QueryKernel();
 
-                return _mapper;
+                return _kernel;
             }
         }
 
