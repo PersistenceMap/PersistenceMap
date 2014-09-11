@@ -414,7 +414,7 @@ namespace PersistanceMap.Test.Integration
                     .AddParameter("@EndDate", () => DateTime.Today)
                     .For<SimpleSalesByYear>()
                     .Map("ShippedDate", s => s.ShippedDte)
-                    .Map("OrderID", s => s.OrdID)
+                    .Map("OrdersID", s => s.OrdID)
                     .Map("Subtotal", s => s.Total)
                     .Map("SpecialSubtotal", s => s.SpecTotal)
                     .Execute();

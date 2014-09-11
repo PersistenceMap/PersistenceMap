@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Compiler;
+using PersistanceMap.Internals;
 using PersistanceMap.QueryProvider;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace PersistanceMap
             context.Execute(query);
         }
 
-        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> anonym)
+        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
             // find the property called ID or {objectname}ID and delete the item according to the id
             throw new NotImplementedException();
@@ -104,9 +105,14 @@ namespace PersistanceMap
 
         #region Update Expressions
 
-        public static void Update<T>(this IDatabaseContext context, Expression<Func<T>> anonym, Expression<Func<T, bool>> predicate)
+        public static void Update<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
             // update all except the key elements used in the reference expression
+            if (key == null)
+            {
+                var keyexpr = ExpressionFactory.ExtractKeyExpression(entity);
+            }
+
             throw new NotImplementedException();
         }
 

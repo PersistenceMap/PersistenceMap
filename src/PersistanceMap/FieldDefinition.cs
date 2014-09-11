@@ -37,6 +37,8 @@ namespace PersistanceMap
 
         public bool IsNullable { get; set; }
 
+        public bool IsPrimaryKey { get; set; }
+
         public PropertyGetterDelegate GetValueFunction { get; set; }
 
         public PropertySetterDelegate SetValueFunction { get; set; }

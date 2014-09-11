@@ -13,14 +13,13 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = connection.Open())
             {
-                context.Delete(() => new Employees { EmployeeID = 1 });
-                context.Delete<Employees>(() => new { EmployeeID = 1 });
+                // DELETE from Employee where (Employee.EmployeeID = 1)
+                context.Delete(() => new Employee { EmployeeID = 1 });
 
-                var employee = new Employees
-                {
-                    EmployeeID = 1
-                };
-                context.Delete<Employees>(() => employee);
+                // DELETE from Employee where (Employee.EmployeeID = 1)
+                context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID);
+                
+                context.Delete<Employee>(() => new { EmployeeID = 1 });
             }
         }
 
@@ -31,17 +30,18 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                // for with aftermap
-                //context.Delete<Employees>();
-
-                //context.Delete<Employees>(e => e.EmployeeID == 1);
-                provider.ExpectedResult = "UPDATE Employees SET FirstName = \"test\", LastName = NULL, ... where (Employees.EmployeeID = 1)";
+                provider.ExpectedResult = "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)";
                 // update all except the key elements used in the reference expression
-                context.Update(() => new Employees { FirstName = "test" }, e => e.EmployeeID == 1);
+                context.Update(() => new Employee { EmployeeID = 1, FirstName = "test" });
 
-                provider.ExpectedResult = "UPDATE Employees SET FirstName = \"test\" where (Employees.EmployeeID = 1)";
+                //context.Delete<Employee>(e => e.EmployeeID == 1);
+                provider.ExpectedResult = "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)";
+                // update all except the key elements used in the reference expression
+                context.Update(() => new Employee { EmployeeID = 1, FirstName = "test"}, e => e.EmployeeID);
+
+                provider.ExpectedResult = "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)";
                 // update all fields defined in the anonym object
-                context.Update<Employees>(() => new { FirstName = "test" }, e => e.EmployeeID == 1);
+                context.Update<Employee>(() => new { FirstName = "test" }, e => e.EmployeeID == 1);
             }
         }
 
@@ -52,7 +52,7 @@ namespace PersistanceMap.Test
             using (var context = connection.Open())
             {
                 // for with aftermap
-                var people = context.From<Employees>()
+                var people = context.From<Employee>()
                     .For<Person>()
                     .Ignore(p => p.State)
                     .AfterMap(p => p.State = "ok")

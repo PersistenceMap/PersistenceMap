@@ -18,7 +18,7 @@ namespace PersistanceMap.Test.Integration
             {
                 var orders = context.Select<Orders>();
                 /* *Expected Query*
-                select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
+                select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
                 from Orders
                 */
 
@@ -34,10 +34,10 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID);
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
 
-                var sql = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery().Flatten(), sql);
@@ -59,11 +59,11 @@ namespace PersistanceMap.Test.Integration
                 // Map => To 
                 var query = context.From<Orders>()
                     .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     // map a property from a joni to a property in the result type
-                    .Map(i => i.OrderID);
+                    .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -84,12 +84,12 @@ namespace PersistanceMap.Test.Integration
             {
                 // Map => To 
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Map(i => i.OrderID)
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
+                    .Map(i => i.OrdersID)
                     // map a property from a joni to a property in the result type
                     .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
 
-                var sql = "select OrderDetails.OrderID, Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select OrderDetails.OrdersID, Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -123,8 +123,8 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 var anonymous = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .Select(() => new
                     {
                         ProductID = 0,
@@ -144,8 +144,8 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID);
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
                 var anonymous = query.Select(od => new
                 {
@@ -154,7 +154,7 @@ namespace PersistanceMap.Test.Integration
                 });
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
                 Assert.IsTrue(anonymous.Any());
@@ -170,8 +170,8 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID);
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
                 // select into a anonymous object
                 var anonymous = query.Select(od => new
@@ -180,7 +180,7 @@ namespace PersistanceMap.Test.Integration
                 });
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected); 
                 Assert.IsTrue(anonymous.Any());
@@ -197,8 +197,8 @@ namespace PersistanceMap.Test.Integration
             {
                 // select only the properties that are defined in the anony object
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID);
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
                 var orders = query.Select(od => new OrderWithDetail
                 {
@@ -208,7 +208,7 @@ namespace PersistanceMap.Test.Integration
                 });
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected); 
                 Assert.IsTrue(orders.Any());
@@ -227,7 +227,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // select only the properties that are defined in the anony object
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .For(() => new
                     {
                         ProductID = 0,
@@ -237,7 +237,7 @@ namespace PersistanceMap.Test.Integration
                 var anonymous = query.Select();
 
                 var sql = query.CompileQuery().Flatten();
-                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
 
@@ -256,7 +256,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // select only the properties that are defined in the anony object
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .For(() => new
                     {
                         ProductID = 0,
@@ -266,7 +266,7 @@ namespace PersistanceMap.Test.Integration
                 var anonymous = query.Select<OrderDetails>();
 
                 var sql = query.CompileQuery().Flatten();
-                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
                 Assert.IsTrue(anonymous.Any());
@@ -285,7 +285,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // select only the properties that are defined in the anony object
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .For(() => new
                     {
                         ProductID = 0,
@@ -295,7 +295,7 @@ namespace PersistanceMap.Test.Integration
                 var anonymous = query.Select(tmp => new OrderDetails { ProductID = tmp.ProductID, Quantity = tmp.Quantity });
 
                 var sql = query.CompileQuery().Flatten();
-                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
                 Assert.IsTrue(anonymous.Any());
@@ -331,33 +331,33 @@ namespace PersistanceMap.Test.Integration
                 using (var context = connection.Open())
                 {
                     yield return new TestCaseData(context.From<Orders>()
-                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                         .For<Orders>()
-                        .Map<Orders>(o => o.OrderID))
-                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .Map<Orders>(o => o.OrdersID))
+                        .Returns("select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)")
                         .SetDescription("select statement with a FOR expression and mapping members/fields to a specific table")
                         .SetName("select statement with a FOR expression and mappings");
 
                     yield return new TestCaseData(context.From<Orders>()
-                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                         .For<Orders>()
-                        .Ignore(o => o.OrderID)
+                        .Ignore(o => o.OrdersID)
                         .Ignore(o => o.OrderDate)
                         .Ignore(o => o.RequiredDate))
-                        .Returns("select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .Returns("select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)")
                         .SetDescription("select statement with a FOR expression and ignoring fields in the resultset")
                         .SetName("select statement with a FOR expression and ignoring fields in the resultset");
 
                     yield return new TestCaseData(context.From<Orders>()
-                        .Map(o => o.OrderID)
-                        .Join<OrderDetails>((od, o) => od.OrderID == o.OrderID)
+                        .Map(o => o.OrdersID)
+                        .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                         .For<Orders>())
-                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)")
+                        .Returns("select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)")
                         .SetDescription("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")
                         .SetName("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type");
 
                     yield return new TestCaseData(context.From<Orders>())
-                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders")
+                        .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders")
                         .SetDescription("simple select from statement")
                         .SetName("simple select from statement");
 
@@ -419,10 +419,10 @@ namespace PersistanceMap.Test.Integration
             {
                 // join using identifiers in the on expression
                 var query = context.From<Orders>("orders")
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, "detail", "orders");
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID, "detail", "orders");
 
-                var sql = "select orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)";
+                var sql = "select orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrdersID = orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
@@ -443,14 +443,14 @@ namespace PersistanceMap.Test.Integration
                 // multiple joins using On<T> with include and includeoperation in from expression
                 var query = context
                     .From<Orders>()
-                    .Map(p => p.OrderID)
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Map(p => p.OrdersID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice);
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)";
+                var expected = "select Orders.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) join Products on (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -471,15 +471,15 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context
                     .From<Orders>("ord")
-                    .Map(p => p.OrderID)
+                    .Map(p => p.OrdersID)
                     //TODO: Join has to check the previous for the alias? "ord"
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, source: "ord")
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID, source: "ord")
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice);
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select ord.OrderID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders ord join OrderDetails on (OrderDetails.OrderID = ord.OrderID) join Products on (Products.ProductID = OrderDetails.ProductID)";
+                var expected = "select ord.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders ord join OrderDetails on (OrderDetails.OrdersID = ord.OrdersID) join Products on (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -500,9 +500,9 @@ namespace PersistanceMap.Test.Integration
             {
                 // fail test because Include doesn't return a property witch ends in a wrong sql statement
                 var tmp = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     // this has to fail!
-                    .Map(i => i.OrderID != 1)
+                    .Map(i => i.OrdersID != 1)
                     .Select<OrderWithDetailExtended>();
 
                 Assert.Fail("This part should not have been reached!");
@@ -534,7 +534,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var orders = context.From<Orders>()
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID)
                     .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
@@ -549,9 +549,9 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var query = context.From<Orders, OrderDetails>((det, order) => det.OrderID == order.OrderID);
+                var query = context.From<Orders, OrderDetails>((det, order) => det.OrdersID == order.OrdersID);
 
-                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
@@ -572,7 +572,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var orders = context.From<Orders>()
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID)
                     .Select<OrderWithDetail>();
 
                 Assert.IsTrue(orders.Any());
@@ -588,13 +588,13 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID, "detail");
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID, "detail");
 
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
 
                 var sql = query.CompileQuery<OrderWithDetail>().Flatten();
-                var expected = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail on (detail.OrderID = Orders.OrderID)";
+                var expected = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail on (detail.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -612,11 +612,11 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var query = context.From<Orders>("orders")
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID, "detail", "orders");
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID, "detail", "orders");
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), "select orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrderID = orders.OrderID)");
+                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), "select orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrdersID = orders.OrdersID)");
 
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
@@ -634,9 +634,9 @@ namespace PersistanceMap.Test.Integration
             using (var context = dbConnection.Open())
             {
                 var query = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID && detail.Quantity > 5);
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID && detail.Quantity > 5);
 
-                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on ((OrderDetails.OrderID = Orders.OrderID) AND (OrderDetails.Quantity > 5))";
+                var sql = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on ((OrderDetails.OrdersID = Orders.OrdersID) AND (OrderDetails.Quantity > 5))";
                 var output = query.CompileQuery<OrderWithDetail>().Flatten();
 
                 // check the compiled sql
@@ -657,10 +657,10 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                // get all customers that are employees and have ordered
+                // get all customers that are Employee and have ordered
                 var query = context.From<Customers>()
                     .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
-                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID)
                     .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID)
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
@@ -668,10 +668,10 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.PostalCode);
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Employees>().Flatten(), "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) and (Employees.EmployeeID = Customers.EmployeeID)");
+                Assert.AreEqual(query.CompileQuery<Employee>().Flatten(), "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) and (Employee.EmployeeID = Customers.EmployeeID)");
 
                 // execute the query
-                var emloyees = query.Select<Employees>();
+                var emloyees = query.Select<Employee>();
 
                 Assert.IsTrue(emloyees.Any());
             }
@@ -686,23 +686,23 @@ namespace PersistanceMap.Test.Integration
                 //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<Customers>("customer")
                     .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord", "customer")
-                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
                     .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID, "empl", "customer")
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode);
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers customer join Orders ord on (ord.EmployeeID = customer.EmployeeID) join Employees empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = customer.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers customer join Orders ord on (ord.EmployeeID = customer.EmployeeID) join Employee empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = customer.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
 
                 // execute the query
-                var employees = query.Select<Employees>();
+                var Employee = query.Select<Employee>();
 
-                Assert.IsTrue(employees.Any());
+                Assert.IsTrue(Employee.Any());
             }
         }
 
@@ -715,18 +715,18 @@ namespace PersistanceMap.Test.Integration
                 // join using include
                 var orders = context
                     .From<Orders>()
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
-                    .Map(i => i.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID)
+                    .Map(i => i.OrdersID)
                     .Select<OrderDetails>();
 
                 /* *Expected Query*
-                 select OrderDetails.OrderID, ProductID, UnitPrice, Quantity, Discount 
+                 select OrderDetails.OrdersID, ProductID, UnitPrice, Quantity, Discount 
                  from Orders 
-                 join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
+                 join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)
                 */
 
                 Assert.IsTrue(orders.Any());
-                Assert.IsTrue(orders.First().OrderID > 0);
+                Assert.IsTrue(orders.First().OrdersID > 0);
                 Assert.IsTrue(orders.First().ProductID > 0);
             }
         }
@@ -740,7 +740,7 @@ namespace PersistanceMap.Test.Integration
                 // multiple joins using On<T> with include
                 var orders = context
                     .From<Orders>()
-                    .Join<OrderDetails>((det, order) => det.OrderID == order.OrderID)
+                    .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID)
                     .Join<Products>((product, det) => product.ProductID == det.ProductID)
                     .Map(p => p.ProductID)
                     .Map(p => p.UnitPrice)
@@ -749,7 +749,7 @@ namespace PersistanceMap.Test.Integration
                 /* *Expected Query*
                  select Products.ProductID, Products.UnitPrice, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, Quantity, Discount 
                  from Orders 
-                 join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)
+                 join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)
                  join Products on (Products.ProductID = OrderDetails.ProductID)
                 */
 
@@ -767,14 +767,14 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // join using on and or
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
                     .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                    .Or<Employees>((c, e) => c.EmployeeID == e.EmployeeID)
+                    .Or<Employee>((c, e) => c.EmployeeID == e.EmployeeID)
                     .Map(o => o.Region)
                     .Map(o => o.CustomerID)
                     .Map(o => o.Country);
@@ -783,7 +783,7 @@ namespace PersistanceMap.Test.Integration
                 var customers = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) or (Customers.EmployeeID = Employees.EmployeeID)";
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) or (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -800,19 +800,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // select with a join that connects to a other table than the previous
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
-                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+                    .Join<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID);
 
                 // execute the query
-                var customers = query.Select<Employees>();
+                var customers = query.Select<Employee>();
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.EmployeeID = Employees.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -829,19 +829,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // select with a join that contains a alias connects to a other table than the previous
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
-                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust");
+                    .Join<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust");
 
                 // execute the query
-                var customers = query.Select<Employees>();
+                var customers = query.Select<Employee>();
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers cust on (cust.EmployeeID = Employees.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers cust on (cust.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -858,19 +858,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // select with a join that containes an alias and connects to a other table than the previous that also contains an alias
-                var query = context.From<Employees>("emp")
+                var query = context.From<Employee>("emp")
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID, source: "emp")
-                    .Join<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp");
+                    .Join<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp");
 
                 // execute the query
-                var customers = query.Select<Employees>();
+                var customers = query.Select<Employee>();
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select emp.EmployeeID, emp.Address, emp.City, emp.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers cust on (cust.EmployeeID = emp.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select emp.EmployeeID, emp.Address, emp.City, emp.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers cust on (cust.EmployeeID = emp.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -889,23 +889,23 @@ namespace PersistanceMap.Test.Integration
                 //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<Customers>()
                     .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord")
-                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, "empl", "ord")
                     .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID, alias: "empl")
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode);
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ord on (ord.EmployeeID = Customers.EmployeeID) join Employees empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = Customers.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ord on (ord.EmployeeID = Customers.EmployeeID) join Employee empl on (empl.EmployeeID = ord.EmployeeID) and (empl.EmployeeID = Customers.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
 
                 // execute the query
-                var employees = query.Select<Employees>();
+                var Employee = query.Select<Employee>();
 
-                Assert.IsTrue(employees.Any());
+                Assert.IsTrue(Employee.Any());
             }
         }
 
@@ -919,23 +919,23 @@ namespace PersistanceMap.Test.Integration
                 //TODO: And allways returns false! create connection that realy works!
                 var query = context.From<Customers>("cust")
                     .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, "ord", "cust")
-                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, source: "ord")
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, source: "ord")
                     .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID, source: "cust")
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode);
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders ord on (ord.EmployeeID = cust.EmployeeID) join Employees on (Employees.EmployeeID = ord.EmployeeID) and (Employees.EmployeeID = cust.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders ord on (ord.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = ord.EmployeeID) and (Employee.EmployeeID = cust.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
 
                 // execute the query
-                var employees = query.Select<Employees>();
+                var Employee = query.Select<Employee>();
 
-                Assert.IsTrue(employees.Any());
+                Assert.IsTrue(Employee.Any());
             }
         }
     }
@@ -953,10 +953,10 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Orders>()
                     // map the property from this join to the Property in the result type
                     .Map(source => source.Freight, "SpecialFreight")
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Map(i => i.OrderID);
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
+                    .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -978,10 +978,10 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Orders>()
                     // map the property from this join to the Property in the result type
                     .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
-                    .Join<OrderDetails>((detail, order) => detail.OrderID == order.OrderID)
-                    .Map(i => i.OrderID);
+                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
+                    .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID)";
+                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -1020,7 +1020,7 @@ namespace PersistanceMap.Test.Integration
                     {
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderBy(o => o.OrderDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc")
                             .SetName("join with simple order by")
                             .SetDescription("join with simple order by");
 
@@ -1029,13 +1029,13 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.CustomerID)
                             .Map(c => c.EmployeeID)
                             .OrderBy<Orders>(o => o.OrderDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc")
                             .SetName("join with generic order by")
                             .SetDescription("join with generic order by");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderByDesc(o => o.OrderDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc")
                             .SetName("join with simple order by desc")
                             .SetDescription("join with simple order by desc");
 
@@ -1044,14 +1044,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.CustomerID)
                             .Map(c => c.EmployeeID)
                             .OrderByDesc<Orders>(o => o.OrderDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc")
                             .SetName("join with generic order by desc")
                             .SetDescription("join with generic order by desc");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderBy(o => o.OrderDate)
                             .ThenBy(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
                             .SetName("join with simple order by with simple then by")
                             .SetDescription("join with simple order by with simple then by");
 
@@ -1061,14 +1061,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderBy<Orders>(o => o.OrderDate)
                             .ThenBy(o => o.RequiredDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate asc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate asc")
                             .SetName("join with generic order by with simple then by")
                             .SetDescription("join with generic order by with simple then by");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderByDesc(o => o.OrderDate)
                             .ThenBy(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
                             .SetName("join with simple order by desc with simple then by")
                             .SetDescription("join with simple order by desc with simple then by");
 
@@ -1078,14 +1078,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderByDesc<Orders>(o => o.OrderDate)
                             .ThenBy(o => o.RequiredDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate asc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate asc")
                             .SetName("join with generic order by desc with simple then by")
                             .SetDescription("join with generic order by desc with simple then by");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderBy(o => o.OrderDate)
                             .ThenBy<Orders>(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
                             .SetName("join with simple order by with generic then by")
                             .SetDescription("join with simple order by with generic then by");
 
@@ -1095,14 +1095,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderBy<Orders>(o => o.OrderDate)
                             .ThenBy<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName asc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName asc")
                             .SetName("join with generic order by with generic then by")
                             .SetDescription("join with generic order by with generic then by");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderByDesc(o => o.OrderDate)
                             .ThenBy<Orders>(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
                             .SetName("join with simple order by desc with generic then by")
                             .SetDescription("join with simple order by desc with generic then by");
 
@@ -1112,14 +1112,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderByDesc<Orders>(o => o.OrderDate)
                             .ThenBy<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName asc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName asc")
                             .SetName("join with generic order by desc with generic then by")
                             .SetDescription("join with generic order by desc with generic then by");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderBy(o => o.OrderDate)
                             .ThenByDesc<Orders>(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate desc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate desc")
                             .SetName("join with simple order by with generic then by desc")
                             .SetDescription("join with simple order by with generic then by desc");
 
@@ -1129,14 +1129,14 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderBy<Orders>(o => o.OrderDate)
                             .ThenByDesc<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName desc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName desc")
                             .SetName("join with generic order by with generic then by desc")
                             .SetDescription("join with generic order by with generic then by desc");
 
                         yield return new TestCaseData(context.From<Orders>()
                             .OrderByDesc(o => o.OrderDate)
                             .ThenByDesc<Orders>(o => o.RequiredDate))
-                            .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate desc")
+                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate desc")
                             .SetName("join with simple order by desc with generic then by desc")
                             .SetDescription("join with simple order by desc with generic then by desc");
 
@@ -1146,7 +1146,7 @@ namespace PersistanceMap.Test.Integration
                             .Map(c => c.EmployeeID)
                             .OrderByDesc<Orders>(o => o.OrderDate)
                             .ThenByDesc<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName desc")
+                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName desc")
                             .SetName("join with generic order by desc with generic then by desc")
                             .SetDescription("join with generic order by desc with generic then by desc");
                     }
@@ -1167,15 +1167,15 @@ namespace PersistanceMap.Test.Integration
             {
                 // where operation on new generic type
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID)
                     .Where<Orders>(o => o.Freight > 0);
 
                 // execute the query
                 var orders = query.Select<OrderDetails>();
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) where (Orders.Freight > '0')";
+                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (Orders.Freight > '0')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1192,25 +1192,25 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // where operation on new generic type
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
                     .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                    .Where<Employees, Customers>((e, c) => e.EmployeeID != c.EmployeeID);
+                    .Where<Employee, Customers>((e, c) => e.EmployeeID != c.EmployeeID);
 
                 // execute the query
-                var employees = query.Select<Employees>();
+                var Employee = query.Select<Employee>();
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID <> Customers.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employee.EmployeeID <> Customers.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
 
-                Assert.IsTrue(employees.Any());
+                Assert.IsTrue(Employee.Any());
             }
         }
 
@@ -1223,16 +1223,16 @@ namespace PersistanceMap.Test.Integration
             {
                 // where operation with and
                 var query = context.From<Orders>()
-                    .Map(o => o.OrderID)
-                    .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
-                    .Where<Orders, OrderDetails>((o, od) => o.OrderID == od.OrderID)
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID)
+                    .Where<Orders, OrderDetails>((o, od) => o.OrdersID == od.OrdersID)
                     .And<OrderDetails>((od) => od.Quantity > 10);
 
                 // execute the query
                 var orderdetails = query.Select();
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrderID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) where (Orders.OrderID = OrderDetails.OrderID) and (OrderDetails.Quantity > 10)";
+                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (Orders.OrdersID = OrderDetails.OrdersID) and (OrderDetails.Quantity > 10)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1249,19 +1249,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // where operation with and
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
                     .Map(o => o.EmployeeID)
                     .Map(o => o.CustomerID)
                     .Join<Customers>((c, o) => o.CustomerID == o.CustomerID)
                     .Where(c => c.ContactName.Contains("a"))
-                    .And<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+                    .And<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID);
 
                 // execute the query
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = Employees.EmployeeID)";
+                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1278,7 +1278,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // join using on and or
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
@@ -1288,14 +1288,14 @@ namespace PersistanceMap.Test.Integration
                     .Map(o => o.Region)
                     .Map(o => o.CustomerID)
                     .Map(o => o.Country)
-                    .Where<Employees, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Where<Employee, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
                     .Or<Orders>(o => o.Freight > 0);
 
                 // execute the query
                 var orders = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID = Customers.EmployeeID) or (Orders.Freight > '0')";
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employee.EmployeeID = Customers.EmployeeID) or (Orders.Freight > '0')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1312,7 +1312,7 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // join using on and or
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Map(e => e.EmployeeID)
                     .Map(e => e.Address)
                     .Map(e => e.City)
@@ -1322,14 +1322,14 @@ namespace PersistanceMap.Test.Integration
                     .Map(o => o.Region)
                     .Map(o => o.CustomerID)
                     .Map(o => o.Country)
-                    .Where<Employees, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
-                    .Or<Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+                    .Where<Employee, Customers>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Or<Employee>((c, e) => c.EmployeeID == e.EmployeeID);
 
                 // execute the query
                 var orders = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "select Employees.EmployeeID, Employees.Address, Employees.City, Employees.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employees.EmployeeID = Customers.EmployeeID) or (Customers.EmployeeID = Employees.EmployeeID)";
+                var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employee.EmployeeID = Customers.EmployeeID) or (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1352,15 +1352,15 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.City)
                     .Map(e => e.PostalCode)
                     .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
-                    .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID)
                     .Where(e => e.FirstName.Contains("Davolio"))
-                    .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID);
+                    .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID);
 
                 // execute the query
-                var orders = query.Select<Employees>();
+                var orders = query.Select<Employee>();
 
-                var sql = query.CompileQuery<Employees>().Flatten();
-                var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (Customers.EmployeeID = Employees.EmployeeID)";
+                var sql = query.CompileQuery<Employee>().Flatten();
+                var expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1377,19 +1377,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // where operation with and
-                var query = context.From<Employees>()
+                var query = context.From<Employee>()
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
                     .Map(o => o.EmployeeID)
                     .Map(o => o.CustomerID)
                     .Join<Customers>((c, o) => o.CustomerID == o.CustomerID, alias: "cust")
                     .Where(c => c.ContactName.Contains("a"))
-                    .And<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust");
+                    .And<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust");
 
                 // execute the query
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees join Orders on (Orders.EmployeeID = Employees.EmployeeID) join Customers cust on (Orders.CustomerID = Orders.CustomerID) where cust.ContactName like '%a%' and (cust.EmployeeID = Employees.EmployeeID)";
+                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers cust on (Orders.CustomerID = Orders.CustomerID) where cust.ContactName like '%a%' and (cust.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1406,19 +1406,19 @@ namespace PersistanceMap.Test.Integration
             using (var context = connection.Open())
             {
                 // where operation with and
-                var query = context.From<Employees>("emp")
+                var query = context.From<Employee>("emp")
                     .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID, source: "emp")
                     .Map(o => o.EmployeeID)
                     .Map(o => o.CustomerID)
                     .Join<Customers>((c, o) => o.CustomerID == o.CustomerID)
                     .Where(c => c.ContactName.Contains("a"))
-                    .And<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp");
+                    .And<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp");
 
                 // execute the query
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrderID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employees emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = emp.EmployeeID)";
+                var expected = "select Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee emp join Orders on (Orders.EmployeeID = emp.EmployeeID) join Customers on (Orders.CustomerID = Orders.CustomerID) where Customers.ContactName like '%a%' and (Customers.EmployeeID = emp.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1429,8 +1429,8 @@ namespace PersistanceMap.Test.Integration
 
 
 
-        [Test, TestCaseSource(typeof(SelectWhereTestCases), "EmployeesTestCases")]
-        public string WhereTest(IOrderQueryProvider<Employees> query)
+        [Test, TestCaseSource(typeof(SelectWhereTestCases), "EmployeeTestCases")]
+        public string WhereTest(IOrderQueryProvider<Employee> query)
         {
             // execute the query
             var orders = query.Select();
@@ -1456,9 +1456,9 @@ namespace PersistanceMap.Test.Integration
 
     class SelectWhereTestCases : TestBase
     {
-        #region EmployeesTestCases
+        #region EmployeeTestCases
 
-        public IEnumerable EmployeesTestCases
+        public IEnumerable EmployeeTestCases
         {
             get
             {
@@ -1471,10 +1471,10 @@ namespace PersistanceMap.Test.Integration
                         .Map(e => e.City)
                         .Map(e => e.PostalCode)
                         .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
-                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                        .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
                         .Where(e => e.FirstName.Contains("Davolio"))
-                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp"))
-                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employees emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
+                        .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp"))
+                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and alias for both types")
                         .SetName("Where expression with Or containing aliases");
 
@@ -1484,10 +1484,10 @@ namespace PersistanceMap.Test.Integration
                         .Map(e => e.City)
                         .Map(e => e.PostalCode)
                         .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
-                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                        .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
                         .Where(e => e.FirstName.Contains("Davolio"))
-                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp"))
-                        .Returns("select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employees emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)")
+                        .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp"))
+                        .Returns("select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the source type")
                         .SetName("Where expression with Or containing source alias");
 
@@ -1497,10 +1497,10 @@ namespace PersistanceMap.Test.Integration
                         .Map(e => e.City)
                         .Map(e => e.PostalCode)
                         .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
-                        .Join<Employees>((e, o) => e.EmployeeID == o.EmployeeID)
+                        .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID)
                         .Where(e => e.FirstName.Contains("Davolio"))
-                        .Or<Customers, Employees>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust"))
-                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrderID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employees on (Employees.EmployeeID = Orders.EmployeeID) where Employees.FirstName like '%Davolio%' or (cust.EmployeeID = Employees.EmployeeID)")
+                        .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust"))
+                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the type")
                         .SetName("Where expression with Or containing aliase");
                 }
@@ -1519,18 +1519,18 @@ namespace PersistanceMap.Test.Integration
                 using (var context = connection.Open())
                 {
                     yield return new TestCaseData(context.From<Orders>()
-                        .Map(o => o.OrderID)
-                        .Join<OrderDetails>((d, o) => d.OrderID == o.OrderID)
+                        .Map(o => o.OrdersID)
+                        .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID)
                         .Where(o => o.Discount > 0)
                         .Rebase<OrderDetails, Orders>())
-                        .Returns("select Orders.OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrderID = Orders.OrderID) where (OrderDetails.Discount > '0')")
+                        .Returns("select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (OrderDetails.Discount > '0')")
                         .SetDescription("Select statement with a simple where operation")
                         .SetName("Join expression with simple WHERE");
 
                     yield return new TestCaseData(context.From<Orders>()
                         .Where(p => p.CustomerID.StartsWith("P"))
                         .Or<Orders>(o => o.ShipCity == "London"))
-                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')")
+                        .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')")
                         .SetDescription("select statement with a where and a simple or operation")
                         .SetName("Where expression with generic OR");
 
@@ -1538,21 +1538,21 @@ namespace PersistanceMap.Test.Integration
                         .Where(p => p.CustomerID.StartsWith("P"))
                         .Or<Orders>(o => o.ShipCity == "Paris")
                         .Or<Orders>(o => o.ShipCity == "London"))
-                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')")
+                        .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')")
                         .SetDescription("select statement with a where and a simple or operation")
                         .SetName("Where expression with two generic OR");
 
                     yield return new TestCaseData(context.From<Orders>("ord")
                         .Where(p => p.CustomerID.StartsWith("P"))
                         .Or<Orders>(o => o.ShipCity == "London", "ord"))
-                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')")
+                        .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')")
                         .SetDescription("Select statement with a where and a generic OR operation")
                         .SetName("Where expression with generic OR with alias");
 
                     yield return new TestCaseData(context.From<Orders>()
                         .Where(p => p.CustomerID.StartsWith("se"))
                         .And(o => o.ShipCity == "London"))
-                        .Returns("select OrderID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')")
+                        .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')")
                         .SetDescription("select statement with a where and a simple and operation")
                         .SetName("Where expression with simple And");
 

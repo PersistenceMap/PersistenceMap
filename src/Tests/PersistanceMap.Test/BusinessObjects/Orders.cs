@@ -7,7 +7,7 @@ namespace PersistanceMap.Test.BusinessObjects
         [Ignore]
         public string IgnoreProperty { get; set; }
 
-        public int OrderID { get; set; }
+        public int OrdersID { get; set; }
 
         public string CustomerID { get; set; }
 
@@ -37,7 +37,7 @@ namespace PersistanceMap.Test.BusinessObjects
 
         public override string ToString()
         {
-            return string.Format("{0}: {1} {2}", OrderID, CustomerID, ShipName);
+            return string.Format("{0}: {1} {2}", OrdersID, CustomerID, ShipName);
         }
     }
 }

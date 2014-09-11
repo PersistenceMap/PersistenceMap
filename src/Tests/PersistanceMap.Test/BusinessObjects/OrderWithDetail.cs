@@ -7,7 +7,7 @@ namespace PersistanceMap.Test.BusinessObjects
         [Ignore]
         public string IgnoreProperty { get; set; }
 
-        //public int OrderID { get; set; }
+        //public int OrdersID { get; set; }
 
         public string CustomerID { get; set; }
 

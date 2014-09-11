@@ -6,7 +6,7 @@ namespace PersistanceMap.Test.BusinessObjects
     {
         public DateTime ShippedDate { get; set; }
 
-        public int OrderID { get; set; }
+        public int OrdersID { get; set; }
 
         public double Subtotal { get; set; }
 

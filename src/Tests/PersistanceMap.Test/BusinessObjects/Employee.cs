@@ -2,7 +2,7 @@
 
 namespace PersistanceMap.Test.BusinessObjects
 {
-    public class Employees
+    public class Employee
     {
         public int EmployeeID { get; set; }
 

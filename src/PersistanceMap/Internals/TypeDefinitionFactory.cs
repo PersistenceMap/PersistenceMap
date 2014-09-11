@@ -75,8 +75,8 @@ namespace PersistanceMap.Internals
 
             var propertyType = isNullableType ? Nullable.GetUnderlyingType(propertyInfo.PropertyType) : propertyInfo.PropertyType;
 
-            var getter = propertyInfo.GetPropertyGetter();
-            var setter = propertyInfo.GetPropertySetter();
+            //var getter = propertyInfo.GetPropertyGetter();
+            //var setter = propertyInfo.GetPropertySetter();
 
             return new FieldDefinition
             {
@@ -87,9 +87,17 @@ namespace PersistanceMap.Internals
                 EntityType = propertyInfo.DeclaringType,
                 IsNullable = isNullable,
                 PropertyInfo = propertyInfo,
+                IsPrimaryKey = CheckPrimaryKey(propertyInfo.Name, propertyInfo.DeclaringType.Name),
                 GetValueFunction = propertyInfo.GetPropertyGetter(),
                 SetValueFunction = propertyInfo.GetPropertySetter(),
             };
+        }
+
+        private static bool CheckPrimaryKey(string propertyName, string memberName)
+        {
+            // extremely simple convention that says the key element has to be called ID or {Member}ID
+            return propertyName.ToLower().Equals("id") ||
+                   propertyName.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
         #endregion

@@ -72,7 +72,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BusinessObjects\Customers.cs" />
-    <Compile Include="BusinessObjects\Employees.cs" />
+    <Compile Include="BusinessObjects\Employee.cs" />
     <Compile Include="BusinessObjects\EmployeeTerritories.cs" />
     <Compile Include="BusinessObjects\Orders.cs" />
     <Compile Include="BusinessObjects\OrderDetails.cs" />
