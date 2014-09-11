@@ -73,7 +73,7 @@ namespace PersistanceMap
             context.Execute(query);
         }
 
-        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> predicate)
+        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
         {
             var queryParts = new QueryPartsMap();
 
@@ -81,7 +81,7 @@ namespace PersistanceMap
 
             QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
 
-            QueryPartsFactory.AppendExpressionQueryPart(queryParts, predicate, OperationType.Where);
+            QueryPartsFactory.AppendExpressionQueryPart(queryParts, where, OperationType.Where);
 
             var expr = context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile<T>(queryParts);
@@ -92,7 +92,24 @@ namespace PersistanceMap
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
             // find the property called ID or {objectname}ID and delete the item according to the id
-            throw new NotImplementedException();
+            LambdaExpression keyexpr = key;
+            if (keyexpr == null)
+            {
+                keyexpr = ExpressionFactory.ExtractKeyExpression(entity);
+            }
+
+            var queryParts = new QueryPartsMap();
+
+            QueryPartsFactory.AppendSimpleQueryPart(queryParts, OperationType.Delete);
+
+            QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
+
+            QueryPartsFactory.AppendExpressionQueryPart(queryParts, keyexpr, OperationType.Where);
+
+            var expr = context.ContextProvider.ExpressionCompiler;
+            var query = expr.Compile<T>(queryParts);
+
+            context.Execute(query);
         }
 
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)

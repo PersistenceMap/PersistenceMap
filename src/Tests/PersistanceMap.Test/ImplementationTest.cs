@@ -10,10 +10,11 @@ namespace PersistanceMap.Test
         [Test]
         public void DeleteImplementationTestMethod()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            var provider = new ComparingContextProvider();
+            var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                // DELETE from Employee where (Employee.EmployeeID = 1)
+                provider.ExpectedResult = "DELETE from Employee where (Employee.EmployeeID = 1)";
                 context.Delete(() => new Employee { EmployeeID = 1 });
 
                 // DELETE from Employee where (Employee.EmployeeID = 1)
@@ -26,7 +27,7 @@ namespace PersistanceMap.Test
         [Test]
         public void UpdateImplementationTestMethod()
         {
-            var provider = new ComparingContextProvider(ConnectionString);
+            var provider = new ComparingContextProvider();
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {

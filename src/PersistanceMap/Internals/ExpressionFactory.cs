@@ -15,7 +15,13 @@ namespace PersistanceMap.Internals
             return expression;
         }
 
-        public static Expression ExtractKeyExpression<T>(Expression<Func<T>> entity)
+        /// <summary>
+        /// Creates a lambdaexpression that returnes the key element with the value contained by the key property
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static LambdaExpression ExtractKeyExpression<T>(Expression<Func<T>> entity)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var pk = fields.FirstOrDefault(f => f.IsPrimaryKey);
@@ -28,13 +34,13 @@ namespace PersistanceMap.Internals
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
 
-            // ***** Where(company => (company.ToLower() == "coho winery" || company.Length > 16)) *****
-            // Create an expression tree that represents the expression 'company.ToLower() == "coho winery"'.
+            // x => (x.Property == value)
+            // Create an expression tree that represents the expression 'x.Property == value'.
             var left = Expression.Property(pe, pk.PropertyInfo);
             var right = Expression.Constant(value);
             var e1 = Expression.Equal(left, right);
 
-            return e1;
+            return Expression.Lambda(e1);
         }
     }
 }
