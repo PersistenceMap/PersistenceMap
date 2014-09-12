@@ -84,7 +84,7 @@
     <Compile Include="BusinessObjects\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Integration\DeleteTests.cs" />
+    <Compile Include="Expression\DeleteTests.cs" />
     <Compile Include="Integration\ProcedureTests.cs" />
     <Compile Include="Integration\SelectTests.cs" />
     <Compile Include="ImplementationTest.cs" />

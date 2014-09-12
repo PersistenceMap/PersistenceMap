@@ -15,11 +15,6 @@ namespace PersistanceMap.Test
             using (var context = connection.Open())
             {
                 provider.ExpectedResult = "DELETE from Employee where (Employee.EmployeeID = 1)";
-                context.Delete(() => new Employee { EmployeeID = 1 });
-
-                // DELETE from Employee where (Employee.EmployeeID = 1)
-                context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID);
-                
                 context.Delete<Employee>(() => new { EmployeeID = 1 });
             }
         }

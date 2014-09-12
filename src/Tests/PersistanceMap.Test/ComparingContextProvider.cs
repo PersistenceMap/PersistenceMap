@@ -9,19 +9,11 @@ namespace PersistanceMap.Test
     public class ComparingContextProvider : IContextProvider
     {
         public ComparingContextProvider()
-            : this(null, null)
         {
         }
-
-        public ComparingContextProvider(string connectionString)
-            : this(connectionString, null)
+        
+        public ComparingContextProvider(string expectedResult)
         {
-        }
-
-        public ComparingContextProvider(string connectionString, string expectedResult)
-        {
-            //Assert.IsNotNullOrEmpty(connectionString);
-            ConnectionString = connectionString;
             ExpectedResult = expectedResult;
         }
 

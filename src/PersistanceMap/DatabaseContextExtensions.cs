@@ -73,6 +73,12 @@ namespace PersistanceMap
             context.Execute(query);
         }
 
+        /// <summary>
+        /// Deletes a record based on the where expression
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="context"></param>
+        /// <param name="where">The expression defining the where statement</param>
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
         {
             var queryParts = new QueryPartsMap();
@@ -89,13 +95,21 @@ namespace PersistanceMap
             context.Execute(query);
         }
 
+        /// <summary>
+        /// Deletes a record based on the Properties and values of the given entity
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="context"></param>
+        /// <param name="entity">The entity to delete</param>
+        /// <param name="key">The property defining the key on the entity</param>
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
-            // find the property called ID or {objectname}ID and delete the item according to the id
-            LambdaExpression keyexpr = key;
-            if (keyexpr == null)
+            // create expression containing key and value
+            var whereexpr = ExpressionFactory.CreateKeyExpression(entity, key);
+            if (whereexpr == null)
             {
-                keyexpr = ExpressionFactory.ExtractKeyExpression(entity);
+                // find the property called ID or {objectname}ID to define the where expression
+                whereexpr = ExpressionFactory.CreateKeyExpression(entity);
             }
 
             var queryParts = new QueryPartsMap();
@@ -104,7 +118,7 @@ namespace PersistanceMap
 
             QueryPartsFactory.AppendEntityQueryPart<T>(queryParts, OperationType.From);
 
-            QueryPartsFactory.AppendExpressionQueryPart(queryParts, keyexpr, OperationType.Where);
+            QueryPartsFactory.AppendExpressionQueryPart(queryParts, whereexpr, OperationType.Where);
 
             var expr = context.ContextProvider.ExpressionCompiler;
             var query = expr.Compile<T>(queryParts);
@@ -127,7 +141,7 @@ namespace PersistanceMap
             // update all except the key elements used in the reference expression
             if (key == null)
             {
-                var keyexpr = ExpressionFactory.ExtractKeyExpression(entity);
+                var keyexpr = ExpressionFactory.CreateKeyExpression(entity);
             }
 
             throw new NotImplementedException();
