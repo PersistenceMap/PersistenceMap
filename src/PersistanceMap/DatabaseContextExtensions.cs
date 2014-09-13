@@ -53,8 +53,9 @@ namespace PersistanceMap
 
         public static void Delete<T>(this IDatabaseContext context)
         {
-            var builder = new DeleteQueryBuilder(context);
-            builder.Delete<T>();
+            new DeleteQueryBuilder(context)
+                .Delete<T>()
+                .AddToStore();
         }
 
         /// <summary>
@@ -65,8 +66,9 @@ namespace PersistanceMap
         /// <param name="where">The expression defining the where statement</param>
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
         {
-            var builder = new DeleteQueryBuilder(context);
-            builder.Delete(where);
+            new DeleteQueryBuilder(context)
+                .Delete(where)
+                .AddToStore();
         }
 
         /// <summary>
@@ -78,14 +80,16 @@ namespace PersistanceMap
         /// <param name="key">The property defining the key on the entity</param>
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
-            var builder = new DeleteQueryBuilder(context);
-            builder.Delete(entity, key);
+            new DeleteQueryBuilder(context)
+                .Delete(entity, key)
+                .AddToStore();
         }
 
         public static void Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
-            var builder = new DeleteQueryBuilder(context);
-            builder.Delete<T>(anonym);
+            new DeleteQueryBuilder(context)
+                .Delete<T>(anonym)
+                .AddToStore();
         }
 
         #endregion
@@ -117,6 +121,33 @@ namespace PersistanceMap
         public static IProcedureQueryProvider Procedure(this IDatabaseContext context, string procName)
         {
             return new ProcedureQueryProvider(context, procName);
+        }
+
+        #endregion
+
+        #region Map
+
+        /// <summary>
+        /// Maps the output from the reader
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader)
+        {
+            return context.Kernel.Map<T>(reader);
+        }
+
+        /// <summary>
+        /// Maps the output from the reader to the provided fields
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader, FieldDefinition[] fields)
+        {
+            return context.Kernel.Map<T>(reader, fields);
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace PersistanceMap.Compiler
 {
     public class ExpressionCompiler : IExpressionCompiler
     {
-        public virtual CompiledQuery Compile<T>(IQueryPartsMap queryParts)
+        public virtual CompiledQuery Compile(IQueryPartsMap queryParts)
         {
             return queryParts.Compile();
         }

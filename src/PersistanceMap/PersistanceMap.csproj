@@ -53,7 +53,9 @@
     <Compile Include="IDeleteQueryProvider.cs" />
     <Compile Include="Internals\ExpressionFactory.cs" />
     <Compile Include="Internals\FieldHelper.cs" />
+    <Compile Include="Internals\DeleteQueryCommand.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />
+    <Compile Include="IQueryCommand.cs" />
     <Compile Include="QueryBuilder\DeleteQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\ProcedureQueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\QueryPartsBuilder.cs" />

@@ -1,6 +1,7 @@
 ﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PersistanceMap
 {
@@ -20,7 +21,7 @@ namespace PersistanceMap
         {
             using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
             {
-                return Map<T>(reader);
+                return this.Map<T>(reader);
             }
         }
 
@@ -48,28 +49,42 @@ namespace PersistanceMap
             }
         }
 
-        /// <summary>
-        /// Maps the output from the reader
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public IEnumerable<T> Map<T>(IReaderContext reader)
+        public void Commit()
         {
-            return Kernel.Map<T>(reader);
+            var command = QueryCommandStore.FirstOrDefault();
+            while (command != null)
+            {
+                command.Execute(this);
+
+                QueryCommandStore.Remove(command);
+                command = QueryCommandStore.FirstOrDefault();
+            }
         }
 
-        /// <summary>
-        /// Maps the output from the reader to the provided fields
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="reader"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
-        public IEnumerable<T> Map<T>(IReaderContext reader, FieldDefinition[] fields)
+        public void AddQuery(IQueryCommand command)
         {
-            return Kernel.Map<T>(reader, fields);
+            QueryCommandStore.Add(command);
         }
+
+        IList<IQueryCommand> _queryCommandStore;
+        public IList<IQueryCommand> QueryCommandStore
+        {
+            get
+            {
+                if (_queryCommandStore == null)
+                    _queryCommandStore = new List<IQueryCommand>();
+                return _queryCommandStore;
+            }
+        }
+
+        IEnumerable<IQueryCommand> IDatabaseContext.QueryCommandStore
+        {
+            get
+            {
+                return QueryCommandStore;
+            }
+        }
+        
 
         private QueryKernel _kernel;
         /// <summary>
@@ -110,6 +125,9 @@ namespace PersistanceMap
             {
                 if (disposing && !IsDisposed)
                 {
+                    // commit all uncommited transactions
+                    Commit();
+
                     IsDisposed = true;
                     GC.SuppressFinalize(this);
                 }

@@ -16,7 +16,7 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
         }
 
-        public DeleteQueryBuilder(IDatabaseContext context, QueryPartsMap container)
+        public DeleteQueryBuilder(IDatabaseContext context, IQueryPartsMap container)
         {
             _context = context;
             _queryPartsMap = container;
@@ -46,19 +46,22 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-
-        public void Delete<T>()
+        public void AddToStore()
         {
-            var queryParts = new QueryPartsMap();
+            Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
+        }
 
-            AppendSimpleQueryPart(queryParts, OperationType.Delete);
+        public IDeleteQueryProvider Delete<T>()
+        {
+            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendEntityQueryPart<T>(queryParts, OperationType.From);
+            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(queryParts);
+            //var expr = Context.ContextProvider.ExpressionCompiler;
+            //var query = expr.Compile<T>(queryParts);
 
-            Context.Execute(query);
+            //Context.Execute(query);
+            return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -66,20 +69,19 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="where">The expression defining the where statement</param>
-        public void Delete<T>(Expression<Func<T, bool>> where)
+        public IDeleteQueryProvider Delete<T>(Expression<Func<T, bool>> where)
         {
-            var queryParts = new QueryPartsMap();
+            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendSimpleQueryPart(queryParts, OperationType.Delete);
+            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            AppendEntityQueryPart<T>(queryParts, OperationType.From);
+            AppendExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
 
-            AppendExpressionQueryPart(queryParts, where, OperationType.Where);
+            //var expr = Context.ContextProvider.ExpressionCompiler;
+            //var query = expr.Compile<T>(queryParts);
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(queryParts);
-
-            Context.Execute(query);
+            //Context.Execute(query);
+            return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -88,7 +90,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="entity">The entity to delete</param>
         /// <param name="key">The property defining the key on the entity</param>
-        public void Delete<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
+        public IDeleteQueryProvider Delete<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
             // create expression containing key and value
             var whereexpr = ExpressionFactory.CreateKeyExpression(entity, key);
@@ -98,21 +100,20 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(entity);
             }
 
-            var queryParts = new QueryPartsMap();
+            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendSimpleQueryPart(queryParts, OperationType.Delete);
+            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            AppendEntityQueryPart<T>(queryParts, OperationType.From);
+            AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
-            AppendExpressionQueryPart(queryParts, whereexpr, OperationType.Where);
+            //var expr = Context.ContextProvider.ExpressionCompiler;
+            //var query = expr.Compile<T>(queryParts);
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
-            var query = expr.Compile<T>(queryParts);
-
-            Context.Execute(query);
+            //Context.Execute(query);
+            return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
-        public void Delete<T>(Expression<Func<object>> anonym)
+        public IDeleteQueryProvider Delete<T>(Expression<Func<object>> anonym)
         {
             // delete item that matches all properties set in the object
             throw new NotImplementedException();

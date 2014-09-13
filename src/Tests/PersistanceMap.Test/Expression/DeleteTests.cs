@@ -26,6 +26,7 @@ namespace PersistanceMap.Test.Expression
             using (var context = connection.Open())
             {
                 context.Delete<Employee>(e => e.EmployeeID == 1);
+                context.Commit();
             }
         }
 
