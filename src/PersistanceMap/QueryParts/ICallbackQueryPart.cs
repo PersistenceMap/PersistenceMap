@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Data;
 
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryParts
 {
     /// <summary>
     /// Callback implementation had to be placed in two interfaces to prevent the base interface to be generic. 

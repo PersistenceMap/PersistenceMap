@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.QueryProvider
+namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryProvider<T> : IJoinQueryProvider<T>
+    public partial class SelectQueryBuilder<T> : IJoinQueryProvider<T>
     {
         #region IJoinQueryProvider Implementation
 

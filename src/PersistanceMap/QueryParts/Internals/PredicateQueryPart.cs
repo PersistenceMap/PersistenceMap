@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq.Expressions;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 
-namespace PersistanceMap.QueryBuilder.Decorators
+namespace PersistanceMap.QueryParts
 {
     internal class PredicateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {

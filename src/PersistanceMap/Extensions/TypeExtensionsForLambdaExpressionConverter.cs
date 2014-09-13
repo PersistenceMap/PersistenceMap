@@ -6,27 +6,29 @@ namespace PersistanceMap
 {
     public static class TypeExtensionsForLambdaExpressionConverter
     {
-        public static bool IsNumericType(this System.Type type)
+        public static bool IsNumericType(this Type type)
         {
             if (type == null)
             {
                 return false;
             }
+
             if (type.IsEnum)
             {
                 if (Configuration.TreatEnumAsInteger)
                 {
                     return true;
                 }
+
                 return type.IsEnumFlags();
             }
+
             switch (type.GetTypeCode())
             {
-                case System.TypeCode.Object:
-                    {
+                case TypeCode.Object:
                         if (type.IsNullableType())
                         {
-                            return System.Nullable.GetUnderlyingType(type).IsNumericType();
+                            return Nullable.GetUnderlyingType(type).IsNumericType();
                         }
                         if (!type.IsEnum)
                         {
@@ -37,41 +39,39 @@ namespace PersistanceMap
                             return true;
                         }
                         return type.IsEnumFlags();
-                    }
-                case System.TypeCode.DBNull:
-                case System.TypeCode.Boolean:
-                case System.TypeCode.Char:
-                    {
+
+                case TypeCode.DBNull:
+                case TypeCode.Boolean:
+                case TypeCode.Char:
                         return false;
-                    }
-                case System.TypeCode.SByte:
-                case System.TypeCode.Byte:
-                case System.TypeCode.Int16:
-                case System.TypeCode.UInt16:
-                case System.TypeCode.Int32:
-                case System.TypeCode.UInt32:
-                case System.TypeCode.Int64:
-                case System.TypeCode.UInt64:
-                case System.TypeCode.Single:
-                case System.TypeCode.Double:
-                case System.TypeCode.Decimal:
-                    {
+
+                case TypeCode.SByte:
+                case TypeCode.Byte:
+                case TypeCode.Int16:
+                case TypeCode.UInt16:
+                case TypeCode.Int32:
+                case TypeCode.UInt32:
+                case TypeCode.Int64:
+                case TypeCode.UInt64:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
                         return true;
-                    }
+
                 default:
-                    {
                         return false;
-                    }
+
             }
         }
 
-        public static bool IsEnumFlags(this System.Type type)
+        public static bool IsEnumFlags(this Type type)
         {
             if (!type.IsEnum)
             {
                 return false;
             }
-            return type.FirstAttribute<System.FlagsAttribute>() != null;
+
+            return type.FirstAttribute<FlagsAttribute>() != null;
         }
 
         public static TAttr FirstAttribute<TAttr>(this Type type) where TAttr : class
@@ -81,7 +81,7 @@ namespace PersistanceMap
 
         public static bool IsOrHasGenericInterfaceTypeOf(this Type type, Type genericTypeDefinition)
         {
-            return (type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition) != null) || (type == genericTypeDefinition);
+            return type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition) != null || type == genericTypeDefinition;
         }
     }
 }

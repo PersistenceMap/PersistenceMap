@@ -1,5 +1,6 @@
 ﻿using PersistanceMap.QueryBuilder;
 using System;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {

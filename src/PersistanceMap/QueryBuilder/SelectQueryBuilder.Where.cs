@@ -1,20 +1,15 @@
-﻿using PersistanceMap.QueryBuilder.Decorators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PersistanceMap.QueryProvider
+namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryProvider<T> : IWhereQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IWhereQueryProvider<T>, IQueryProvider
     {
         #region Private Implementation
 
-        private SelectQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
+        private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.Or, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -23,12 +18,12 @@ namespace PersistanceMap.QueryProvider
             if (!string.IsNullOrEmpty(source))
                 part.AliasMap.Add(typeof(TOr), source);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        private SelectQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
+        private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.And, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -37,7 +32,7 @@ namespace PersistanceMap.QueryProvider
             if (!string.IsNullOrEmpty(source))
                 part.AliasMap.Add(typeof(TAnd), source);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
@@ -53,13 +48,13 @@ namespace PersistanceMap.QueryProvider
 
         public IWhereQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.And, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
                 part.AliasMap.Add(typeof(TAnd), alias);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         IWhereQueryProvider<T> IWhereQueryProvider<T>.And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
@@ -69,7 +64,7 @@ namespace PersistanceMap.QueryProvider
 
         public IWhereQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.And, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -78,7 +73,7 @@ namespace PersistanceMap.QueryProvider
             if (!string.IsNullOrEmpty(source))
                 part.AliasMap.Add(typeof(TAnd), source);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
@@ -92,13 +87,13 @@ namespace PersistanceMap.QueryProvider
 
         public IWhereQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.Or, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
                 part.AliasMap.Add(typeof(TOr), alias);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         IWhereQueryProvider<T> IWhereQueryProvider<T>.Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias, string source)
@@ -108,7 +103,7 @@ namespace PersistanceMap.QueryProvider
 
         public IWhereQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(OperationType.Or, predicate);
+            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -117,7 +112,7 @@ namespace PersistanceMap.QueryProvider
             if (!string.IsNullOrEmpty(source))
                 part.AliasMap.Add(typeof(TOr), source);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion

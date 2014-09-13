@@ -1,4 +1,5 @@
-﻿using PersistanceMap.QueryProvider;
+﻿using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.Test
 {
@@ -6,7 +7,7 @@ namespace PersistanceMap.Test
     {
         public static ISelectQueryProviderBase<TRebase> Rebase<T, TRebase>(this ISelectQueryProviderBase<T> query)
         {
-            return new SelectQueryProvider<TRebase>(query.Context, query.QueryPartsMap as SelectQueryPartsMap);
+            return new SelectQueryBuilder<TRebase>(query.Context, query.QueryPartsMap as SelectQueryPartsMap);
         }
     }
 }

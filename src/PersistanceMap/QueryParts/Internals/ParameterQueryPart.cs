@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using PersistanceMap.Compiler;
-using PersistanceMap.Sql;
 
-namespace PersistanceMap.QueryBuilder.Decorators
+namespace PersistanceMap.QueryParts
 {
     internal class ParameterQueryPart : QueryPartDecorator, IParameterQueryPart, ICallbackHandlerQueryPart, IQueryPartDecorator, IQueryPart
     {

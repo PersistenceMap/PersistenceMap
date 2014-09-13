@@ -25,14 +25,9 @@ namespace PersistanceMap
                 var exprCallPropertyGetFn = Expression.Call(instanceParam, getMethodInfo);
                 var oExprCallPropertyGetFn = Expression.Convert(exprCallPropertyGetFn, typeof(object));
 
-                var propertyGetFn = Expression.Lambda<PropertyGetterDelegate>
-                    (
-                        oExprCallPropertyGetFn,
-                        oInstanceParam
-                    ).Compile();
+                var propertyGetFn = Expression.Lambda<PropertyGetterDelegate>(oExprCallPropertyGetFn, oInstanceParam).Compile();
 
                 return propertyGetFn;
-
             }
             catch (Exception ex)
             {

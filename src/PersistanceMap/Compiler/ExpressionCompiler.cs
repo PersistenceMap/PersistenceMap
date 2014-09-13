@@ -1,5 +1,7 @@
 ﻿using PersistanceMap.QueryBuilder;
 using System.Linq;
+using PersistanceMap.QueryBuilder.QueryPartsBuilders;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.Compiler
 {
@@ -19,7 +21,7 @@ namespace PersistanceMap.Compiler
             //TODO: should entity also not be set?
             var fields = members.Select(m => m.ToFieldQueryPart(null, null/*from.Entity*/));
             
-            QueryPartsFactory.AddFiedlParts(queryParts, fields.ToArray());
+            QueryPartsBuilder.AddFiedlParts(queryParts, fields.ToArray());
 
             return queryParts.Compile();
         }

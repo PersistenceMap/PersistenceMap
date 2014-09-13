@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryParts
 {
     internal class SimpleQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {

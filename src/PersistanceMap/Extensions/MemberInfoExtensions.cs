@@ -1,6 +1,5 @@
-﻿using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.QueryParts;
 using System.Reflection;
-using PersistanceMap.QueryBuilder.Decorators;
 
 namespace PersistanceMap
 {

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
+using System;
 using System.Collections.Generic;
-using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {

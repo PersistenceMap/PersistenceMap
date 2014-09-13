@@ -1,11 +1,7 @@
-﻿using PersistanceMap.Compiler;
-using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryBuilder.Decorators;
+﻿using PersistanceMap.QueryParts;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using PersistanceMap.QueryProvider;
 
 namespace PersistanceMap
 {
@@ -76,7 +72,7 @@ namespace PersistanceMap
             return entity;
         }
         
-        public static IFieldQueryMap AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
+        public static IFieldQueryPart AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
         {
             var part = new FieldQueryPart(field, alias, null /*EntityAlias*/, entity)
             {
@@ -96,7 +92,7 @@ namespace PersistanceMap
             return part;
         }
 
-        public static void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryMap[] fields)
+        public static void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryPart[] fields)
         {
             foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
@@ -106,7 +102,7 @@ namespace PersistanceMap
 
                 foreach (var field in fields)
                 {
-                    if (map.Parts.Any(f => f is IFieldQueryMap && ((IFieldQueryMap)f).Field == field.Field || ((IFieldQueryMap)f).FieldAlias == field.Field))
+                    if (map.Parts.Any(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == field.Field || ((IFieldQueryPart)f).FieldAlias == field.Field))
                         continue;
 
                     map.Add(field);

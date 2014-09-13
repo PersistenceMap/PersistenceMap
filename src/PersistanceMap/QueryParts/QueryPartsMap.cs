@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PersistanceMap
+namespace PersistanceMap.QueryParts
 {
     /// <summary>
     /// Base Class for IQueryPartsMap implementations

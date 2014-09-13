@@ -1,15 +1,13 @@
 ﻿using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PersistanceMap.QueryProvider
+namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryProvider<T> : IJoinQueryProvider<T>
+    public partial class SelectQueryBuilder<T> : IJoinQueryProvider<T>
     {
         #region ISelectQueryProvider<T> Implementation
 
@@ -25,7 +23,7 @@ namespace PersistanceMap.QueryProvider
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
+            return CreateEntityQueryPart(Context, QueryPartsMap, predicate, OperationType.Join, alias, source);
         }
 
         /// <summary>
@@ -39,12 +37,27 @@ namespace PersistanceMap.QueryProvider
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
+            return CreateEntityQueryPart(Context, QueryPartsMap, predicate, OperationType.Join, alias, source);
         }
 
         #endregion
 
         #region Map Expressions
+
+        protected ISelectQueryProvider<T> Map(string source, string alias, string entity, string entityalias)
+        {
+            //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
+            // if there is a alias on the last item it has to be used with the map
+
+            var last = QueryPartsMap.Parts.Last(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
+            if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
+                entity = last.EntityAlias;
+
+            AppendFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type
@@ -125,7 +138,7 @@ namespace PersistanceMap.QueryProvider
 
         public IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
         {
-            var part = QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            var part = AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             // check if the last part that was added containes a alias
             var last = QueryPartsMap.Parts.Last(l => 
@@ -138,21 +151,21 @@ namespace PersistanceMap.QueryProvider
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && last.Entity == typeof(T).Name)
                 part.AliasMap.Add(typeof(T), last.EntityAlias);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate)
         {
-            QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
         {
-            QueryPartsFactory.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
@@ -161,22 +174,22 @@ namespace PersistanceMap.QueryProvider
 
         public IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T>(Context, QueryPartsMap, OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T2>(Context, QueryPartsMap, OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T>(Context, QueryPartsMap, OperationType.OrderByDesc, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T2>(Context, QueryPartsMap, OperationType.OrderByDesc, predicate);
         }
 
         #endregion
@@ -232,7 +245,7 @@ namespace PersistanceMap.QueryProvider
             var members = typeof(TNew).GetSelectionMembers();
             var fields = members.Select(m => m.ToFieldQueryPart(null, null));
 
-            QueryPartsFactory.AddFiedlParts(QueryPartsMap, fields.ToArray());
+            AddFiedlParts(QueryPartsMap, fields.ToArray());
 
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
@@ -242,7 +255,7 @@ namespace PersistanceMap.QueryProvider
                     map.IsSealded = true;
             }
 
-            return new SelectQueryProvider<TNew>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<TNew>(Context, QueryPartsMap);
         }
 
         public IAfterMapQueryProvider<TAno> For<TAno>(Expression<Func<TAno>> anonym)

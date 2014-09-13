@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace PersistanceMap.QueryBuilder.Decorators
+namespace PersistanceMap.QueryParts
 {
     internal class ExpressionQueryPart : QueryPartDecorator, IExpressionQueryPart, IQueryPartDecorator, IQueryPart
     {
@@ -122,3 +122,5 @@ namespace PersistanceMap.QueryBuilder.Decorators
         }
     }
 }
+
+

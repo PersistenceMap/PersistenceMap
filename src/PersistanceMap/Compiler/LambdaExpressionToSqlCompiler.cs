@@ -1,16 +1,14 @@
 ﻿using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.Compiler
 {

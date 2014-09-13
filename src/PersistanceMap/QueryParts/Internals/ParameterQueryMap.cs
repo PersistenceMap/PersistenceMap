@@ -1,7 +1,7 @@
 ﻿using PersistanceMap.Sql;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.QueryBuilder.Decorators
+namespace PersistanceMap.QueryParts
 {
     internal class ParameterQueryMap : ExpressionQueryPart, INamedQueryPart
     {

@@ -1,15 +1,12 @@
 ﻿using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PersistanceMap.QueryProvider
+namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryProvider<T> : IAfterMapQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IAfterMapQueryProvider<T>, IQueryProvider
     {
         public IAfterMapQueryProvider<T> AfterMap(Action<T> predicate)
         {
@@ -31,12 +28,12 @@ namespace PersistanceMap.QueryProvider
 
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
-                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryMap && ((IFieldQueryMap)f).Field == fieldName || ((IFieldQueryMap)f).FieldAlias == fieldName);
+                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
                 if (subpart != null)
                     map.Remove(subpart);
             }
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -55,14 +52,14 @@ namespace PersistanceMap.QueryProvider
 
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
-                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryMap && ((IFieldQueryMap)f).Field == fieldName || ((IFieldQueryMap)f).FieldAlias == fieldName) as IFieldQueryMap;
+                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName) as IFieldQueryPart;
                 if (subpart != null)
                 {
                     subpart.EntityAlias = typeof (TSource).Name;
                 }
             }
 
-            return new SelectQueryProvider<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
     }
 }

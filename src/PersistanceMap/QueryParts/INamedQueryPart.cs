@@ -1,5 +1,5 @@
 ﻿
-namespace PersistanceMap.QueryBuilder
+namespace PersistanceMap.QueryParts
 {
     public interface INamedQueryPart : IQueryPart
     {
