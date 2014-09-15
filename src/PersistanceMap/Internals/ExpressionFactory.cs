@@ -68,6 +68,21 @@ namespace PersistanceMap.Internals
             return Expression.Lambda(e1);
         }
 
+        public static LambdaExpression CreateKeyExpression<T>(Expression<Func<T>> entity, FieldDefinition field)
+        {
+            var value = field.GetValueFunction(entity);
+
+            ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
+
+            // x => (x.Property == value)
+            // Create an expression tree that represents the expression 'x.Property == value'.
+            var left = Expression.Property(pe, field.PropertyInfo);
+            var right = Expression.Constant(value);
+            var e1 = Expression.Equal(left, right);
+
+            return Expression.Lambda(e1);
+        }
+
         private static PropertyInfo GetProperty<T>(Expression<Func<T, object>> expression)
         {
             // sometimes the expression comes in as Convert(originalexpression)

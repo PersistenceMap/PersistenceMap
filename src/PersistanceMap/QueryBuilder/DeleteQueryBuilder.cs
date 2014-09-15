@@ -118,7 +118,20 @@ namespace PersistanceMap.QueryBuilder
         public IDeleteQueryProvider Delete<T>(Expression<Func<object>> anonym)
         {
             // delete item that matches all properties set in the object
-            throw new NotImplementedException();
+            //var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+            var fields = TypeDefinitionFactory.GetFieldDefinitions(anonym.Compile().Invoke().GetType());
+
+            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+
+            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+
+            foreach (var field in fields)
+            {
+                var whereexpr = ExpressionFactory.CreateKeyExpression(anonym, field);
+                AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            }
+
+            return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
     }
 }
