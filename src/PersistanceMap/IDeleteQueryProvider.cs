@@ -3,9 +3,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IDeleteQueryProvider
+    public interface IDeleteQueryProvider : IQueryProvider
     {
-        void AddToStore();
+        IDeleteQueryProvider AddToStore();
 
         IDeleteQueryProvider Delete<T>();
 

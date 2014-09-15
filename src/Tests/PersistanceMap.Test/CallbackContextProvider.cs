@@ -1,27 +1,32 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using PersistanceMap.Compiler;
 
 namespace PersistanceMap.Test
 {
+    public delegate void ContextProviderCallbackHandler(string query);
+
     /// <summary>
     /// Represents a IContextProvider that only compares the generated sql string to a expected sql string withou executing to a database
     /// </summary>
-    public class ComparingContextProvider : IContextProvider
+    public class CallbackContextProvider : IContextProvider
     {
-        public ComparingContextProvider()
+        //private readonly Action<string> _callback;
+        public event ContextProviderCallbackHandler Callback;
+
+        public CallbackContextProvider()
         {
         }
-        
-        public ComparingContextProvider(string expectedResult)
+
+        public CallbackContextProvider(Action<string> callback)
         {
-            ExpectedResult = expectedResult;
+            Callback = (s) => callback(s);
         }
 
         public string ConnectionString { get; private set; }
 
-        public string ExpectedResult { get; set; }
-
         private IExpressionCompiler _expressionCompiler;
+
         public virtual IExpressionCompiler ExpressionCompiler
         {
             get
@@ -35,13 +40,16 @@ namespace PersistanceMap.Test
 
         public IReaderContext Execute(string query)
         {
-            Assert.AreEqual(query.Flatten(), ExpectedResult);
-            return null;
+            return ExecuteNonQuery(query);
         }
 
         public IReaderContext ExecuteNonQuery(string query)
         {
-            Assert.AreEqual(query.Flatten(), ExpectedResult);
+            if(Callback == null)
+                throw new ArgumentNullException("Callback was not set prior to execution");
+
+            Callback(query);
+
             return null;
         }
     }

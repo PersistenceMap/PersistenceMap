@@ -51,9 +51,9 @@ namespace PersistanceMap
 
         #region Delete Expressions
 
-        public static void Delete<T>(this IDatabaseContext context)
+        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context)
         {
-            new DeleteQueryBuilder(context)
+            return new DeleteQueryBuilder(context)
                 .Delete<T>()
                 .AddToStore();
         }
@@ -64,9 +64,9 @@ namespace PersistanceMap
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="context"></param>
         /// <param name="where">The expression defining the where statement</param>
-        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
+        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
         {
-            new DeleteQueryBuilder(context)
+            return new DeleteQueryBuilder(context)
                 .Delete(where)
                 .AddToStore();
         }
@@ -78,16 +78,16 @@ namespace PersistanceMap
         /// <param name="context"></param>
         /// <param name="entity">The entity to delete</param>
         /// <param name="key">The property defining the key on the entity</param>
-        public static void Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
+        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
         {
-            new DeleteQueryBuilder(context)
+            return new DeleteQueryBuilder(context)
                 .Delete(entity, key)
                 .AddToStore();
         }
 
-        public static void Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
+        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
-            new DeleteQueryBuilder(context)
+            return new DeleteQueryBuilder(context)
                 .Delete<T>(anonym)
                 .AddToStore();
         }

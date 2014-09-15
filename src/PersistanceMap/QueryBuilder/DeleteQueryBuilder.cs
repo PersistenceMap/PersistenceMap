@@ -46,9 +46,11 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public void AddToStore()
+        public IDeleteQueryProvider AddToStore()
         {
             Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
+
+            return this;
         }
 
         public IDeleteQueryProvider Delete<T>()
