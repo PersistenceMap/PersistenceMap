@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
@@ -119,17 +120,27 @@ namespace PersistanceMap.QueryBuilder
         {
             // delete item that matches all properties set in the object
             //var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
-            var fields = TypeDefinitionFactory.GetFieldDefinitions(anonym.Compile().Invoke().GetType());
+            var obj = anonym.Compile().Invoke();
+            var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj.GetType());
+            var entityFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
             AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
             AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            foreach (var field in fields)
-            {
-                var whereexpr = ExpressionFactory.CreateKeyExpression(anonym, field);
-                AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
-            }
+            //foreach (var valueField in anonymFields)
+            //{
+                //var entityField = entityFields.FirstOrDefault(f => f.FieldName == valueField.FieldName);
+            var expr = ExpressionFactory.CreateKeyExpression<T>(obj, anonymFields, entityFields);
+
+
+
+
+
+
+
+                AppendExpressionQueryPart(QueryPartsMap, expr, OperationType.Where);
+            //}
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
