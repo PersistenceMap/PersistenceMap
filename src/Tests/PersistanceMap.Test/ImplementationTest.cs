@@ -15,13 +15,18 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                //provider.Callback += (s) => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)");
+                //var sql = "";
+                //provider.Callback += (s) => sql = s;
+
                 //context.Delete<Employee>(() => new { EmployeeID = 1 });
                 //context.Commit();
 
-                provider.Callback += (s) => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)");
-                context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });
-                context.Commit();
+                //Assert.AreEqual(sql.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)");
+
+                //context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });
+                //context.Commit();
+
+                //Assert.AreEqual(sql.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')");
             }
         }
 

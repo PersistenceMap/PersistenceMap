@@ -116,10 +116,15 @@ namespace PersistanceMap.QueryBuilder
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Delete a record based on the Properties and values passed in the anonym object
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="anonym">The object that defines the properties and the values that mark the object to delete</param>
+        /// <returns>IDeleteQueryProvider</returns>
         public IDeleteQueryProvider Delete<T>(Expression<Func<object>> anonym)
         {
             // delete item that matches all properties set in the object
-            //var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var obj = anonym.Compile().Invoke();
             var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj.GetType());
             var entityFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -128,19 +133,14 @@ namespace PersistanceMap.QueryBuilder
 
             AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            //foreach (var valueField in anonymFields)
-            //{
-                //var entityField = entityFields.FirstOrDefault(f => f.FieldName == valueField.FieldName);
-            var expr = ExpressionFactory.CreateKeyExpression<T>(obj, anonymFields, entityFields);
+            // create expressions of all properties and theyr values
+            var expressions = ExpressionFactory.CreateKeyExpressions<T>(obj, anonymFields, entityFields).ToList();
 
-
-
-
-
-
-
-                AppendExpressionQueryPart(QueryPartsMap, expr, OperationType.Where);
-            //}
+            foreach (var expr in expressions)
+            {
+                // add all expressions to the queryexpression
+                AppendExpressionQueryPart(QueryPartsMap, expr, expressions.First() == expr ? OperationType.Where : OperationType.And);
+            }
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }

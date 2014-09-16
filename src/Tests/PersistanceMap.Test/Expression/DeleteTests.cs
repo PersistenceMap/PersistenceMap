@@ -40,6 +40,7 @@ namespace PersistanceMap.Test.Expression
             using (var context = connection.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 });
+                context.Commit();
             }
         }
 
@@ -51,6 +52,7 @@ namespace PersistanceMap.Test.Expression
             using (var context = connection.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID);
+                context.Commit();
             }
         }
 
@@ -64,11 +66,34 @@ namespace PersistanceMap.Test.Expression
             {
                 // this has to fail because the expression should only return the property instead of the boolean!
                 context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID == 1);
+                context.Commit();
             }
         }
 
 
+        [Test]
+        [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]
+        public void DeleteEntityWithAnonymObjectContainingOneParam()
+        {
+            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)")));
+            using (var context = connection.Open())
+            {
+                context.Delete<Employee>(() => new { EmployeeID = 1 });
+                context.Commit();
+            }
+        }
 
+        [Test]
+        [Description("A delete statement that is build depending on the properties of a anonym object containing multile properties")]
+        public void DeleteEntityWithAnonymObjectContainingMultipleParams()
+        {
+            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')")));
+            using (var context = connection.Open())
+            {
+                context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });
+                context.Commit();
+            }
+        }
 
 
 

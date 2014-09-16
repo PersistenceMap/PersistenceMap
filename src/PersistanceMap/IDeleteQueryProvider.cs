@@ -14,6 +14,7 @@ namespace PersistanceMap
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="where">The expression defining the where statement</param>
+        /// <returns>IDeleteQueryProvider</returns>
         IDeleteQueryProvider Delete<T>(Expression<Func<T, bool>> where);
 
         /// <summary>
@@ -22,8 +23,15 @@ namespace PersistanceMap
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="entity">The entity to delete</param>
         /// <param name="key">The property defining the key on the entity</param>
+        /// <returns>IDeleteQueryProvider</returns>
         IDeleteQueryProvider Delete<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key = null);
 
+        /// <summary>
+        /// Delete a record based on the Properties and values passed in the anonym object
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="anonym">The object that defines the properties and the values that mark the object to delete</param>
+        /// <returns>IDeleteQueryProvider</returns>
         IDeleteQueryProvider Delete<T>(Expression<Func<object>> anonym);
     }
 }
