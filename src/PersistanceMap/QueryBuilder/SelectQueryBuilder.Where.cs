@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -9,7 +10,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -23,7 +24,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -48,7 +49,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -64,7 +65,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -87,7 +88,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -103,7 +104,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null)
         {
-            var part = AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))

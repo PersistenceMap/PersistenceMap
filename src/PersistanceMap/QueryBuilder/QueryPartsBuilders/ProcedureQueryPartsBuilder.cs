@@ -4,14 +4,29 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
 {
-    public class ProcedureQueryPartsBuilder : QueryPartsBuilder
+    internal class ProcedureQueryPartsBuilder : QueryPartsBuilder
     {
         protected ProcedureQueryPartsBuilder()
         {
         }
 
+        private static ProcedureQueryPartsBuilder _instance;
 
-        public static IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T>> predicate, string name = null)
+        /// <summary>
+        /// Gets the Singleton instance of the ProcedureQueryPartsBuilder
+        /// </summary>
+        public static ProcedureQueryPartsBuilder Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new ProcedureQueryPartsBuilder();
+
+                return _instance;
+            }
+        }
+
+        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T>> predicate, string name = null)
         {
             if (!string.IsNullOrEmpty(name))
             {
@@ -30,7 +45,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        public static IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart map, Action<T> callback)
+        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart map, Action<T> callback)
         {
             var part = new CallbackParameterQueryPart<T>(new IExpressionQueryPart[] { map }, callback)
             {

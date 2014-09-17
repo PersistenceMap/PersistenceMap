@@ -21,7 +21,7 @@ namespace PersistanceMap.Compiler
             //TODO: should entity also not be set?
             var fields = members.Select(m => m.ToFieldQueryPart(null, null/*from.Entity*/));
             
-            QueryPartsBuilder.AddFiedlParts(queryParts, fields.ToArray());
+            SelectQueryPartsBuilder.Instance.AddFiedlParts(queryParts, fields.ToArray());
 
             return queryParts.Compile();
         }

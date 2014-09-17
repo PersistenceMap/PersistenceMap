@@ -1,9 +1,11 @@
-﻿using PersistanceMap.QueryBuilder.QueryPartsBuilders;
+﻿using System;
+using System.Linq.Expressions;
+using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : SelectQueryPartsBuilder<T>, ISelectQueryProviderBase<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IAfterMapQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : ISelectQueryProviderBase<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IAfterMapQueryProvider<T>, IQueryProvider
     {
         public SelectQueryBuilder(IDatabaseContext context)
         {
@@ -53,10 +55,10 @@ namespace PersistanceMap.QueryBuilder
         internal ISelectQueryProvider<T2> From<T2>()
         {
             // create the begining for the select operation
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
 
             // add the from operation
-            AppendEntityQueryPart<T2>(QueryPartsMap, OperationType.From);
+            SelectQueryPartsBuilder.Instance.AppendEntityQueryPart<T2>(QueryPartsMap, OperationType.From);
 
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
@@ -66,13 +68,43 @@ namespace PersistanceMap.QueryBuilder
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
 
             // add the from operation with a alias
-            var part = AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+            var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
             part.EntityAlias = alias;
 
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
+        }
+
+        private SelectQueryBuilder<T2> CreateExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
+        {
+            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, operation);
+
+            return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
+        }
+
+        private IJoinQueryProvider<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
+        {
+            var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart(QueryPartsMap, predicate, operation);
+            if (!string.IsNullOrEmpty(alias))
+                part.EntityAlias = alias;
+
+            foreach (var itm in part.Parts)
+            {
+                var map = itm as IExpressionQueryPart;
+                if (map == null)
+                    continue;
+
+                // add aliases to mapcollections
+                if (!string.IsNullOrEmpty(source))
+                    map.AliasMap.Add(typeof(T2), source);
+
+                if (!string.IsNullOrEmpty(alias))
+                    map.AliasMap.Add(typeof(T1), alias);
+            }
+
+            return new SelectQueryBuilder<T1>(Context, QueryPartsMap);
         }
 
         #endregion

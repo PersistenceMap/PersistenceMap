@@ -5,13 +5,29 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
 {
-    public class QueryPartsBuilder
+    internal class QueryPartsBuilder
     {
         protected QueryPartsBuilder()
         {
         }
 
-        protected IQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
+        private static QueryPartsBuilder _instance;
+
+        /// <summary>
+        /// Gets the Singleton instance of the QueryPartsBuilder
+        /// </summary>
+        public static QueryPartsBuilder Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new QueryPartsBuilder();
+
+                return _instance;
+            }
+        }
+
+        internal IQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
         {
             var part = new SimpleQueryPart(operation);
 
@@ -20,7 +36,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        protected IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
+        internal IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
         {
             var part = new PredicateQueryPart(operation, predicate);
 
@@ -71,7 +87,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return entity;
         }
 
-        protected IExpressionQueryPart AppendExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
+        internal IExpressionQueryPart AppendExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
         {
             var part = new ExpressionQueryPart(operation, predicate);
             queryParts.Add(part);
@@ -79,7 +95,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        protected IFieldQueryPart AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
+        internal IFieldQueryPart AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
         {
             var part = new FieldQueryPart(field, alias, null /*EntityAlias*/, entity)
             {
@@ -91,7 +107,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        internal static void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryPart[] fields)
+        internal void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryPart[] fields)
         {
             foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {

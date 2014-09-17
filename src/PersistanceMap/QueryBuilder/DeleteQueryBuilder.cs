@@ -10,7 +10,7 @@ namespace PersistanceMap.QueryBuilder
     /// <summary>
     /// Containes logic to create queries that delete data from a database
     /// </summary>
-    public class DeleteQueryBuilder : QueryPartsBuilder, IDeleteQueryProvider, IQueryProvider
+    public class DeleteQueryBuilder : IDeleteQueryProvider, IQueryProvider
     {
         public DeleteQueryBuilder(IDatabaseContext context)
         {
@@ -56,9 +56,9 @@ namespace PersistanceMap.QueryBuilder
 
         public IDeleteQueryProvider Delete<T>()
         {
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
             //var expr = Context.ContextProvider.ExpressionCompiler;
             //var query = expr.Compile<T>(queryParts);
@@ -74,11 +74,11 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="where">The expression defining the where statement</param>
         public IDeleteQueryProvider Delete<T>(Expression<Func<T, bool>> where)
         {
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            AppendExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
+            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
 
             //var expr = Context.ContextProvider.ExpressionCompiler;
             //var query = expr.Compile<T>(queryParts);
@@ -103,11 +103,11 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(entity);
             }
 
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
             //var expr = Context.ContextProvider.ExpressionCompiler;
             //var query = expr.Compile<T>(queryParts);
@@ -129,17 +129,18 @@ namespace PersistanceMap.QueryBuilder
             var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj.GetType());
             var entityFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
-            AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
-            AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
+            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
             // create expressions of all properties and theyr values
             var expressions = ExpressionFactory.CreateKeyExpressions<T>(obj, anonymFields, entityFields).ToList();
 
+            var first = expressions.FirstOrDefault();
             foreach (var expr in expressions)
             {
                 // add all expressions to the queryexpression
-                AppendExpressionQueryPart(QueryPartsMap, expr, expressions.First() == expr ? OperationType.Where : OperationType.And);
+                QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, expr, first == expr ? OperationType.Where : OperationType.And);
             }
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);

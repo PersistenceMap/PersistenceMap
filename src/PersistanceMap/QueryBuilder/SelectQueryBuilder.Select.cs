@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Internals;
+using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(Context, QueryPartsMap, predicate, OperationType.Join, alias, source);
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(Context, QueryPartsMap, predicate, OperationType.Join, alias, source);
+            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
 
         #endregion
@@ -53,7 +54,7 @@ namespace PersistanceMap.QueryBuilder
             if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
                 entity = last.EntityAlias;
 
-            AppendFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
+            SelectQueryPartsBuilder.Instance.AppendFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -138,7 +139,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
         {
-            var part = AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             // check if the last part that was added containes a alias
             var last = QueryPartsMap.Parts.Last(l => 
@@ -156,14 +157,14 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate)
         {
-            AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
         {
-            AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -174,22 +175,22 @@ namespace PersistanceMap.QueryBuilder
 
         public IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(Context, QueryPartsMap, OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(Context, QueryPartsMap, OperationType.OrderBy, predicate);
+            return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
         }
 
         public IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(Context, QueryPartsMap, OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
         }
 
         public IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(Context, QueryPartsMap, OperationType.OrderByDesc, predicate);
+            return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
         }
 
         #endregion
@@ -245,7 +246,7 @@ namespace PersistanceMap.QueryBuilder
             var members = typeof(TNew).GetSelectionMembers();
             var fields = members.Select(m => m.ToFieldQueryPart(null, null));
 
-            AddFiedlParts(QueryPartsMap, fields.ToArray());
+            SelectQueryPartsBuilder.Instance.AddFiedlParts(QueryPartsMap, fields.ToArray());
 
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {

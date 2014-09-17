@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public abstract class ProcedureQueryProviderBase : ProcedureQueryPartsBuilder, IQueryProvider
+    public abstract class ProcedureQueryProviderBase : IQueryProvider
     {
         public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
         {
@@ -112,7 +112,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate)
         {
-            AppendParameterQueryPart(QueryPartsMap, predicate);
+            ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate);
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -126,7 +126,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate)
         {
-            AppendParameterQueryPart(QueryPartsMap, predicate, name);
+            ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate, name);
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -147,7 +147,7 @@ namespace PersistanceMap.QueryBuilder
 
             var map = new ParameterQueryMap(OperationType.Value, name, predicate);
 
-            var cb = AppendParameterQueryPart(QueryPartsMap, map, callback);
+            var cb = ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, map, callback);
             if (cb.CanHandleCallback)
             {
                 // get the index of the parameter in the collection to create the name of the out parameter
