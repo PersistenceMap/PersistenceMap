@@ -1,5 +1,5 @@
 ﻿
-namespace PersistanceMap.Internals
+namespace PersistanceMap.QueryBuilder.Commands
 {
     internal class DeleteQueryCommand : IQueryCommand
     {

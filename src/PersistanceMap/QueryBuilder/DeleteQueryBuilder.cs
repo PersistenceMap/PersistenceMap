@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
+using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.QueryBuilder
