@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using PersistanceMap.Test.BusinessObjects;
+using PersistanceMap.Test.TableTypes;
 using System.Collections;
 using System.Data.SqlClient;
 using System.Linq;

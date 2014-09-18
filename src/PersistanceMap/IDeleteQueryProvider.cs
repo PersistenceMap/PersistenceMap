@@ -21,10 +21,10 @@ namespace PersistanceMap
         /// Deletes a record based on the Properties and values of the given entity
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
-        /// <param name="entity">The entity to delete</param>
-        /// <param name="key">The property defining the key on the entity</param>
+        /// <param name="dataObject">The entity to delete</param>
+        /// <param name="where">The property defining the key on the entity</param>
         /// <returns>IDeleteQueryProvider</returns>
-        IDeleteQueryProvider Delete<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key = null);
+        IDeleteQueryProvider Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null);
 
         /// <summary>
         /// Delete a record based on the Properties and values passed in the anonym object

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using PersistanceMap.Test.BusinessObjects;
+using PersistanceMap.Test.TableTypes;
 using System;
 using System.Collections;
 

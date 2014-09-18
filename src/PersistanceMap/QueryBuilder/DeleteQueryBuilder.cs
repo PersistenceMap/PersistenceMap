@@ -41,7 +41,7 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_queryPartsMap == null)
-                    _queryPartsMap = new SelectQueryPartsMap();
+                    _queryPartsMap = new QueryPartsMap();
                 return _queryPartsMap;
             }
         }
@@ -92,16 +92,16 @@ namespace PersistanceMap.QueryBuilder
         /// Deletes a record based on the Properties and values of the given entity
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
-        /// <param name="entity">The entity to delete</param>
-        /// <param name="key">The property defining the key on the entity</param>
-        public IDeleteQueryProvider Delete<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
+        /// <param name="dataObject">The entity to delete</param>
+        /// <param name="where">The property defining the key on the entity</param>
+        public IDeleteQueryProvider Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
-            // create expression containing key and value
-            var whereexpr = ExpressionFactory.CreateKeyExpression(entity, key);
+            // create expression containing key and value for the where statement
+            var whereexpr = ExpressionFactory.CreateKeyExpression(dataObject, where);
             if (whereexpr == null)
             {
                 // find the property called ID or {objectname}ID to define the where expression
-                whereexpr = ExpressionFactory.CreateKeyExpression(entity);
+                whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
             }
 
             QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
@@ -128,14 +128,14 @@ namespace PersistanceMap.QueryBuilder
             // delete item that matches all properties set in the object
             var obj = anonym.Compile().Invoke();
             var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj.GetType());
-            var entityFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+            var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
             QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
             // create expressions of all properties and theyr values
-            var expressions = ExpressionFactory.CreateKeyExpressions<T>(obj, anonymFields, entityFields).ToList();
+            var expressions = ExpressionFactory.CreateKeyValueEqualityExpressions<T>(obj, anonymFields, tableFields).ToList();
 
             var first = expressions.FirstOrDefault();
             foreach (var expr in expressions)

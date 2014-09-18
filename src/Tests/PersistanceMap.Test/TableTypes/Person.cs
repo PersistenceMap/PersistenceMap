@@ -1,17 +1,15 @@
 ﻿using System;
 
-namespace PersistanceMap.Test.BusinessObjects
+namespace PersistanceMap.Test.TableTypes
 {
-    public class Employee
+    public class Person
     {
-        public int EmployeeID { get; set; }
-
         public string LastName { get; set; }
 
         public string FirstName { get; set; }
 
         public string Title { get; set; }
-        
+
         //TitleOfCourtesy
 
         public DateTime BirthDate { get; set; }
@@ -32,8 +30,7 @@ namespace PersistanceMap.Test.BusinessObjects
         //Photo
         //Notes
 
-        public int ReportsTo { get; set; }
-
-        //PhotoPath
+        [Ignore]
+        public string State { get; set; }
     }
 }

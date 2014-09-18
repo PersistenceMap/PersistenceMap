@@ -56,6 +56,10 @@ namespace PersistanceMap.QueryParts
                 case OperationType.FullJoin:
                     sb.Append("full join");
                     break;
+
+                case PersistanceMap.OperationType.Update:
+                    sb.Append("UPDATE ");
+                    break;
             }
 
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(EntityAlias) ? string.Empty : string.Format(" {0}", EntityAlias)));

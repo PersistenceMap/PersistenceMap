@@ -76,15 +76,22 @@ namespace PersistanceMap
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="context"></param>
-        /// <param name="entity">The entity to delete</param>
-        /// <param name="key">The property defining the key on the entity</param>
-        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
+        /// <param name="dataObject">The entity to delete</param>
+        /// <param name="where">The property defining the key on the entity</param>
+        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
             return new DeleteQueryBuilder(context)
-                .Delete(entity, key)
+                .Delete(dataObject, where)
                 .AddToStore();
         }
 
+        /// <summary>
+        /// Delete a record based on the Properties and values passed in the anonym object
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="context"></param>
+        /// <param name="anonym">The object that defines the properties and the values that mark the object to delete</param>
+        /// <returns>IDeleteQueryProvider</returns>
         public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
             return new DeleteQueryBuilder(context)
@@ -96,21 +103,20 @@ namespace PersistanceMap
 
         #region Update Expressions
 
-        public static void Update<T>(this IDatabaseContext context, Expression<Func<T>> entity, Expression<Func<T, object>> key = null)
+        public static IUpdateQueryProvider Update<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
             // update all except the key elements used in the reference expression
-            if (key == null)
-            {
-                var keyexpr = ExpressionFactory.CreateKeyExpression(entity);
-            }
-
-            throw new NotImplementedException();
+            return new UpdateQueryBuilder(context)
+            .Update(dataObject, where)
+            .AddToStore();
         }
 
-        public static void Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> predicate)
+        public static IUpdateQueryProvider Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
             // update all fields defined in the anonym object
-            throw new NotImplementedException();
+            return new UpdateQueryBuilder(context)
+            .Update(anonym, where)
+            .AddToStore();
         }
 
 

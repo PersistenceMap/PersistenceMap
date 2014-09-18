@@ -21,6 +21,13 @@ namespace PersistanceMap.Internals
 
                 if (memberExpression == null)
                 {
+                    var binary = propertyExpression.Body as BinaryExpression;
+                    if (binary != null)
+                        memberExpression = binary.Left as MemberExpression;
+                }
+
+                if (memberExpression == null)
+                {
                     //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
                     Trace.WriteLine("Property is not a MemberAccessExpression");
                     try

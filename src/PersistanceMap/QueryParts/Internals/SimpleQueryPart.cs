@@ -25,17 +25,22 @@ namespace PersistanceMap.QueryParts
                     sb.Append("DELETE ");
                     break;
 
+                case PersistanceMap.OperationType.Set:
+                    sb.Append("SET ");
+                    break;
+
                 default:
                     throw new NotImplementedException("OperationType is not implemented in SelectMapQueryPart");
             }
 
+            var last = Parts.LastOrDefault();
             foreach (var part in Parts)
             {
                 var value = part.Compile();
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                sb.AppendFormat("{0}{1} ", value, Parts.Last() == part ? "" : ",");
+                sb.AppendFormat("{0}{1} ", value, last == part ? "" : ",");
             }
 
             return sb.ToString().RemoveLineBreak();

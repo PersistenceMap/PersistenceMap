@@ -71,17 +71,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BusinessObjects\Customers.cs" />
-    <Compile Include="BusinessObjects\Employee.cs" />
-    <Compile Include="BusinessObjects\EmployeeTerritories.cs" />
-    <Compile Include="BusinessObjects\Orders.cs" />
-    <Compile Include="BusinessObjects\OrderDetails.cs" />
-    <Compile Include="BusinessObjects\OrderWithDetail.cs" />
-    <Compile Include="BusinessObjects\Person.cs" />
-    <Compile Include="BusinessObjects\ProductsWithIndexer.cs" />
-    <Compile Include="BusinessObjects\Products.cs" />
-    <Compile Include="BusinessObjects\SalesByYear.cs" />
-    <Compile Include="BusinessObjects\SimpleSalesByYear.cs" />
+    <Compile Include="TableTypes\Customers.cs" />
+    <Compile Include="TableTypes\Employee.cs" />
+    <Compile Include="TableTypes\EmployeeTerritories.cs" />
+    <Compile Include="TableTypes\Orders.cs" />
+    <Compile Include="TableTypes\OrderDetails.cs" />
+    <Compile Include="TableTypes\OrderWithDetail.cs" />
+    <Compile Include="TableTypes\Person.cs" />
+    <Compile Include="TableTypes\ProductsWithIndexer.cs" />
+    <Compile Include="TableTypes\Products.cs" />
+    <Compile Include="TableTypes\SalesByYear.cs" />
+    <Compile Include="TableTypes\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Expression\DeleteTests.cs" />

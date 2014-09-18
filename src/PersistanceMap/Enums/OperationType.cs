@@ -36,6 +36,9 @@ namespace PersistanceMap
         /// </summary>
         Delete = 10,
 
+        Update = 11,
+
+        Set = 12,
 
         /// <summary>
         /// defines the operation as an alias of a table, a field or a storedprocedure parameter

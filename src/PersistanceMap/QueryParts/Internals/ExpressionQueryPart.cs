@@ -15,11 +15,14 @@ namespace PersistanceMap.QueryParts
             Expression = expression;
 
             AliasMap = new Dictionary<Type, string>();
+            IsValueQuotated = true;
         }
 
         //public OperationType OperationType { get; private set; }
 
         public LambdaExpression Expression { get; private set; }
+
+        public bool IsValueQuotated { get; set; }
 
         /// <summary>
         /// Defines a mapping for types and the alias that the entity has
@@ -90,8 +93,13 @@ namespace PersistanceMap.QueryParts
             }
             else
             {
-                //sb.AppendLine(DialectProvider.Instance.GetQuotedValue(value, value.GetType()));
-                expression = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+                if (IsValueQuotated)
+                {
+                    //sb.AppendLine(DialectProvider.Instance.GetQuotedValue(value, value.GetType()));
+                    expression = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+                }
+                else
+                    expression = value.ToString();
             }
 
             if (!string.IsNullOrEmpty(sufix))

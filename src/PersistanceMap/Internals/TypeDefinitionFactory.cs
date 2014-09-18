@@ -19,6 +19,32 @@ namespace PersistanceMap.Internals
             return ExtractFieldDefinitions(typeof(T));
         }
 
+        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(Type type)
+        {
+            var definedFields = ExtractFieldDefinitions(typeof(T));
+            var objectDefinitions = ExtractFieldDefinitions(type).ToList();
+
+            foreach (var field in objectDefinitions)
+            {
+                // merge the fields from the defined type to the provided type (anonymous object)
+                var defined = definedFields.FirstOrDefault(f => f.MemberName == field.MemberName);
+                if (defined == null)
+                    continue;
+
+                field.IsNullable = defined.IsNullable;
+                field.IsPrimaryKey = defined.IsPrimaryKey;
+                field.EntityName = defined.EntityName;
+                field.EntityType = defined.EntityType;
+                field.PropertyInfo = defined.PropertyInfo;
+                //field.SetValueFunction = defined.SetValueFunction;
+                //yield return defined;
+
+                //yield return defined;
+            }
+
+            return objectDefinitions;
+        }
+
         /// <summary>
         /// Gets all fielddefinitions that can be created by the type
         /// </summary>
@@ -28,6 +54,27 @@ namespace PersistanceMap.Internals
         {
             return ExtractFieldDefinitions(type);
         }
+
+        //public static IEnumerable<FieldDefinition> GetFiedlDefinitions<T>(this Type type)
+        //{
+        //    var definedFields = ExtractFieldDefinitions(typeof(T));
+        //    var objectDefinitions = ExtractFieldDefinitions(type);
+
+        //    foreach (var field in objectDefinitions)
+        //    {
+        //        // merge the fields from the defined type to the provided type (anonymous object)
+        //        var defined = definedFields.FirstOrDefault(f => f.MemberName == field.MemberName);
+        //        if (defined == null)
+        //            continue;
+
+        //        field.IsNullable = defined.IsNullable;
+        //        field.IsPrimaryKey = defined.IsPrimaryKey;
+        //        field.EntityName = defined.EntityName;
+        //        field.EntityType = defined.EntityType;
+        //    }
+
+        //    return objectDefinitions;
+        //}
 
         #region Internal Implementation
 

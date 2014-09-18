@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PersistanceMap.Test.BusinessObjects
+namespace PersistanceMap.Test.TableTypes
 {
     public class SalesByYear
     {

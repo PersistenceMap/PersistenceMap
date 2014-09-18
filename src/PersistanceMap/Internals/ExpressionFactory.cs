@@ -21,7 +21,7 @@ namespace PersistanceMap.Internals
         /// <typeparam name="T"></typeparam>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public static LambdaExpression CreateKeyExpression<T>(Expression<Func<T>> entity)
+        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<T>> entity)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var pk = fields.FirstOrDefault(f => f.IsPrimaryKey);
@@ -38,9 +38,32 @@ namespace PersistanceMap.Internals
             // Create an expression tree that represents the expression 'x.Property == value'.
             var left = Expression.Property(pe, pk.PropertyInfo);
             var right = Expression.Constant(value);
-            var e1 = Expression.Equal(left, right);
+            var expression = Expression.Equal(left, right);
 
-            return Expression.Lambda(e1);
+            //return Expression.Lambda(e1);
+            return Expression.Lambda<Func<T, bool>>(expression, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
+        }
+
+        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<object>> entity)
+        {
+            var valueObject = entity.Compile().Invoke();
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>(valueObject.GetType());
+            var pk = fields.FirstOrDefault(f => f.IsPrimaryKey);
+            if (pk == null)
+                return null;
+
+            var value = pk.GetValueFunction(entity.Compile().Invoke());
+
+            ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
+
+            // x => (x.Property == value)
+            // Create an expression tree that represents the expression 'x.Property == value'.
+            var left = Expression.Property(pe, pk.PropertyInfo);
+            var right = Expression.Constant(value, pk.MemberType);
+
+            var expression = Expression.Equal(left, right);
+
+            return Expression.Lambda<Func<T, bool>>(expression, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
         }
 
         /// <summary>
@@ -51,7 +74,7 @@ namespace PersistanceMap.Internals
         /// <param name="entity"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static LambdaExpression CreateKeyExpression<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key)
+        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key)
         {
             if (key == null)
                 return null;
@@ -66,16 +89,36 @@ namespace PersistanceMap.Internals
             var right = Expression.Constant(value);
             var e1 = Expression.Equal(left, right);
 
-            return Expression.Lambda(e1);
+            //return Expression.Lambda(e1);
+            return Expression.Lambda<Func<T, bool>>(e1, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
         }
 
-        public static IEnumerable<Expression<Func<T,bool>>> CreateKeyExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields, IEnumerable<FieldDefinition> entityFields)
+        //public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<object>> entity, Expression<Func<T, bool>> key)
+        //{
+        //    if (key == null)
+        //        return null;
+
+        //    var value = key.Compile().Invoke(entity.Compile().Invoke());
+
+        //    ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
+
+        //    // x => (x.Property == value)
+        //    // Create an expression tree that represents the expression 'x.Property == value'.
+        //    var left = Expression.Property(pe, GetProperty(key));
+        //    var right = Expression.Constant(value);
+        //    var e1 = Expression.Equal(left, right);
+
+        //    //return Expression.Lambda(e1);
+        //    return Expression.Lambda<Func<T, bool>>(e1, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
+        //}
+
+        public static IEnumerable<Expression<Func<T,bool>>> CreateKeyValueEqualityExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields, IEnumerable<FieldDefinition> tableFields)
         {
             ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
 
             foreach (var valueField in valueFields)
             {
-                var entityField = entityFields.FirstOrDefault(f => f.FieldName == valueField.FieldName);
+                var entityField = tableFields.FirstOrDefault(f => f.FieldName == valueField.FieldName);
                 var value = valueField.GetValueFunction(entity);
 
                 // x => (x.Property == value)
@@ -84,19 +127,26 @@ namespace PersistanceMap.Internals
                 var right = Expression.Constant(value);
 
                 yield return Expression.Lambda<Func<T, bool>>(Expression.Equal(left, right), new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
-
-                //if (expression != null)
-                //{
-                //    var exTmp = Expression.Equal(left, right);
-                //    expression = Expression.AndAlso(expression, exTmp);
-                //}
-                //else
-                //{
-                //    expression = Expression.Equal(left, right);
-                //}
             }
+        }
 
-            //return Expression.Lambda(expression);
+        public static IEnumerable<LambdaExpression> CreateKeyExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields)
+        {
+            ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
+
+            foreach (var valueField in valueFields)
+            {
+                var value = valueField.GetValueFunction(entity);
+
+                // x => (x.Property == value)
+                // Create an expression tree that represents the expression 'x.Property == value'.
+                var left = Expression.Property(pe, valueField.PropertyInfo);
+                var right = Expression.Constant(value, valueField.MemberType);
+
+                var expression = Expression.Assign(left, right);
+
+                yield return Expression.Lambda(expression, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
+            }
         }
 
         /// <summary>

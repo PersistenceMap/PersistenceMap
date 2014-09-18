@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace PersistanceMap.Test.BusinessObjects
+namespace PersistanceMap.Test.TableTypes
 {
-    public class OrderWithDetail
+    public class Orders
     {
         [Ignore]
         public string IgnoreProperty { get; set; }
 
-        //public int OrdersID { get; set; }
+        public int OrdersID { get; set; }
 
         public string CustomerID { get; set; }
 
@@ -35,17 +35,9 @@ namespace PersistanceMap.Test.BusinessObjects
 
         public string ShipCountry { get; set; }
 
-        public int ProductID { get; set; }
-
-        public double UnitPrice { get; set; }
-
-        public int Quantity { get; set; }
-
-        public double Discount { get; set; }
-    }
-
-    public class OrderWithDetailExtended : OrderWithDetail
-    {
-        public double SpecialFreight { get; set; }
+        public override string ToString()
+        {
+            return string.Format("{0}: {1} {2}", OrdersID, CustomerID, ShipName);
+        }
     }
 }

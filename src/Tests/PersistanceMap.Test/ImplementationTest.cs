@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using PersistanceMap.Test.BusinessObjects;
+using PersistanceMap.Test.TableTypes;
 using System.Linq;
 
 namespace PersistanceMap.Test
@@ -37,19 +37,32 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                var sqlstrings = new List<string>();
-                provider.Callback += s => sqlstrings.Add(s.Flatten());
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
                 // update all except the key elements used in the reference expression
                 context.Update(() => new Employee { EmployeeID = 1, FirstName = "test" });
-                Assert.IsTrue(sqlstrings.Contains("UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)"));
+                context.Commit();
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)");
 
                 // update all except the key elements used in the reference expression
                 context.Update(() => new Employee { EmployeeID = 1, FirstName = "test"}, e => e.EmployeeID);
-                Assert.IsTrue(sqlstrings.Contains("UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)"));
+                context.Commit(); 
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)");
+
+                // update all fields defined in the anonym object
+                context.Update<Employee>(() => new { EmployeeID = 1, FirstName = "test" });
+                context.Commit(); 
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
 
                 // update all fields defined in the anonym object
                 context.Update<Employee>(() => new { FirstName = "test" }, e => e.EmployeeID == 1);
-                Assert.IsTrue(sqlstrings.Contains("UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)"));
+                context.Commit(); 
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
+
+                // update all fields defined in the anonym object
+                context.Update<Employee>(() => new { EmployeeID = 1, FirstName = "test" }, e => e.EmployeeID == 1);
+                context.Commit();
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
             }
         }
 
