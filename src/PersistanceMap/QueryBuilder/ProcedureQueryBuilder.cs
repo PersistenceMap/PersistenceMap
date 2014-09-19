@@ -90,7 +90,7 @@ namespace PersistanceMap.QueryBuilder
         #endregion
     }
 
-    public class ProcedureQueryProvider : ProcedureQueryProviderBase, IProcedureQueryProvider, IQueryProvider
+    public class ProcedureQueryProvider : ProcedureQueryProviderBase, IProcedureQueryExpression, IQueryProvider
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
             : this(context, procName, null)
@@ -110,7 +110,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="T2">The Type returned by the expression</typeparam>
         /// <param name="predicate">The Expression containing the value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate)
+        public IProcedureQueryExpression AddParameter<T>(Expression<Func<T>> predicate)
         {
             ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate);
 
@@ -124,7 +124,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="name">The name of the parameter</param>
         /// <param name="predicate">The Expression containing the value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate)
+        public IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate)
         {
             ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate, name);
 
@@ -139,7 +139,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="predicate">The Expression containing the value</param>
         /// <param name="callback">The callback for returning the output value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback)
+        public IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback)
         {
             // parameters have to start with @
             if (!name.StartsWith("@"))
@@ -202,7 +202,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="T">The returned type</typeparam>
         /// <returns>A typesage IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider<T> For<T>()
+        public IProcedureQueryExpression<T> For<T>()
         {
             return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
         }
@@ -213,7 +213,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="T">The returned type</typeparam>
         /// <param name="anonymous">The instance defining the type. this can be a anonym object</param>
         /// <returns>A typesafe IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider<T> For<T>(Expression<Func<T>> anonymous)
+        public IProcedureQueryExpression<T> For<T>(Expression<Func<T>> anonymous)
         {
             return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
         }
@@ -226,7 +226,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider Map<T, TOut>(string source, Expression<Func<T, TOut>> alias)
+        public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
@@ -291,7 +291,7 @@ namespace PersistanceMap.QueryBuilder
         #endregion
     }
 
-    public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryProvider<T>, IQueryProvider
+    public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryExpression<T>, IQueryProvider
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
             : this(context, procName, null)
@@ -313,7 +313,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryProvider<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias)
+        public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 

@@ -18,19 +18,19 @@ namespace PersistanceMap
             return builder.Select<T>();
         }
 
-        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context)
+        public static ISelectQueryExpression<T> From<T>(this IDatabaseContext context)
         {
             return new SelectQueryBuilder<T>(context)
                 .From<T>();
         }
 
-        public static ISelectQueryProvider<T> From<T>(this IDatabaseContext context, string alias)
+        public static ISelectQueryExpression<T> From<T>(this IDatabaseContext context, string alias)
         {
             return new SelectQueryBuilder<T>(context)
                 .From<T>(alias);
         }
 
-        public static ISelectQueryProvider<TJoin> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
+        public static ISelectQueryExpression<TJoin> From<T, TJoin>(this IDatabaseContext context, Expression<Func<TJoin, T, bool>> predicate)
         {
             return new SelectQueryBuilder<T>(context)
                 .From<T>()
@@ -51,7 +51,7 @@ namespace PersistanceMap
 
         #region Delete Expressions
 
-        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context)
+        public static IDeleteQueryExpression Delete<T>(this IDatabaseContext context)
         {
             return new DeleteQueryBuilder(context)
                 .Delete<T>()
@@ -64,7 +64,7 @@ namespace PersistanceMap
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="context"></param>
         /// <param name="where">The expression defining the where statement</param>
-        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
+        public static IDeleteQueryExpression Delete<T>(this IDatabaseContext context, Expression<Func<T, bool>> where)
         {
             return new DeleteQueryBuilder(context)
                 .Delete(where)
@@ -78,7 +78,7 @@ namespace PersistanceMap
         /// <param name="context"></param>
         /// <param name="dataObject">The entity to delete</param>
         /// <param name="where">The property defining the key on the entity</param>
-        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        public static IDeleteQueryExpression Delete<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
             return new DeleteQueryBuilder(context)
                 .Delete(dataObject, where)
@@ -92,7 +92,7 @@ namespace PersistanceMap
         /// <param name="context"></param>
         /// <param name="anonym">The object that defines the properties and the values that mark the object to delete</param>
         /// <returns>IDeleteQueryProvider</returns>
-        public static IDeleteQueryProvider Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
+        public static IDeleteQueryExpression Delete<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
             return new DeleteQueryBuilder(context)
                 .Delete<T>(anonym)
@@ -103,28 +103,42 @@ namespace PersistanceMap
 
         #region Update Expressions
 
-        public static IUpdateQueryProvider Update<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        public static IUpdateQueryExpression Update<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
             // update all except the key elements used in the reference expression
             return new UpdateQueryBuilder(context)
-            .Update(dataObject, where)
-            .AddToStore();
+                .Update(dataObject, where)
+                .AddToStore();
         }
 
-        public static IUpdateQueryProvider Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
+        public static IUpdateQueryExpression Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
             // update all fields defined in the anonym object
             return new UpdateQueryBuilder(context)
-            .Update(anonym, where)
-            .AddToStore();
+                .Update(anonym, where)
+                .AddToStore();
         }
 
 
         #endregion
 
+        #region Insert Expressions
+
+        public static IInsertQueryExpression Insert<T>(this IDatabaseContext context, Expression<Func<T>> dataObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static IInsertQueryExpression Insert<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
         #region Procedure Expressions
 
-        public static IProcedureQueryProvider Procedure(this IDatabaseContext context, string procName)
+        public static IProcedureQueryExpression Procedure(this IDatabaseContext context, string procName)
         {
             return new ProcedureQueryProvider(context, procName);
         }

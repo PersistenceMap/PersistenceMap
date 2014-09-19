@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface ISelectQueryProviderBase<T> : IQueryProvider
+    public interface ISelectQueryExpressionBase<T> : IQueryProvider
     {
         IEnumerable<T2> Select<T2>();
 
@@ -16,9 +16,9 @@ namespace PersistanceMap
 
         T2 Single<T2>();
 
-        IAfterMapQueryProvider<TNew> For<TNew>();
+        IAfterMapQueryExpression<TNew> For<TNew>();
 
-        IAfterMapQueryProvider<TAno> For<TAno>(Expression<Func<TAno>> anonym);
+        IAfterMapQueryExpression<TAno> For<TAno>(Expression<Func<TAno>> anonym);
 
         /// <summary>
         /// Compiles the Query to a sql statement
@@ -34,7 +34,7 @@ namespace PersistanceMap
         string CompileQuery();
     }
 
-    public interface ISelectQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
+    public interface ISelectQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
     {
         /// <summary>
         /// Joines a new entity type to the last entity
@@ -44,7 +44,7 @@ namespace PersistanceMap
         /// <param name="alias">The alias of the joining entity</param>
         /// <param name="source">The alias of the source entity</param>
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
-        IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null);
 
         /// <summary>
         /// Joines a new entity type to a previous entity
@@ -55,14 +55,14 @@ namespace PersistanceMap
         /// <param name="alias">The alias of the joining entity</param>
         /// <param name="source">The alias of the source entity</param>
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
-        IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type
         /// </summary>
         /// <param name="predicate">The expression that returns the Property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map(Expression<Func<T, object>> predicate);
+        ISelectQueryExpression<T> Map(Expression<Func<T, object>> predicate);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
@@ -70,7 +70,7 @@ namespace PersistanceMap
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map(Expression<Func<T, object>> source, string alias);
+        ISelectQueryExpression<T> Map(Expression<Func<T, object>> source, string alias);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
@@ -79,7 +79,7 @@ namespace PersistanceMap
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias);
+        ISelectQueryExpression<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
@@ -89,88 +89,88 @@ namespace PersistanceMap
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryProvider<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias);
+        ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias);
 
 
 
-        IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate);
+        IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate);
 
-        IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate);
+        IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate);
 
-        IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
-
-
+        IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
 
 
-        IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
 
-        IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate);
+        IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
+        IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
+
+        IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate);
+
+        IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
 
         
     }
 
-    public interface IJoinQueryProvider<T> : ISelectQueryProvider<T>, IQueryProvider
+    public interface IJoinQueryExpression<T> : ISelectQueryExpression<T>, IQueryProvider
     {
-        IJoinQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
 
-        IJoinQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
     }
 
-    public interface IWhereQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
+    public interface IWhereQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
     {
-        IWhereQueryProvider<T> And(Expression<Func<T, bool>> predicate);
+        IWhereQueryExpression<T> And(Expression<Func<T, bool>> predicate);
 
-        IWhereQueryProvider<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null);
+        IWhereQueryExpression<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null);
 
-        IWhereQueryProvider<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
 
-        IWhereQueryProvider<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null);
-
-
-        IWhereQueryProvider<T> Or(Expression<Func<T, bool>> predicate);
-
-        IWhereQueryProvider<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null);
-
-        IWhereQueryProvider<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
-
-        IWhereQueryProvider<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null);
 
 
+        IWhereQueryExpression<T> Or(Expression<Func<T, bool>> predicate);
 
-        IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate);
+        IWhereQueryExpression<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null);
 
-        IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
+        IWhereQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
 
-        IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate);
+        IWhereQueryExpression<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null);
 
-        IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
+
+
+        IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
+
+        IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
+
+        IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate);
+
+        IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
-    public interface IOrderQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
+    public interface IOrderQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
     {
-        IOrderQueryProvider<T> ThenBy(Expression<Func<T, object>> predicate);
+        IOrderQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T> ThenBy<T2>(Expression<Func<T2, object>> predicate);
+        IOrderQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate);
 
-        IOrderQueryProvider<T> ThenByDesc(Expression<Func<T, object>> predicate);
+        IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate);
 
-        IOrderQueryProvider<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate);
+        IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
-    public interface IAfterMapQueryProvider<T> : ISelectQueryProviderBase<T>, IQueryProvider
+    public interface IAfterMapQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
     {
-        IAfterMapQueryProvider<T> AfterMap(Action<T> predicate);
+        IAfterMapQueryExpression<T> AfterMap(Action<T> predicate);
 
         /// <summary>
         /// Marks the provided field as ignored. The field will not be included in the select.
         /// </summary>
         /// <param name="predicate">Marks the member to ignore</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
-        IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate);
+        IAfterMapQueryExpression<T> Ignore(Expression<Func<T, object>> predicate);
         
         /// <summary>
         /// Maps the provided field to a specific table. This helps to avoid Ambiguous column errors.
@@ -178,6 +178,6 @@ namespace PersistanceMap
         /// <typeparam name="TSource">The source Table to map the member from</typeparam>
         /// <param name="predicate">Marks the member to be mapped</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
-        IAfterMapQueryProvider<T> Map<TSource>(Expression<Func<TSource, object>> predicate);
+        IAfterMapQueryExpression<T> Map<TSource>(Expression<Func<TSource, object>> predicate);
     }
 }

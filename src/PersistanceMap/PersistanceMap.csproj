@@ -50,10 +50,11 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Enums\OperationType.cs" />
-    <Compile Include="IDeleteQueryProvider.cs" />
+    <Compile Include="IDeleteQueryExpression.cs" />
+    <Compile Include="IInsertQueryExpression.cs" />
     <Compile Include="Internals\ExpressionFactory.cs" />
     <Compile Include="Internals\FieldHelper.cs" />
-    <Compile Include="IUpdateQueryProvider.cs" />
+    <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="QueryBuilder\Commands\DeleteQueryCommand.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />
     <Compile Include="IQueryCommand.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="QueryParts\IExpressionQueryPart.cs" />
     <Compile Include="Compiler\LambdaExpressionToSqlCompiler.cs" />
     <Compile Include="IQueryProvider.cs" />
-    <Compile Include="IProcedureQueryProvider.cs" />
+    <Compile Include="IProcedureQueryExpression.cs" />
     <Compile Include="IQueryPartsMap.cs" />
     <Compile Include="QueryParts\ProcedureQueryPartsMap.cs" />
     <Compile Include="QueryParts\INamedQueryPart.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="QueryParts\Internals\FieldQueryPart.cs" />
     <Compile Include="QueryParts\Internals\EntityQueryPart.cs" />
     <Compile Include="QueryParts\SelectQueryPartsMap.cs" />
-    <Compile Include="ISelectQueryProvider.cs" />
+    <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DatabaseContextExtensions.cs" />
     <Compile Include="QueryParts\Internals\ParameterQueryPart.cs" />

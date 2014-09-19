@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IJoinQueryProvider<T>
+    public partial class SelectQueryBuilder<T> : IJoinQueryExpression<T>
     {
         #region ISelectQueryProvider<T> Implementation
 
@@ -22,7 +22,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="alias">The alias of the joining entity</param>
         /// <param name="source">The alias of the source entity</param>
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
-        public IJoinQueryProvider<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
+        public IJoinQueryExpression<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
             return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
@@ -36,7 +36,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="alias">The alias of the joining entity</param>
         /// <param name="source">The alias of the source entity</param>
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
-        public IJoinQueryProvider<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
+        public IJoinQueryExpression<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
         {
             return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
         }
@@ -45,7 +45,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region Map Expressions
 
-        protected ISelectQueryProvider<T> Map(string source, string alias, string entity, string entityalias)
+        protected ISelectQueryExpression<T> Map(string source, string alias, string entity, string entityalias)
         {
             //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
@@ -65,7 +65,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <param name="predicate">The expression that returns the Property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map(Expression<Func<T, object>> predicate)
+        public ISelectQueryExpression<T> Map(Expression<Func<T, object>> predicate)
         {
             var source = FieldHelper.TryExtractPropertyName(predicate);
             var entity = typeof(T).Name;
@@ -79,7 +79,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map(Expression<Func<T, object>> source, string alias)
+        public ISelectQueryExpression<T> Map(Expression<Func<T, object>> source, string alias)
         {
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
@@ -96,7 +96,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias)
+        public ISelectQueryExpression<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias)
         {
             return Map<T, TAlias>(source, alias);
         }
@@ -110,7 +110,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryProvider<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias)
+        public ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
             var sourceField = FieldHelper.TryExtractPropertyName(source);
@@ -137,7 +137,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region Where Expressions
 
-        public IWhereQueryProvider<T> Where(Expression<Func<T, bool>> predicate)
+        public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate)
         {
             var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
@@ -155,14 +155,14 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        public IWhereQueryProvider<T> Where<T2>(Expression<Func<T2, bool>> predicate)
+        public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate)
         {
             SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        public IWhereQueryProvider<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
+        public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
         {
             SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
@@ -173,22 +173,22 @@ namespace PersistanceMap.QueryBuilder
 
         #region OrderBy Expressions
 
-        public IOrderQueryProvider<T> OrderBy(Expression<Func<T, object>> predicate)
+        public IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
         }
 
-        public IOrderQueryProvider<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
+        public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
         }
 
-        public IOrderQueryProvider<T> OrderByDesc(Expression<Func<T, object>> predicate)
+        public IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
         }
 
-        public IOrderQueryProvider<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
+        public IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
         }
@@ -241,7 +241,7 @@ namespace PersistanceMap.QueryBuilder
             throw new NotImplementedException();
         }
 
-        public IAfterMapQueryProvider<TNew> For<TNew>()
+        public IAfterMapQueryExpression<TNew> For<TNew>()
         {
             var members = typeof(TNew).GetSelectionMembers();
             var fields = members.Select(m => m.ToFieldQueryPart(null, null));
@@ -259,7 +259,7 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<TNew>(Context, QueryPartsMap);
         }
 
-        public IAfterMapQueryProvider<TAno> For<TAno>(Expression<Func<TAno>> anonym)
+        public IAfterMapQueryExpression<TAno> For<TAno>(Expression<Func<TAno>> anonym)
         {
             //throw new NotImplementedException("For has to make sure that the resultset values equals the defined type");
             //return new SelectQueryProvider<TAno>(Context, QueryPartsMap);

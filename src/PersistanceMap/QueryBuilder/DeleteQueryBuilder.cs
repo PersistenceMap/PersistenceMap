@@ -11,7 +11,7 @@ namespace PersistanceMap.QueryBuilder
     /// <summary>
     /// Containes logic to create queries that delete data from a database
     /// </summary>
-    public class DeleteQueryBuilder : IDeleteQueryProvider, IQueryProvider
+    public class DeleteQueryBuilder : IDeleteQueryExpression, IQueryProvider
     {
         public DeleteQueryBuilder(IDatabaseContext context)
         {
@@ -48,14 +48,14 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public IDeleteQueryProvider AddToStore()
+        public IDeleteQueryExpression AddToStore()
         {
             Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
 
             return this;
         }
 
-        public IDeleteQueryProvider Delete<T>()
+        public IDeleteQueryExpression Delete<T>()
         {
             QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
@@ -73,7 +73,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="where">The expression defining the where statement</param>
-        public IDeleteQueryProvider Delete<T>(Expression<Func<T, bool>> where)
+        public IDeleteQueryExpression Delete<T>(Expression<Func<T, bool>> where)
         {
             QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
@@ -94,7 +94,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="dataObject">The entity to delete</param>
         /// <param name="where">The property defining the key on the entity</param>
-        public IDeleteQueryProvider Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        public IDeleteQueryExpression Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
             // create expression containing key and value for the where statement
             var whereexpr = ExpressionFactory.CreateKeyExpression(dataObject, where);
@@ -123,7 +123,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="anonym">The object that defines the properties and the values that mark the object to delete</param>
         /// <returns>IDeleteQueryProvider</returns>
-        public IDeleteQueryProvider Delete<T>(Expression<Func<object>> anonym)
+        public IDeleteQueryExpression Delete<T>(Expression<Func<object>> anonym)
         {
             // delete item that matches all properties set in the object
             var obj = anonym.Compile().Invoke();

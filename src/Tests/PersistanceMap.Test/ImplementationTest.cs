@@ -31,7 +31,7 @@ namespace PersistanceMap.Test
         }
 
         [Test]
-        public void UpdateImplementationTestMethod()
+        public void InsertImplementationTestMethod()
         {
             var provider = new CallbackContextProvider();
             var connection = new DatabaseConnection(provider);
@@ -39,30 +39,16 @@ namespace PersistanceMap.Test
             {
                 var sql = "";
                 provider.Callback += s => sql = s.Flatten();
-                //// update all except the key elements used in the reference expression
-                //context.Update(() => new Employee { EmployeeID = 1, FirstName = "test" });
-                //context.Commit();
-                //Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)");
 
-                //// update all except the key elements used in the reference expression
-                //context.Update(() => new Employee { EmployeeID = 1, FirstName = "test"}, e => e.EmployeeID);
-                //context.Commit(); 
-                //Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)");
+                // insert all except the key elements used in the reference expression
+                context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" });
+                context.Commit();
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\", LastName = NULL, ... where (Employee.EmployeeID = 1)");
 
-                //// update all fields defined in the anonym object
-                //context.Update<Employee>(() => new { EmployeeID = 1, FirstName = "test" });
-                //context.Commit(); 
-                //Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
-
-                //// update all fields defined in the anonym object
-                //context.Update<Employee>(() => new { FirstName = "test" }, e => e.EmployeeID == 1);
-                //context.Commit(); 
-                //Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
-
-                //// update all fields defined in the anonym object
-                //context.Update<Employee>(() => new { EmployeeID = 1, FirstName = "test" }, e => e.EmployeeID == 1);
-                //context.Commit();
-                //Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
+                // insert all fields defined in the anonym object
+                context.Insert<Warrior>(() => new { ID = 1, Race = "Dwarf" });
+                context.Commit(); 
+                Assert.AreEqual(sql, "UPDATE Employee SET FirstName = \"test\" where (Employee.EmployeeID = 1)");
             }
         }
 

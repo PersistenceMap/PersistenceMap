@@ -309,7 +309,7 @@ namespace PersistanceMap.Test.Integration
 
 
         [Test, TestCaseSource(typeof(SelectTestCases), "SelectTestCasesForOrders")]
-        public string SelectTestForOrders(IOrderQueryProvider<Orders> query)
+        public string SelectTestForOrders(IOrderQueryExpression<Orders> query)
         {
             // execute the query
             var orders = query.Select();
@@ -998,7 +998,7 @@ namespace PersistanceMap.Test.Integration
     public class OrderTests
     {
         [Test, TestCaseSource(typeof(OrderTestCases), "TestCases")]
-        public string OrderTest(IOrderQueryProvider<Orders> query)
+        public string OrderTest(IOrderQueryExpression<Orders> query)
         {
             // execute the query
             var orders = query.Select();
@@ -1430,7 +1430,7 @@ namespace PersistanceMap.Test.Integration
 
 
         [Test, TestCaseSource(typeof(SelectWhereTestCases), "EmployeeTestCases")]
-        public string WhereTest(IOrderQueryProvider<Employee> query)
+        public string WhereTest(IOrderQueryExpression<Employee> query)
         {
             // execute the query
             var orders = query.Select();
@@ -1442,7 +1442,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test, TestCaseSource(typeof(SelectWhereTestCases), "OrdersTestCases")]
-        public string WhereTest(IOrderQueryProvider<Orders> query)
+        public string WhereTest(IOrderQueryExpression<Orders> query)
         {
             // execute the query
             var orders = query.Select();

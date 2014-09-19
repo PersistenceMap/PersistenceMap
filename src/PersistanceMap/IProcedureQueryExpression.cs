@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IProcedureQueryProvider : IQueryProvider
+    public interface IProcedureQueryExpression : IQueryProvider
     {
         /// <summary>
         /// Adds a parameter containing the value of the expression
@@ -12,7 +12,7 @@ namespace PersistanceMap
         /// <typeparam name="T2">The Type returned by the expression</typeparam>
         /// <param name="predicate">The Expression containing the value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryProvider AddParameter<T>(Expression<Func<T>> predicate);
+        IProcedureQueryExpression AddParameter<T>(Expression<Func<T>> predicate);
 
         /// <summary>
         /// Adds a named parameter containing the value of the expression
@@ -21,7 +21,7 @@ namespace PersistanceMap
         /// <param name="name">The name of the parameter</param>
         /// <param name="predicate">The Expression containing the value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate);
+        IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate);
 
         /// <summary>
         /// Adds a named output parameter containing the value of the expression. The output is returned in the callback
@@ -31,14 +31,14 @@ namespace PersistanceMap
         /// <param name="predicate">The Expression containing the value</param>
         /// <param name="callback">The callback for returning the output value</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryProvider AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback);
+        IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback);
 
         /// <summary>
         /// Creates a Type safe expression for the return value of the procedure call
         /// </summary>
         /// <typeparam name="T">The returned type</typeparam>
         /// <returns>A typesafe IProcedureQueryProvider</returns>
-        IProcedureQueryProvider<T> For<T>();
+        IProcedureQueryExpression<T> For<T>();
 
         /// <summary>
         /// Creates a Type safe expression for the return value of the procedure call. The type is defined as a instance object passed as parameter.
@@ -46,7 +46,7 @@ namespace PersistanceMap
         /// <typeparam name="T">The returned type</typeparam>
         /// <param name="anonymous">The instance defining the type. this can be a anonym object</param>
         /// <returns>A typesafe IProcedureQueryProvider</returns>
-        IProcedureQueryProvider<T> For<T>(Expression<Func<T>> anonymous);
+        IProcedureQueryExpression<T> For<T>(Expression<Func<T>> anonymous);
 
         /// <summary>
         /// Map a Property from the mapped type that is included in the result
@@ -56,7 +56,7 @@ namespace PersistanceMap
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryProvider Map<T, TOut>(string source, Expression<Func<T, TOut>> alias);
+        IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias);
 
         /// <summary>
         /// Execute the Procedure without reading the resultset
@@ -70,7 +70,7 @@ namespace PersistanceMap
         IEnumerable<T> Execute<T>();
     }
 
-    public interface IProcedureQueryProvider<T>
+    public interface IProcedureQueryExpression<T>
     {
         /// <summary>
         /// Map a Property from the mapped type that is included in the result
@@ -80,7 +80,7 @@ namespace PersistanceMap
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryProvider<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias);
+        IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias);
 
         /// <summary>
         /// Execute the Procedure

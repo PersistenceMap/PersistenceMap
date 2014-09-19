@@ -3,9 +3,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IUpdateQueryProvider
+    public interface IUpdateQueryExpression
     {
-        IUpdateQueryProvider AddToStore();
+        IUpdateQueryExpression AddToStore();
 
         /// <summary>
         /// Updates a row with the values provided by the dataobject
@@ -14,7 +14,7 @@ namespace PersistanceMap
         /// <param name="dataObject">Expression providing the object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        IUpdateQueryProvider Update<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null);
+        IUpdateQueryExpression Update<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null);
 
         /// <summary>
         /// Updates a row with the values provided by the anonym dataobject
@@ -23,6 +23,6 @@ namespace PersistanceMap
         /// <param name="anonym">Expression providing the anonym object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        IUpdateQueryProvider Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null);
+        IUpdateQueryExpression Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null);
     }
 }

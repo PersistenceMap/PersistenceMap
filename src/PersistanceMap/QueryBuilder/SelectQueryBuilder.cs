@@ -5,7 +5,7 @@ using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : ISelectQueryProviderBase<T>, ISelectQueryProvider<T>, IJoinQueryProvider<T>, IWhereQueryProvider<T>, IAfterMapQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : ISelectQueryExpressionBase<T>, ISelectQueryExpression<T>, IJoinQueryExpression<T>, IWhereQueryExpression<T>, IAfterMapQueryExpression<T>, IQueryProvider
     {
         public SelectQueryBuilder(IDatabaseContext context)
         {
@@ -52,7 +52,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region Internal Implementation
 
-        internal ISelectQueryProvider<T2> From<T2>()
+        internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
             SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
@@ -63,7 +63,7 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
 
-        internal ISelectQueryProvider<T2> From<T2>(string alias)
+        internal ISelectQueryExpression<T2> From<T2>(string alias)
         {
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
@@ -84,7 +84,7 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
 
-        private IJoinQueryProvider<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
+        private IJoinQueryExpression<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
         {
             var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart(QueryPartsMap, predicate, operation);
             if (!string.IsNullOrEmpty(alias))

@@ -3,16 +3,16 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IJoinQueryProvider<T>
+    public partial class SelectQueryBuilder<T> : IJoinQueryExpression<T>
     {
         #region IJoinQueryProvider Implementation
 
-        IJoinQueryProvider<T> IJoinQueryProvider<T>.And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
+        IJoinQueryExpression<T> IJoinQueryExpression<T>.And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
         {
             return And<TAnd>(predicate, alias, source);
         }
 
-        IJoinQueryProvider<T> IJoinQueryProvider<T>.Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
+        IJoinQueryExpression<T> IJoinQueryExpression<T>.Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
         {
             return Or<TOr>(predicate, alias, source);
         }

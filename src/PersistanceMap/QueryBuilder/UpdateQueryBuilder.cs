@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public class UpdateQueryBuilder : IUpdateQueryProvider, IQueryProvider
+    public class UpdateQueryBuilder : IUpdateQueryExpression, IQueryProvider
     {
         public UpdateQueryBuilder(IDatabaseContext context)
         {
@@ -49,7 +49,7 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public IUpdateQueryProvider AddToStore()
+        public IUpdateQueryExpression AddToStore()
         {
             Context.AddQuery(new UpdateQueryCommand(QueryPartsMap));
 
@@ -63,7 +63,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="dataPredicate">Expression providing the object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        public IUpdateQueryProvider Update<T>(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
+        public IUpdateQueryExpression Update<T>(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
         {
             // create expression containing key and value for the where statement
             var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, where);
@@ -98,7 +98,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="anonym">Expression providing the anonym object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        public IUpdateQueryProvider Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
+        public IUpdateQueryExpression Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
             // create expression containing key and value for the where statement
             var whereexpr = where;

@@ -5,7 +5,7 @@ namespace PersistanceMap.Test
 {
     internal static class IQueryProviderExtensions
     {
-        public static ISelectQueryProviderBase<TRebase> Rebase<T, TRebase>(this ISelectQueryProviderBase<T> query)
+        public static ISelectQueryExpressionBase<TRebase> Rebase<T, TRebase>(this ISelectQueryExpressionBase<T> query)
         {
             return new SelectQueryBuilder<TRebase>(query.Context, query.QueryPartsMap as SelectQueryPartsMap);
         }

@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IAfterMapQueryProvider<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IAfterMapQueryExpression<T>, IQueryProvider
     {
-        public IAfterMapQueryProvider<T> AfterMap(Action<T> predicate)
+        public IAfterMapQueryExpression<T> AfterMap(Action<T> predicate)
         {
             throw new NotImplementedException();
         }
@@ -18,7 +18,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <param name="predicate">Marks the member to ignore</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
-        public IAfterMapQueryProvider<T> Ignore(Expression<Func<T, object>> predicate)
+        public IAfterMapQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
@@ -42,7 +42,7 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="TSource">The source Table to map the member from</typeparam>
         /// <param name="predicate">Marks the member to be mapped</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
-        public IAfterMapQueryProvider<T> Map<TSource>(Expression<Func<TSource, object>> predicate)
+        public IAfterMapQueryExpression<T> Map<TSource>(Expression<Func<TSource, object>> predicate)
         {
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {
