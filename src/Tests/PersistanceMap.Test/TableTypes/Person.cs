@@ -4,31 +4,19 @@ namespace PersistanceMap.Test.TableTypes
 {
     public class Person
     {
+        public int PersonID { get; set; }
+
         public string LastName { get; set; }
 
         public string FirstName { get; set; }
 
         public string Title { get; set; }
 
-        //TitleOfCourtesy
-
         public DateTime BirthDate { get; set; }
-
-        public DateTime HireDate { get; set; }
 
         public string Address { get; set; }
 
         public string City { get; set; }
-
-        //Region
-
-        public string PostalCode { get; set; }
-
-        //Country
-        //HomePhone
-        //Extension
-        //Photo
-        //Notes
 
         [Ignore]
         public string State { get; set; }

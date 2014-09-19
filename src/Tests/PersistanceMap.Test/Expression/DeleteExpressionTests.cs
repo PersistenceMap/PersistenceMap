@@ -7,7 +7,7 @@ using System.Collections;
 namespace PersistanceMap.Test.Expression
 {
     [TestFixture]
-    public class DeleteTests : TestBase
+    public class DeleteExpressionTests : TestBase
     {
         [Test]
         [Description("A simple delete statement that deletes all items in a table")]

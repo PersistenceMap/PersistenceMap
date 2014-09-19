@@ -56,10 +56,15 @@ namespace PersistanceMap.QueryBuilder
             return this;
         }
 
+        /// <summary>
+        /// Updates a row with the values provided by the dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to update</typeparam>
+        /// <param name="dataPredicate">Expression providing the object containing the data</param>
+        /// <param name="where">The expression providing the where statement</param>
+        /// <returns></returns>
         public IUpdateQueryProvider Update<T>(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
         {
-            // update all except the key elements used in the reference expression
-
             // create expression containing key and value for the where statement
             var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, where);
             if (whereexpr == null)
@@ -86,6 +91,13 @@ namespace PersistanceMap.QueryBuilder
             return new UpdateQueryBuilder(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Updates a row with the values provided by the dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to update</typeparam>
+        /// <param name="anonym">Expression providing the anonym object containing the data</param>
+        /// <param name="where">The expression providing the where statement</param>
+        /// <returns></returns>
         public IUpdateQueryProvider Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
             // create expression containing key and value for the where statement

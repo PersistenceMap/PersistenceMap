@@ -58,7 +58,7 @@ namespace PersistanceMap.QueryParts
                     break;
 
                 case PersistanceMap.OperationType.Update:
-                    sb.Append("UPDATE ");
+                    sb.Append("UPDATE");
                     break;
             }
 

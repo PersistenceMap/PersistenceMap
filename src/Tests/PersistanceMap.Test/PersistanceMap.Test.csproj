@@ -71,6 +71,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Expression\UpdateExpressionTests.cs" />
     <Compile Include="TableTypes\Customers.cs" />
     <Compile Include="TableTypes\Employee.cs" />
     <Compile Include="TableTypes\EmployeeTerritories.cs" />
@@ -84,7 +85,7 @@
     <Compile Include="TableTypes\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Expression\DeleteTests.cs" />
+    <Compile Include="Expression\DeleteExpressionTests.cs" />
     <Compile Include="Integration\ProcedureTests.cs" />
     <Compile Include="Integration\SelectTests.cs" />
     <Compile Include="ImplementationTest.cs" />
@@ -95,6 +96,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="TableTypes\Warrior.cs" />
+    <Compile Include="TableTypes\Weapon.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
