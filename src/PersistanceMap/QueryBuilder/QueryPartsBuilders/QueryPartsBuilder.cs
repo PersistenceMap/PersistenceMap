@@ -45,10 +45,10 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        internal EntityQueryPart<T> AppendEntityQueryPart<T>(IQueryPartsMap queryParts, OperationType operation)
+        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, OperationType operation)
         {
             var type = typeof(T);
-            var entity = new EntityQueryPart<T>(type.Name)
+            var entity = new EntityQueryPart(type.Name)
             {
                 OperationType = operation
             };
@@ -58,26 +58,26 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return entity;
         }
 
-        internal EntityQueryPart<T> AppendEntityQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T, bool>> predicate, OperationType operation)
+        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T, bool>> predicate, OperationType operation)
         {
             var expression = new ExpressionQueryPart(OperationType.On, predicate);
 
             return AppendEntityQueryPart<T>(queryParts, new IExpressionQueryPart[] { expression }, operation);
         }
 
-        internal EntityQueryPart<T> AppendEntityQueryPart<T, T2>(IQueryPartsMap queryParts, Expression<Func<T, T2, bool>> predicate, OperationType operation)
+        internal EntityQueryPart AppendEntityQueryPart<T, T2>(IQueryPartsMap queryParts, Expression<Func<T, T2, bool>> predicate, OperationType operation)
         {
             var expression = new ExpressionQueryPart(OperationType.On, predicate);
 
             return AppendEntityQueryPart<T>(queryParts, new IExpressionQueryPart[] { expression }, operation);
         }
 
-        internal EntityQueryPart<T> AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart[] parts, OperationType maptype)
+        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart[] parts, OperationType maptype)
         {
             var operationParts = parts.Where(p => p.OperationType == OperationType.On || p.OperationType == OperationType.And || p.OperationType == OperationType.Or).ToArray();
 
             var type = typeof(T);
-            var entity = new EntityQueryPart<T>(type.Name, null, operationParts)
+            var entity = new EntityQueryPart(type.Name, null, operationParts)
             {
                 OperationType = maptype
             };

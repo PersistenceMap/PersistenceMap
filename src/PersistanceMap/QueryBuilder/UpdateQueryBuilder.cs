@@ -2,6 +2,7 @@
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +90,8 @@ namespace PersistanceMap.QueryBuilder
             foreach(var field in tableFields)
             {
                 if (field.MemberName != keyName)
-                    simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                    simple.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
+                    //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
 
             QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -125,7 +127,8 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields)
             {
                 if (field.MemberName != keyName)
-                    set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                    set.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
+                    //set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
 
             QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);

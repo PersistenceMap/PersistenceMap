@@ -2,7 +2,7 @@
 
 namespace PersistanceMap.QueryParts
 {
-    internal class EntityQueryPart<T> : QueryPartDecorator, IEntityQueryPart, IQueryPartDecorator, IQueryPart
+    internal class EntityQueryPart : QueryPartDecorator, IEntityQueryPart, IQueryPartDecorator, IQueryPart
     {
         public EntityQueryPart(string entity)
             : this(entity, null)

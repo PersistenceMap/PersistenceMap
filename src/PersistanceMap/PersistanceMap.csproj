@@ -66,12 +66,11 @@
     <Compile Include="QueryBuilder\QueryPartsBuilders\QueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\SelectQueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
-    <Compile Include="QueryParts\Internals\KeyValueAssignQueryPart.cs" />
+    <Compile Include="QueryParts\Internals\CallbackQueryPart.cs" />
     <Compile Include="QueryParts\Internals\PredicateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
     <Compile Include="QueryParts\Internals\SimpleQueryPart.cs" />
     <Compile Include="QueryParts\IFieldQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\StringQueryPart.cs" />
     <Compile Include="QueryParts\IQueryPartDecorator.cs" />
     <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />

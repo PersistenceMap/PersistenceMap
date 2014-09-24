@@ -12,7 +12,7 @@ namespace PersistanceMap.QueryParts
             ChildSeparator = ", ";
         }
 
-        public string ChildSeparator { get; set; }
+        //public string ChildSeparator { get; set; }
 
         public override string Compile()
         {
@@ -44,6 +44,7 @@ namespace PersistanceMap.QueryParts
                     throw new NotImplementedException("OperationType is not implemented in SelectMapQueryPart");
             }
 
+            //TODO: Use base.Compile implementation
             var last = Parts.LastOrDefault();
             foreach (var part in Parts)
             {
@@ -53,6 +54,9 @@ namespace PersistanceMap.QueryParts
 
                 sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
             }
+            //var value = base.Compile();
+            //if (!string.IsNullOrEmpty(value))
+            //    sb.Append(value);
 
             return sb.ToString().RemoveLineBreak();
         }
