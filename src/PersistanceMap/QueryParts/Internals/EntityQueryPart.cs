@@ -60,6 +60,10 @@ namespace PersistanceMap.QueryParts
                 case PersistanceMap.OperationType.Update:
                     sb.Append("UPDATE");
                     break;
+
+                case PersistanceMap.OperationType.Insert:
+                    sb.Append("INSERT INTO");
+                    break;
             }
 
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(EntityAlias) ? string.Empty : string.Format(" {0}", EntityAlias)));

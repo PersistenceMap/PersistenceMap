@@ -103,18 +103,32 @@ namespace PersistanceMap
 
         #region Update Expressions
 
-        public static IUpdateQueryExpression Update<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        /// <summary>
+        /// Updates a row with the values provided by the dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to update</typeparam>
+        /// <param name="context"></param>
+        /// <param name="dataObject">Expression providing the object containing the data</param>
+        /// <param name="where">The expression providing the where statement</param>
+        /// <returns></returns>
+        public static IUpdateQueryExpression<T> Update<T>(this IDatabaseContext context, Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
         {
-            // update all except the key elements used in the reference expression
-            return new UpdateQueryBuilder(context)
+            return new UpdateQueryBuilder<T>(context)
                 .Update(dataObject, where)
                 .AddToStore();
         }
 
-        public static IUpdateQueryExpression Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
+        /// <summary>
+        /// Updates a row with the values provided by the dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to update</typeparam>
+        /// <param name="context"></param>
+        /// <param name="anonym">Expression providing the anonym object containing the data1</param>
+        /// <param name="where">The expression providing the where statement</param>
+        /// <returns></returns>
+        public static IUpdateQueryExpression<T> Update<T>(this IDatabaseContext context, Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
-            // update all fields defined in the anonym object
-            return new UpdateQueryBuilder(context)
+            return new UpdateQueryBuilder<T>(context)
                 .Update(anonym, where)
                 .AddToStore();
         }
@@ -124,14 +138,32 @@ namespace PersistanceMap
 
         #region Insert Expressions
 
-        public static IInsertQueryExpression Insert<T>(this IDatabaseContext context, Expression<Func<T>> dataObject)
+        /// <summary>
+        /// Inserts a row with the values defined in the dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to insert</typeparam>
+        /// <param name="context"></param>
+        /// <param name="dataObject">Expression providing the object containing the data</param>
+        /// <returns></returns>
+        public static IInsertQueryExpression<T> Insert<T>(this IDatabaseContext context, Expression<Func<T>> dataObject)
         {
-            throw new NotImplementedException();
+            return new InsertQueryBuilder<T>(context)
+                .Insert(dataObject)
+                .AddToStore();
         }
 
-        public static IInsertQueryExpression Insert<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
+        /// <summary>
+        /// Inserts a row with the values defined in the anonym dataobject
+        /// </summary>
+        /// <typeparam name="T">Tabletype to insert</typeparam>
+        /// <param name="context"></param>
+        /// <param name="anonym">Expression providing the anonym object containing the data</param>
+        /// <returns></returns>
+        public static IInsertQueryExpression<T> Insert<T>(this IDatabaseContext context, Expression<Func<object>> anonym)
         {
-            throw new NotImplementedException();
+            return new InsertQueryBuilder<T>(context)
+                .Insert(anonym)
+                .AddToStore();
         }
 
         #endregion

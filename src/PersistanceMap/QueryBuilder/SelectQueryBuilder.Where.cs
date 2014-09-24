@@ -4,7 +4,7 @@ using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IWhereQueryExpression<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IWhereQueryExpression<T>, IQueryExpression
     {
         #region Private Implementation
 

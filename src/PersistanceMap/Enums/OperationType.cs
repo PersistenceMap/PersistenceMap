@@ -40,6 +40,15 @@ namespace PersistanceMap
 
         Set = 12,
 
+        Insert = 13,
+
+        Into = 14,
+
+        /// <summary>
+        /// defines a values element for a insert
+        /// </summary>
+        Values = 15,
+
         /// <summary>
         /// defines the operation as an alias of a table, a field or a storedprocedure parameter
         /// </summary>

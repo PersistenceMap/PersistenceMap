@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public class UpdateQueryBuilder : IUpdateQueryExpression, IQueryProvider
+    public class UpdateQueryBuilder<T> : IUpdateQueryExpression<T>, IQueryExpression
     {
         public UpdateQueryBuilder(IDatabaseContext context)
         {
@@ -49,11 +49,16 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public IUpdateQueryExpression AddToStore()
+        public IUpdateQueryExpression<T> AddToStore()
         {
             Context.AddQuery(new UpdateQueryCommand(QueryPartsMap));
 
             return this;
+        }
+
+        public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -63,7 +68,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="dataPredicate">Expression providing the object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        public IUpdateQueryExpression Update<T>(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
+        public IUpdateQueryExpression<T> Update(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
         {
             // create expression containing key and value for the where statement
             var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, where);
@@ -75,6 +80,7 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
             var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
+            simple.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -83,12 +89,12 @@ namespace PersistanceMap.QueryBuilder
             foreach(var field in tableFields)
             {
                 if (field.MemberName != keyName)
-                    simple.Add(new KeyValueAssignExpression<T>(OperationType.None, dataObject, field));
+                    simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
 
             QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
-            return new UpdateQueryBuilder(Context, QueryPartsMap);
+            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -98,7 +104,7 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="anonym">Expression providing the anonym object containing the data</param>
         /// <param name="where">The expression providing the where statement</param>
         /// <returns></returns>
-        public IUpdateQueryExpression Update<T>(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
+        public IUpdateQueryExpression<T> Update(Expression<Func<object>> anonym, Expression<Func<T, bool>> where = null)
         {
             // create expression containing key and value for the where statement
             var whereexpr = where;
@@ -109,7 +115,8 @@ namespace PersistanceMap.QueryBuilder
             }
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
-            var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
+            var set = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
+            set.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -118,12 +125,12 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields)
             {
                 if (field.MemberName != keyName)
-                    simple.Add(new KeyValueAssignExpression<T>(OperationType.None, dataObject, field));
+                    set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
 
             QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
-            return new UpdateQueryBuilder(Context, QueryPartsMap);
+            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }
     }
 }

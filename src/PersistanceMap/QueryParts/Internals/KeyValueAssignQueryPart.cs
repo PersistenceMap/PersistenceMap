@@ -2,12 +2,12 @@
 
 namespace PersistanceMap.QueryParts
 {
-    internal class KeyValueAssignExpression<T> : IQueryPart
+    internal class KeyValueAssignQueryPart<T> : IQueryPart
     {
         readonly object _valueObject;
         readonly FieldDefinition _field;
 
-        public KeyValueAssignExpression(OperationType operationtype, object valueObject, FieldDefinition field)
+        public KeyValueAssignQueryPart(OperationType operationtype, object valueObject, FieldDefinition field)
         {
             OperationType = operationtype;
             _valueObject = valueObject;

@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IAfterMapQueryExpression<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IAfterMapQueryExpression<T>, IQueryExpression
     {
         public IAfterMapQueryExpression<T> AfterMap(Action<T> predicate)
         {

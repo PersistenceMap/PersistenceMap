@@ -236,10 +236,10 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        public T2 Single<T2>()
-        {
-            throw new NotImplementedException();
-        }
+        //public T2 Single<T2>()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public IAfterMapQueryExpression<TNew> For<TNew>()
         {

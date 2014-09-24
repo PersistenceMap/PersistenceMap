@@ -9,7 +9,10 @@ namespace PersistanceMap.QueryParts
         public SimpleQueryPart(OperationType operation)
         {
             OperationType = operation;
+            ChildSeparator = ", ";
         }
+
+        public string ChildSeparator { get; set; }
 
         public override string Compile()
         {
@@ -29,6 +32,14 @@ namespace PersistanceMap.QueryParts
                     sb.Append("SET ");
                     break;
 
+                case PersistanceMap.OperationType.Into:
+                    sb.Append("INTO ");
+                    break;
+
+                case PersistanceMap.OperationType.Values:
+                    sb.Append(" VALUES ");
+                    break;
+
                 default:
                     throw new NotImplementedException("OperationType is not implemented in SelectMapQueryPart");
             }
@@ -40,7 +51,7 @@ namespace PersistanceMap.QueryParts
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                sb.AppendFormat("{0}{1} ", value, last == part ? "" : ",");
+                sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
             }
 
             return sb.ToString().RemoveLineBreak();

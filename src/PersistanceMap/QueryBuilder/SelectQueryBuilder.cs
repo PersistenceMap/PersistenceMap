@@ -5,7 +5,7 @@ using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : ISelectQueryExpressionBase<T>, ISelectQueryExpression<T>, IJoinQueryExpression<T>, IWhereQueryExpression<T>, IAfterMapQueryExpression<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : ISelectQueryExpressionBase<T>, ISelectQueryExpression<T>, IJoinQueryExpression<T>, IWhereQueryExpression<T>, IAfterMapQueryExpression<T>, IQueryExpression
     {
         public SelectQueryBuilder(IDatabaseContext context)
         {
@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap IQueryProvider.QueryPartsMap
+        IQueryPartsMap IQueryExpression.QueryPartsMap
         {
             get
             {

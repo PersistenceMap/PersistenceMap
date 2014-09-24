@@ -85,7 +85,7 @@ namespace PersistanceMap.Internals
 
             // x => (x.Property == value)
             // Create an expression tree that represents the expression 'x.Property == value'.
-            var left = Expression.Property(pe, GetProperty(key));
+            var left = Expression.Property(pe, FieldHelper.TryExtractPropertyName(key));
             var right = Expression.Constant(value);
             var e1 = Expression.Equal(left, right);
 
@@ -149,32 +149,32 @@ namespace PersistanceMap.Internals
             }
         }
 
-        /// <summary>
-        /// Extracts the propertyinfo out of a expression
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        public static PropertyInfo GetProperty<T>(Expression<Func<T, object>> expression)
-        {
-            // sometimes the expression comes in as Convert(originalexpression)
-            if (expression.Body is UnaryExpression)
-            {
-                var exp = (UnaryExpression)expression.Body;
-                if (exp.Operand is MemberExpression)
-                {
-                    return (PropertyInfo)((MemberExpression)exp.Operand).Member;
-                }
+        ///// <summary>
+        ///// Extracts the propertyinfo out of a expression
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="expression"></param>
+        ///// <returns></returns>
+        //public static PropertyInfo GetProperty<T>(Expression<Func<T, object>> expression)
+        //{
+        //    // sometimes the expression comes in as Convert(originalexpression)
+        //    if (expression.Body is UnaryExpression)
+        //    {
+        //        var exp = (UnaryExpression)expression.Body;
+        //        if (exp.Operand is MemberExpression)
+        //        {
+        //            return (PropertyInfo)((MemberExpression)exp.Operand).Member;
+        //        }
                 
-                throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
-            }
+        //        throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
+        //    }
             
-            if (expression.Body is MemberExpression)
-            {
-                return (PropertyInfo)((MemberExpression)expression.Body).Member;
-            }
+        //    if (expression.Body is MemberExpression)
+        //    {
+        //        return (PropertyInfo)((MemberExpression)expression.Body).Member;
+        //    }
 
-            throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
-        }
+        //    throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
+        //}
     }
 }

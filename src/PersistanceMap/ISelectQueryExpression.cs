@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface ISelectQueryExpressionBase<T> : IQueryProvider
+    public interface ISelectQueryExpressionBase<T> : IQueryExpression
     {
         IEnumerable<T2> Select<T2>();
 
@@ -14,7 +14,7 @@ namespace PersistanceMap
 
         IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym);
 
-        T2 Single<T2>();
+        //T2 Single<T2>();
 
         IAfterMapQueryExpression<TNew> For<TNew>();
 
@@ -34,7 +34,7 @@ namespace PersistanceMap
         string CompileQuery();
     }
 
-    public interface ISelectQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
+    public interface ISelectQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
         /// <summary>
         /// Joines a new entity type to the last entity
@@ -113,14 +113,14 @@ namespace PersistanceMap
         
     }
 
-    public interface IJoinQueryExpression<T> : ISelectQueryExpression<T>, IQueryProvider
+    public interface IJoinQueryExpression<T> : ISelectQueryExpression<T>, IQueryExpression
     {
         IJoinQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
 
         IJoinQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
     }
 
-    public interface IWhereQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
+    public interface IWhereQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
         IWhereQueryExpression<T> And(Expression<Func<T, bool>> predicate);
 
@@ -150,7 +150,7 @@ namespace PersistanceMap
         IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
-    public interface IOrderQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
+    public interface IOrderQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
         IOrderQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate);
 
@@ -161,7 +161,7 @@ namespace PersistanceMap
         IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
-    public interface IAfterMapQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryProvider
+    public interface IAfterMapQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
         IAfterMapQueryExpression<T> AfterMap(Action<T> predicate);
 

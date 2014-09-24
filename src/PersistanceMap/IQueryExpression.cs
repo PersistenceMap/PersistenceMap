@@ -3,7 +3,7 @@ using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {
-    public interface IQueryProvider
+    public interface IQueryExpression
     {
         IDatabaseContext Context { get; }
 

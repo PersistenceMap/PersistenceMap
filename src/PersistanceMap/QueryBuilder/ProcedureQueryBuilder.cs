@@ -10,7 +10,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public abstract class ProcedureQueryProviderBase : IQueryProvider
+    public abstract class ProcedureQueryProviderBase : IQueryExpression
     {
         public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
         {
@@ -48,7 +48,7 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap IQueryProvider.QueryPartsMap
+        IQueryPartsMap IQueryExpression.QueryPartsMap
         {
             get
             {
@@ -90,7 +90,7 @@ namespace PersistanceMap.QueryBuilder
         #endregion
     }
 
-    public class ProcedureQueryProvider : ProcedureQueryProviderBase, IProcedureQueryExpression, IQueryProvider
+    public class ProcedureQueryProvider : ProcedureQueryProviderBase, IProcedureQueryExpression, IQueryExpression
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
             : this(context, procName, null)
@@ -291,7 +291,7 @@ namespace PersistanceMap.QueryBuilder
         #endregion
     }
 
-    public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryExpression<T>, IQueryProvider
+    public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryExpression<T>, IQueryExpression
     {
         public ProcedureQueryProvider(IDatabaseContext context, string procName)
             : this(context, procName, null)

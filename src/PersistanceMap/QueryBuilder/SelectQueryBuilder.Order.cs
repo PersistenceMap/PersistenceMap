@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
-    public partial class SelectQueryBuilder<T> : IOrderQueryExpression<T>, ISelectQueryExpressionBase<T>, IQueryProvider
+    public partial class SelectQueryBuilder<T> : IOrderQueryExpression<T>, ISelectQueryExpressionBase<T>, IQueryExpression
     {
         #region OrderBy Expressions
 

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IProcedureQueryExpression : IQueryProvider
+    public interface IProcedureQueryExpression : IQueryExpression
     {
         /// <summary>
         /// Adds a parameter containing the value of the expression

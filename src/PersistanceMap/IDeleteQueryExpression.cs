@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap
 {
-    public interface IDeleteQueryExpression : IQueryProvider
+    public interface IDeleteQueryExpression : IQueryExpression
     {
         IDeleteQueryExpression AddToStore();
 

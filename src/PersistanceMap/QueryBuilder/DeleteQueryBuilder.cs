@@ -11,7 +11,7 @@ namespace PersistanceMap.QueryBuilder
     /// <summary>
     /// Containes logic to create queries that delete data from a database
     /// </summary>
-    public class DeleteQueryBuilder : IDeleteQueryExpression, IQueryProvider
+    public class DeleteQueryBuilder : IDeleteQueryExpression, IQueryExpression
     {
         public DeleteQueryBuilder(IDatabaseContext context)
         {
@@ -104,7 +104,8 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
             }
 
-            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            simple.ChildSeparator = ", ";
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
