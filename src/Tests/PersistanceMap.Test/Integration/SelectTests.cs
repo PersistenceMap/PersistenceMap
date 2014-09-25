@@ -63,7 +63,7 @@ namespace PersistanceMap.Test.Integration
                     // map a property from a joni to a property in the result type
                     .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -89,10 +89,11 @@ namespace PersistanceMap.Test.Integration
                     // map a property from a joni to a property in the result type
                     .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
 
-                var sql = "select OrderDetails.OrdersID, Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = query.CompileQuery<OrderWithDetailExtended>().Flatten();
+                var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var orders = query.Select<OrderWithDetailExtended>();
@@ -615,8 +616,11 @@ namespace PersistanceMap.Test.Integration
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID, "detail", "orders");
 
+                var sql = query.CompileQuery<OrderWithDetail>().Flatten();
+                var expected = "select CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrdersID = orders.OrdersID)";
+
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), "select orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail on (detail.OrdersID = orders.OrdersID)");
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var orders = query.Select<OrderWithDetail>();
@@ -956,7 +960,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -981,7 +985,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, OrderDetails.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -1474,7 +1478,8 @@ namespace PersistanceMap.Test.Integration
                         .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
                         .Where(e => e.FirstName.Contains("Davolio"))
                         .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp"))
-                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
+                        //.Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
+                        .Returns("select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and alias for both types")
                         .SetName("Where expression with Or containing aliases");
 
@@ -1487,7 +1492,7 @@ namespace PersistanceMap.Test.Integration
                         .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
                         .Where(e => e.FirstName.Contains("Davolio"))
                         .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp"))
-                        .Returns("select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)")
+                        .Returns("select Customers.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the source type")
                         .SetName("Where expression with Or containing source alias");
 
@@ -1500,7 +1505,7 @@ namespace PersistanceMap.Test.Integration
                         .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID)
                         .Where(e => e.FirstName.Contains("Davolio"))
                         .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust"))
-                        .Returns("select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)")
+                        .Returns("select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)")
                         .SetDescription("select statement with a where operation and a or operation that has two genereic parameters and a alias on the type")
                         .SetName("Where expression with Or containing aliase");
                 }

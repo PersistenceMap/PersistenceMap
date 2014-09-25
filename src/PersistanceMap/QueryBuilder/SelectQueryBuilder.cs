@@ -79,7 +79,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T2> CreateExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
         {
-            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, operation);
+            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, operation);
 
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }

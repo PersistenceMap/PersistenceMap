@@ -79,7 +79,7 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
+            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
 
             //var expr = Context.ContextProvider.ExpressionCompiler;
             //var query = expr.Compile<T>(queryParts);
@@ -105,11 +105,11 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
-            simple.ChildSeparator = ", ";
+            //simple.ChildSeparator = ", ";
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
             //var expr = Context.ContextProvider.ExpressionCompiler;
             //var query = expr.Compile<T>(queryParts);
@@ -142,7 +142,7 @@ namespace PersistanceMap.QueryBuilder
             foreach (var expr in expressions)
             {
                 // add all expressions to the queryexpression
-                QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, expr, first == expr ? OperationType.Where : OperationType.And);
+                QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, expr, first == expr ? OperationType.Where : OperationType.And);
             }
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);

@@ -9,7 +9,7 @@ namespace PersistanceMap.QueryParts
         public SimpleQueryPart(OperationType operation)
         {
             OperationType = operation;
-            ChildSeparator = ", ";
+            //ChildSeparator = ", ";
         }
 
         //public string ChildSeparator { get; set; }
@@ -52,7 +52,8 @@ namespace PersistanceMap.QueryParts
                 if (string.IsNullOrEmpty(value))
                     continue;
 
-                sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
+                //sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
+                sb.Append(value);
             }
             //var value = base.Compile();
             //if (!string.IsNullOrEmpty(value))

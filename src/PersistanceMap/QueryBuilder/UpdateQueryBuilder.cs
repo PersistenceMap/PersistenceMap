@@ -81,20 +81,22 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
             var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
-            simple.ChildSeparator = ", ";
+            //simple.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var dataObject = dataPredicate.Compile().Invoke();
-            foreach(var field in tableFields)
+            var last = tableFields.Where(f => f.MemberName != keyName).LastOrDefault();
+            foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
-                if (field.MemberName != keyName)
-                    simple.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
-                    //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
+                var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field.MemberName == last.MemberName ? " " : ", ");
+                simple.Add(new CallbackQueryPart(OperationType.None, () => formatted));
+                //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
 
-            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
             return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -118,20 +120,28 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
             var set = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
-            set.ChildSeparator = ", ";
+            //set.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
             var dataObject = anonym.Compile().Invoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-            foreach (var field in tableFields)
+            var last = tableFields.Where(f => f.MemberName != keyName).LastOrDefault();
+            foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
-                if (field.MemberName != keyName)
-                    set.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
-                    //set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
+                var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field == last ? " " : ", ");
+                set.Add(new CallbackQueryPart(OperationType.None, () => formatted));
+                //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
             }
+            //foreach (var field in tableFields)
+            //{
+            //    if (field.MemberName != keyName)
+            //        set.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
+            //        //set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+            //}
 
-            QueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
             return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }

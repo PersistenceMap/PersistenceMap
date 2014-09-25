@@ -23,6 +23,8 @@ namespace PersistanceMap.QueryParts
             Entity = entity;
         }
 
+        public string Sufix { get; set; }
+
         #region IEntityQueryPart Implementation
 
         /// <summary>
@@ -62,6 +64,9 @@ namespace PersistanceMap.QueryParts
             
             if (!string.IsNullOrEmpty(FieldAlias))
                 sb.Append(string.Format(" as {0}", FieldAlias));
+
+            if (string.IsNullOrEmpty(Sufix) == false)
+                sb.Append(Sufix);
 
             return sb.ToString();
         }

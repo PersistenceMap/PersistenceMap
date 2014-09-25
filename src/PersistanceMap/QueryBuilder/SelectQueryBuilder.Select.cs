@@ -54,7 +54,7 @@ namespace PersistanceMap.QueryBuilder
             if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
                 entity = last.EntityAlias;
 
-            SelectQueryPartsBuilder.Instance.AppendFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
+            SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -139,7 +139,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             // check if the last part that was added containes a alias
             var last = QueryPartsMap.Parts.Last(l => 
@@ -157,14 +157,14 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate)
         {
-            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
         {
-            SelectQueryPartsBuilder.Instance.AppendExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }

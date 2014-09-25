@@ -87,7 +87,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return entity;
         }
 
-        internal IExpressionQueryPart AppendExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
+        internal IExpressionQueryPart AddExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
         {
             var part = new ExpressionQueryPart(operation, predicate);
             queryParts.Add(part);
@@ -95,7 +95,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        internal IFieldQueryPart AppendFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
+        internal IFieldQueryPart AddFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
         {
             var part = new FieldQueryPart(field, alias, null /*EntityAlias*/, entity)
             {
@@ -107,7 +107,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        internal void AddFiedlParts(SelectQueryPartsMap queryParts, IFieldQueryPart[] fields)
+        internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
         {
             foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
@@ -115,13 +115,40 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                 if (map == null)
                     continue;
 
+                var mappedFields = map.Parts.ToList();
+
+                //var last = fields.LastOrDefault();
                 foreach (var field in fields)
                 {
-                    if (map.Parts.Any(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == field.Field || ((IFieldQueryPart)f).FieldAlias == field.Field))
+                    //if (map.Parts.Any(f => f is FieldQueryPart && ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field))
+                    //    continue;
+
+                    //var sufix = ", ";
+                    //if (field == last)
+                    //    sufix = " ";
+
+                    var mappedField = map.Parts.FirstOrDefault(f => f is FieldQueryPart && ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field);
+                    if (mappedField != null)
+                    {
+                        ((FieldQueryPart)mappedField).Sufix = ", ";
+                        mappedFields.Remove(mappedField);
                         continue;
+                    }
+
+                    field.Sufix = ", ";
 
                     map.Add(field);
                 }
+
+                // remove all mapped fields that were not included in the select fields
+                foreach (var field in mappedFields)
+                {
+                    map.Remove(field);
+                }
+
+                var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;
+                if (last != null)
+                    last.Sufix = " ";
             }
         }
     }

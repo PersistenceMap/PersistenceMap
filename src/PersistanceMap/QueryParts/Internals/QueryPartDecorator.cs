@@ -18,10 +18,10 @@ namespace PersistanceMap.QueryParts
             parts.EnsureArgumentNotNull("parts");
 
             Parts = parts.ToList();
-            ChildSeparator = "";
+            //ChildSeparator = "";
         }
 
-        public string ChildSeparator { get; set; }
+        //public string ChildSeparator { get; set; }
 
         #region IQueryPartDecorator Implementation
 
@@ -94,19 +94,19 @@ namespace PersistanceMap.QueryParts
                 var value = part.Compile();
                 if (string.IsNullOrEmpty(value))
                     continue;
+                sb.Append(value);
+                //switch (OperationType)
+                //{
+                //    case PersistanceMap.OperationType.Values:
+                //    case PersistanceMap.OperationType.None:
+                //    case PersistanceMap.OperationType.Insert:
+                //        sb.Append(string.Format("{0}{1}", value, part != last ? ChildSeparator : ""));
+                //        break;
 
-                switch (OperationType)
-                {
-                    case PersistanceMap.OperationType.Values:
-                    case PersistanceMap.OperationType.None:
-                    case PersistanceMap.OperationType.Insert:
-                        sb.Append(string.Format("{0}{1}", value, part != last ? ChildSeparator : ""));
-                        break;
-
-                    default:
-                        sb.AppendLine(string.Format("{0}{1}", value, part != last ? ChildSeparator : ""));
-                        break;
-                }
+                //    default:
+                //        sb.AppendLine(string.Format("{0}{1}", value, part != last ? ChildSeparator : ""));
+                //        break;
+                //}
             }
 
             return sb.ToString().RemoveLineBreak();

@@ -77,8 +77,8 @@ namespace PersistanceMap.QueryBuilder
             var dataObject = dataPredicate.Compile().Invoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
 
-            values.ChildSeparator = ", ";
-            insert.ChildSeparator = ", ";
+            //values.ChildSeparator = ", ";
+            //insert.ChildSeparator = ", ";
 
             var first = tableFields.FirstOrDefault();
             var last = tableFields.LastOrDefault();
@@ -89,8 +89,8 @@ namespace PersistanceMap.QueryBuilder
 
                 //insert.Add(new StringQueryPart(OperationType.None, field.MemberName, field == first ? "(" : "", field == last ? ")" : ""));
                 //values.Add(new StringQueryPart(OperationType.None, quotated, field == first ? "(" : "", field == last ? ")" : ""));
-                insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : "")));
-                values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : "")));
+                insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", ")));
+                values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", ")));
             }
 
 
@@ -113,8 +113,8 @@ namespace PersistanceMap.QueryBuilder
             var dataObject = anonym.Compile().Invoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
 
-            values.ChildSeparator = ", ";
-            insert.ChildSeparator = ", ";
+            //values.ChildSeparator = ", ";
+            //insert.ChildSeparator = ", ";
 
             var first = tableFields.FirstOrDefault();
             var last = tableFields.LastOrDefault();
@@ -125,8 +125,8 @@ namespace PersistanceMap.QueryBuilder
 
                 //insert.Add(new StringQueryPart(OperationType.None, field.MemberName, field == first ? "(" : "", field == last ? ")" : ""));
                 //values.Add(new StringQueryPart(OperationType.None, quotated, field == first ? "(" : "", field == last ? ")" : ""));
-                insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : "")));
-                values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : "")));
+                insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", ")));
+                values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", ")));
             }
 
 
