@@ -45,19 +45,19 @@ namespace PersistanceMap.QueryParts
             }
 
             //TODO: Use base.Compile implementation
-            var last = Parts.LastOrDefault();
-            foreach (var part in Parts)
-            {
-                var value = part.Compile();
-                if (string.IsNullOrEmpty(value))
-                    continue;
+            //var last = Parts.LastOrDefault();
+            //foreach (var part in Parts)
+            //{
+            //    var value = part.Compile();
+            //    if (string.IsNullOrEmpty(value))
+            //        continue;
 
-                //sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
-                sb.Append(value);
-            }
-            //var value = base.Compile();
-            //if (!string.IsNullOrEmpty(value))
+            //    //sb.AppendFormat("{0}{1}", value, last != part ? ChildSeparator : " ");
             //    sb.Append(value);
+            //}
+            var value = base.Compile();
+            if (!string.IsNullOrEmpty(value))
+                sb.Append(value);
 
             return sb.ToString().RemoveLineBreak();
         }
