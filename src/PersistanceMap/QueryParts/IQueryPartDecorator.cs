@@ -5,6 +5,8 @@ namespace PersistanceMap.QueryParts
 {
     public interface IQueryPartDecorator : IQueryPart
     {
+        void Insert(int index, IQueryPart part);
+
         void Add(IQueryPart part);
 
         void AddToLast(IQueryPart part, OperationType operation);

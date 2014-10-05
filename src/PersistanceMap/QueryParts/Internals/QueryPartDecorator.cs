@@ -7,23 +7,30 @@ namespace PersistanceMap.QueryParts
 {
     internal class QueryPartDecorator : IQueryPartDecorator, IQueryPart
     {
-        public QueryPartDecorator()
+        public QueryPartDecorator(string id = null)
         {
             Parts = new List<IQueryPart>();
+            ID = id;
         }
 
-        public QueryPartDecorator(IQueryPart[] parts)
+        public QueryPartDecorator(IQueryPart[] parts, string id = null)
         {
             // ensure parameter is not null
             parts.EnsureArgumentNotNull("parts");
 
             Parts = parts.ToList();
-            //ChildSeparator = "";
+            ID = id;
         }
 
-        //public string ChildSeparator { get; set; }
-
         #region IQueryPartDecorator Implementation
+
+        public void Insert(int index, IQueryPart part)
+        {
+            if (IsSealded)
+                return;
+
+            Parts.Insert(index, part);
+        }
 
         public virtual void Add(IQueryPart part)
         {
@@ -81,6 +88,8 @@ namespace PersistanceMap.QueryParts
         #endregion
 
         #region IQueryPart Implementation
+
+        public string ID { get; set; }
 
         public OperationType OperationType { get; set; }
 

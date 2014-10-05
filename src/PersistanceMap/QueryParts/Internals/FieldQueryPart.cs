@@ -5,23 +5,26 @@ namespace PersistanceMap.QueryParts
     //TODO: remove interface IQueryMap! It is not needed!
     internal class FieldQueryPart : IFieldQueryPart, IEntityQueryPart, IQueryPart
     {
-        public FieldQueryPart(string field, string entityalias)
-            : this(field, entityalias, null)
-        {
-        }
+        //public FieldQueryPart(string field, string entityalias, string id = null)
+        //    : this(field, entityalias, null)
+        //{
+        //}
 
-        public FieldQueryPart(string field, string entityalias, string entity)
-            : this(field, null, entityalias, entity)
-        {
-        }
+        //public FieldQueryPart(string field, string entityalias, string entity)
+        //    : this(field, null, entityalias, entity)
+        //{
+        //}
 
-        public FieldQueryPart(string field, string fieldalias, string entityalias, string entity)
+        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null)
         {
             EntityAlias = entityalias;
             Field = field;
             FieldAlias = fieldalias;
             Entity = entity;
+            ID = id;
         }
+
+        public string ID { get; set; }
 
         public string Sufix { get; set; }
 

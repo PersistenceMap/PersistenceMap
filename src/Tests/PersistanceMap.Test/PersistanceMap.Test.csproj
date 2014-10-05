@@ -71,6 +71,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Expression\InsertExpressionTests.cs" />
     <Compile Include="Expression\UpdateExpressionTests.cs" />
     <Compile Include="TableTypes\Customers.cs" />
     <Compile Include="TableTypes\Employee.cs" />
