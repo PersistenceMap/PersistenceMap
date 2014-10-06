@@ -59,7 +59,13 @@ namespace PersistanceMap.QueryBuilder
 
         public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            throw new NotImplementedException();
+            var set = QueryPartsMap.Parts.FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
+
+            var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+
+            RemovePartByID(set, fieldName);
+
+            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -81,7 +87,6 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
             var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
-            //simple.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -92,8 +97,7 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field.MemberName == last.MemberName ? " " : ", ");
-                simple.Add(new CallbackQueryPart(OperationType.None, () => formatted));
-                //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                simple.Add(new CallbackQueryPart(OperationType.None, () => formatted, field.MemberName));
             }
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -120,7 +124,6 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
             var set = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
-            //set.ChildSeparator = ", ";
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -131,19 +134,38 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field == last ? " " : ", ");
-                set.Add(new CallbackQueryPart(OperationType.None, () => formatted));
-                //simple.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
+                set.Add(new CallbackQueryPart(OperationType.None, () => formatted, field.MemberName));
             }
-            //foreach (var field in tableFields)
-            //{
-            //    if (field.MemberName != keyName)
-            //        set.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} = {1}", field.FieldName, DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType) ?? "NULL")));
-            //        //set.Add(new KeyValueAssignQueryPart<T>(OperationType.None, dataObject, field));
-            //}
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
             return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+        private static void RemovePartByID(IQueryPartDecorator decorator, string id)
+        {
+            //throw new NotImplementedException();
+            if (decorator != null)
+            {
+                // remove the ignored element
+                var subpart = decorator.Parts.FirstOrDefault(f => f.ID == id);
+                if (subpart != null)
+                    decorator.Remove(subpart);
+
+                // make sure the last statement is correct
+                var last = decorator.Parts.LastOrDefault();
+                if (last != null)
+                {
+                    var value = last.Compile();
+                    if (value.TrimEnd().EndsWith(","))
+                    {
+                        value = value.Replace(",", "").TrimEnd();//.Replace(" ", "");
+
+                        decorator.Remove(last);
+                        decorator.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} ", value), last.ID));
+                    }
+                }
+            }
         }
     }
 }

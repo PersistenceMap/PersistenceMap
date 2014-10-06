@@ -76,6 +76,14 @@ namespace PersistanceMap.Test.Expression
                         yield return new TestCaseData(sql, "UPDATE Warrior SET Race = 'Elf' where ((Warrior.ID = 1) AND (Warrior.SpecialSkill is null))")
                             .SetDescription("")
                             .SetName("Update with anonym object with multiple keys defined as expression");
+
+                        context.Update<Warrior>(() => new Warrior { ID = 1, Race = "Elf" })
+                            .Ignore(w => w.SpecialSkill);
+                        context.Commit();
+
+                        yield return new TestCaseData(sql, "UPDATE Warrior SET WeaponID = 0, Race = 'Elf' where (Warrior.ID = 1)")
+                            .SetName("Update with concrete object ignoring fields");
+
                     }
                 }
             }

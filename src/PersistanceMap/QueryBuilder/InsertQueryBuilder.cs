@@ -165,6 +165,7 @@ namespace PersistanceMap.QueryBuilder
         {
             if (decorator != null)
             {
+                // remove the ignored element
                 var subpart = decorator.Parts.FirstOrDefault(f => f.ID == id);
                 if (subpart != null)
                     decorator.Remove(subpart);
@@ -186,7 +187,7 @@ namespace PersistanceMap.QueryBuilder
                 if (last != null)
                 {
                     var value = last.Compile();
-                    if (!value.EndsWith(")"))
+                    if (!value.TrimEnd().EndsWith(")"))
                     {
                         value = value.Replace(",", "").Replace(" ", "");
 

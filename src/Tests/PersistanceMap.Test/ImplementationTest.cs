@@ -66,9 +66,14 @@ namespace PersistanceMap.Test
             var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                context.Update<Warrior>(() => new Warrior { ID = 1, Race = "Elf" })
-                    .Ignore(w => w.SpecialSkill)
-                    .Ignore(w => w.WeaponID);
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                //context.Update<Warrior>(() => new Warrior { ID = 1, Race = "Elf" })
+                //    .Ignore(w => w.SpecialSkill);
+                //    //.Ignore(w => w.WeaponID);
+                //context.Commit();
+                //Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 0, Race = 'Elf' where (Warrior.ID = 1)");
             }
         }
 
