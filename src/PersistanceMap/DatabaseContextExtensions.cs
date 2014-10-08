@@ -8,6 +8,30 @@ namespace PersistanceMap
 {
     public static class DatabaseContextExtensions
     {
+        #region Execute
+
+        public static IEnumerable<T> Execute<T>(this IDatabaseContext context, string queryString)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            return context.Execute<T>(query);
+        }
+
+        public static void Execute(this IDatabaseContext context, string queryString)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            context.Execute(query);
+        }
+
+        #endregion
+
         #region Select Expressions
 
         public static IEnumerable<T> Select<T>(this IDatabaseContext context)
@@ -35,16 +59,6 @@ namespace PersistanceMap
             return new SelectQueryBuilder<T>(context)
                 .From<T>()
                 .Join<TJoin>(predicate);
-        }
-
-        public static IEnumerable<T> Select<T>(this IDatabaseContext context, string queryString)
-        {
-            var query = new CompiledQuery
-            {
-                QueryString = queryString
-            };
-
-            return context.Execute<T>(query);
         }
 
         #endregion

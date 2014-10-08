@@ -50,203 +50,203 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        [Test]
-        public void SelectWithMapping()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // Map => To 
-                var query = context.From<Orders>()
-                    .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
-                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
-                    // map a property from a joni to a property in the result type
-                    .Map(i => i.OrdersID);
+        //[Test]
+        //public void SelectWithAliasMapping()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // Map => To 
+        //        var query = context.From<Orders>()
+        //            .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
+        //            .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
+        //            // map a property from a join to a property in the result type
+        //            .Map(i => i.OrdersID);
 
-                var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
+        //        // check the compiled sql
+        //        Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
 
-                // execute the query
-                var orders = query.Select<OrderWithDetailExtended>();
+        //        // execute the query
+        //        var orders = query.Select<OrderWithDetailExtended>();
 
-                Assert.IsTrue(orders.Any());
-                Assert.IsTrue(orders.First().SpecialFreight > 0);
-            }
-        }
+        //        Assert.IsTrue(orders.Any());
+        //        Assert.IsTrue(orders.First().SpecialFreight > 0);
+        //    }
+        //}
 
-        [Test]
-        public void SelectWithExtendedMapping()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // Map => To 
-                var query = context.From<Orders>()
-                    .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
-                    .Map(i => i.OrdersID)
-                    // map a property from a joni to a property in the result type
-                    .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
+        //[Test]
+        //public void SelectWithExtendedMapping()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // Map => To 
+        //        var query = context.From<Orders>()
+        //            .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
+        //            .Map(i => i.OrdersID)
+        //            // map a property from a joni to a property in the result type
+        //            .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
 
-                var sql = query.CompileQuery<OrderWithDetailExtended>().Flatten();
-                var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = query.CompileQuery<OrderWithDetailExtended>().Flatten();
+        //        var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                // check the compiled sql
-                Assert.AreEqual(sql, expected);
+        //        // check the compiled sql
+        //        Assert.AreEqual(sql, expected);
 
-                // execute the query
-                var orders = query.Select<OrderWithDetailExtended>();
+        //        // execute the query
+        //        var orders = query.Select<OrderWithDetailExtended>();
                 
-                Assert.IsTrue(orders.Any());
-                Assert.IsTrue(orders.First().SpecialFreight > 0);
-            }
-        }
+        //        Assert.IsTrue(orders.Any());
+        //        Assert.IsTrue(orders.First().SpecialFreight > 0);
+        //    }
+        //}
 
-        [Test]
-        public void Select_WithStringSelectStatement()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // select with string select statement
-                var orders = context.Select<Orders>("Select * from Orders");
+        //[Test]
+        //public void Select_WithStringSelectStatement()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // select with string select statement
+        //        var orders = context.Execute<Orders>("Select * from Orders");
 
-                Assert.IsTrue(orders.Any());
-            }
-        }
+        //        Assert.IsTrue(orders.Any());
+        //    }
+        //}
 
 
-        [Test(Description = "Select with a anonym object definition")]
-        public void Select_Anonym_ObjectTypeDefiniton()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                var anonymous = context.From<Orders>()
-                    .Map(o => o.OrdersID)
-                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
-                    .Select(() => new
-                    {
-                        ProductID = 0,
-                        Quantity = 0.0
-                    });
+        //[Test(Description = "Select with a anonym object definition")]
+        //public void Select_Anonym_ObjectTypeDefiniton()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        var anonymous = context.From<Orders>()
+        //            .Map(o => o.OrdersID)
+        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
+        //            .Select(() => new
+        //            {
+        //                ProductID = 0,
+        //                Quantity = 0.0
+        //            });
 
-                Assert.IsTrue(anonymous.Any());
-                Assert.IsTrue(anonymous.First().ProductID > 0);
-                Assert.IsTrue(anonymous.First().Quantity > 0);
-            }
-        }
+        //        Assert.IsTrue(anonymous.Any());
+        //        Assert.IsTrue(anonymous.First().ProductID > 0);
+        //        Assert.IsTrue(anonymous.First().Quantity > 0);
+        //    }
+        //}
 
-        [Test(Description = "Select to a anonym object")]
-        public void Select_Anonym_Object()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                var query = context.From<Orders>()
-                    .Map(o => o.OrdersID)
-                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
+        //[Test(Description = "Select to a anonym object")]
+        //public void Select_Anonym_Object()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        var query = context.From<Orders>()
+        //            .Map(o => o.OrdersID)
+        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
-                var anonymous = query.Select(od => new
-                {
-                    ProductID = od.ProductID,
-                    Quantity = od.Quantity
-                });
+        //        var anonymous = query.Select(od => new
+        //        {
+        //            ProductID = od.ProductID,
+        //            Quantity = od.Quantity
+        //        });
 
-                var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
+        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                Assert.AreEqual(sql, expected);
-                Assert.IsTrue(anonymous.Any());
-                Assert.IsTrue(anonymous.First().ProductID > 0);
-                Assert.IsTrue(anonymous.First().Quantity > 0);
-            }
-        }
+        //        Assert.AreEqual(sql, expected);
+        //        Assert.IsTrue(anonymous.Any());
+        //        Assert.IsTrue(anonymous.First().ProductID > 0);
+        //        Assert.IsTrue(anonymous.First().Quantity > 0);
+        //    }
+        //}
 
-        [Test(Description = "Select to a anonym object delegate")]
-        public void Select_Anonym_Object2()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                var query = context.From<Orders>()
-                    .Map(o => o.OrdersID)
-                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
+        //[Test(Description = "Select to a anonym object delegate")]
+        //public void Select_Anonym_Object2()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        var query = context.From<Orders>()
+        //            .Map(o => o.OrdersID)
+        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
-                // select into a anonymous object
-                var anonymous = query.Select(od => new
-                {
-                    Prud = od.Quantity
-                });
+        //        // select into a anonymous object
+        //        var anonymous = query.Select(od => new
+        //        {
+        //            Prud = od.Quantity
+        //        });
 
-                var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
+        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                Assert.AreEqual(sql, expected); 
-                Assert.IsTrue(anonymous.Any());
-                Assert.IsTrue(anonymous.First().Prud > 0);
+        //        Assert.AreEqual(sql, expected); 
+        //        Assert.IsTrue(anonymous.Any());
+        //        Assert.IsTrue(anonymous.First().Prud > 0);
 
-            }
-        }
+        //    }
+        //}
 
-        [Test(Description = "Select to a type object delegate")]
-        public void Select_Object_Delegate()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // select only the properties that are defined in the anony object
-                var query = context.From<Orders>()
-                    .Map(o => o.OrdersID)
-                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
+        //[Test(Description = "Select to a type object delegate")]
+        //public void Select_Object_Delegate()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // select only the properties that are defined in the anony object
+        //        var query = context.From<Orders>()
+        //            .Map(o => o.OrdersID)
+        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
 
-                var orders = query.Select(od => new OrderWithDetail
-                {
-                    // only select the properties defined
-                    ProductID = od.ProductID,
-                    Quantity = od.Quantity
-                });
+        //        var orders = query.Select(od => new OrderWithDetail
+        //        {
+        //            // only select the properties defined
+        //            ProductID = od.ProductID,
+        //            Quantity = od.Quantity
+        //        });
 
-                var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
+        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                Assert.AreEqual(sql, expected); 
-                Assert.IsTrue(orders.Any());
-                Assert.IsTrue(orders.First().ProductID > 0);
-                Assert.IsTrue(orders.First().Quantity > 0);
-                Assert.IsTrue(orders.First().CustomerID == null);
-            }
-        }
+        //        Assert.AreEqual(sql, expected); 
+        //        Assert.IsTrue(orders.Any());
+        //        Assert.IsTrue(orders.First().ProductID > 0);
+        //        Assert.IsTrue(orders.First().Quantity > 0);
+        //        Assert.IsTrue(orders.First().CustomerID == null);
+        //    }
+        //}
 
-        [Test]
-        [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
-        public void Select_For_Anonym_ObjectType()
-        {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
-            {
-                // select only the properties that are defined in the anony object
-                var query = context.From<Orders>()
-                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
-                    .For(() => new
-                    {
-                        ProductID = 0,
-                        Quantity = 0
-                    });
+        //[Test]
+        //[Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
+        //public void Select_For_Anonym_ObjectType()
+        //{
+        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = connection.Open())
+        //    {
+        //        // select only the properties that are defined in the anony object
+        //        var query = context.From<Orders>()
+        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
+        //            .For(() => new
+        //            {
+        //                ProductID = 0,
+        //                Quantity = 0
+        //            });
 
-                var anonymous = query.Select();
+        //        var anonymous = query.Select();
 
-                var sql = query.CompileQuery().Flatten();
-                var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+        //        var sql = query.CompileQuery().Flatten();
+        //        var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-                Assert.AreEqual(sql, expected);
+        //        Assert.AreEqual(sql, expected);
 
-                Assert.IsTrue(anonymous.Any());
-                Assert.IsTrue(anonymous.First().ProductID > 0);
-                Assert.IsTrue(anonymous.First().Quantity > 0);
-            }
-        }
+        //        Assert.IsTrue(anonymous.Any());
+        //        Assert.IsTrue(anonymous.First().ProductID > 0);
+        //        Assert.IsTrue(anonymous.First().Quantity > 0);
+        //    }
+        //}
 
         [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
