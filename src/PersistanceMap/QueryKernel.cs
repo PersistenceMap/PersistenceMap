@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Internals;
+using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,44 @@ namespace PersistanceMap
     public class QueryKernel
     {
         protected const int NotFound = -1;
+        readonly IContextProvider _contextProvider;
+
+        public QueryKernel(IContextProvider provider)
+        {
+            _contextProvider = provider;
+        }
+
+        public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
+        {
+            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            {
+                return this.Map<T>(reader);
+            }
+        }
+
+        public void Execute(CompiledQuery compiledQuery)
+        {
+            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            {
+                // make sure Disposed is called on reader!
+            }
+        }
+
+        public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
+        {
+            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            {
+                foreach (var expression in expressions)
+                {
+                    // invoke expression with the reader
+                    expression.Invoke(reader);
+
+                    // read next resultset
+                    if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
+                        break;
+                }
+            }
+        }
 
         public IEnumerable<T> Map<T>(IReaderContext context, FieldDefinition[] fields)
         {

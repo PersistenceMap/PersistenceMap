@@ -17,7 +17,7 @@ namespace PersistanceMap
                 QueryString = queryString
             };
 
-            return context.Execute<T>(query);
+            return context.Kernel.Execute<T>(query);
         }
 
         public static void Execute(this IDatabaseContext context, string queryString)
@@ -27,7 +27,7 @@ namespace PersistanceMap
                 QueryString = queryString
             };
 
-            context.Execute(query);
+            context.Kernel.Execute(query);
         }
 
         #endregion
@@ -191,31 +191,31 @@ namespace PersistanceMap
 
         #endregion
 
-        #region Map
+        //#region Map
 
-        /// <summary>
-        /// Maps the output from the reader
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader)
-        {
-            return context.Kernel.Map<T>(reader);
-        }
+        ///// <summary>
+        ///// Maps the output from the reader
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="reader"></param>
+        ///// <returns></returns>
+        //public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader)
+        //{
+        //    return context.Kernel.Map<T>(reader);
+        //}
 
-        /// <summary>
-        /// Maps the output from the reader to the provided fields
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="reader"></param>
-        /// <param name="fields"></param>
-        /// <returns></returns>
-        public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader, FieldDefinition[] fields)
-        {
-            return context.Kernel.Map<T>(reader, fields);
-        }
+        ///// <summary>
+        ///// Maps the output from the reader to the provided fields
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="reader"></param>
+        ///// <param name="fields"></param>
+        ///// <returns></returns>
+        //public static IEnumerable<T> Map<T>(this IDatabaseContext context, IReaderContext reader, FieldDefinition[] fields)
+        //{
+        //    return context.Kernel.Map<T>(reader, fields);
+        //}
 
-        #endregion
+        //#endregion
     }
 }

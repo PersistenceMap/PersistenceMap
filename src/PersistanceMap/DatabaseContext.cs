@@ -17,37 +17,37 @@ namespace PersistanceMap
 
         public IContextProvider ContextProvider { get; private set; }
 
-        public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
-        {
-            using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-            {
-                return this.Map<T>(reader);
-            }
-        }
+        //public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
+        //{
+        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
+        //    {
+        //        return this.Map<T>(reader);
+        //    }
+        //}
 
-        public void Execute(CompiledQuery compiledQuery)
-        {
-            using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-            {
-                // make sure Disposed is called on reader!
-            }
-        }
+        //public void Execute(CompiledQuery compiledQuery)
+        //{
+        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
+        //    {
+        //        // make sure Disposed is called on reader!
+        //    }
+        //}
 
-        public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
-        {
-            using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-            {
-                foreach (var expression in expressions)
-                {
-                    // invoke expression with the reader
-                    expression.Invoke(reader);
+        //public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
+        //{
+        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
+        //    {
+        //        foreach (var expression in expressions)
+        //        {
+        //            // invoke expression with the reader
+        //            expression.Invoke(reader);
 
-                    // read next resultset
-                    if(reader.DataReader.IsClosed || !reader.DataReader.NextResult())
-                        break;
-                }
-            }
-        }
+        //            // read next resultset
+        //            if(reader.DataReader.IsClosed || !reader.DataReader.NextResult())
+        //                break;
+        //        }
+        //    }
+        //}
 
         public void Commit()
         {
@@ -95,7 +95,7 @@ namespace PersistanceMap
             get
             {
                 if (_kernel == null)
-                    _kernel = new QueryKernel();
+                    _kernel = new QueryKernel(ContextProvider);
 
                 return _kernel;
             }

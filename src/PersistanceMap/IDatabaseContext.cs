@@ -8,11 +8,11 @@ namespace PersistanceMap
     {
         IContextProvider ContextProvider { get; }
 
-        IEnumerable<T> Execute<T>(CompiledQuery compiledQuery);
+        //IEnumerable<T> Execute<T>(CompiledQuery compiledQuery);
 
-        void Execute(CompiledQuery compiledQuery);
+        //void Execute(CompiledQuery compiledQuery);
 
-        void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions);
+        //void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions);
 
         void Commit();
 
