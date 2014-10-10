@@ -155,6 +155,12 @@ namespace PersistanceMap
                 .AddToStore();
         }
 
+        public static IUpdateQueryExpression<T> AddToStore<T>(this IUpdateQueryExpression<T> expression)
+        {
+            expression.Context.AddQuery(new UpdateQueryCommand(expression.QueryPartsMap));
+
+            return expression;
+        }
 
         #endregion
 
@@ -186,6 +192,13 @@ namespace PersistanceMap
             return new InsertQueryBuilder<T>(context)
                 .Insert(anonym)
                 .AddToStore();
+        }
+
+        public static IInsertQueryExpression<T> AddToStore<T>(this IInsertQueryExpression<T> expression)
+        {
+            expression.Context.AddQuery(new InsertQueryCommand(expression.QueryPartsMap));
+
+            return expression;
         }
 
         #endregion

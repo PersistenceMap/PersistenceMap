@@ -61,7 +61,7 @@ namespace PersistanceMap.Test.Expression
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteEntityWithExpressionKeyThatFails()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider());
+            var connection = new DatabaseConnection(new SqlContextProvider(null));
             using (var context = connection.Open())
             {
                 // this has to fail because the expression should only return the property instead of the boolean!

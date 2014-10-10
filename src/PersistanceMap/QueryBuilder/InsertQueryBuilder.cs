@@ -49,12 +49,12 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public IInsertQueryExpression<T> AddToStore()
-        {
-            Context.AddQuery(new InsertQueryCommand(QueryPartsMap));
+        //public IInsertQueryExpression<T> AddToStore()
+        //{
+        //    Context.AddQuery(new InsertQueryCommand(QueryPartsMap));
 
-            return this;
-        }
+        //    return this;
+        //}
 
         public IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {

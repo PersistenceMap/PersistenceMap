@@ -5,7 +5,7 @@ namespace PersistanceMap
 {
     public interface IUpdateQueryExpression<T> : IQueryExpression
     {
-        IUpdateQueryExpression<T> AddToStore();
+        //IUpdateQueryExpression<T> AddToStore();
 
         ///// <summary>
         ///// Updates a row with the values provided by the dataobject

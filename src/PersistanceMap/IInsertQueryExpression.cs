@@ -9,7 +9,7 @@ namespace PersistanceMap
 {
     public interface IInsertQueryExpression<T> : IQueryExpression
     {
-        IInsertQueryExpression<T> AddToStore();
+        //IInsertQueryExpression<T> AddToStore();
 
         //IInsertQueryExpression Insert<T>(Expression<Func<T>> dataObject);
 
