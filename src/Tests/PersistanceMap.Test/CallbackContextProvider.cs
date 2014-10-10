@@ -15,6 +15,8 @@ namespace PersistanceMap.Test
         //private readonly Action<string> _callback;
         public event ContextProviderCallbackHandler Callback;
 
+        private bool _callbackCalled = false;
+
         public CallbackContextProvider()
         {
         }
@@ -51,9 +53,54 @@ namespace PersistanceMap.Test
 
             Callback(query);
 
+            _callbackCalled = true;
+
             return new CallbackReaderContext();
         }
 
+        #region IDisposeable Implementation
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        internal bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases resources held by the object.
+        /// </summary>
+        public virtual void Dispose(bool disposing)
+        {
+            lock (this)
+            {
+                if (disposing && !IsDisposed)
+                {
+                    if (_callbackCalled == false)
+                        throw new Exception("Callback was not called by client");
+
+                    IsDisposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Releases resources before the object is reclaimed by garbage collection.
+        /// </summary>
+        ~CallbackContextProvider()
+        {
+            Dispose(false);
+        }
+
+        #endregion
+        
         public class CallbackReaderContext : IReaderContext
         {
             public System.Data.IDataReader DataReader

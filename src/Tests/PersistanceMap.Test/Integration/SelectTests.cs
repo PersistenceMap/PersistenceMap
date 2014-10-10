@@ -211,7 +211,7 @@ namespace PersistanceMap.Test.Integration
         //        var sql = query.CompileQuery<OrderDetails>().Flatten();
         //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-        //        Assert.AreEqual(sql, expected); 
+        //        Assert.AreEqual(sql, expected);
         //        Assert.IsTrue(orders.Any());
         //        Assert.IsTrue(orders.First().ProductID > 0);
         //        Assert.IsTrue(orders.First().Quantity > 0);

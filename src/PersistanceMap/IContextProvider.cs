@@ -2,7 +2,7 @@
 
 namespace PersistanceMap
 {
-    public interface IContextProvider
+    public interface IContextProvider : IDisposable
     {
         string ConnectionString { get; }
 

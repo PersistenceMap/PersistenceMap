@@ -48,12 +48,12 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        public IDeleteQueryExpression AddToStore()
-        {
-            Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
+        //public IDeleteQueryExpression AddToStore()
+        //{
+        //    Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
 
-            return this;
-        }
+        //    return this;
+        //}
 
         public IDeleteQueryExpression Delete<T>()
         {

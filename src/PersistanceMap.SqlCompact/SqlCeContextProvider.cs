@@ -13,7 +13,7 @@ namespace PersistanceMap
         public SqlCeContextProvider(string connectionstring)
         {
             if (string.IsNullOrEmpty(connectionstring))
-                throw new ArgumentNullException("connectionString");
+                throw new ArgumentNullException("connectionstring");
 
             ConnectionString = connectionstring;
         }
@@ -34,14 +34,11 @@ namespace PersistanceMap
 
         public virtual IReaderContext Execute(string query)
         {
-            SqlCeConnection connection;
-            SqlCeCommand command;
-
-            connection = new SqlCeConnection(ConnectionString);
+            var connection = new SqlCeConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCeCommand(query, connection);
+                var command = new SqlCeCommand(query, connection);
                 
                 return new SqlCeContextReader(command.ExecuteReader(), connection, command);
             }
@@ -58,14 +55,11 @@ namespace PersistanceMap
         /// <param name="query"></param>
         public IReaderContext ExecuteNonQuery(string query)
         {
-            SqlCeConnection connection;
-            SqlCeCommand command;
-
-            connection = new SqlCeConnection(ConnectionString);
+            var connection = new SqlCeConnection(ConnectionString);
             try
             {
                 connection.Open();
-                command = new SqlCeCommand(query, connection);
+                var command = new SqlCeCommand(query, connection);
                 
                 command.ExecuteNonQuery();
 
@@ -78,5 +72,45 @@ namespace PersistanceMap
                 throw;
             }
         }
+
+        #region IDisposeable Implementation
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        internal bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases resources held by the object.
+        /// </summary>
+        public virtual void Dispose(bool disposing)
+        {
+            lock (this)
+            {
+                if (disposing && !IsDisposed)
+                {
+                    IsDisposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Releases resources before the object is reclaimed by garbage collection.
+        /// </summary>
+        ~SqlCeContextProvider()
+        {
+            Dispose(false);
+        }
+
+        #endregion
     }
 }

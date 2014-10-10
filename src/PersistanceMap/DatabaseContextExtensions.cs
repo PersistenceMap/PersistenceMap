@@ -3,6 +3,7 @@ using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using PersistanceMap.QueryBuilder.Commands;
 
 namespace PersistanceMap
 {
@@ -111,6 +112,13 @@ namespace PersistanceMap
             return new DeleteQueryBuilder(context)
                 .Delete<T>(anonym)
                 .AddToStore();
+        }
+
+        internal static IDeleteQueryExpression AddToStore(this IDeleteQueryExpression expression)
+        {
+            expression.Context.AddQuery(new DeleteQueryCommand(expression.QueryPartsMap));
+            
+            return expression;
         }
 
         #endregion

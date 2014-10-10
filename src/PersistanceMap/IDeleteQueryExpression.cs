@@ -5,7 +5,7 @@ namespace PersistanceMap
 {
     public interface IDeleteQueryExpression : IQueryExpression
     {
-        IDeleteQueryExpression AddToStore();
+        //IDeleteQueryExpression AddToStore();
 
         IDeleteQueryExpression Delete<T>();
 

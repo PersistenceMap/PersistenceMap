@@ -128,6 +128,8 @@ namespace PersistanceMap
                     // commit all uncommited transactions
                     Commit();
 
+                    ContextProvider.Dispose();
+
                     IsDisposed = true;
                     GC.SuppressFinalize(this);
                 }

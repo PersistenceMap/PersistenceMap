@@ -73,7 +73,7 @@ namespace PersistanceMap.Test.Expression
             var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
             using (var context = connection.Open())
             {
-                context.From<Orders>()
+                var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .Select(od => new
@@ -81,6 +81,8 @@ namespace PersistanceMap.Test.Expression
                         ProductID = od.ProductID,
                         Quantity = od.Quantity
                     });
+
+                items.Any();
             }
         }
 
@@ -92,7 +94,7 @@ namespace PersistanceMap.Test.Expression
             var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
             using (var context = connection.Open())
             {
-                context.From<Orders>()
+                var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     // select into a anonymous object
@@ -100,6 +102,8 @@ namespace PersistanceMap.Test.Expression
                     {
                         Prud = od.Quantity
                     });
+
+                items.Any();
             }
         }
 
@@ -112,7 +116,7 @@ namespace PersistanceMap.Test.Expression
             using (var context = connection.Open())
             {
                 // select only the properties that are defined in the anony object
-                context.From<Orders>()
+                var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
                     .Select(od => new OrderWithDetail
@@ -121,6 +125,8 @@ namespace PersistanceMap.Test.Expression
                         ProductID = od.ProductID,
                         Quantity = od.Quantity
                     });
+
+                items.Any();
             }
         }
 
