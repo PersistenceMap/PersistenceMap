@@ -104,6 +104,15 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
 
             queryParts.Add(part);
 
+
+
+
+
+
+
+
+
+
             return part;
         }
 
@@ -115,33 +124,31 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                 if (map == null)
                     continue;
 
-                var mappedFields = map.Parts.ToList();
+                // add all mapped fields to a collection to ensure that they are used in the query
+                var unusedMappedFields = map.Parts.ToList();
 
-                //var last = fields.LastOrDefault();
                 foreach (var field in fields)
                 {
-                    //if (map.Parts.Any(f => f is FieldQueryPart && ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field))
-                    //    continue;
-
-                    //var sufix = ", ";
-                    //if (field == last)
-                    //    sufix = " ";
-
-                    var mappedField = map.Parts.FirstOrDefault(f => f is FieldQueryPart && ((FieldQueryPart)f).Field == field.Field || ((FieldQueryPart)f).FieldAlias == field.Field);
-                    if (mappedField != null)
+                    // check if the field was allready mapped previously
+                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
+                    if (mappedFields.Any())
                     {
-                        ((FieldQueryPart)mappedField).Sufix = ", ";
-                        mappedFields.Remove(mappedField);
+                        foreach (var mappedField in mappedFields)
+                        {
+                            mappedField.Sufix = ", ";
+                            unusedMappedFields.Remove(mappedField);
+                        }
+
                         continue;
                     }
 
+                    // add the new field
                     field.Sufix = ", ";
-
                     map.Add(field);
                 }
 
                 // remove all mapped fields that were not included in the select fields
-                foreach (var field in mappedFields)
+                foreach (var field in unusedMappedFields)
                 {
                     map.Remove(field);
                 }

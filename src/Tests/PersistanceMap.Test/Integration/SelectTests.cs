@@ -1014,6 +1014,37 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(orders.Any());
             }
         }
+
+        [Test]
+        public void SelectWithMultipleMapsToSameType()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // select the properties that are defined in the mapping
+                context.From<WarriorWithName>()
+                    .Map(w => w.WeaponID, "ID")
+                    .Map(w => w.WeaponID)
+                    .Map(w => w.Race, "Name")
+                    .Map(w => w.Race)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+
+                // map one property to a custom field
+                context.From<WarriorWithName>()
+                    .Map(w => w.WeaponID, "ID")
+                    .Map(w => w.Race, "Name")
+                    .Map(w => w.Race)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+            }
+        }
     }
 
     [TestFixture]

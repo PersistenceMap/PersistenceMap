@@ -86,17 +86,7 @@ namespace PersistanceMap.Test
             {
                 var sql = "";
                 provider.Callback += s => sql = s.Flatten();
-
-                // select the properties that are defined in the mapping
-                context.From<WarriorWithName>()
-                    .Map(w => w.WeaponID, "ID")
-                    .Map(w => w.WeaponID)
-                    .Map(w => w.Race, "Name")
-                    .Map(w => w.Race)
-                    .Select();
-
-                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
-
+                
                 // ignore a member in the select
                 context.From<WarriorWithName>()
                     //.Ignore(w => w.ID)
