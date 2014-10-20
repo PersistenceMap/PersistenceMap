@@ -1045,6 +1045,47 @@ namespace PersistanceMap.Test.Integration
                 Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
             }
         }
+
+        [Test]
+        public void ISelectQueryExpressionWithIgnoringFields()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Ignore(w => w.SpecialSkill)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Ignore(w => w.SpecialSkill)
+                    .Map(w => w.Name)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Map(w => w.WeaponID, "TestFieldName")
+                    .Ignore(w => w.SpecialSkill)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
+            }
+        }
     }
 
     [TestFixture]

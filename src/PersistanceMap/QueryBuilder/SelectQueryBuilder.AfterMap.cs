@@ -21,22 +21,27 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <param name="predicate">Marks the member to ignore</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
-        public IAfterMapQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
+        IAfterMapQueryExpression<T> IAfterMapQueryExpression<T>.Ignore(Expression<Func<T, object>> predicate)
         {
-            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
-            {
-                var map = part as IQueryPartDecorator;
-                if (map == null)
-                    continue;
+            //foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
+            //{
+            //    var map = part as IQueryPartDecorator;
+            //    if (map == null)
+            //        continue;
 
-                var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+            //    var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
-                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
-                if (subpart != null)
-                    map.Remove(subpart);
-            }
+            //    //var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
+            //    var subpart = map.Parts.OfType<IFieldQueryPart>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
+            //    if (subpart != null)
+            //        map.Remove(subpart);
 
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+            //    map.Add(new IgnoreFieldQueryPart(subpart.Field, subpart.FieldAlias));
+            //}
+
+            //return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+
+            return Ignore(predicate);
         }
 
         /// <summary>

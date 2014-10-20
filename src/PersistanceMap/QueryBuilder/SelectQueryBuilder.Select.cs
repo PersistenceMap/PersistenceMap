@@ -10,6 +10,31 @@ namespace PersistanceMap.QueryBuilder
 {
     public partial class SelectQueryBuilder<T> : IJoinQueryExpression<T>
     {
+        #region Private implementation
+
+        private SelectQueryBuilder<T> Ignore(Expression<Func<T, object>> predicate)
+        {
+            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
+            {
+                var map = part as IQueryPartDecorator;
+                if (map == null)
+                    continue;
+
+                var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+
+                //var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
+                var subpart = map.Parts.OfType<IFieldQueryPart>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
+                if (subpart != null)
+                    map.Remove(subpart);
+
+                map.Add(new IgnoreFieldQueryPart(fieldName, ""));
+            }
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+        #endregion
+
         #region ISelectQueryProvider<T> Implementation
 
         #region Join Expressions
@@ -117,6 +142,16 @@ namespace PersistanceMap.QueryBuilder
             var entity = typeof(TSource).Name;
 
             return Map(sourceField, aliasField, entity, null);
+        }
+
+        /// <summary>
+        /// Marks a field to be ignored in the query
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        ISelectQueryExpression<T> ISelectQueryExpression<T>.Ignore(Expression<Func<T, object>> predicate)
+        {
+            return Ignore(predicate);
         }
 
         #endregion

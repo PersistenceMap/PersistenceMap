@@ -56,7 +56,7 @@ namespace PersistanceMap.QueryParts
 
         public OperationType OperationType { get; set; }
 
-        public string Compile()
+        public virtual string Compile()
         {
             var sb = new StringBuilder();
 
@@ -80,5 +80,18 @@ namespace PersistanceMap.QueryParts
         }
 
         #endregion
+    }
+
+    internal class IgnoreFieldQueryPart : FieldQueryPart
+    {
+        public IgnoreFieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null) :
+            base(field, fieldalias, entityalias, entity, id)
+        {
+        }
+
+        public override string Compile()
+        {
+            return "";
+        }
     }
 }

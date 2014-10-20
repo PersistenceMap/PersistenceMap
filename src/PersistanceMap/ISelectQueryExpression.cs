@@ -91,6 +91,13 @@ namespace PersistanceMap
         /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias);
 
+        /// <summary>
+        /// Marks a field to be ignored in the query
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        ISelectQueryExpression<T> Ignore(Expression<Func<T, object>> predicate);
+
 
 
         IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate);
