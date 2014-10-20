@@ -11,7 +11,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
         {
         }
 
-        private static QueryPartsBuilder _instance;
+        private static QueryPartsBuilder instance;
 
         /// <summary>
         /// Gets the Singleton instance of the QueryPartsBuilder
@@ -20,10 +20,10 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
         {
             get
             {
-                if (_instance == null)
-                    _instance = new QueryPartsBuilder();
+                if (instance == null)
+                    instance = new QueryPartsBuilder();
 
-                return _instance;
+                return instance;
             }
         }
 

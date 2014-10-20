@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -29,14 +28,15 @@ namespace PersistanceMap.Internals
                 if (memberExpression == null)
                 {
                     //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
-                    Trace.WriteLine("Property is not a MemberAccessExpression");
+                    Logger.Write("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
+
                     try
                     {
                         return propertyExpression.Compile().DynamicInvoke().ToString(); //    .Body.ToString();
                     }
                     catch (Exception e)
                     {
-                        Trace.WriteLine(e);
+                        Logger.Write(e);
                         return propertyExpression.ToString();
                     }
                 }
@@ -45,14 +45,14 @@ namespace PersistanceMap.Internals
             var propertyInfo = memberExpression.Member as PropertyInfo;
             if (propertyInfo == null)
             {
-                Trace.WriteLine("Property is not a PropertyInfo");
+                Logger.Write("Property is not a PropertyInfo");
                 return memberExpression.Member.ToString();
             }
 
             if (propertyInfo.GetGetMethod(true).IsStatic)
             {
                 //throw new ArgumentException("Property is static", "propertyExpression");
-                Trace.WriteLine("Property is static");
+                Logger.Write("Property is static");
                 return memberExpression.Member.ToString();
             }
 

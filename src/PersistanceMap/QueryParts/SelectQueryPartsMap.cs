@@ -20,6 +20,11 @@ namespace PersistanceMap.QueryParts
             }
         }
 
+        
+        
+      
+		
+
         #endregion
 
         #region IQueryPartsMap Implementation

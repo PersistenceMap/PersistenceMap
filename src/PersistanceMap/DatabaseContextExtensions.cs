@@ -1,5 +1,4 @@
-﻿using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

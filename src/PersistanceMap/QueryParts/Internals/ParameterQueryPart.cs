@@ -122,8 +122,8 @@ namespace PersistanceMap.QueryParts
             }
             catch (Exception e)
             {
-                Trace.WriteLine(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof (T).Name));
-                Trace.WriteLine(e.Message);
+                Logger.Write(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof(T).Name));
+                Logger.Write(e.Message);
 
                 return false;
             }

@@ -1,5 +1,4 @@
 ﻿using PersistanceMap.Compiler;
-using PersistanceMap.Internals;
 using System;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -41,7 +40,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Trace.TraceError("PersistanceMap - An error occured while executing a uery:\n{0}", ex.Message);
                 throw;
             }
         }
@@ -65,7 +64,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Trace.TraceError("PersistanceMap - An error occured while executing a uery:\n{0}", ex.Message);
                 throw;
             }
         }

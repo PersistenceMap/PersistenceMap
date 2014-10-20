@@ -80,18 +80,31 @@ namespace PersistanceMap.Test
         [Test]
         public void SelectImplementationTestMethod()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
             using (var context = connection.Open())
             {
-                // for with aftermap
-                var people = context.From<Employee>()
-                    .For<Person>()
-                    .Ignore(p => p.State)
-                    .AfterMap(p => p.State = "ok")
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // select the properties that are defined in the mapping
+                context.From<WarriorWithName>()
+                    .Map(w => w.WeaponID, "ID")
+                    .Map(w => w.WeaponID)
+                    .Map(w => w.Race, "Name")
+                    .Map(w => w.Race)
                     .Select();
 
-                Assert.IsTrue(people.Any());
-                Assert.IsFalse(people.Any(p => p.State != "ok"));
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    //.Ignore(w => w.ID)
+                    //.Ignore(w => w.Name)
+                    //.Ignore(w => w.SpecialSkill)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID, WarriorWithName.Race from WarriorWithName");
             }
         }
     }

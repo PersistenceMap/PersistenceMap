@@ -15,22 +15,22 @@ namespace PersistanceMap.Compiler
     public class LambdaExpressionToSqlCompiler
     {
         //TODO: separator has to be set as an option!
-        string separator = " ";
+        readonly string _separator = " ";
 
         //TODO: useFieldName has to be set as an option!
-        bool _useFieldName = true;
+        readonly bool _useFieldName = true;
         private Dictionary<Type, string> _aliasMap;
 
         public bool PrefixFieldWithTableName { get; set; }
 
-        static LambdaExpressionToSqlCompiler _instance;
+        static LambdaExpressionToSqlCompiler instance;
         public static LambdaExpressionToSqlCompiler Instance
         {
             get
             {
-                if (_instance == null)
-                    _instance = new LambdaExpressionToSqlCompiler();
-                return _instance;
+                if (instance == null)
+                    instance = new LambdaExpressionToSqlCompiler();
+                return instance;
             }
         }
 
@@ -248,7 +248,7 @@ namespace PersistanceMap.Compiler
                     return new PartialSqlString(string.Format("{0}({1},{2})", operand, left, right));
 
                 default:
-                    return new PartialSqlString("(" + left + separator + operand + separator + right + ")");
+                    return new PartialSqlString("(" + left + _separator + operand + _separator + right + ")");
             }
         }
 

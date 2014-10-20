@@ -4,14 +4,16 @@ namespace PersistanceMap.Sql
 {
     public class DialectProvider : BaseDialectProvider
     {
-        static DialectProvider _instance;
+        const string Iso8601Format = "yyyy-MM-dd";
+
+        static DialectProvider instance;
         public static DialectProvider Instance
         {
             get
             {
-                if (_instance == null)
-                    _instance = new DialectProvider();
-                return _instance;
+                if (instance == null)
+                    instance = new DialectProvider();
+                return instance;
             }
         }
 
@@ -22,13 +24,12 @@ namespace PersistanceMap.Sql
 
             if (fieldType == typeof(Guid))
             {
-                var guid = (Guid)value;
-                return CompactGuid ? "'" + BitConverter.ToString(guid.ToByteArray()).Replace("-", "") + "'" : string.Format("CAST('{0}' AS {1})", guid, StringGuidDefinition);
+                //var guid = (Guid)value;
+                return /*CompactGuid ? "'" + BitConverter.ToString(guid.ToByteArray()).Replace("-", "") + "'" :*/ string.Format("CAST('{0}' AS {1})", (Guid)value, StringGuidDefinition);
             }
 
             if (fieldType == typeof(DateTime) || fieldType == typeof(DateTime?))
             {
-                var dateValue = (DateTime)value;
                 /*
                  * Original *
                  //TODO: check if this is correct!
@@ -43,31 +44,28 @@ namespace PersistanceMap.Sql
                 */
 
                 /*New*/
-                const string iso8601Format = "yyyy-MM-dd";
-                return base.GetQuotedValue(dateValue.ToString(iso8601Format), typeof(string));
+                
+                return base.GetQuotedValue(((DateTime)value).ToString(Iso8601Format), typeof(string));
             }
 
             if ((value is TimeSpan) && (fieldType == typeof(Int64) || fieldType == typeof(Int64?)))
             {
-                var longValue = ((TimeSpan)value).Ticks;
-                return base.GetQuotedValue(longValue, fieldType);
+                return base.GetQuotedValue(((TimeSpan)value).Ticks, fieldType);
             }
 
             if (fieldType == typeof(bool?) || fieldType == typeof(bool))
             {
-                var boolValue = (bool)value;
-                return base.GetQuotedValue(boolValue ? "1" : "0", typeof(string));
+                return base.GetQuotedValue((bool)value ? "1" : "0", typeof(string));
             }
 
-            if (fieldType == typeof(decimal?) || fieldType == typeof(decimal) ||
-                fieldType == typeof(double?) || fieldType == typeof(double) ||
-                fieldType == typeof(float?) || fieldType == typeof(float))
+            if (fieldType == typeof(decimal?) || fieldType == typeof(decimal) || fieldType == typeof(double?) || fieldType == typeof(double) || fieldType == typeof(float?) || fieldType == typeof(float))
             {
                 var s = base.GetQuotedValue(value, fieldType);
                 if (s.Length > 20) 
                     s = s.Substring(0, 20);
 
-                return "'" + s + "'"; // when quoted exception is more clear!
+                // when quoted exception is more clear!
+                return "'" + s + "'"; 
             }
 
             return base.GetQuotedValue(value, fieldType);

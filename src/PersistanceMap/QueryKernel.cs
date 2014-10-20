@@ -2,7 +2,6 @@
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -158,7 +157,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Logger.Write(ex);
             }
 
             return row;
@@ -200,7 +199,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex);
+                Logger.Write(ex);
             }
 
             return objWithProperties;

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PersistanceMap.Compiler;
 
 namespace PersistanceMap.Sql
 {
@@ -16,7 +11,7 @@ namespace PersistanceMap.Sql
         public string StringColumnDefinition;
         public string StringLengthColumnDefinitionFormat;
 
-        protected bool CompactGuid;
+        //private bool CompactGuid;
         internal const string StringGuidDefinition = "VARCHAR2(37)";
 
         public string AutoIncrementDefinition = "AUTOINCREMENT"; //SqlServer express limit
@@ -31,7 +26,7 @@ namespace PersistanceMap.Sql
         public string TimeColumnDefinition = "BIGINT";
         public string DateTimeOffsetColumnDefinition = "DATETIMEOFFSET";
 
-        protected bool _useUnicode;
+        private bool _useUnicode;
         public virtual bool UseUnicode
         {
             get

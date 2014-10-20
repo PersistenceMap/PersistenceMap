@@ -1,5 +1,4 @@
-﻿using PersistanceMap.QueryBuilder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,38 +15,6 @@ namespace PersistanceMap
         }
 
         public IContextProvider ContextProvider { get; private set; }
-
-        //public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
-        //{
-        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-        //    {
-        //        return this.Map<T>(reader);
-        //    }
-        //}
-
-        //public void Execute(CompiledQuery compiledQuery)
-        //{
-        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-        //    {
-        //        // make sure Disposed is called on reader!
-        //    }
-        //}
-
-        //public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
-        //{
-        //    using (var reader = ContextProvider.Execute(compiledQuery.QueryString))
-        //    {
-        //        foreach (var expression in expressions)
-        //        {
-        //            // invoke expression with the reader
-        //            expression.Invoke(reader);
-
-        //            // read next resultset
-        //            if(reader.DataReader.IsClosed || !reader.DataReader.NextResult())
-        //                break;
-        //        }
-        //    }
-        //}
 
         public void Commit()
         {

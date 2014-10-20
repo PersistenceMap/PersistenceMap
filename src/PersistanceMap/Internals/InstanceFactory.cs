@@ -16,7 +16,7 @@ namespace PersistanceMap.Internals
     /// </summary>
     internal static class InstanceFactory
     {
-        static Dictionary<Type, EmptyConstructorDelegate> ConstructorMethods = new Dictionary<Type, EmptyConstructorDelegate>();
+        static Dictionary<Type, EmptyConstructorDelegate> constructorMethods = new Dictionary<Type, EmptyConstructorDelegate>();
 
         /// <summary>
         /// Factory Method that creates an instance of type T
@@ -25,7 +25,7 @@ namespace PersistanceMap.Internals
         /// <returns>An instance of type T</returns>
         public static T CreateInstance<T>()
         {
-            return (T)TypeMeta<T>.EmptyCtorFunction();
+            return (T)ConstructorProvider<T>.EmptyConstructorFunction();
         }
 
         private static object CreateInstance(this Type type)
@@ -102,38 +102,41 @@ namespace PersistanceMap.Internals
 
         private static EmptyConstructorDelegate GetConstructorMethod(Type type)
         {
-            EmptyConstructorDelegate emptyCtorFunction;
-            if (ConstructorMethods.TryGetValue(type, out emptyCtorFunction))
-            {
-                return emptyCtorFunction;
-            }
+            EmptyConstructorDelegate emptyConstructorFunction;
+            if (constructorMethods.TryGetValue(type, out emptyConstructorFunction))
+                return emptyConstructorFunction;
 
-            emptyCtorFunction = GetConstructorMethodToCache(type);
+            emptyConstructorFunction = GetConstructorMethodToCache(type);
 
             Dictionary<Type, EmptyConstructorDelegate> snapshot;
             Dictionary<Type, EmptyConstructorDelegate> newCache;
 
             do
             {
-                snapshot = ConstructorMethods;
-                newCache = new Dictionary<Type, EmptyConstructorDelegate>(ConstructorMethods);
-                newCache[type] = emptyCtorFunction;
+                snapshot = constructorMethods;
+                newCache = new Dictionary<Type, EmptyConstructorDelegate>(constructorMethods);
+                newCache[type] = emptyConstructorFunction;
             } 
-            while (!ReferenceEquals(Interlocked.CompareExchange(ref ConstructorMethods, newCache, snapshot), snapshot));
+            while (!ReferenceEquals(Interlocked.CompareExchange(ref constructorMethods, newCache, snapshot), snapshot));
 
-            return emptyCtorFunction;
+            return emptyConstructorFunction;
         }
 
         #endregion
 
         #region Internal Classes
 
-        private static class TypeMeta<T>
+        /// <summary>
+        /// Static class that searches for the constructor only once
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private static class ConstructorProvider<T>
         {
-            public static readonly EmptyConstructorDelegate EmptyCtorFunction;
-            static TypeMeta()
+            public static readonly EmptyConstructorDelegate EmptyConstructorFunction;
+
+            static ConstructorProvider()
             {
-                EmptyCtorFunction = GetConstructorMethodToCache(typeof(T));
+                EmptyConstructorFunction = GetConstructorMethodToCache(typeof(T));
             }
         }
 

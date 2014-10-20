@@ -163,7 +163,7 @@ namespace PersistanceMap
 
     public interface IAfterMapQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
-        IAfterMapQueryExpression<T> AfterMap(Action<T> predicate);
+        //IAfterMapQueryExpression<T> AfterMap(Action<T> predicate);
 
         /// <summary>
         /// Marks the provided field as ignored. The field will not be included in the select.

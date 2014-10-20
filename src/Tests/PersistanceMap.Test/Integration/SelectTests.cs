@@ -306,6 +306,24 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
+        [Test]
+        public void SelectWithoutEmptyConstructor()
+        {
+            var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = dbConnection.Open())
+            {
+                var orders = context.Select<PersistanceMap.Test.TableTypes.InvalidTypes.Orders>();
+                /* *Expected Query*
+                select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
+                from Orders
+                */
+
+                var orders2 = context.Select<Orders>();
+
+                Assert.IsNotNull(orders);
+                Assert.IsTrue(orders.Any());
+            }
+        }
 
 
 

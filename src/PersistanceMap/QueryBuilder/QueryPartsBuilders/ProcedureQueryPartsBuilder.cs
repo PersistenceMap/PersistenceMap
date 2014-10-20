@@ -10,19 +10,19 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
         {
         }
 
-        private static ProcedureQueryPartsBuilder _instance;
+        private static ProcedureQueryPartsBuilder instance;
 
         /// <summary>
         /// Gets the Singleton instance of the ProcedureQueryPartsBuilder
         /// </summary>
-        public static ProcedureQueryPartsBuilder Instance
+        public static new ProcedureQueryPartsBuilder Instance
         {
             get
             {
-                if (_instance == null)
-                    _instance = new ProcedureQueryPartsBuilder();
+                if (instance == null)
+                    instance = new ProcedureQueryPartsBuilder();
 
-                return _instance;
+                return instance;
             }
         }
 

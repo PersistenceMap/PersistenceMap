@@ -54,6 +54,7 @@
     <Compile Include="IInsertQueryExpression.cs" />
     <Compile Include="Internals\ExpressionFactory.cs" />
     <Compile Include="Internals\FieldHelper.cs" />
+    <Compile Include="Internals\Logger.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="QueryBuilder\Commands\DeleteQueryCommand.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />

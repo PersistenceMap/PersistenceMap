@@ -1,10 +1,7 @@
-﻿using PersistanceMap.QueryBuilder;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Threading;
 
 namespace PersistanceMap

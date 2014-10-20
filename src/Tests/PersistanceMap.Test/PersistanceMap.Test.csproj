@@ -34,6 +34,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\PersistanceMap.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.core">
       <HintPath>..\..\..\packages\NUnitTestAdapter.1.0\lib\nunit.core.dll</HintPath>
@@ -59,6 +65,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\PersistanceMap.snk">
+      <Link>Properties\PersistanceMap.snk</Link>
+    </None>
+  </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
       <ItemGroup>
@@ -80,6 +91,7 @@
     <Compile Include="TableTypes\Customers.cs" />
     <Compile Include="TableTypes\Employee.cs" />
     <Compile Include="TableTypes\EmployeeTerritories.cs" />
+    <Compile Include="TableTypes\InvalidTypes\Orders.cs" />
     <Compile Include="TableTypes\Orders.cs" />
     <Compile Include="TableTypes\OrderDetails.cs" />
     <Compile Include="TableTypes\OrderWithDetail.cs" />
@@ -102,6 +114,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="TableTypes\Warrior.cs" />
+    <Compile Include="TableTypes\WarriorWithName.cs" />
     <Compile Include="TableTypes\Weapon.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>

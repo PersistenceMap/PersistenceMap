@@ -150,5 +150,25 @@ namespace PersistanceMap.Test.Expression
                     .Select();
             }
         }
+
+        [Test]
+        public void SelectWithINExpression()
+        {
+            var expected = "select ID, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
+               
+            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
+            using (var context = connection.Open())
+            {
+                IEnumerable<string> races = new List<string>
+                {
+                    "Elf",
+                    "Dwarf"
+                };
+
+                context.From<Warrior>()
+                    .Where(w => races.Contains(w.Race))
+                    .Select();
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using NUnit.Framework;
 using PersistanceMap.Compiler;
 using System.Data;
 

@@ -97,13 +97,15 @@ namespace PersistanceMap.QueryParts
         {
             var sb = new StringBuilder();
 
-            var last = Parts.LastOrDefault();
+            //var last = Parts.LastOrDefault();
             foreach (var part in Parts)
             {
                 var value = part.Compile();
                 if (string.IsNullOrEmpty(value))
                     continue;
+
                 sb.Append(value);
+                
                 //switch (OperationType)
                 //{
                 //    case PersistanceMap.OperationType.Values:

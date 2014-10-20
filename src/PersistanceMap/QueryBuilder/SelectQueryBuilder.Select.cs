@@ -241,6 +241,11 @@ namespace PersistanceMap.QueryBuilder
         //    throw new NotImplementedException();
         //}
 
+        /// <summary>
+        /// Defines the fields that will be used in the query
+        /// </summary>
+        /// <typeparam name="TNew"></typeparam>
+        /// <returns></returns>
         public IAfterMapQueryExpression<TNew> For<TNew>()
         {
             var members = typeof(TNew).GetSelectionMembers();
@@ -259,10 +264,14 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<TNew>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Defines the fields that will be used in the query
+        /// </summary>
+        /// <typeparam name="TAno"></typeparam>
+        /// <param name="anonym"></param>
+        /// <returns></returns>
         public IAfterMapQueryExpression<TAno> For<TAno>(Expression<Func<TAno>> anonym)
         {
-            //throw new NotImplementedException("For has to make sure that the resultset values equals the defined type");
-            //return new SelectQueryProvider<TAno>(Context, QueryPartsMap);
             return For<TAno>();
         }
 

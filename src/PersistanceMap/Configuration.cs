@@ -9,16 +9,16 @@ namespace PersistanceMap
             StripUpperInLike = true;
         }
 
-        static bool? _treatEnumAsInteger;
+        static bool? treatEnumAsInteger;
         public static bool TreatEnumAsInteger
         {
             get
             {
-                return _treatEnumAsInteger != null ? _treatEnumAsInteger.Value : false;
+                return treatEnumAsInteger != null ? treatEnumAsInteger.Value : false;
             }
             set
             {
-                _treatEnumAsInteger = value;
+                treatEnumAsInteger = value;
             }
         }
 

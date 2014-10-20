@@ -99,6 +99,8 @@ namespace PersistanceMap
         /// <summary>
         /// defines the operation as a sufix of a out parameter (select @outparam)
         /// </summary>
-        OutParameterSufix = 43
+        OutParameterSufix = 43,
+
+        AfterMap = 200
     }
 }

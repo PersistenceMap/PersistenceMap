@@ -3,7 +3,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
-using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.QueryBuilder
@@ -104,17 +103,12 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
             }
 
-            var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
-            //simple.ChildSeparator = ", ";
+            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
 
-            //var expr = Context.ContextProvider.ExpressionCompiler;
-            //var query = expr.Compile<T>(queryParts);
-
-            //Context.Execute(query);
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 

@@ -8,10 +8,13 @@ namespace PersistanceMap.QueryBuilder
 {
     public partial class SelectQueryBuilder<T> : IAfterMapQueryExpression<T>, IQueryExpression
     {
-        public IAfterMapQueryExpression<T> AfterMap(Action<T> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        //public IAfterMapQueryExpression<T> AfterMap(Action<T> predicate)
+        //{
+        //    //QueryPartsMap.Add(new 
+
+
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Marks the provided field as ignored. The field will not be included in the select.

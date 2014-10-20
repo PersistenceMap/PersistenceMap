@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -19,19 +18,19 @@ namespace PersistanceMap
 
             try
             {
-                var oInstanceParam = Expression.Parameter(typeof(object), "oInstanceParam");
-                var instanceParam = Expression.Convert(oInstanceParam, propertyInfo.DeclaringType);
+                var objectInstanceParam = Expression.Parameter(typeof(object), "objectInstanceParam");
+                var instanceParam = Expression.Convert(objectInstanceParam, propertyInfo.DeclaringType);
 
                 var exprCallPropertyGetFn = Expression.Call(instanceParam, getMethodInfo);
                 var oExprCallPropertyGetFn = Expression.Convert(exprCallPropertyGetFn, typeof(object));
 
-                var propertyGetFn = Expression.Lambda<PropertyGetterDelegate>(oExprCallPropertyGetFn, oInstanceParam).Compile();
+                var propertyGetFn = Expression.Lambda<PropertyGetterDelegate>(oExprCallPropertyGetFn, objectInstanceParam).Compile();
 
                 return propertyGetFn;
             }
             catch (Exception ex)
             {
-                Trace.Write(ex.Message);
+                Logger.Write(ex.Message);
                 throw;
             }
         }
