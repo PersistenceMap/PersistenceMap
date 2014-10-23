@@ -22,11 +22,14 @@ namespace PersistanceMap.QueryBuilder
 
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
-                //var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
-                var subpart = map.Parts.OfType<IFieldQueryPart>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
-                if (subpart != null)
+                // remove all previous mappings of the ignored field
+                var subparts = map.Parts.OfType<IFieldQueryPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName);
+                foreach (var subpart in subparts.ToList())
+                {
                     map.Remove(subpart);
+                }
 
+                // add a field marked as ignored
                 map.Add(new IgnoreFieldQueryPart(fieldName, ""));
             }
 

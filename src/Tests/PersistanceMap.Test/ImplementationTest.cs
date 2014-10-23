@@ -80,42 +80,25 @@ namespace PersistanceMap.Test
         [Test]
         public void SelectImplementationTestMethod()
         {
-            //var provider = new CallbackContextProvider();
-            //var connection = new DatabaseConnection(provider);
-            //using (var context = connection.Open())
-            //{
-            //    var sql = "";
-            //    provider.Callback += s => sql = s.Flatten();
-                
-            //    // ignore a member in the select
-            //    context.From<WarriorWithName>()
-            //        .Ignore(w => w.ID)
-            //        .Ignore(w => w.Name)
-            //        .Ignore(w => w.SpecialSkill)
-            //        .Select();
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
 
-            //    Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+                // ignore a member in the select
+                context.From<Warrior>(w => w.ID == 1)
+                    .Select();
 
-            //    // ignore a member in the select
-            //    context.From<WarriorWithName>()
-            //        .Ignore(w => w.ID)
-            //        .Ignore(w => w.Name)
-            //        .Ignore(w => w.SpecialSkill)
-            //        .Map(w => w.Name)
-            //        .Select();
+                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
 
-            //    Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+                // ignore a member in the select
+                context.Select<Warrior>(w => w.ID == 1);
 
-            //    // ignore a member in the select
-            //    context.From<WarriorWithName>()
-            //        .Ignore(w => w.ID)
-            //        .Ignore(w => w.Name)
-            //        .Map(w => w.WeaponID, "TestFieldName")
-            //        .Ignore(w => w.SpecialSkill)
-            //        .Select();
+                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
 
-            //    Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
-            //}
+            }
         }
     }
 }

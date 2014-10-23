@@ -36,10 +36,19 @@ namespace PersistanceMap
 
         public static IEnumerable<T> Select<T>(this IDatabaseContext context)
         {
-            var builder = new SelectQueryBuilder<T>(context)
+            var query = new SelectQueryBuilder<T>(context)
                 .From<T>();
 
-            return builder.Select<T>();
+            return query.Select<T>();
+        }
+
+        public static IEnumerable<T> Select<T>(this IDatabaseContext context, Expression<Func<T, bool>> predicate)
+        {
+            var query = new SelectQueryBuilder<T>(context)
+                .From<T>()
+                .Where(predicate);
+
+            return query.Select<T>();
         }
 
         public static ISelectQueryExpression<T> From<T>(this IDatabaseContext context)
@@ -59,6 +68,13 @@ namespace PersistanceMap
             return new SelectQueryBuilder<T>(context)
                 .From<T>()
                 .Join<TJoin>(predicate);
+        }
+
+        public static IWhereQueryExpression<T> From<T>(this IDatabaseContext context, Expression<Func<T,bool>> predicate)
+        {
+            return new SelectQueryBuilder<T>(context)
+                .From<T>()
+                .Where(predicate);
         }
 
         #endregion
