@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -81,16 +82,17 @@ namespace PersistanceMap.Internals
             if (emptyCtor != null)
             {
 #if SL5 
-                var dm = new System.Reflection.Emit.DynamicMethod("MyCtor", type, Type.EmptyTypes);
+                var dm = new DynamicMethod("MyCtor", type, Type.EmptyTypes);
 #else
-                var dm = new System.Reflection.Emit.DynamicMethod("MyCtor", type, Type.EmptyTypes, typeof(TypeExtensions).Module, true);
+                //var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, typeof(TypeExtensions).Module, true);
+                var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, type.Module, true);
 #endif
-                var ilgen = dm.GetILGenerator();
-                ilgen.Emit(System.Reflection.Emit.OpCodes.Nop);
-                ilgen.Emit(System.Reflection.Emit.OpCodes.Newobj, emptyCtor);
-                ilgen.Emit(System.Reflection.Emit.OpCodes.Ret);
+                var ilGenerator = dynamicMethod.GetILGenerator();
+                ilGenerator.Emit(System.Reflection.Emit.OpCodes.Nop);
+                ilGenerator.Emit(System.Reflection.Emit.OpCodes.Newobj, emptyCtor);
+                ilGenerator.Emit(System.Reflection.Emit.OpCodes.Ret);
 
-                return (EmptyConstructorDelegate)dm.CreateDelegate(typeof(EmptyConstructorDelegate));
+                return (EmptyConstructorDelegate)dynamicMethod.CreateDelegate(typeof(EmptyConstructorDelegate));
             }
 
             if (type == typeof(string))
@@ -171,6 +173,22 @@ namespace PersistanceMap.Internals
                 && type.IsGenericType && type.Name.Contains("AnonymousType")
                 && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
                 && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+        }
+
+        public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
+        {
+            foreach (var genericTypeDefinition in genericTypeDefinitions)
+            {
+                var genericType = type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition);
+                if (genericType == null && type == genericTypeDefinition)
+                {
+                    genericType = type;
+                }
+
+                if (genericType != null)
+                    return genericType;
+            }
+            return null;
         }
 
         #endregion

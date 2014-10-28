@@ -539,7 +539,7 @@ GO
 
 create procedure SalesByYear
 	@BeginDate DateTime, @EndDate DateTime AS
-SELECT Orders.ShippedDate, Orders.OrdersID, OrderSubtotals.Subtotal, DATENAME(yy,ShippedDate) AS Year
+SELECT Orders.ShippedDate, Orders.OrdersID, OrderSubtotals.Subtotal, DATENAME(yy,ShippedDate) AS Year, 1 AS TestForBool
 FROM Orders INNER JOIN OrderSubtotals ON Orders.OrdersID = OrderSubtotals.OrdersID
 WHERE Orders.ShippedDate Between @BeginDate And @EndDate
 GO

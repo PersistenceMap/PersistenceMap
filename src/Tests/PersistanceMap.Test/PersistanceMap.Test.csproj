@@ -99,6 +99,7 @@
     <Compile Include="TableTypes\ProductsWithIndexer.cs" />
     <Compile Include="TableTypes\Products.cs" />
     <Compile Include="TableTypes\SalesByYear.cs" />
+    <Compile Include="TableTypes\SalesByYearWithBase.cs" />
     <Compile Include="TableTypes\SimpleSalesByYear.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

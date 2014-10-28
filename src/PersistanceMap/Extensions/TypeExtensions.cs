@@ -66,21 +66,21 @@ namespace PersistanceMap
             return null;
         }
         
-        public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
-        {
-            foreach (var genericTypeDefinition in genericTypeDefinitions)
-            {
-                var genericType = type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition);
-                if (genericType == null && type == genericTypeDefinition)
-                {
-                    genericType = type;
-                }
+        //public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
+        //{
+        //    foreach (var genericTypeDefinition in genericTypeDefinitions)
+        //    {
+        //        var genericType = type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition);
+        //        if (genericType == null && type == genericTypeDefinition)
+        //        {
+        //            genericType = type;
+        //        }
 
-                if (genericType != null)
-                    return genericType;
-            }
-            return null;
-        }
+        //        if (genericType != null)
+        //            return genericType;
+        //    }
+        //    return null;
+        //}
 
         public static Type GetTypeWithGenericTypeDefinitionOf(this Type type, Type genericTypeDefinition)
         {

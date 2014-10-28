@@ -25,6 +25,25 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
+        public void ProcedureWithResultWithoutParamNamesAndBaseClass()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // proc with resultset without parameter names
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
+                    .AddParameter(() => DateTime.Today)
+                    .For<SalesByYearWithBase>()
+                    .Map("OrdersID", p => p.ID)
+                    .Map("TestForBool", p => p.IsTestForBool)
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+            }
+        }
+
+        [Test]
         public void ProcedureWithResultWithParamNames()
         {
             var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));

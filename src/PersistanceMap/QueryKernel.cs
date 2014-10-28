@@ -2,6 +2,7 @@
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -163,38 +164,38 @@ namespace PersistanceMap
             return row;
         }
 
-        public T ReadToObject<T>(IReaderContext context, FieldDefinition[] fieldDefs, Dictionary<string, int> indexCache)
+        public T ReadToObject<T>(IReaderContext context, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
         {
             var objWithProperties = InstanceFactory.CreateInstance<T>();
 
             try
             {
-                foreach (var fieldDef in fieldDefs)
+                foreach (var fieldDefinition in fieldDefinitions)
                 {
                     int index;
                     if (indexCache != null)
                     {
-                        if (!indexCache.TryGetValue(fieldDef.MemberName, out index))
+                        if (!indexCache.TryGetValue(fieldDefinition.MemberName, out index))
                         {
-                            index = context.DataReader.GetColumnIndex(fieldDef.FieldName);
+                            index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
                             //if (index == NotFound)
                             //{
                             //    index = TryGuessColumnIndex(fieldDef.FieldName, dataReader);
                             //}
 
-                            indexCache.Add(fieldDef.MemberName, index);
+                            indexCache.Add(fieldDefinition.MemberName, index);
                         }
                     }
                     else
                     {
-                        index = context.DataReader.GetColumnIndex(fieldDef.FieldName);
+                        index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
                         //if (index == NotFound)
                         //{
                         //    index = TryGuessColumnIndex(fieldDef.FieldName, dataReader);
                         //}
                     }
 
-                    SetValue(context, fieldDef, index, objWithProperties);
+                    SetValue(context, fieldDefinition, index, objWithProperties);
                 }
             }
             catch (Exception ex)
@@ -214,6 +215,8 @@ namespace PersistanceMap
                 return;
 
             var convertedValue = ConvertDatabaseValueToTypeValue(context.DataReader.GetValue(colIndex), fieldDef.MemberType);
+            if (convertedValue == null)
+                return;
 
             try
             {
@@ -288,6 +291,7 @@ namespace PersistanceMap
                 {
                     return DateTimeOffset.Parse(strValue, null, DateTimeStyles.RoundtripKind);
                 }
+
                 if (value is DateTime)
                 {
                     return new DateTimeOffset((DateTime)value);
@@ -349,7 +353,26 @@ namespace PersistanceMap
             //    Trace.WriteLine(e);
             //    throw;
             //}
-            throw new NotImplementedException();
+
+            if (memberType == typeof(bool))
+            {
+                if (strValue != null)
+                {
+                    bool boolVal;
+                    if (Boolean.TryParse(strValue, out boolVal))
+                        return boolVal;
+                }
+
+                if (value is int)
+                {
+                    return (int)value == 1;
+                }
+            }
+
+            Logger.Write(string.Format("QueryKernel - Cannot convert value {0} to type {1}", value, memberType));
+
+            //throw new NotImplementedException();
+            return null;
         }
 
         public static ulong ConvertToULong(byte[] bytes)

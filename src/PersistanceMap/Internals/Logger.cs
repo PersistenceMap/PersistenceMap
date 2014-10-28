@@ -6,17 +6,17 @@ namespace PersistanceMap
     {
         public static void Write(string message, params object[] args)
         {
-            Trace.WriteLine(string.Format(message, args), "PersistanceMap");
+            Trace.WriteLine(string.Format("### PersistanceMap: {0}", string.Format(message, args)), "PersistanceMap");
         }
 
         public static void Write(string message)
         {
-            Trace.WriteLine(message, "PersistanceMap");
+            Trace.WriteLine(string.Format("### PersistanceMap: {0}", message), "PersistanceMap");
         }
 
         public static void Write(object message)
         {
-            Trace.WriteLine(message, "PersistanceMap");
+            Trace.WriteLine(string.Format("### PersistanceMap: {0}", message), "PersistanceMap");
         }
     }
 }
