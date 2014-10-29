@@ -103,54 +103,44 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             };
 
             queryParts.Add(part);
-
-
-
-
-
-
-
-
-
-
+            
             return part;
         }
 
         internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
         {
-            foreach (var part in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
+            foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
             {
-                var map = part as IQueryPartDecorator;
-                if (map == null)
-                    continue;
-
-                // add all mapped fields to a collection to ensure that they are used in the query
-                var unusedMappedFields = map.Parts.ToList();
-
-                foreach (var field in fields)
+                if (!map.IsSealded)
                 {
-                    // check if the field was allready mapped previously
-                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
-                    if (mappedFields.Any())
+                    // add all mapped fields to a collection to ensure that they are used in the query
+                    var unusedMappedFields = map.Parts.ToList();
+
+                    foreach (var field in fields)
                     {
-                        foreach (var mappedField in mappedFields)
+                        // check if the field was allready mapped previously
+                        var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
+                        if (mappedFields.Any())
                         {
-                            mappedField.Sufix = ", ";
-                            unusedMappedFields.Remove(mappedField);
+                            foreach (var mappedField in mappedFields)
+                            {
+                                mappedField.Sufix = ", ";
+                                unusedMappedFields.Remove(mappedField);
+                            }
+
+                            continue;
                         }
 
-                        continue;
+                        // add the new field
+                        field.Sufix = ", ";
+                        map.Add(field);
                     }
 
-                    // add the new field
-                    field.Sufix = ", ";
-                    map.Add(field);
-                }
-
-                // remove all mapped fields that were not included in the select fields
-                foreach (var field in unusedMappedFields)
-                {
-                    map.Remove(field);
+                    // remove all mapped fields that were not included in the select fields
+                    foreach (var field in unusedMappedFields)
+                    {
+                        map.Remove(field);
+                    }
                 }
 
                 var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;

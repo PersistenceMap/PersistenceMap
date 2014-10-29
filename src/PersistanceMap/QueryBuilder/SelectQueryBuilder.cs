@@ -108,5 +108,50 @@ namespace PersistanceMap.QueryBuilder
         }
 
         #endregion
+
+
+        #region Private Generalized Implementation of Interfaces
+
+        private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
+        {
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
+
+            // add aliases to mapcollections
+            if (!string.IsNullOrEmpty(alias))
+                part.AliasMap.Add(typeof(T), alias);
+
+            if (!string.IsNullOrEmpty(source))
+                part.AliasMap.Add(typeof(TOr), source);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+        private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
+        {
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
+
+            // add aliases to mapcollections
+            if (!string.IsNullOrEmpty(alias))
+                part.AliasMap.Add(typeof(T), alias);
+
+            if (!string.IsNullOrEmpty(source))
+                part.AliasMap.Add(typeof(TAnd), source);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+
+
+        private SelectQueryBuilder<T> ThenBy(Expression<Func<T, object>> predicate)
+        {
+            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+        }
+
+        private SelectQueryBuilder<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
+        {
+            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+        }
+
+        #endregion
     }
 }

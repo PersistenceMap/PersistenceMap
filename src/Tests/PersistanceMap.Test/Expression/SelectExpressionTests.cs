@@ -12,6 +12,62 @@ namespace PersistanceMap.Test.Expression
     public class SelectExpressionTests
     {
         [Test]
+        public void SelectWithPredicate()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // ignore a member in the select
+                context.From<Warrior>(w => w.ID == 1)
+                    .Select();
+
+                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+
+                // ignore a member in the select
+                context.Select<Warrior>(w => w.ID == 1);
+
+                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+            }
+        }
+
+        [Test]
+        public void SelectWithGroupBy()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).GroupBy(w => w.Race).Select();
+                Assert.AreEqual(sql, "select Race from Warrior GROUP BY Race");
+
+                context.From<Warrior>().GroupBy(w => w.Race).ThenBy(w => w.WeaponID).For<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Select();
+                Assert.AreEqual(sql, "select WeaponID, Race from Warrior GROUP BY Race, WeaponID");
+
+                context.From<Warrior>().For(() => new { ID = 0, Race = "" }).GroupBy(w => w.Race).ThenBy(w => w.ID).Select();
+                Assert.AreEqual(sql, "select ID, Race from Warrior GROUP BY Race, ID");
+
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).For(() => new { Race = "" }).Select();
+                Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
+
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).ThenBy<Weapon>(w => w.WeaponID).For(() => new { Race = "", WeaponID = 0 }).Select();
+                Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
+
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "" }).GroupBy(w => w.Race).Select();
+                Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
+
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "", WeaponID = 0 }).GroupBy(w => w.Race).ThenBy(w => w.WeaponID).Select();
+                Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
+            }
+        }
+
+        [Test]
         public void SelectWithAliasMapping()
         {
             var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";

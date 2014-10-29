@@ -67,6 +67,7 @@
     <Compile Include="QueryBuilder\QueryPartsBuilders\ProcedureQueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\QueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\SelectQueryPartsBuilder.cs" />
+    <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs" />
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\DelegateDecoratorQueryPart.cs" />

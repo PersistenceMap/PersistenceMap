@@ -125,16 +125,50 @@ namespace PersistanceMap
 
 
 
-
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
 
-        
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate);
     }
 
     public interface IJoinQueryExpression<T> : ISelectQueryExpression<T>, IQueryExpression
@@ -165,30 +199,135 @@ namespace PersistanceMap
 
 
 
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
     public interface IOrderQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate);
+    }
+
+    public interface IGroupQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
+    {
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate);
     }
 
     public interface IAfterMapQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
-        //IAfterMapQueryExpression<T> AfterMap(Action<T> predicate);
-
         /// <summary>
         /// Marks the provided field as ignored. The field will not be included in the select.
         /// </summary>
@@ -203,5 +342,35 @@ namespace PersistanceMap
         /// <param name="predicate">Marks the member to be mapped</param>
         /// <returns>IAfterMapQueryProvider{T}</returns>
         IAfterMapQueryExpression<T> Map<TSource>(Expression<Func<TSource, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate);
     }
 }

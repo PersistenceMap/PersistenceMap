@@ -69,6 +69,27 @@ namespace PersistanceMap.QueryBuilder
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> IAfterMapQueryExpression<T>.GroupBy(Expression<Func<T, object>> predicate)
+        {
+            return GroupBy(predicate);
+        }
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        IGroupQueryExpression<T> IAfterMapQueryExpression<T>.GroupBy<T2>(Expression<Func<T2, object>> predicate)
+        {
+            return GroupBy<T2>(predicate);
+        }
     }
 }
 

@@ -7,23 +7,43 @@ namespace PersistanceMap.QueryBuilder
     {
         #region OrderBy Expressions
 
-        public IOrderQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate)
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T> IOrderQueryExpression<T>.ThenBy(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            return ThenBy(predicate);
         }
 
-        public IOrderQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
+        IOrderQueryExpression<T> IOrderQueryExpression<T>.ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            return ThenBy<T2>(predicate);
         }
 
-        //public IOrderQueryProvider<T> ThenByDesc<TOrder>(Expression<Func<T, TOrder>> predicate)
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
         }
 
-        //public IOrderQueryProvider<T> ThenByDesc<T2, TOrder>(Expression<Func<T2, TOrder>> predicate)
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);

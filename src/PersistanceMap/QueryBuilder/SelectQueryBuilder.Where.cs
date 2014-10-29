@@ -6,38 +6,6 @@ namespace PersistanceMap.QueryBuilder
 {
     public partial class SelectQueryBuilder<T> : IWhereQueryExpression<T>, IQueryExpression
     {
-        #region Private Implementation
-
-        private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
-        {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
-
-            // add aliases to mapcollections
-            if (!string.IsNullOrEmpty(alias))
-                part.AliasMap.Add(typeof(T), alias);
-
-            if (!string.IsNullOrEmpty(source))
-                part.AliasMap.Add(typeof(TOr), source);
-
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
-        }
-
-        private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
-        {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
-
-            // add aliases to mapcollections
-            if (!string.IsNullOrEmpty(alias))
-                part.AliasMap.Add(typeof(T), alias);
-
-            if (!string.IsNullOrEmpty(source))
-                part.AliasMap.Add(typeof(TAnd), source);
-
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
-        }
-
-        #endregion
-
         #region IWhereQueryProvider Implementation
 
         #region And Expressions
@@ -120,21 +88,43 @@ namespace PersistanceMap.QueryBuilder
 
         #region OrderBy Expressions
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> IWhereQueryExpression<T>.OrderBy(Expression<Func<T, object>> predicate)
         {
             return OrderBy(predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> IWhereQueryExpression<T>.OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
             return OrderBy<T2>(predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T> IWhereQueryExpression<T>.OrderByDesc(Expression<Func<T, object>> predicate)
         {
             return OrderByDesc(predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         IOrderQueryExpression<T2> IWhereQueryExpression<T>.OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             return OrderByDesc<T2>(predicate);

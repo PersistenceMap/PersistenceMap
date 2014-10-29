@@ -164,8 +164,16 @@ namespace PersistanceMap.QueryBuilder
         public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate)
         {
             var field = FieldHelper.TryExtractPropertyName(predicate);
-            var del = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}", field));
-            throw new NotImplementedException();
+            var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}) ", field));
+
+            var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            if (parent != null)
+            {
+                parent.Add(part);
+                parent.IsSealded = true;
+            }
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -175,7 +183,17 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate)
         {
-            throw new NotImplementedException();
+            var field = FieldHelper.TryExtractPropertyName(predicate);
+            var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MIN({0}) ", field));
+
+            var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            if (parent != null)
+            {
+                parent.Add(part);
+                parent.IsSealded = true;
+            }
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
@@ -232,24 +250,75 @@ namespace PersistanceMap.QueryBuilder
 
         #region OrderBy Expressions
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by ascending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
             return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
         }
 
+        /// <summary>
+        /// Marks a field to be ordered by descending
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to order by</typeparam>
+        /// <param name="predicate">The property to order by</param>
+        /// <returns></returns>
         public IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
+        }
+
+        #endregion
+
+        #region GroupBy Expressions
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        public IGroupQueryExpression<T> GroupBy(Expression<Func<T, object>> predicate)
+        {
+            return GroupBy<T>(predicate);
+        }
+
+        /// <summary>
+        /// Marks a field to be grouped by
+        /// </summary>
+        /// <typeparam name="T2">The type containing the member to group by</typeparam>
+        /// <param name="predicate">The property to group by</param>
+        /// <returns></returns>
+        public IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate)
+        {
+            var field = FieldHelper.TryExtractPropertyName(predicate);
+            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format("GROUP BY {0}", field));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
