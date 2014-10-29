@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryParts
 
         public void AddToLast(IQueryPart part, OperationType operation)
         {
-            var last = Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == operation) as IQueryPartDecorator;
+            var last = Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == operation);
             if (last == null)
                 return;
 
@@ -49,7 +49,7 @@ namespace PersistanceMap.QueryParts
 
         public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
         {
-            var last = Parts.Where(p => p is IQueryPartDecorator).Last(predicate) as IQueryPartDecorator;
+            var last = Parts.OfType<IQueryPartDecorator>().LastOrDefault(predicate) as IQueryPartDecorator;
             if (last == null)
                 return;
 

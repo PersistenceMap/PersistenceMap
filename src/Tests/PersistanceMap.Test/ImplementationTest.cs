@@ -80,26 +80,14 @@ namespace PersistanceMap.Test
         [Test]
         public void SelectImplementationTestMethod()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
-            {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
+            //var provider = new CallbackContextProvider();
+            //var connection = new DatabaseConnection(provider);
+            //using (var context = connection.Open())
+            //{
+            //    var sql = "";
+            //    provider.Callback += s => sql = s.Flatten();
                 
-
-                // select the max id
-                context.From<Warrior>().Max(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MAX(ID) from Warrior");
-
-                // select the max id with grouping
-                context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select MAX(ID), Race from Warrior GROUP BY Race");
-
-                // select the min id
-                context.From<Warrior>().Min(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MIN(ID) from Warrior");
-            }
+            //}
         }
     }
 }

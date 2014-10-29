@@ -70,7 +70,6 @@
     <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs" />
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\DelegateDecoratorQueryPart.cs" />
     <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
     <Compile Include="QueryParts\Internals\SimpleQueryPart.cs" />
     <Compile Include="QueryParts\IFieldQueryPart.cs" />

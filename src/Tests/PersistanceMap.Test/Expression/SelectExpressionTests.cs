@@ -68,6 +68,34 @@ namespace PersistanceMap.Test.Expression
         }
 
         [Test]
+        public void SelectWithMaxAndMin()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // select the max id
+                context.From<Warrior>().Max(w => w.ID).Select();
+                Assert.AreEqual(sql, "select MAX(ID) from Warrior");
+
+                // select the max id with grouping
+                context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
+                Assert.AreEqual(sql, "select MAX(ID), Warrior.Race from Warrior GROUP BY Race");
+
+                // select the min id
+                context.From<Warrior>().Min(w => w.ID).Select();
+                Assert.AreEqual(sql, "select MIN(ID) from Warrior");
+
+                // select the min id with grouping
+                context.From<Warrior>().Min(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
+                Assert.AreEqual(sql, "select MIN(ID), Warrior.Race from Warrior GROUP BY Race");
+            }
+        }
+
+        [Test]
         public void SelectWithAliasMapping()
         {
             var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";

@@ -82,7 +82,21 @@ namespace PersistanceMap.QueryBuilder
             if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
                 entity = last.EntityAlias;
 
+            // make sure the select part is not sealed so the custom map can be added
+            bool isSealed = false;
+            var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            if (parent != null)
+            {
+                isSealed = parent.IsSealded;
+                parent.IsSealded = false;
+            }
+
             SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
+
+            if (parent != null)
+            {
+                parent.IsSealded = isSealed;
+            }
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -163,12 +177,13 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate)
         {
-            var field = FieldHelper.TryExtractPropertyName(predicate);
-            var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}) ", field));
-
             var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
+                var field = FieldHelper.TryExtractPropertyName(predicate);                
+                var id = Guid.NewGuid().ToString();
+                var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}){1} ", field, parent.Parts.Last().ID != id ? "," : ""), id);
+
                 parent.Add(part);
                 parent.IsSealded = true;
             }
@@ -183,12 +198,13 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate)
         {
-            var field = FieldHelper.TryExtractPropertyName(predicate);
-            var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MIN({0}) ", field));
-
             var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
+                var field = FieldHelper.TryExtractPropertyName(predicate);
+                var id = Guid.NewGuid().ToString();
+                var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MIN({0}){1} ", field, parent.Parts.Last().ID != id ? "," : ""), id);
+
                 parent.Add(part);
                 parent.IsSealded = true;
             }
@@ -197,20 +213,6 @@ namespace PersistanceMap.QueryBuilder
         }
 
         #endregion
-
-        //#region For Member
-
-        //public ISelectQueryProvider<T> ForMember(Expression<Func<T, object>> predicate, Action<IMemberConfiguration> memberExpression)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ISelectQueryProvider<T> ForMember<TType>(Expression<Func<TType, object>> predicate, Action<IMemberConfiguration> memberExpression)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //#endregion
 
         #region Where Expressions
 
