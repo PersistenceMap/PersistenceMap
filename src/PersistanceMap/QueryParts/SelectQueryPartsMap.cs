@@ -20,10 +20,10 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        
-        
-      
-		
+        /// <summary>
+        /// Gets or sets a value that indicates if the mapping of the fields in the select should be extended with the fields from the maped type
+        /// </summary>
+        public bool IsFieldMapFinal { get; set; }
 
         #endregion
 

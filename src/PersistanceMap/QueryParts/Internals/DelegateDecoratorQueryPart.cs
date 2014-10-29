@@ -3,9 +3,9 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class PredicateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
+    internal class DelegateDecoratorQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {
-        public PredicateQueryPart(OperationType operation, Func<string> predicate)
+        public DelegateDecoratorQueryPart(OperationType operation, Func<string> predicate)
         {
             OperationType = operation;
             Predicate = predicate;
@@ -33,7 +33,7 @@ namespace PersistanceMap.QueryParts
         #endregion
 
         public Func<string> Predicate { get; private set; }
-
+        
         public override string ToString()
         {
             if (Predicate != null)

@@ -49,6 +49,8 @@ namespace PersistanceMap
         /// </summary>
         Values = 15,
 
+        Max = 16,
+
         /// <summary>
         /// defines the operation as an alias of a table, a field or a storedprocedure parameter
         /// </summary>

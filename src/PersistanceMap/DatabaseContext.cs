@@ -5,13 +5,16 @@ using System.Linq;
 namespace PersistanceMap
 {
     /// <summary>
-    /// Internal implementation of the Database Context
+    /// Internal implementation of the DatabaseContext
     /// </summary>
     public class DatabaseContext : IDatabaseContext
     {
+        readonly IList<IQueryCommand> _queryCommandStore;
+
         public DatabaseContext(IContextProvider provider)
         {
             ContextProvider = provider;
+            _queryCommandStore = new List<IQueryCommand>();
         }
 
         public IContextProvider ContextProvider { get; private set; }
@@ -23,32 +26,21 @@ namespace PersistanceMap
             {
                 command.Execute(this);
 
-                QueryCommandStore.Remove(command);
+                _queryCommandStore.Remove(command);
                 command = QueryCommandStore.FirstOrDefault();
             }
         }
 
         public void AddQuery(IQueryCommand command)
         {
-            QueryCommandStore.Add(command);
+            _queryCommandStore.Add(command);
         }
 
-        IList<IQueryCommand> _queryCommandStore;
-        public IList<IQueryCommand> QueryCommandStore
+        public IEnumerable<IQueryCommand> QueryCommandStore
         {
             get
             {
-                if (_queryCommandStore == null)
-                    _queryCommandStore = new List<IQueryCommand>();
                 return _queryCommandStore;
-            }
-        }
-
-        IEnumerable<IQueryCommand> IDatabaseContext.QueryCommandStore
-        {
-            get
-            {
-                return QueryCommandStore;
             }
         }
         

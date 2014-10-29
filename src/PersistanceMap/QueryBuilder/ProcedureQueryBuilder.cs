@@ -156,7 +156,7 @@ namespace PersistanceMap.QueryBuilder
 
                 // create output parameters 
                 QueryPartsMap.AddBefore(
-                    new PredicateQueryPart(OperationType.OutParameterPrefix, () =>
+                    new DelegateDecoratorQueryPart(OperationType.OutParameterPrefix, () =>
                     {
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
@@ -184,7 +184,7 @@ namespace PersistanceMap.QueryBuilder
                     }), OperationType.Parameter);
 
                 // create value for selecting output parameters
-                QueryPartsMap.AddAfter(new PredicateQueryPart(OperationType.OutParameterSufix, () =>
+                QueryPartsMap.AddAfter(new DelegateDecoratorQueryPart(OperationType.OutParameterSufix, () =>
                     {
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;

@@ -93,7 +93,7 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field.MemberName == last.MemberName ? " " : ", ");
-                simple.Add(new CallbackQueryPart(OperationType.None, () => formatted, field.MemberName));
+                simple.Add(new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName));
             }
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -130,7 +130,7 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field == last ? " " : ", ");
-                set.Add(new CallbackQueryPart(OperationType.None, () => formatted, field.MemberName));
+                set.Add(new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName));
             }
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -158,7 +158,7 @@ namespace PersistanceMap.QueryBuilder
                         value = value.Replace(",", "").TrimEnd();//.Replace(" ", "");
 
                         decorator.Remove(last);
-                        decorator.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0} ", value), last.ID));
+                        decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0} ", value), last.ID));
                     }
                 }
             }

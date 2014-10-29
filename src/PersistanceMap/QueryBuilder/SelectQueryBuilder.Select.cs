@@ -134,7 +134,6 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="TSource">The select type containig the source alias property</typeparam>
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
-        /// <typeparam name="TOut">The alias Type</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
@@ -155,6 +154,28 @@ namespace PersistanceMap.QueryBuilder
         ISelectQueryExpression<T> ISelectQueryExpression<T>.Ignore(Expression<Func<T, object>> predicate)
         {
             return Ignore(predicate);
+        }
+
+        /// <summary>
+        /// Marks a field to return the max value
+        /// </summary>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate)
+        {
+            var field = FieldHelper.TryExtractPropertyName(predicate);
+            var del = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}", field));
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Marks a field to return the min value
+        /// </summary>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

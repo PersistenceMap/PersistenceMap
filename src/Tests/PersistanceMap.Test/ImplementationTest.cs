@@ -98,6 +98,18 @@ namespace PersistanceMap.Test
 
                 Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
 
+
+                // select the max id
+                context.From<Warrior>()
+                    .Max(w => w.ID)
+                    .Select();
+                Assert.AreEqual(sql, "select MAX(ID) from Warrior");
+
+                // select the min id
+                context.From<Warrior>()
+                    .Min(w => w.ID)
+                    .Select();
+                Assert.AreEqual(sql, "select MIN(ID) from Warrior");
             }
         }
     }

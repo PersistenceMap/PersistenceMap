@@ -149,8 +149,8 @@ namespace PersistanceMap.QueryBuilder
                 var value = field.GetValueFunction(dataObject);
                 var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
 
-                insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName));
-                values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName));
+                insert.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName));
+                values.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName));
             }
 
 
@@ -174,7 +174,7 @@ namespace PersistanceMap.QueryBuilder
                     if (!value.StartsWith("("))
                     {
                         decorator.Remove(first);
-                        decorator.Insert(0, new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}", "(", value), first.ID));
+                        decorator.Insert(0, new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}", "(", value), first.ID));
                     }
                 }
 
@@ -188,7 +188,7 @@ namespace PersistanceMap.QueryBuilder
                         value = value.Replace(",", "").Replace(" ", "");
 
                         decorator.Remove(last);
-                        decorator.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}", value, ")"), last.ID));
+                        decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}", value, ")"), last.ID));
                     }
                 }
             }

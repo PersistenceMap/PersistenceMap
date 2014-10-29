@@ -17,11 +17,14 @@ namespace PersistanceMap.Compiler
             // get all members on the type to be composed
             var members = typeof(T).GetSelectionMembers();
 
-            // don't set entity alias to prevent fields being set with a default alias of the from expression
-            //TODO: should entity also not be set?
-            var fields = members.Select(m => m.ToFieldQueryPart(null, null/*from.Entity*/));
-            
-            SelectQueryPartsBuilder.Instance.AddFiedlParts(queryParts, fields.ToArray());
+            if (queryParts.IsFieldMapFinal)
+            {
+                // don't set entity alias to prevent fields being set with a default alias of the from expression
+                //TODO: should entity also not be set?
+                var fields = members.Select(m => m.ToFieldQueryPart(null, null /*from.Entity*/));
+
+                SelectQueryPartsBuilder.Instance.AddFiedlParts(queryParts, fields.ToArray());
+            }
 
             return queryParts.Compile();
         }

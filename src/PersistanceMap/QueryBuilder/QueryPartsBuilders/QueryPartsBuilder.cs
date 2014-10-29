@@ -38,7 +38,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
 
         internal IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
         {
-            var part = new PredicateQueryPart(operation, predicate);
+            var part = new DelegateDecoratorQueryPart(operation, predicate);
 
             queryParts.Add(part);
 

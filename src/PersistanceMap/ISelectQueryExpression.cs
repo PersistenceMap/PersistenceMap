@@ -98,6 +98,23 @@ namespace PersistanceMap
         /// <returns></returns>
         ISelectQueryExpression<T> Ignore(Expression<Func<T, object>> predicate);
 
+        /// <summary>
+        /// Marks a field to return the max value
+        /// </summary>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate);
+
+        /// <summary>
+        /// Marks a field to return the min value
+        /// </summary>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate);
+
+
+
+
 
 
         IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate);
