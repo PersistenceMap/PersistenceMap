@@ -28,17 +28,17 @@ namespace PersistanceMap.QueryParts
                     sb.Append("DELETE ");
                     break;
 
-                case PersistanceMap.OperationType.Set:
-                    sb.Append("SET ");
-                    break;
+                //case PersistanceMap.OperationType.Set:
+                //    sb.Append("SET ");
+                //    break;
 
-                case PersistanceMap.OperationType.Into:
-                    sb.Append("INTO ");
-                    break;
+                //case PersistanceMap.OperationType.Into:
+                //    sb.Append("INTO ");
+                //    break;
 
-                case PersistanceMap.OperationType.Values:
-                    sb.Append(" VALUES ");
-                    break;
+                //case PersistanceMap.OperationType.Values:
+                //    sb.Append(" VALUES ");
+                //    break;
 
                 default:
                     throw new NotImplementedException("OperationType is not implemented in SelectMapQueryPart");

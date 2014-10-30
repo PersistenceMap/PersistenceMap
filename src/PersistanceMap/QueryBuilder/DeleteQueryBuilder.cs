@@ -46,17 +46,11 @@ namespace PersistanceMap.QueryBuilder
         }
 
         #endregion
-
-        //public IDeleteQueryExpression AddToStore()
-        //{
-        //    Context.AddQuery(new DeleteQueryCommand(QueryPartsMap));
-
-        //    return this;
-        //}
-
+        
         public IDeleteQueryExpression Delete<T>()
         {
-            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
+            QueryPartsMap.Add(deletePart);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
@@ -74,7 +68,8 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="where">The expression defining the where statement</param>
         public IDeleteQueryExpression Delete<T>(Expression<Func<T, bool>> where)
         {
-            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
+            QueryPartsMap.Add(deletePart);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
@@ -103,7 +98,8 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
             }
 
-            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
+            QueryPartsMap.Add(deletePart);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
@@ -122,10 +118,12 @@ namespace PersistanceMap.QueryBuilder
         {
             // delete item that matches all properties set in the object
             var obj = anonym.Compile().Invoke();
-            var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj.GetType());
+
+            var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj);
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
-            QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Delete);
+            var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
+            QueryPartsMap.Add(deletePart);
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 

@@ -1,5 +1,4 @@
 ﻿using PersistanceMap.Internals;
-using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;
@@ -45,18 +44,15 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        //public IInsertQueryExpression<T> AddToStore()
-        //{
-        //    Context.AddQuery(new InsertQueryCommand(QueryPartsMap));
-
-        //    return this;
-        //}
-
+        /// <summary>
+        /// Marks a propterty not to be included in the insert statement
+        /// </summary>
+        /// <param name="predicate">The property to ignore</param>
+        /// <returns></returns>
         public IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var insert = QueryPartsMap.Parts.FirstOrDefault(p => p.OperationType == OperationType.Insert) as IQueryPartDecorator;
-            var value = QueryPartsMap.Parts.FirstOrDefault(p => p.OperationType == OperationType.Values) as IQueryPartDecorator;
-
+            var insert = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Insert) as IQueryPartDecorator;
+            var value = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Values) as IQueryPartDecorator;
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
@@ -70,33 +66,11 @@ namespace PersistanceMap.QueryBuilder
         /// Inserts a row with the values defined in the dataobject
         /// </summary>
         /// <typeparam name="T">Tabletype to insert</typeparam>
-        /// <param name="dataObject">Expression providing the object containing the data</param>
+        /// <param name="dataPredicate">Expression providing the object containing the data</param>
         /// <returns></returns>
         public IInsertQueryExpression<T> Insert(Expression<Func<T>> dataPredicate)
         {
-            // INSERT INTO Warrior (ID, WeaponID, Race, SpecialSkill) VALUES (1, 0, 'Dwarf', NULL)
-
             return InsertInternal(dataPredicate);
-
-            //var insert = QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Insert);
-            //var values = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Values);
-
-            //var dataObject = dataPredicate.Compile().Invoke();
-            //var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-
-            //var first = tableFields.FirstOrDefault();
-            //var last = tableFields.LastOrDefault();
-            //foreach (var field in tableFields)
-            //{
-            //    var value = field.GetValueFunction(dataObject);
-            //    var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
-
-            //    insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName));
-            //    values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName));
-            //}
-
-
-            //return new InsertQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -107,52 +81,34 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IInsertQueryExpression<T> Insert(Expression<Func<object>> anonym)
         {
-            // INSERT INTO Warrior (ID, Race) VALUES (1, 'Dwarf')
-
             return InsertInternal(anonym);
-
-            //var insert = QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Insert);
-            //var values = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Values);
-
-            //var dataObject = anonym.Compile().Invoke();
-            //var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-
-            //var first = tableFields.FirstOrDefault();
-            //var last = tableFields.LastOrDefault();
-            //foreach (var field in tableFields)
-            //{
-            //    var value = field.GetValueFunction(dataObject);
-            //    var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
-
-            //    insert.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName));
-            //    values.Add(new CallbackQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName));
-            //}
-
-
-            //return new InsertQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         private IInsertQueryExpression<T> InsertInternal(LambdaExpression anonym)
         {
-            // INSERT INTO Warrior (ID, Race) VALUES (1, 'Dwarf')
+            var insertPart = new DelegateQueryPart(OperationType.Insert, () => string.Format("INSERT INTO {0} ", typeof(T).Name));
+            QueryPartsMap.Add(insertPart);
 
-            var insert = QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Insert);
-            var values = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Values);
+            var valuesPart = new DelegateQueryPart(OperationType.Values, () => " VALUES ");
+            QueryPartsMap.Add(valuesPart);
 
             var dataObject = anonym.Compile().DynamicInvoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
 
             var first = tableFields.FirstOrDefault();
             var last = tableFields.LastOrDefault();
+
             foreach (var field in tableFields)
             {
                 var value = field.GetValueFunction(dataObject);
                 var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
 
-                insert.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName));
-                values.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName));
-            }
+                var fieldPart = new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName);
+                insertPart.Add(fieldPart);
 
+                var valuePart = new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName);
+                valuesPart.Add(valuePart);
+            }
 
             return new InsertQueryBuilder<T>(Context, QueryPartsMap);
         }

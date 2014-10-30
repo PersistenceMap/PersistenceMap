@@ -5,14 +5,11 @@ namespace PersistanceMap
 {
     public interface IInsertQueryExpression<T> : IQueryExpression
     {
-        //IInsertQueryExpression<T> AddToStore();
-
-        //IInsertQueryExpression Insert<T>(Expression<Func<T>> dataObject);
-
-        //IInsertQueryExpression Insert<T>(Expression<Func<object>> anonym);
-
-        //IInsertQueryExpression Ignore<T>(Expression<Func<T, object>> predicate);
-
+        /// <summary>
+        /// Marks a propterty not to be included in the insert statement
+        /// </summary>
+        /// <param name="predicate">The property to ignore</param>
+        /// <returns></returns>
         IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate);
     }
 }

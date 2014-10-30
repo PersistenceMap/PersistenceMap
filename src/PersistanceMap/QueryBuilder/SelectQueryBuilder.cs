@@ -55,7 +55,9 @@ namespace PersistanceMap.QueryBuilder
         internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
-            SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            //SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            var selectPart = new DelegateQueryPart(OperationType.Select, () => "select ");
+            QueryPartsMap.Add(selectPart);
 
             // add the from operation
             SelectQueryPartsBuilder.Instance.AppendEntityQueryPart<T2>(QueryPartsMap, OperationType.From);
@@ -68,7 +70,9 @@ namespace PersistanceMap.QueryBuilder
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            //SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
+            var selectPart = new DelegateQueryPart(OperationType.Select, () => "select ");
+            QueryPartsMap.Add(selectPart);
 
             // add the from operation with a alias
             var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
@@ -112,9 +116,9 @@ namespace PersistanceMap.QueryBuilder
 
         #region Private Generalized Implementation of Interfaces
 
-        private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null)
+        private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, operation);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
@@ -126,9 +130,9 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null)
+        private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, predicate);
+            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, operation);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))

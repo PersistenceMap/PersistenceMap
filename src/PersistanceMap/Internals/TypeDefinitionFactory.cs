@@ -53,6 +53,16 @@ namespace PersistanceMap.Internals
             return ExtractFieldDefinitions(type);
         }
 
+        /// <summary>
+        /// Gets all fielddefinitions that can be created by the type
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static IEnumerable<FieldDefinition> GetFieldDefinitions(object obj)
+        {
+            return ExtractFieldDefinitions(obj.GetType());
+        }
+
         //public static IEnumerable<FieldDefinition> GetFiedlDefinitions<T>(this Type type)
         //{
         //    var definedFields = ExtractFieldDefinitions(typeof(T));

@@ -42,7 +42,7 @@ namespace PersistanceMap
 
         Insert = 13,
 
-        Into = 14,
+        //Into = 14,
 
         /// <summary>
         /// defines a values element for a insert

@@ -23,6 +23,9 @@ namespace PersistanceMap
 
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
+            //TODO: Add more information to log like time and duration
+            Logger.WriteInternal(compiledQuery.QueryString);
+
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {
                 return this.Map<T>(reader);
@@ -31,6 +34,9 @@ namespace PersistanceMap
 
         public void Execute(CompiledQuery compiledQuery)
         {
+            //TODO: Add more information to log like time and duration
+            Logger.WriteInternal(compiledQuery.QueryString);
+
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {
                 // make sure Disposed is called on reader!
@@ -39,6 +45,9 @@ namespace PersistanceMap
 
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
+            //TODO: Add more information to log like time and duration
+            Logger.WriteInternal(compiledQuery.QueryString);
+
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {
                 foreach (var expression in expressions)

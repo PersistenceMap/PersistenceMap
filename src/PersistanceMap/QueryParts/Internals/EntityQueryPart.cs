@@ -10,7 +10,7 @@ namespace PersistanceMap.QueryParts
         }
 
         public EntityQueryPart(string entity, string alias)
-            : this(entity, alias, new IExpressionQueryPart[0])
+            : this(entity, alias, new IQueryPart[0])
         {
         }
 
@@ -56,24 +56,11 @@ namespace PersistanceMap.QueryParts
                 case OperationType.FullJoin:
                     sb.Append("full join");
                     break;
-
-                case PersistanceMap.OperationType.Update:
-                    sb.Append("UPDATE");
-                    break;
-
-                case PersistanceMap.OperationType.Insert:
-                    sb.Append("INSERT INTO");
-                    break;
             }
 
             sb.Append(string.Format(" {0}{1} ", Entity, string.IsNullOrEmpty(EntityAlias) ? string.Empty : string.Format(" {0}", EntityAlias)));
 
-            // compile all mappings that belong to the part (on, and, or...)
-            //Parts.ForEach(a => sb.Append(a.Compile()));
-            var value = base.Compile();
-            if (!string.IsNullOrEmpty(value))
-                sb.Append(value);
-
+            sb.Append(base.Compile() ?? "");
 
             return sb.ToString().RemoveLineBreak();
         }
@@ -83,9 +70,9 @@ namespace PersistanceMap.QueryParts
         public override string ToString()
         {
             if (string.IsNullOrEmpty(EntityAlias))
-                return string.Format("Entity: [{0}] Operation: [{1}]", Entity, OperationType);
+                return string.Format("{0} - Entity: [{1}] Operation: [{2}]", GetType().Name, Entity, OperationType);
 
-            return string.Format("Entity: [{0} {1}] Operation: [{2}]", Entity, EntityAlias, OperationType);
+            return string.Format("{0} - Entity: [{1} {2}] Operation: [{3}]", GetType().Name, Entity, EntityAlias, OperationType);
         }
     }
 }

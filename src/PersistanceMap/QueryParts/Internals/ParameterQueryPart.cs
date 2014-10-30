@@ -159,7 +159,7 @@ namespace PersistanceMap.QueryParts
                 if (string.IsNullOrEmpty(name))
                 {
                     //throw new NotSupportedException("The Parametername has to be provided when using Output Parameters");
-                    Trace.WriteLine("The Parametername has to be provided when using Output Parameters");
+                    Logger.Write(string.Format("{0} - The Parametername has to be provided when using Output Parameters", GetType().Name));
                     return base.Compile();
                 }
 

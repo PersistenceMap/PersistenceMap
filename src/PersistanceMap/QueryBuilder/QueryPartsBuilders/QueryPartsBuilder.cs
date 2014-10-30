@@ -27,14 +27,14 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             }
         }
 
-        internal SimpleQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
-        {
-            var part = new SimpleQueryPart(operation);
+        //internal SimpleQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
+        //{
+        //    var part = new SimpleQueryPart(operation);
 
-            queryParts.Add(part);
+        //    queryParts.Add(part);
 
-            return part;
-        }
+        //    return part;
+        //}
 
         internal IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
         {

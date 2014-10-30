@@ -18,5 +18,17 @@ namespace PersistanceMap
         {
             Trace.WriteLine(string.Format("### PersistanceMap: {0}", message), "PersistanceMap");
         }
+
+        /// <summary>
+        /// placeholder to log stuff that only gets published with logviewers
+        /// </summary>
+        /// <param name="message"></param>
+        internal static void WriteInternal(string message)
+        {
+            // placeholder to log stuff that only gets published with logviewers
+            //TODO: Write more detail to internal traces (Time, duration...) http://msdn.microsoft.com/en-us/data/dn469464.aspx
+            //TODO: only trace to logviewer/interceptor
+            Write(message);
+        }
     }
 }

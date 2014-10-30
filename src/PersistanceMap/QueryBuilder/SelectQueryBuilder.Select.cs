@@ -77,9 +77,8 @@ namespace PersistanceMap.QueryBuilder
         {
             //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
-
-            var last = QueryPartsMap.Parts.Last(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
-            if (last != null && string.IsNullOrEmpty(last.EntityAlias) == false && entity == last.Entity)
+            var last = QueryPartsMap.Parts.OfType<IEntityQueryPart>().LastOrDefault(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
+            if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
                 entity = last.EntityAlias;
 
             // make sure the select part is not sealed so the custom map can be added
@@ -216,9 +215,9 @@ namespace PersistanceMap.QueryBuilder
 
         #region Where Expressions
 
-        public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate)
+        public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation)
         {
-            var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
 
             // check if the last part that was added containes a alias
             var last = QueryPartsMap.Parts.Last(l => 
@@ -234,16 +233,16 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate)
+        public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> operation)
         {
-            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate)
+        public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> operation)
         {
-            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, OperationType.Where);
+            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -324,7 +323,6 @@ namespace PersistanceMap.QueryBuilder
         }
 
         #endregion
-
 
         #region Select Expressions
 

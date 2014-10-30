@@ -81,6 +81,12 @@ namespace PersistanceMap
 
         #region Delete Expressions
 
+        /// <summary>
+        /// Deletes all records
+        /// </summary>
+        /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static IDeleteQueryExpression Delete<T>(this IDatabaseContext context)
         {
             return new DeleteQueryBuilder(context)
@@ -170,7 +176,7 @@ namespace PersistanceMap
                 .AddToStore();
         }
 
-        public static IUpdateQueryExpression<T> AddToStore<T>(this IUpdateQueryExpression<T> expression)
+        internal static IUpdateQueryExpression<T> AddToStore<T>(this IUpdateQueryExpression<T> expression)
         {
             expression.Context.AddQuery(new UpdateQueryCommand(expression.QueryPartsMap));
 
@@ -209,7 +215,7 @@ namespace PersistanceMap
                 .AddToStore();
         }
 
-        public static IInsertQueryExpression<T> AddToStore<T>(this IInsertQueryExpression<T> expression)
+        internal static IInsertQueryExpression<T> AddToStore<T>(this IInsertQueryExpression<T> expression)
         {
             expression.Context.AddQuery(new InsertQueryCommand(expression.QueryPartsMap));
 

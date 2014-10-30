@@ -46,16 +46,14 @@ namespace PersistanceMap.QueryBuilder
 
         #endregion
 
-        //public IUpdateQueryExpression<T> AddToStore()
-        //{
-        //    Context.AddQuery(new UpdateQueryCommand(QueryPartsMap));
-
-        //    return this;
-        //}
-
+        /// <summary>
+        /// Marks a property not to be included in the update statement
+        /// </summary>
+        /// <param name="predicate">The property to ignore</param>
+        /// <returns></returns>
         public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var set = QueryPartsMap.Parts.FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
+            var set = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
@@ -81,19 +79,27 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate);
             }
 
-            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
-            var simple = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
+            var updatePart = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
+            QueryPartsMap.Add(updatePart);
+
+            var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
+            QueryPartsMap.Add(setPart);
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
-            var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var dataObject = dataPredicate.Compile().Invoke();
-            var last = tableFields.Where(f => f.MemberName != keyName).LastOrDefault();
+
+            var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+
+            var last = tableFields.LastOrDefault(f => f.MemberName != keyName);
+
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field.MemberName == last.MemberName ? " " : ", ");
-                simple.Add(new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName));
+
+                var keyValuePart = new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName);
+                setPart.Add(keyValuePart);
             }
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -118,19 +124,27 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateKeyExpression<T>(anonym);
             }
 
-            QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.Update);
-            var set = QueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Set);
+            var entity = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
+            QueryPartsMap.Add(entity);
+            
+            var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
+            QueryPartsMap.Add(setPart);
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
             var dataObject = anonym.Compile().Invoke();
+
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-            var last = tableFields.Where(f => f.MemberName != keyName).LastOrDefault();
+
+            var last = tableFields.LastOrDefault(f => f.MemberName != keyName);
+
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field == last ? " " : ", ");
-                set.Add(new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName));
+
+                var keyValuePart = new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName);
+                setPart.Add(keyValuePart);
             }
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
@@ -140,7 +154,6 @@ namespace PersistanceMap.QueryBuilder
 
         private static void RemovePartByID(IQueryPartDecorator decorator, string id)
         {
-            //throw new NotImplementedException();
             if (decorator != null)
             {
                 // remove the ignored element
@@ -155,7 +168,7 @@ namespace PersistanceMap.QueryBuilder
                     var value = last.Compile();
                     if (value.TrimEnd().EndsWith(","))
                     {
-                        value = value.Replace(",", "").TrimEnd();//.Replace(" ", "");
+                        value = value.Replace(",", "").TrimEnd();
 
                         decorator.Remove(last);
                         decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0} ", value), last.ID));

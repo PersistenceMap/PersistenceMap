@@ -117,11 +117,11 @@ namespace PersistanceMap
 
 
 
-        IWhereQueryExpression<T> Where(Expression<Func<T, bool>> predicate);
+        IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation);
 
-        IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> predicate);
+        IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> operation);
 
-        IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> predicate);
+        IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> operation);
 
 
 
@@ -173,29 +173,29 @@ namespace PersistanceMap
 
     public interface IJoinQueryExpression<T> : ISelectQueryExpression<T>, IQueryExpression
     {
-        IJoinQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null);
 
-        IJoinQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
+        IJoinQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null);
     }
 
     public interface IWhereQueryExpression<T> : ISelectQueryExpressionBase<T>, IQueryExpression
     {
-        IWhereQueryExpression<T> And(Expression<Func<T, bool>> predicate);
+        IWhereQueryExpression<T> And(Expression<Func<T, bool>> operation);
 
-        IWhereQueryExpression<T> And<TAnd>(Expression<Func<TAnd, bool>> predicate, string alias = null);
+        IWhereQueryExpression<T> And<TAnd>(Expression<Func<TAnd, bool>> operation, string alias = null);
 
-        IWhereQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null);
 
-        IWhereQueryExpression<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> operation, string alias = null, string source = null);
 
 
-        IWhereQueryExpression<T> Or(Expression<Func<T, bool>> predicate);
+        IWhereQueryExpression<T> Or(Expression<Func<T, bool>> operation);
 
-        IWhereQueryExpression<T> Or<TOr>(Expression<Func<TOr, bool>> predicate, string alias = null);
+        IWhereQueryExpression<T> Or<TOr>(Expression<Func<TOr, bool>> operation, string alias = null);
 
-        IWhereQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null);
 
-        IWhereQueryExpression<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> predicate, string alias = null, string source = null);
+        IWhereQueryExpression<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> operation, string alias = null, string source = null);
 
 
 

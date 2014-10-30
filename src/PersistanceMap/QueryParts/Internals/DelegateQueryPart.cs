@@ -36,9 +36,9 @@ namespace PersistanceMap.QueryParts
         public override string ToString()
         {
             if (Delegate != null)
-                return string.Format("{0}: Delegate: [{1}] Operation: [{2}]", GetType().Name, Delegate.ToString(), OperationType.ToString());
+                return string.Format("{0} - Delegate: [{1}] Operation: [{2}]", GetType().Name, Delegate.ToString(), OperationType.ToString());
 
-            return string.Format("{0}: Delegate: [No delegate defined] Operation: [{1}]", GetType().Name, OperationType.ToString());
+            return string.Format("{0} - Delegate: [No delegate defined] Operation: [{1}]", GetType().Name, OperationType.ToString());
         }
     }
 }
