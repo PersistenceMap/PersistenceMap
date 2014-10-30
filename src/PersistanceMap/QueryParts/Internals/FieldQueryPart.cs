@@ -2,19 +2,8 @@
 
 namespace PersistanceMap.QueryParts
 {
-    //TODO: remove interface IQueryMap! It is not needed!
     internal class FieldQueryPart : IFieldQueryPart, IEntityQueryPart, IQueryPart
     {
-        //public FieldQueryPart(string field, string entityalias, string id = null)
-        //    : this(field, entityalias, null)
-        //{
-        //}
-
-        //public FieldQueryPart(string field, string entityalias, string entity)
-        //    : this(field, null, entityalias, entity)
-        //{
-        //}
-
         public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null)
         {
             EntityAlias = entityalias;
@@ -74,12 +63,12 @@ namespace PersistanceMap.QueryParts
             return sb.ToString();
         }
 
+        #endregion
+
         public override string ToString()
         {
-            return string.Format("Entity: {0} Field: {1} [{1}.{2}]", Entity, EntityAlias ?? Entity, Field);
+            return string.Format("{0} - Entity: {1} Field: {2} [{2}.{3}]", GetType().Name, Entity, EntityAlias ?? Entity, Field);
         }
-
-        #endregion
     }
 
     internal class IgnoreFieldQueryPart : FieldQueryPart

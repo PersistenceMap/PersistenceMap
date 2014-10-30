@@ -68,7 +68,7 @@ namespace PersistanceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithMaxAndMin()
+        public void SelectWithMax()
         {
             var provider = new CallbackContextProvider();
             var connection = new DatabaseConnection(provider);
@@ -79,19 +79,74 @@ namespace PersistanceMap.Test.Expression
 
                 // select the max id
                 context.From<Warrior>().Max(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MAX(ID) from Warrior");
+                Assert.AreEqual(sql, "select MAX(ID) AS ID from Warrior");
 
                 // select the max id with grouping
                 context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select MAX(ID), Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "select MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                // select the max id with grouping
+                context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
+                Assert.AreEqual(sql, "select MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                context.From<Warrior>().Max(w => w.ID, "MaxID").For(() => new { MaxID = 0 }).Select();
+                Assert.AreEqual(sql, "select MAX(ID) AS MaxID from Warrior");
+            }
+        }
+
+        [Test]
+        public void SelectWithMin()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
 
                 // select the min id
                 context.From<Warrior>().Min(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MIN(ID) from Warrior");
+                Assert.AreEqual(sql, "select MIN(ID) AS ID from Warrior");
 
                 // select the min id with grouping
                 context.From<Warrior>().Min(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select MIN(ID), Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "select MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                // select the min id with grouping
+                context.From<Warrior>().Min(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
+                Assert.AreEqual(sql, "select MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                // select the min id
+                context.From<Warrior>().Min(w => w.ID, "MinID").For(() => new { MinID = 0 }).Select();
+                Assert.AreEqual(sql, "select MIN(ID) AS MinID from Warrior");
+            }
+        }
+
+        [Test]
+        public void SelectWithCount()
+        {
+            var provider = new CallbackContextProvider();
+            var connection = new DatabaseConnection(provider);
+            using (var context = connection.Open())
+            {
+                var sql = "";
+                provider.Callback += s => sql = s.Flatten();
+
+                // select the min id
+                context.From<Warrior>().Count(w => w.ID).Select();
+                Assert.AreEqual(sql, "select COUNT(ID) AS ID from Warrior");
+
+                // select the min id with grouping
+                context.From<Warrior>().Count(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
+                Assert.AreEqual(sql, "select COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                // select the min id with grouping
+                context.From<Warrior>().Count(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
+                Assert.AreEqual(sql, "select COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+
+                // select the min id
+                context.From<Warrior>().Count(w => w.ID, "IdCount").For(() => new { IdCount = 0 }).Select();
+                Assert.AreEqual(sql, "select COUNT(ID) AS IdCount from Warrior");
             }
         }
 

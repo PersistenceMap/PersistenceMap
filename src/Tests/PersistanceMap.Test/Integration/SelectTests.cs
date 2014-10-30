@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
+using System;
 using System.Collections;
 using System.Data.SqlClient;
 using System.Linq;
@@ -33,9 +34,7 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
             using (var context = dbConnection.Open())
             {
-                var query = context.From<Orders>()
-                    .Map(o => o.OrdersID)
-                    .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
+                var query = context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
 
                 var sql = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -50,6 +49,166 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
+
+        [Test]
+        public void SelectWithMax()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select the max id
+                var query1 = context.From<Orders>().Max(w => w.OrdersID);
+
+                var expected = "select MAX(OrdersID) AS OrdersID from Orders";
+                var sql = query1.CompileQuery().Flatten();
+                Assert.AreEqual(sql, expected);
+
+                var orders1 = query1.Select();
+
+                Assert.IsNotNull(orders1);
+                Assert.IsTrue(orders1.Any());
+                Assert.IsTrue(orders1.First().OrdersID > 0);
+
+
+
+                // select the max id with grouping
+                var query2 = context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
+
+                expected = "select MAX(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+                sql = query2.CompileQuery().Flatten();
+                Assert.AreEqual(sql, expected);
+
+                var orders2 = query2.Select();
+
+                Assert.IsNotNull(orders2);
+                Assert.IsTrue(orders2.Any());
+                Assert.IsTrue(orders2.First().OrdersID > 0);
+
+
+
+                // select the max id with grouping
+                var query3 = context.From<Orders>().Max(w => w.OrdersID, "MaxID").For(() => new { MaxID = 0 });
+
+                expected = "select MAX(OrdersID) AS MaxID from Orders";
+                sql = query3.CompileQuery().Flatten();
+                Assert.AreEqual(sql, expected);
+
+                var orders3 = query3.Select();
+
+                Assert.IsNotNull(orders3);
+                Assert.IsTrue(orders3.Any());
+                Assert.IsTrue(orders3.First().MaxID > 0);
+            }
+        }
+
+        [Test]
+        public void SelectWithMin()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select the min id
+                var query1 = context.From<Orders>().Min(w => w.OrdersID);
+                var sql = "select MIN(OrdersID) AS OrdersID from Orders";
+
+                Assert.AreEqual(query1.CompileQuery().Flatten(), sql);
+
+                var orders1 = query1.Select();
+
+                Assert.IsNotNull(orders1);
+                Assert.IsTrue(orders1.Any());
+                Assert.IsTrue(orders1.First().OrdersID > 0);
+
+
+
+                // select the min id with grouping
+                var query2 = context.From<Orders>().Min(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
+                sql = "select MIN(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+
+                Assert.AreEqual(query2.CompileQuery().Flatten(), sql);
+
+                var orders2 = query2.Select();
+
+                Assert.IsNotNull(orders2);
+                Assert.IsTrue(orders2.Any());
+                Assert.IsTrue(orders2.First().OrdersID > 0);
+
+
+
+                // select the min id with grouping
+                var query3 = context.From<Orders>().Min(w => w.OrdersID, "MinID").For(() => new { MinID = 0 });
+                sql = "select MIN(OrdersID) AS MinID from Orders";
+
+                Assert.AreEqual(query3.CompileQuery().Flatten(), sql);
+
+                var orders3 = query3.Select();
+
+                Assert.IsNotNull(orders3);
+                Assert.IsTrue(orders3.Any());
+                Assert.IsTrue(orders3.First().MinID > 0);
+            }
+        }
+
+        [Test]
+        public void SelectWithCount()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // select the min id
+                var query1 = context.From<Orders>().Count(w => w.OrdersID);
+                var sql = "select COUNT(OrdersID) AS OrdersID from Orders";
+
+                Assert.AreEqual(query1.CompileQuery().Flatten(), sql);
+
+                var orders1 = query1.Select();
+
+                Assert.IsNotNull(orders1);
+                Assert.IsTrue(orders1.Any());
+                Assert.IsTrue(orders1.First().OrdersID > 0);
+
+
+
+                // select the min id with grouping
+                var query2 = context.From<Orders>().Count(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
+                sql = "select COUNT(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+
+                Assert.AreEqual(query2.CompileQuery().Flatten(), sql);
+
+                var orders2 = query2.Select();
+
+                Assert.IsNotNull(orders2);
+                Assert.IsTrue(orders2.Any());
+                Assert.IsTrue(orders2.First().OrdersID > 0);
+
+
+
+                // select the min id with grouping
+                var query3 = context.From<Orders>().Count(w => w.OrdersID, "IdCount").For(() => new { IdCount = 0 });
+                sql = "select COUNT(OrdersID) AS IdCount from Orders";
+
+                Assert.AreEqual(query3.CompileQuery().Flatten(), sql);
+
+                var orders3 = query3.Select();
+
+                Assert.IsNotNull(orders3);
+                Assert.IsTrue(orders3.Any());
+                Assert.IsTrue(orders3.First().IdCount > 0);
+            }
+        }
+
+
+        [Test]
+        [ExpectedException(typeof(FormatException))]
+        public void SelectWithFormatException()
+        {
+            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+            using (var context = connection.Open())
+            {
+                // CustomerID should be a string
+                context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = 0 }).Select();
+            }
+        }
         //[Test]
         //public void SelectWithAliasMapping()
         //{

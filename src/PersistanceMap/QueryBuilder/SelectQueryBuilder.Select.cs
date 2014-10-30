@@ -170,18 +170,19 @@ namespace PersistanceMap.QueryBuilder
         }
 
         /// <summary>
-        /// Marks a field to return the max value
+        /// Marks a field to return the max value of
         /// </summary>
         /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate)
+        public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate, string alias = null)
         {
             var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
-                var field = FieldHelper.TryExtractPropertyName(predicate);                
+                var field = FieldHelper.TryExtractPropertyName(predicate);
+                alias = alias ?? field;
                 var id = Guid.NewGuid().ToString();
-                var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}){1} ", field, parent.Parts.Last().ID != id ? "," : ""), id);
+                var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
 
                 parent.Add(part);
                 parent.IsSealded = true;
@@ -191,18 +192,41 @@ namespace PersistanceMap.QueryBuilder
         }
 
         /// <summary>
-        /// Marks a field to return the min value
+        /// Marks a field to return the min value of
         /// </summary>
         /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate)
+        public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate, string alias = null)
         {
             var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
+                alias = alias ?? field;
                 var id = Guid.NewGuid().ToString();
-                var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MIN({0}){1} ", field, parent.Parts.Last().ID != id ? "," : ""), id);
+                var part = new DelegateQueryPart(OperationType.Min, () => string.Format("MIN({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
+
+                parent.Add(part);
+                parent.IsSealded = true;
+            }
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+        /// <summary>
+        /// Marks a field to return the count of
+        /// </summary>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        public ISelectQueryExpression<T> Count(Expression<Func<T, object>> predicate, string alias = null)
+        {
+            var parent = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            if (parent != null)
+            {
+                var field = FieldHelper.TryExtractPropertyName(predicate);
+                alias = alias ?? field;
+                var id = Guid.NewGuid().ToString();
+                var part = new DelegateQueryPart(OperationType.Count, () => string.Format("COUNT({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
 
                 parent.Add(part);
                 parent.IsSealded = true;

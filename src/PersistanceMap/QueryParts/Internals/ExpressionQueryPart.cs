@@ -124,9 +124,9 @@ namespace PersistanceMap.QueryParts
         public override string ToString()
         {
             if (Expression == null)
-                return string.Format("Expression with Operation: [{0}]", OperationType);
+                return string.Format("{0} - Expression with Operation: [{1}]", GetType().Name, OperationType);
 
-            return string.Format("Expression: [{0}] Operation: [{1}]", Expression, OperationType);
+            return string.Format("{0} - Expression: [{1}] Operation: [{2}]", GetType().Name, Expression, OperationType);
         }
     }
 }

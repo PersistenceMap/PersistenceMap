@@ -165,6 +165,11 @@ namespace PersistanceMap
                     row[def.Name] = GetValue(context, def, index);
                 }
             }
+            catch (FormatException fe)
+            {
+                Logger.Write(fe.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Logger.Write(ex);
