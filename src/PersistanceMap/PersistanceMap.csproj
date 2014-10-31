@@ -97,7 +97,7 @@
     <Compile Include="SqlContextReader.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
-    <Compile Include="Compiler\ExpressionCompiler.cs" />
+    <Compile Include="SqlExpressionCompiler.cs" />
     <Compile Include="QueryParts\QueryPartsMap.cs" />
     <Compile Include="QueryBuilder\SelectQueryBuilder.AfterMap.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>

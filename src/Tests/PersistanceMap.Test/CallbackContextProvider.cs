@@ -34,7 +34,7 @@ namespace PersistanceMap.Test
             get
             {
                 if (_expressionCompiler == null)
-                    _expressionCompiler = new ExpressionCompiler();
+                    _expressionCompiler = new SqlExpressionCompiler();
 
                 return _expressionCompiler;
             }
