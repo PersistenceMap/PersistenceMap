@@ -8,7 +8,7 @@ namespace PersistanceMap
     /// <summary>
     /// Compiels the QueryParts to a sql string
     /// </summary>
-    public class SqlExpressionCompiler : IExpressionCompiler
+    public class QueryCompiler : IQueryCompiler
     {
         public virtual CompiledQuery Compile(IQueryPartsMap queryParts)
         {

@@ -247,7 +247,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public void Execute()
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile(QueryPartsMap);
 
             //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
@@ -278,7 +278,7 @@ namespace PersistanceMap.QueryBuilder
             }
 
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile(QueryPartsMap);
 
             IEnumerable<T> values = null;
@@ -352,7 +352,7 @@ namespace PersistanceMap.QueryBuilder
             }
 
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile(QueryPartsMap);
 
             IEnumerable<T> values = null;
@@ -394,7 +394,7 @@ namespace PersistanceMap.QueryBuilder
                 fields.Add(field);
             }
 
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile(QueryPartsMap);
 
             IEnumerable<TOut> values = null;

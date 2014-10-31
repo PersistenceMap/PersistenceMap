@@ -20,15 +20,15 @@ namespace PersistanceMap
 
         public string ConnectionString { get; private set; }
 
-        private IExpressionCompiler _expressionCompiler;
-        public virtual IExpressionCompiler ExpressionCompiler
+        private IQueryCompiler _queryCompiler;
+        public virtual IQueryCompiler QueryCompiler
         {
             get
             {
-                if (_expressionCompiler == null)
-                    _expressionCompiler = new SqlExpressionCompiler();
+                if (_queryCompiler == null)
+                    _queryCompiler = new QueryCompiler();
 
-                return _expressionCompiler;
+                return _queryCompiler;
             }
         }
 

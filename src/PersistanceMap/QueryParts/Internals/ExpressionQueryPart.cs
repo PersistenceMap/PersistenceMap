@@ -1,5 +1,4 @@
-﻿using PersistanceMap.Compiler;
-using PersistanceMap.Sql;
+﻿using PersistanceMap.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -31,7 +30,7 @@ namespace PersistanceMap.QueryParts
 
         public override string Compile()
         {
-            var value = LambdaExpressionToSqlCompiler.Instance.Compile(this);
+            var value = LambdaToSqlCompiler.Instance.Compile(this);
             if (value == null)
                 return null;
 

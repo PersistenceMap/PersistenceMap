@@ -4,7 +4,7 @@ using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {
-    public interface IExpressionCompiler
+    public interface IQueryCompiler
     {
         CompiledQuery Compile(IQueryPartsMap queryParts);
 

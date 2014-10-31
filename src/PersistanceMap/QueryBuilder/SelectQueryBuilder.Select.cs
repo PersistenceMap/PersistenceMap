@@ -352,7 +352,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IEnumerable<T2> Select<T2>()
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile<T2>(QueryPartsMap);
 
             return Context.Kernel.Execute<T2>(query);
@@ -360,7 +360,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IEnumerable<T> Select()
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile<T>(QueryPartsMap);
 
             return Context.Kernel.Execute<T>(query);
@@ -368,7 +368,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym)
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile<TSelect>(QueryPartsMap);
 
             return Context.Kernel.Execute<TSelect>(query);
@@ -376,7 +376,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym)
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile<T>(QueryPartsMap);
 
             var elements = Context.Kernel.Execute<T>(query);
@@ -434,7 +434,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>The sql string</returns>
         public string CompileQuery<T2>()
         {
-            var expr = Context.ContextProvider.ExpressionCompiler;
+            var expr = Context.ContextProvider.QueryCompiler;
             var query = expr.Compile<T2>(QueryPartsMap);
 
             return query.QueryString;

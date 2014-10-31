@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Text;
-using PersistanceMap.Compiler;
 using PersistanceMap.QueryBuilder;
 using System.Collections.Generic;
+using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryParts
 {
@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryParts
             // create the exec statement
             sb.Append(string.Format("exec {0} ", ProcedureName));
 
-            var conv = new LambdaExpressionToSqlCompiler();
+            var conv = new LambdaToSqlCompiler();
             conv.PrefixFieldWithTableName = false;
 
             // add parameters

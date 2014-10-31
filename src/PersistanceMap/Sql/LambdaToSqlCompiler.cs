@@ -10,9 +10,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace PersistanceMap.Compiler
+namespace PersistanceMap.Sql
 {
-    public class LambdaExpressionToSqlCompiler
+    public class LambdaToSqlCompiler
     {
         //TODO: separator has to be set as an option!
         readonly string _separator = " ";
@@ -23,19 +23,19 @@ namespace PersistanceMap.Compiler
 
         public bool PrefixFieldWithTableName { get; set; }
 
-        static LambdaExpressionToSqlCompiler instance;
-        public static LambdaExpressionToSqlCompiler Instance
+        static LambdaToSqlCompiler instance;
+        public static LambdaToSqlCompiler Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new LambdaExpressionToSqlCompiler();
+                    instance = new LambdaToSqlCompiler();
                 return instance;
             }
         }
 
 
-        public LambdaExpressionToSqlCompiler()
+        public LambdaToSqlCompiler()
         {
             PrefixFieldWithTableName = true;
             _aliasMap = new Dictionary<Type, string>();

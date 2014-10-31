@@ -27,16 +27,16 @@ namespace PersistanceMap.Test
 
         public string ConnectionString { get; private set; }
 
-        private IExpressionCompiler _expressionCompiler;
+        private IQueryCompiler _queryCompiler;
 
-        public virtual IExpressionCompiler ExpressionCompiler
+        public virtual IQueryCompiler QueryCompiler
         {
             get
             {
-                if (_expressionCompiler == null)
-                    _expressionCompiler = new SqlExpressionCompiler();
+                if (_queryCompiler == null)
+                    _queryCompiler = new QueryCompiler();
 
-                return _expressionCompiler;
+                return _queryCompiler;
             }
         }
 

@@ -6,7 +6,7 @@ namespace PersistanceMap
     {
         string ConnectionString { get; }
 
-        IExpressionCompiler ExpressionCompiler { get; }
+        IQueryCompiler QueryCompiler { get; }
 
         IReaderContext Execute(string query);
 

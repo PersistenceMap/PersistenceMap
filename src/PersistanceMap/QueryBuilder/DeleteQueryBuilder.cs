@@ -54,10 +54,6 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            //var expr = Context.ContextProvider.ExpressionCompiler;
-            //var query = expr.Compile<T>(queryParts);
-
-            //Context.Execute(query);
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
@@ -75,10 +71,6 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
 
-            //var expr = Context.ContextProvider.ExpressionCompiler;
-            //var query = expr.Compile<T>(queryParts);
-
-            //Context.Execute(query);
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
 
