@@ -60,9 +60,9 @@ namespace PersistanceMap.QueryBuilder
 
         #region Protected Implementation
 
-        protected void ReadReturnValues(IReaderContext reader)
+        protected void ReadReturnValues(IReaderContext reader, QueryKernel kernel)
         {
-            var kernel = new QueryKernel(Context.ContextProvider);
+            //var kernel = new QueryKernel(Context.ContextProvider);
 
             var objectDefs = QueryPartsMap.Parameters.Where(p => p.CanHandleCallback)
                 .Select(p =>
@@ -252,7 +252,7 @@ namespace PersistanceMap.QueryBuilder
 
             //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
             // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
-            Context.Kernel.Execute(query, dr => ReadReturnValues(dr), dr => ReadReturnValues(dr));
+            Context.Kernel.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace PersistanceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }
@@ -357,7 +357,7 @@ namespace PersistanceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }
@@ -399,7 +399,7 @@ namespace PersistanceMap.QueryBuilder
 
             IEnumerable<TOut> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<TOut>(dr, fields.ToArray()), dr => ReadReturnValues(dr));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<TOut>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }

@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Internals;
+﻿using PersistanceMap.Diagnostics;
+using PersistanceMap.Internals;
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,18 @@ namespace PersistanceMap
         protected const int NotFound = -1;
         readonly IContextProvider _contextProvider;
 
-        public QueryKernel(IContextProvider provider)
+        readonly Lazy<ILogger> _logger;
+
+        public QueryKernel(IContextProvider provider, ILoggerFactory loggerFactory)
         {
             _contextProvider = provider;
+            _logger = new Lazy<ILogger>(() => loggerFactory.CreateLogger());
         }
 
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            Logger.WriteInternal(compiledQuery.QueryString);
+            _logger.Value.Write(compiledQuery.QueryString);
 
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {
@@ -35,7 +39,7 @@ namespace PersistanceMap
         public void Execute(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            Logger.WriteInternal(compiledQuery.QueryString);
+            _logger.Value.Write(compiledQuery.QueryString);
 
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {
@@ -46,7 +50,7 @@ namespace PersistanceMap
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
             //TODO: Add more information to log like time and duration
-            Logger.WriteInternal(compiledQuery.QueryString);
+            _logger.Value.Write(compiledQuery.QueryString);
 
             using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
             {

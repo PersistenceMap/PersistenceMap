@@ -50,6 +50,11 @@
     <Compile Include="Attributes\IgnoreAttribute.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="DatabaseOptions.cs" />
+    <Compile Include="Diagnostics\ILogger.cs" />
+    <Compile Include="Diagnostics\ILoggerFactory.cs" />
+    <Compile Include="Diagnostics\Logger.cs" />
+    <Compile Include="Diagnostics\LoggerFactory.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="IDeleteQueryExpression.cs" />
     <Compile Include="IInsertQueryExpression.cs" />
@@ -145,9 +150,7 @@
       <Link>Properties\PersistanceMap.snk</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

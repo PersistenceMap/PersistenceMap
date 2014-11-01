@@ -1,4 +1,5 @@
-﻿using PersistanceMap.QueryBuilder;
+﻿using PersistanceMap.Diagnostics;
+using PersistanceMap.QueryBuilder;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using System.Linq;
@@ -10,6 +11,10 @@ namespace PersistanceMap
     /// </summary>
     public class QueryCompiler : IQueryCompiler
     {
+        //public QueryCompiler(ILoggerFactory loggerFactory)
+        //{
+        //}
+
         public virtual CompiledQuery Compile(IQueryPartsMap queryParts)
         {
             return queryParts.Compile();

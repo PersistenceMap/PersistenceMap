@@ -1,5 +1,4 @@
 ﻿using System;
-using PersistanceMap.Compiler;
 using System.Data;
 
 namespace PersistanceMap.Test

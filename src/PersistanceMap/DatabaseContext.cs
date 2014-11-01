@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,11 +11,13 @@ namespace PersistanceMap
     public class DatabaseContext : IDatabaseContext
     {
         readonly IList<IQueryCommand> _queryCommandStore;
+        readonly ILoggerFactory _loggerFactory;
 
-        public DatabaseContext(IContextProvider provider)
+        public DatabaseContext(IContextProvider provider, ILoggerFactory loggerFactory)
         {
             ContextProvider = provider;
             _queryCommandStore = new List<IQueryCommand>();
+            _loggerFactory = loggerFactory;
         }
 
         public IContextProvider ContextProvider { get; private set; }
@@ -54,7 +57,7 @@ namespace PersistanceMap
             get
             {
                 if (_kernel == null)
-                    _kernel = new QueryKernel(ContextProvider);
+                    _kernel = new QueryKernel(ContextProvider, _loggerFactory);
 
                 return _kernel;
             }

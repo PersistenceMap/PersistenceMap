@@ -1,5 +1,4 @@
-﻿using PersistanceMap.Compiler;
-using System;
+﻿using System;
 using System.Data.SqlServerCe;
 using System.Diagnostics;
 
