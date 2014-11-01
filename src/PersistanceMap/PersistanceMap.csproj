@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -48,7 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\IgnoreAttribute.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="CustomConfiguration.cs" />
+    <Compile Include="Configuration\LoggerElement.cs" />
+    <Compile Include="Configuration\LoggerElementCollection.cs" />
+    <Compile Include="Diagnostics\TraceLogger.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="DatabaseOptions.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
@@ -62,6 +66,7 @@
     <Compile Include="Internals\FieldHelper.cs" />
     <Compile Include="Internals\Logger.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
+    <Compile Include="Configuration\PersistanceMapSection.cs" />
     <Compile Include="QueryBuilder\Commands\DeleteQueryCommand.cs" />
     <Compile Include="Internals\TypeDefinitionFactory.cs" />
     <Compile Include="IQueryCommand.cs" />

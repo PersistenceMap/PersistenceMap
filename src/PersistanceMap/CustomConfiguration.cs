@@ -1,9 +1,9 @@
 ﻿
 namespace PersistanceMap
 {
-    public static class Configuration
+    public static class CustomConfiguration
     {
-        static Configuration()
+        static CustomConfiguration()
         {
             TreatEnumAsInteger = true;
             StripUpperInLike = true;

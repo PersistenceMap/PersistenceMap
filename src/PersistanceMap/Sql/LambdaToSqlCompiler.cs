@@ -501,7 +501,7 @@ namespace PersistanceMap.Sql
                     break;
 
                 case "StartsWith":
-                    if (!Configuration.StripUpperInLike)
+                    if (!CustomConfiguration.StripUpperInLike)
                     {
                         statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue(wildcardArg.ToUpper() + "%"), escapeSuffix);
                     }
@@ -512,7 +512,7 @@ namespace PersistanceMap.Sql
                     break;
 
                 case "EndsWith":
-                    if (!Configuration.StripUpperInLike)
+                    if (!CustomConfiguration.StripUpperInLike)
                     {
                         statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper()), escapeSuffix);
                     }
@@ -523,7 +523,7 @@ namespace PersistanceMap.Sql
                     break;
 
                 case "Contains":
-                    if (!Configuration.StripUpperInLike)
+                    if (!CustomConfiguration.StripUpperInLike)
                     {
                         statement = string.Format("upper({0}) like {1}{2}", quotedColName, DialectProvider.Instance.GetQuotedValue("%" + wildcardArg.ToUpper() + "%"), escapeSuffix);
                     }

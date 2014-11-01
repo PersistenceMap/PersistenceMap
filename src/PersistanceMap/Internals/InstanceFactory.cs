@@ -29,7 +29,7 @@ namespace PersistanceMap.Internals
             return (T)ConstructorProvider<T>.EmptyConstructorFunction();
         }
 
-        private static object CreateInstance(this Type type)
+        internal static object CreateInstance(this Type type)
         {
             if (type == null)
                 return null;

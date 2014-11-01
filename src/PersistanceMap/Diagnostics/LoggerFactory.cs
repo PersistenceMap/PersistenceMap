@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PersistanceMap.Diagnostics
 {
@@ -20,6 +21,8 @@ namespace PersistanceMap.Diagnostics
             if (!_logProviders.ContainsKey(name))
             {
                 _logProviders.Add(name, loggerProvider);
+
+                Trace.WriteLine(string.Format("#### PersistanceMap - Added Logger: {0}", name));
             }
         }
 

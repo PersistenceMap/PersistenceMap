@@ -15,7 +15,7 @@ namespace PersistanceMap
 
             if (type.IsEnum)
             {
-                if (Configuration.TreatEnumAsInteger)
+                if (CustomConfiguration.TreatEnumAsInteger)
                 {
                     return true;
                 }
@@ -34,7 +34,7 @@ namespace PersistanceMap
                         {
                             return false;
                         }
-                        if (Configuration.TreatEnumAsInteger)
+                        if (CustomConfiguration.TreatEnumAsInteger)
                         {
                             return true;
                         }
