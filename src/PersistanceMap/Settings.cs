@@ -3,6 +3,7 @@ using PersistanceMap.Diagnostics;
 using PersistanceMap.Internals;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace PersistanceMap
 {
@@ -55,10 +56,17 @@ namespace PersistanceMap
                         var type = Type.GetType(element.Type);
                         if (type != null)
                         {
-                            var logger = type.CreateInstance() as ILogger;
-                            if (logger != null)
+                            var instance = type.CreateInstance() as ILogger;
+                            if (instance != null)
                             {
-                                LoggerFactory.AddLogger(logger.GetType().Name, () => logger);
+                                LoggerFactory.AddLogger(instance.GetType().Name, () => instance);
+                            }
+                            else
+                            {
+                                var message = string.Format("#### PersistanceMap - Configuration error: Logger {0} cannot be created because the Type does not exist or does not derive from {1}.", element.Type, typeof(ILogger).Name);
+                                var logger = LoggerFactory.CreateLogger();
+                                logger.Write(message, "Configuration", DateTime.Now);
+                                Trace.WriteLine(message);
                             }
                         }
                     }

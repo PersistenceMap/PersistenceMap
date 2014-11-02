@@ -5,7 +5,7 @@ namespace PersistanceMap.Configuration
     public class PersistanceMapSection : ConfigurationSection
     {
         [ConfigurationProperty("loggers", IsDefaultCollection = true)]
-        [ConfigurationCollection(typeof(LoggerElement), AddItemName = "logger")]
+        [ConfigurationCollection(typeof(LoggerElement), AddItemName = "add")]
         public LoggerElementCollection Loggers
         {
             get
