@@ -8,7 +8,7 @@ namespace PersistanceMap
         public DatabaseConnection(IContextProvider provider)
         {
             _provider = provider;
-            Options = new DatabaseOptions();
+            Options = new Settings();
         }
 
         public virtual IDatabaseContext Open()
@@ -16,6 +16,6 @@ namespace PersistanceMap
             return new DatabaseContext(_provider, Options.LoggerFactory);
         }
 
-        public DatabaseOptions Options { get; private set; }
+        public Settings Options { get; private set; }
     }
 }

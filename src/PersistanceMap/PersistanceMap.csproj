@@ -54,7 +54,6 @@
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="Diagnostics\TraceLogger.cs" />
     <Compile Include="DatabaseConnection.cs" />
-    <Compile Include="DatabaseOptions.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\ILoggerFactory.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
@@ -77,7 +76,9 @@
     <Compile Include="QueryBuilder\QueryPartsBuilders\ProcedureQueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\QueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\SelectQueryPartsBuilder.cs" />
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs" />
+    <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs">
+      <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
+    </Compile>
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryParts\ICallbackQueryPart.cs" />
     <Compile Include="QueryParts\IExpressionQueryPart.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
     <Compile Include="IProcedureQueryExpression.cs" />
