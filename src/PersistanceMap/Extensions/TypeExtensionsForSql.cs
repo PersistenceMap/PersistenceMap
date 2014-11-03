@@ -6,56 +6,56 @@ namespace PersistanceMap.Sql
 {
     internal static class TypeExtensionsForSql
     {
-        private static Dictionary<Type, string> Mappings;
+        private static readonly Dictionary<Type, string> _mappings;
 
         static TypeExtensionsForSql()
         {
-            Mappings = new Dictionary<Type, string>();
+            _mappings = new Dictionary<Type, string>();
 
-            Mappings.Add(typeof(Int16), "smallint");
-            Mappings.Add(typeof(Int32), "int");
-            Mappings.Add(typeof(Int64), "bigint");
+            _mappings.Add(typeof(Int16), "smallint");
+            _mappings.Add(typeof(Int32), "int");
+            _mappings.Add(typeof(Int64), "bigint");
 
-            Mappings.Add(typeof(Byte[]), "binary");
+            _mappings.Add(typeof(Byte[]), "binary");
             //Mappings.Add(typeof(Byte[]), "image");
             //Mappings.Add(typeof(Byte[]), "rowversion");
             //Mappings.Add(typeof(Byte[]), "timestamp");
 
-            Mappings.Add(typeof(Byte), "tinyint");
+            _mappings.Add(typeof(Byte), "tinyint");
 
-            Mappings.Add(typeof(Boolean), "bit");
-            Mappings.Add(typeof(DateTime), "date");
+            _mappings.Add(typeof(Boolean), "bit");
+            _mappings.Add(typeof(DateTime), "date");
             //Mappings.Add(typeof(DateTime), "datetime");
             //Mappings.Add(typeof(DateTime), "datetime2");
             //Mappings.Add(typeof(DateTime), "smalldatetime");
 
-            Mappings.Add(typeof(TimeSpan), "time");
+            _mappings.Add(typeof(TimeSpan), "time");
 
-            Mappings.Add(typeof(DateTimeOffset), "datetimeoffset");
+            _mappings.Add(typeof(DateTimeOffset), "datetimeoffset");
 
-            Mappings.Add(typeof(Decimal), "decimal");
+            _mappings.Add(typeof(Decimal), "decimal");
             //Mappings.Add(typeof(Decimal), "money");
             //Mappings.Add(typeof(Decimal), "numeric");
             //Mappings.Add(typeof(Decimal), "smallmoney");
 
-            Mappings.Add(typeof(Double), "float");
+            _mappings.Add(typeof(Double), "float");
 
-            Mappings.Add(typeof(String), "varchar(max)");
+            _mappings.Add(typeof(String), "varchar(max)");
             //Mappings.Add(typeof(String), "nchar");
             //Mappings.Add(typeof(String), "ntext");
             //Mappings.Add(typeof(String), "nvarchar");
             //Mappings.Add(typeof(String), "char");
             //Mappings.Add(typeof(String), "text");
 
-            Mappings.Add(typeof(Single), "real");
+            _mappings.Add(typeof(Single), "real");
 
-            Mappings.Add(typeof(Guid), "uniqueidentifier");
+            _mappings.Add(typeof(Guid), "uniqueidentifier");
         }
 
         public static string ToSqlDbType(this Type clrType)
         {
             string datatype = null;
-            if (Mappings.TryGetValue(clrType, out datatype))
+            if (_mappings.TryGetValue(clrType, out datatype))
                 return datatype;
 
             throw new TypeLoadException(string.Format("Can not load CLR Type from {0}", clrType));

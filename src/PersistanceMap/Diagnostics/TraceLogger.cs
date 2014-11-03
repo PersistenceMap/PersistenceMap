@@ -9,10 +9,10 @@ namespace PersistanceMap.Diagnostics
     /// </summary>
     public class TraceLogger : ILogger
     {
-        public void Write(string message, string category = null, DateTime? logtime = null)
+        public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("#### PersistanceMap - Execute query");
+            sb.AppendLine(string.Format("#### PersistanceMap - {0}", source));
             sb.AppendLine(message.TrimEnd());
             sb.AppendLine(string.Format("## Execute at: {0}", logtime ?? DateTime.Now));
             sb.AppendLine(string.Format("## Category: {0}", category));

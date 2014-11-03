@@ -11,7 +11,7 @@ namespace PersistanceMap.Diagnostics
             _loggerFactory = loggerFactory;
         }
 
-        public void Write(string message, string category = null, DateTime? logtime = null)
+        public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
         {
             //TODO: add message to _loggerFactory.LogQueue
             //TODO: find alternative to _loggerFactory.LogQueue /other place for LogQueue
@@ -19,7 +19,7 @@ namespace PersistanceMap.Diagnostics
 
             foreach (var logger in _loggerFactory.LogProviders)
             {
-                logger().Write(message, category, logtime);
+                logger.Write(message, source, category, logtime);
             }
         }
     }

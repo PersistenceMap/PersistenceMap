@@ -41,7 +41,7 @@ namespace PersistanceMap
             //TODO: Add more information to log like time and duration
             _logger.Value.Write(compiledQuery.QueryString);
 
-            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            using (var reader = _contextProvider.ExecuteNonQuery(compiledQuery.QueryString))
             {
                 // make sure Disposed is called on reader!
             }

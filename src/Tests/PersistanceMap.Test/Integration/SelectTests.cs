@@ -477,10 +477,13 @@ namespace PersistanceMap.Test.Integration
                 from Orders
                 */
 
-                var orders2 = context.Select<Orders>();
-
                 Assert.IsNotNull(orders);
                 Assert.IsTrue(orders.Any());
+
+                var orders2 = context.Select<Orders>();
+
+                Assert.IsNotNull(orders2);
+                Assert.IsTrue(orders2.Any());
             }
         }
 

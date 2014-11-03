@@ -8,14 +8,14 @@ namespace PersistanceMap
         public DatabaseConnection(IContextProvider provider)
         {
             _provider = provider;
-            Options = new Settings();
+            Settings = new Settings();
         }
 
         public virtual IDatabaseContext Open()
         {
-            return new DatabaseContext(_provider, Options.LoggerFactory);
+            return new DatabaseContext(_provider, Settings.LoggerFactory);
         }
 
-        public Settings Options { get; private set; }
+        public Settings Settings { get; private set; }
     }
 }

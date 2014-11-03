@@ -4,6 +4,6 @@ namespace PersistanceMap.Diagnostics
 {
     public interface ILogger
     {
-        void Write(string message, string category = null, DateTime? logtime = null);
+        void Write(string message, string source = null, string category = null, DateTime? logtime = null);
     }
 }

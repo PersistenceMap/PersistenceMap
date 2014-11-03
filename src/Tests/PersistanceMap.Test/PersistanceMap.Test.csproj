@@ -88,6 +88,8 @@
     <Compile Include="Expression\SelectExpressionTests.cs" />
     <Compile Include="Expression\UpdateExpressionTests.cs" />
     <Compile Include="Integration\ExecuteTests.cs" />
+    <Compile Include="Integration\UpdateTests.cs" />
+    <Compile Include="MessageStackLogger.cs" />
     <Compile Include="TableTypes\Customers.cs" />
     <Compile Include="TableTypes\Employee.cs" />
     <Compile Include="TableTypes\EmployeeTerritories.cs" />

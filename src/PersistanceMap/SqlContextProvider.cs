@@ -39,7 +39,8 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.TraceError("PersistanceMap - An error occured while executing a uery:\n{0}", ex.Message);
+                //TODO: Log exception
+                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n{0}", ex.Message);
                 throw;
             }
         }
@@ -63,7 +64,8 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Trace.TraceError("PersistanceMap - An error occured while executing a uery:\n{0}", ex.Message);
+                //TODO: Log exception
+                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n{0}", ex.Message);
                 throw;
             }
         }

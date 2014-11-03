@@ -2,6 +2,7 @@
 using PersistanceMap.Diagnostics;
 using PersistanceMap.Internals;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 
@@ -11,6 +12,13 @@ namespace PersistanceMap
     {
         public Settings()
         {
+            _loggerFactory = new Lazy<ILoggerFactory>(() => 
+            {
+                // copy all loggers from the Configuration
+                var factory = new LoggerFactory();
+                ConfigSettings.Loggers.ForEach(l => factory.AddLogger(l.GetType().Name, l));
+                return factory;
+            });
         }
 
         
@@ -25,17 +33,18 @@ namespace PersistanceMap
             }
         }
 
+        readonly Lazy<ILoggerFactory> _loggerFactory;
         internal ILoggerFactory LoggerFactory
         {
             get
             {
-                return ConfigSettings.LoggerFactory;
+                return _loggerFactory.Value;
             }
         }
 
         public void AddLogger(ILogger logger)
         {
-            LoggerFactory.AddLogger(logger.GetType().Name, () => logger);
+            LoggerFactory.AddLogger(logger.GetType().Name, logger);
         }
 
         /// <summary>
@@ -45,7 +54,7 @@ namespace PersistanceMap
         {
             public ConfigurationSettings()
             {
-                LoggerFactory = new LoggerFactory();
+                var loggers = new List<ILogger>();
 
                 // add loggers that are defined in the configurationsection in the app.config
                 var section = ConfigurationManager.GetSection("persistanceMap") as PersistanceMapSection;
@@ -59,21 +68,26 @@ namespace PersistanceMap
                             var instance = type.CreateInstance() as ILogger;
                             if (instance != null)
                             {
-                                LoggerFactory.AddLogger(instance.GetType().Name, () => instance);
+                                loggers.Add(instance);
                             }
                             else
                             {
-                                var message = string.Format("#### PersistanceMap - Configuration error: Logger {0} cannot be created because the Type does not exist or does not derive from {1}.", element.Type, typeof(ILogger).Name);
-                                var logger = LoggerFactory.CreateLogger();
-                                logger.Write(message, "Configuration", DateTime.Now);
-                                Trace.WriteLine(message);
+                                var loggerFactory = new LoggerFactory();
+                                var logger = loggerFactory.CreateLogger();
+
+                                var message = string.Format("Logger {0} cannot be created because the Type does not exist or does not derive from {1}.", element.Type, typeof(ILogger).Name);
+                                
+                                logger.Write(message, "Configuration error", "Configuration", DateTime.Now);
+                                Trace.WriteLine(string.Format("#### PersistanceMap - Configuration error: {0}", message));
                             }
                         }
                     }
                 }
+
+                Loggers = loggers;
             }
 
-            internal ILoggerFactory LoggerFactory { get; private set; }
+            internal IEnumerable<ILogger> Loggers { get; private set; }
         }
     }
 }

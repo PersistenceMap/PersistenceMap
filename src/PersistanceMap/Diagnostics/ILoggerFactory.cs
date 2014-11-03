@@ -4,9 +4,9 @@ namespace PersistanceMap.Diagnostics
 {
     public interface ILoggerFactory
     {
-        IEnumerable<CreateLoggerCallback> LogProviders { get; }
+        IEnumerable<ILogger> LogProviders { get; }
 
-        void AddLogger(string name, CreateLoggerCallback loggerProvider);
+        void AddLogger(string name, ILogger loggerProvider);
 
         ILogger CreateLogger();
     }
