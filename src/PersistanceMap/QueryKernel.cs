@@ -18,6 +18,13 @@ namespace PersistanceMap
         readonly IContextProvider _contextProvider;
 
         readonly Lazy<ILogger> _logger;
+        private ILogger Logger
+        {
+            get
+            {
+                return _logger.Value;
+            }
+        }
 
         public QueryKernel(IContextProvider provider, ILoggerFactory loggerFactory)
         {
@@ -28,41 +35,77 @@ namespace PersistanceMap
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            _logger.Value.Write(compiledQuery.QueryString);
+            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
-            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            try
             {
-                return this.Map<T>(reader);
+                using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+                {
+                    return this.Map<T>(reader);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+
+                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
+
+                throw;
             }
         }
 
         public void Execute(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            _logger.Value.Write(compiledQuery.QueryString);
+            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
-            using (var reader = _contextProvider.ExecuteNonQuery(compiledQuery.QueryString))
+            try
             {
-                // make sure Disposed is called on reader!
+                using (var reader = _contextProvider.ExecuteNonQuery(compiledQuery.QueryString))
+                {
+                    // make sure Disposed is called on reader!
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                
+                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
+
+                throw;
             }
         }
 
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
             //TODO: Add more information to log like time and duration
-            _logger.Value.Write(compiledQuery.QueryString);
+            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
-            using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+            try
             {
-                foreach (var expression in expressions)
+                using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
                 {
-                    // invoke expression with the reader
-                    expression.Invoke(reader);
+                    foreach (var expression in expressions)
+                    {
+                        // invoke expression with the reader
+                        expression.Invoke(reader);
 
-                    // read next resultset
-                    if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
-                        break;
+                        // read next resultset
+                        if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+
+                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
+
+                throw;
             }
         }
 
@@ -171,12 +214,12 @@ namespace PersistanceMap
             }
             catch (FormatException fe)
             {
-                Logger.Write(fe.Message);
+                Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.Write(ex);
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
             }
 
             return row;
@@ -218,7 +261,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(ex);
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
             }
 
             return objWithProperties;
@@ -240,7 +283,10 @@ namespace PersistanceMap
             {
                 fieldDef.SetValueFunction(instance, convertedValue);
             }
-            catch (NullReferenceException) { }
+            catch (NullReferenceException ex)
+            {
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+            }
         }
 
         public virtual object GetValue(IReaderContext context, ObjectDefinition objectDef, int colIndex)
@@ -387,7 +433,7 @@ namespace PersistanceMap
                 }
             }
 
-            Logger.Write(string.Format("QueryKernel - Cannot convert value {0} to type {1}", value, memberType));
+            Logger.Write(string.Format("Cannot convert value {0} to type {1}", value, memberType), GetType().Name, LoggerCategory.Error, DateTime.Now);
 
             //throw new NotImplementedException();
             return null;

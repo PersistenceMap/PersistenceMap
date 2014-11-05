@@ -34,18 +34,11 @@ namespace PersistanceMap
         public virtual IReaderContext Execute(string query)
         {
             var connection = new SqlCeConnection(ConnectionString);
-            try
-            {
-                connection.Open();
-                var command = new SqlCeCommand(query, connection);
-                
-                return new SqlCeContextReader(command.ExecuteReader(), connection, command);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                throw;
-            }
+
+            connection.Open();
+            var command = new SqlCeCommand(query, connection);
+
+            return new SqlCeContextReader(command.ExecuteReader(), connection, command);
         }
 
         /// <summary>
@@ -55,21 +48,13 @@ namespace PersistanceMap
         public IReaderContext ExecuteNonQuery(string query)
         {
             var connection = new SqlCeConnection(ConnectionString);
-            try
-            {
-                connection.Open();
-                var command = new SqlCeCommand(query, connection);
-                
-                command.ExecuteNonQuery();
 
-                return new SqlCeContextReader(null, connection, command);
+            connection.Open();
+            var command = new SqlCeCommand(query, connection);
 
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                throw;
-            }
+            command.ExecuteNonQuery();
+
+            return new SqlCeContextReader(null, connection, command);
         }
 
         #region IDisposeable Implementation

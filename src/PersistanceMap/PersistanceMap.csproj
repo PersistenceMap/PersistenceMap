@@ -52,6 +52,7 @@
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
+    <Compile Include="Diagnostics\LoggerCategory.cs" />
     <Compile Include="Diagnostics\TraceLogger.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
@@ -63,7 +64,6 @@
     <Compile Include="IInsertQueryExpression.cs" />
     <Compile Include="Internals\ExpressionFactory.cs" />
     <Compile Include="Internals\FieldHelper.cs" />
-    <Compile Include="Internals\Logger.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="Configuration\PersistanceMapSection.cs" />
     <Compile Include="QueryBuilder\Commands\DeleteQueryCommand.cs" />

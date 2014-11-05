@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Diagnostics;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -28,7 +29,7 @@ namespace PersistanceMap.Internals
                 if (memberExpression == null)
                 {
                     //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
-                    Logger.Write("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
+                    PersistanceMap.Diagnostics.Logger.TraceLine("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
 
                     try
                     {
@@ -36,7 +37,7 @@ namespace PersistanceMap.Internals
                     }
                     catch (Exception e)
                     {
-                        Logger.Write(e);
+                        Logger.TraceLine(e.Message);
                         return propertyExpression.ToString();
                     }
                 }
@@ -45,14 +46,14 @@ namespace PersistanceMap.Internals
             var propertyInfo = memberExpression.Member as PropertyInfo;
             if (propertyInfo == null)
             {
-                Logger.Write("Property is not a PropertyInfo");
+                Logger.TraceLine("Property is not a PropertyInfo");
                 return memberExpression.Member.ToString();
             }
 
             if (propertyInfo.GetGetMethod(true).IsStatic)
             {
                 //throw new ArgumentException("Property is static", "propertyExpression");
-                Logger.Write("Property is static");
+                Logger.TraceLine("Property is static");
                 return memberExpression.Member.ToString();
             }
 

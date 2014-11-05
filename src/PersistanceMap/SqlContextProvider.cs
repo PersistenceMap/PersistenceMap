@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Diagnostics;
 
 namespace PersistanceMap
 {
@@ -30,19 +29,11 @@ namespace PersistanceMap
         public virtual IReaderContext Execute(string query)
         {
             var connection = new SqlConnection(ConnectionString);
-            try
-            {
-                connection.Open();
-                var command = new SqlCommand(query, connection);
-                
-                return new SqlContextReader(command.ExecuteReader(), connection, command);
-            }
-            catch (Exception ex)
-            {
-                //TODO: Log exception
-                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n{0}", ex.Message);
-                throw;
-            }
+
+            connection.Open();
+            var command = new SqlCommand(query, connection);
+
+            return new SqlContextReader(command.ExecuteReader(), connection, command);
         }
 
         /// <summary>
@@ -52,22 +43,13 @@ namespace PersistanceMap
         public IReaderContext ExecuteNonQuery(string query)
         {
             var connection = new SqlConnection(ConnectionString);
-            try
-            {
-                connection.Open();
-                var command = new SqlCommand(query, connection);
-                
-                command.ExecuteNonQuery();
 
-                return new SqlContextReader(null, connection, command);
+            connection.Open();
+            var command = new SqlCommand(query, connection);
 
-            }
-            catch (Exception ex)
-            {
-                //TODO: Log exception
-                Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n{0}", ex.Message);
-                throw;
-            }
+            command.ExecuteNonQuery();
+
+            return new SqlContextReader(null, connection, command);
         }
 
         #region IDisposeable Implementation

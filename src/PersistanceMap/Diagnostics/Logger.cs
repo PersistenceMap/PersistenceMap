@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PersistanceMap.Diagnostics
 {
@@ -13,14 +14,21 @@ namespace PersistanceMap.Diagnostics
 
         public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
         {
-            //TODO: add message to _loggerFactory.LogQueue
-            //TODO: find alternative to _loggerFactory.LogQueue /other place for LogQueue
-
-
+            // set message to all registered loggers
             foreach (var logger in _loggerFactory.LogProviders)
             {
                 logger.Write(message, source, category, logtime);
             }
+        }
+
+        internal static void TraceLine(string message)
+        {
+            Trace.WriteLine(message);
+        }
+
+        internal static void TraceLine(string message, params string[] args)
+        {
+            Trace.WriteLine(string.Format(message, args));
         }
     }
 }

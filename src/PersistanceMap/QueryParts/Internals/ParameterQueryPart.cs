@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Diagnostics;
+using System;
 using System.Diagnostics;
 using System.Linq;
 
@@ -122,8 +123,8 @@ namespace PersistanceMap.QueryParts
             }
             catch (Exception e)
             {
-                Logger.Write(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof(T).Name));
-                Logger.Write(e.Message);
+                Logger.TraceLine(String.Format("Value could not be set for callback. Value type: {0} Expected type: {1}", value != null ? value.GetType().Name : "null", typeof(T).Name));
+                Logger.TraceLine(e.Message);
 
                 return false;
             }
@@ -159,7 +160,7 @@ namespace PersistanceMap.QueryParts
                 if (string.IsNullOrEmpty(name))
                 {
                     //throw new NotSupportedException("The Parametername has to be provided when using Output Parameters");
-                    Logger.Write(string.Format("{0} - The Parametername has to be provided when using Output Parameters", GetType().Name));
+                    Logger.TraceLine(string.Format("{0} - The Parametername has to be provided when using Output Parameters", GetType().Name));
                     return base.Compile();
                 }
 

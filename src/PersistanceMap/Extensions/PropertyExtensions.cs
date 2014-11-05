@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Diagnostics;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -30,7 +31,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(ex.Message);
+                Logger.TraceLine(ex.Message);
                 throw;
             }
         }
