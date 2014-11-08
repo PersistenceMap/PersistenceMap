@@ -14,47 +14,17 @@ namespace PersistanceMap
             if (string.IsNullOrEmpty(connectionstring))
                 throw new ArgumentNullException("connectionstring");
 
-            ConnectionString = connectionstring;
+            ConnectionProvider = new SqlCeConnectionProvider(connectionstring);
+            Settings = new Settings();
         }
 
-        public string ConnectionString { get; private set; }
+        public Settings Settings { get; private set; }
 
-        private IQueryCompiler _queryCompiler;
-        public virtual IQueryCompiler QueryCompiler
+        public IConnectionProvider ConnectionProvider { get; private set; }
+
+        public virtual DatabaseContext Open()
         {
-            get
-            {
-                if (_queryCompiler == null)
-                    _queryCompiler = new QueryCompiler();
-
-                return _queryCompiler;
-            }
-        }
-
-        public virtual IReaderContext Execute(string query)
-        {
-            var connection = new SqlCeConnection(ConnectionString);
-
-            connection.Open();
-            var command = new SqlCeCommand(query, connection);
-
-            return new SqlCeContextReader(command.ExecuteReader(), connection, command);
-        }
-
-        /// <summary>
-        /// Executes a sql query without returning a resultset
-        /// </summary>
-        /// <param name="query"></param>
-        public IReaderContext ExecuteNonQuery(string query)
-        {
-            var connection = new SqlCeConnection(ConnectionString);
-
-            connection.Open();
-            var command = new SqlCeCommand(query, connection);
-
-            command.ExecuteNonQuery();
-
-            return new SqlCeContextReader(null, connection, command);
+            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
         }
 
         #region IDisposeable Implementation
