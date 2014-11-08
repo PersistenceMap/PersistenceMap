@@ -22,7 +22,7 @@ namespace PersistanceMap
 
         public IConnectionProvider ConnectionProvider { get; private set; }
 
-        public virtual DatabaseContext Open()
+        public virtual SqlCeDatabaseContext Open()
         {
             return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
         }

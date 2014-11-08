@@ -39,6 +39,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDatabaseQueryExpression.cs" />
+    <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
     <Compile Include="SqliteConnectionProvider.cs" />
     <Compile Include="SqliteContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

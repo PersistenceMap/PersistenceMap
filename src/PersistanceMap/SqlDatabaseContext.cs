@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Diagnostics;
+using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {
@@ -8,5 +9,14 @@ namespace PersistanceMap
             : base(provider, loggerFactory)
         {
         }
+
+        #region Procedure Expressions
+
+        public IProcedureQueryExpression Procedure(string procName)
+        {
+            return new ProcedureQueryProvider(this, procName);
+        }
+
+        #endregion
     }
 }

@@ -16,7 +16,7 @@ namespace PersistanceMap
 
         public IConnectionProvider ConnectionProvider { get; private set; }
 
-        public virtual DatabaseContext Open()
+        public virtual SqlDatabaseContext Open()
         {
             return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
         }

@@ -128,7 +128,6 @@
     <Compile Include="QueryParts\SelectQueryPartsMap.cs" />
     <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DatabaseContextExtensions.cs" />
     <Compile Include="QueryParts\Internals\ParameterQueryPart.cs" />
     <Compile Include="QueryBuilder\SelectQueryBuilder.Join.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>

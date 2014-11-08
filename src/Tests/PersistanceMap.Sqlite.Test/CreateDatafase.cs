@@ -4,11 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace PersistanceMap.Sqlite.Test
 {
     [TestClass]
-    public class UnitTest
+    public class CreateDatafase
     {
         [TestMethod]
-        public void TestMethod1()
+        public void CreateDatabase()
         {
+
         }
     }
 }

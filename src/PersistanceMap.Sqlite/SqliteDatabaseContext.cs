@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.Diagnostics;
+using PersistanceMap.Sqlite.QueryBuilder;
 
 namespace PersistanceMap.Sqlite
 {
@@ -7,6 +8,14 @@ namespace PersistanceMap.Sqlite
         public SqliteDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
             : base(provider, loggerFactory)
         {
+        }
+
+        public IDatabaseQueryExpression Database
+        {
+            get
+            {
+                return new DatabaseQueryBuilder(this);
+            }
         }
     }
 }

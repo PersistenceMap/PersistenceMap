@@ -199,7 +199,7 @@ namespace PersistanceMap.Test.Integration
 
 
         [Test]
-        [ExpectedException(typeof(FormatException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(FormatException))]
         public void SelectWithFormatException()
         {
             var provider = new SqlContextProvider(ConnectionString);
@@ -673,7 +673,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [ExpectedException(typeof(SqlException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(SqlException))]
         public void IncludeWithWrongLambdaExpressionFailTest()
         {
             var provider = new SqlContextProvider(ConnectionString);

@@ -17,7 +17,7 @@ namespace PersistanceMap.Sqlite
 
         public IConnectionProvider ConnectionProvider { get; private set; }
 
-        public virtual DatabaseContext Open()
+        public virtual SqliteDatabaseContext Open()
         {
             return new SqliteDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
         }

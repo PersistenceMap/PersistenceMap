@@ -58,7 +58,7 @@ namespace PersistanceMap.Test.Expression
 
         [Test]
         [Description("A failing delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        [ExpectedException(typeof(ArgumentException))]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
         public void DeleteEntityWithExpressionKeyThatFails()
         {
             var provider = new SqlContextProvider(null);
