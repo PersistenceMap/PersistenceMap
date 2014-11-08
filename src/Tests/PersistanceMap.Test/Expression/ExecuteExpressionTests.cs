@@ -11,8 +11,8 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void ExecuteSelectStatement()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "SELECT * FROM Orders")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "SELECT * FROM Orders"));
+            using (var context = provider.Open())
             {
                 // select with string select statement
                 var orders = context.Execute<Orders>("SELECT * FROM Orders");
@@ -22,8 +22,8 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void ExecuteSqlStatement()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000"));
+            using (var context = provider.Open())
             {
                 // select with string select statement
                 context.Execute("UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000");

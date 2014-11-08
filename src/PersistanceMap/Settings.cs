@@ -34,7 +34,7 @@ namespace PersistanceMap
         }
 
         readonly Lazy<ILoggerFactory> _loggerFactory;
-        internal ILoggerFactory LoggerFactory
+        public ILoggerFactory LoggerFactory
         {
             get
             {

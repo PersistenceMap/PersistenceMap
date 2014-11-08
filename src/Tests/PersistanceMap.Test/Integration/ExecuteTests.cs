@@ -11,9 +11,9 @@ namespace PersistanceMap.Test.Integration
         public void ExecuteSelectStatement()
         {
             var logger = new MessageStackLogger();
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            connection.Settings.AddLogger(logger);
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
             {
                 // select with string select statement
                 var orders = context.Execute<Orders>("SELECT * FROM Orders");
@@ -27,9 +27,9 @@ namespace PersistanceMap.Test.Integration
         public void ExecuteUpateStatement()
         {
             var logger = new MessageStackLogger();
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            connection.Settings.AddLogger(logger);
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
             {
                 // select with string select statement
                 context.Execute("UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000");

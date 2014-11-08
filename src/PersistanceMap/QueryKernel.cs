@@ -15,7 +15,7 @@ namespace PersistanceMap
     public class QueryKernel
     {
         protected const int NotFound = -1;
-        readonly IContextProvider _contextProvider;
+        readonly IConnectionProvider _connectionProvider;
 
         readonly Lazy<ILogger> _logger;
         private ILogger Logger
@@ -26,28 +26,28 @@ namespace PersistanceMap
             }
         }
 
-        public QueryKernel(IContextProvider provider, ILoggerFactory loggerFactory)
+        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
         {
-            _contextProvider = provider;
+            _connectionProvider = provider;
             _logger = new Lazy<ILogger>(() => loggerFactory.CreateLogger());
         }
 
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+            Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
             {
-                using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+                using (var reader = _connectionProvider.Execute(compiledQuery.QueryString))
                 {
                     return this.Map<T>(reader);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
 
                 Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
 
@@ -58,19 +58,19 @@ namespace PersistanceMap
         public void Execute(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+            Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
             {
-                using (var reader = _contextProvider.ExecuteNonQuery(compiledQuery.QueryString))
+                using (var reader = _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString))
                 {
                     // make sure Disposed is called on reader!
                 }
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
                 
                 Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
 
@@ -81,11 +81,11 @@ namespace PersistanceMap
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
             //TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, _contextProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+            Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
             {
-                using (var reader = _contextProvider.Execute(compiledQuery.QueryString))
+                using (var reader = _connectionProvider.Execute(compiledQuery.QueryString))
                 {
                     foreach (var expression in expressions)
                     {
@@ -100,8 +100,8 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _contextProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
 
                 Trace.WriteLine("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message);
 
@@ -214,7 +214,7 @@ namespace PersistanceMap
             }
             catch (FormatException fe)
             {
-                Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _contextProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
                 throw;
             }
             catch (Exception ex)

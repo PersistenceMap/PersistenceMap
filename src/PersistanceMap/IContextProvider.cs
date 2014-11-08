@@ -4,12 +4,14 @@ namespace PersistanceMap
 {
     public interface IContextProvider : IDisposable
     {
-        string ConnectionString { get; }
+        //string ConnectionString { get; }
 
-        IQueryCompiler QueryCompiler { get; }
+        //IQueryCompiler QueryCompiler { get; }
 
-        IReaderContext Execute(string query);
+        //IReaderContext Execute(string query);
 
-        IReaderContext ExecuteNonQuery(string query);
+        //IReaderContext ExecuteNonQuery(string query);
+
+        IConnectionProvider ConnectionProvider { get; }
     }
 }

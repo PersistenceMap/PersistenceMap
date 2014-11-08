@@ -14,13 +14,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithPredicate()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 // ignore a member in the select
                 context.From<Warrior>(w => w.ID == 1)
                     .Select();
@@ -37,13 +34,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithGroupBy()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).GroupBy(w => w.Race).Select();
                 Assert.AreEqual(sql, "select Race from Warrior GROUP BY Race");
 
@@ -70,13 +64,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithMax()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 // select the max id
                 context.From<Warrior>().Max(w => w.ID).Select();
                 Assert.AreEqual(sql, "select MAX(ID) AS ID from Warrior");
@@ -97,13 +88,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithMin()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 // select the min id
                 context.From<Warrior>().Min(w => w.ID).Select();
                 Assert.AreEqual(sql, "select MIN(ID) AS ID from Warrior");
@@ -125,13 +113,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithCount()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 // select the min id
                 context.From<Warrior>().Count(w => w.ID).Select();
                 Assert.AreEqual(sql, "select COUNT(ID) AS ID from Warrior");
@@ -155,8 +140,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 // Map => To 
                 context.From<Orders>()
@@ -173,8 +158,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
             
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 // Map => To 
                 context.From<Orders>()
@@ -191,8 +176,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 context.From<Orders>()
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
@@ -209,8 +194,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
@@ -230,8 +215,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
@@ -251,8 +236,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 // select only the properties that are defined in the anony object
                 var items = context.From<Orders>()
@@ -275,8 +260,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 // select only the properties that are defined in the anony object
                 context.From<Orders>()
@@ -295,8 +280,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "select ID, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
                
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected)));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            using (var context = provider.Open())
             {
                 IEnumerable<string> races = new List<string>
                 {

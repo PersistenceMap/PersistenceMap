@@ -11,8 +11,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithoutParamNames()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset without parameter names
                 var proc = context.Procedure("SalesByYear")
@@ -27,8 +27,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithoutParamNamesAndBaseClass()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset without parameter names
                 var proc = context.Procedure("SalesByYear")
@@ -46,8 +46,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithParamNames()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset with parameter names
                 var proc = context.Procedure("SalesByYear")
@@ -62,8 +62,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithParamNamesContainingAt()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset with parameter names and @ before name
                 var proc = context.Procedure("SalesByYear")
@@ -78,8 +78,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithoutResultWithoutParamNames()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc without resultset without parameter names
                 context.Procedure("SalesByYear")
@@ -92,8 +92,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithoutResultWithParamNames()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc without resultset with parameter names
                 context.Procedure("SalesByYear")
@@ -106,8 +106,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithoutResultWithParamNamesContainingAt()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc without resultset with parameter names and @ before name
                 context.Procedure("SalesByYear")
@@ -120,8 +120,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithRetval()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 /* *Using Output compiles to*
                 
@@ -152,8 +152,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithoutResultWithRetval()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 /* *Using Output compiles to*
                 
@@ -183,8 +183,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithRetvalContainingAt()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 /* *Using Output compiles to*
                 
@@ -215,8 +215,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithoutResultWithRetvalContainingAt()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 /* *Using Output compiles to*
                 
@@ -246,8 +246,8 @@ namespace PersistanceMap.Test.Integration
         //[ExpectedException(typeof(SqlException))]
         //public void ProcedureFailWithResultWithRetval()
         //{
-        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = connection.Open())
+        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = provider.Open())
         //    {
         //        int returnvalue = 1;
         //        string returnvalue2 = "tmp";
@@ -280,8 +280,8 @@ namespace PersistanceMap.Test.Integration
         //[ExpectedException(typeof(SqlException))]
         //public void ProcedureFailWithoutResultWithRetvalContainingAt()
         //{
-        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = connection.Open())
+        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = provider.Open())
         //    {
         //        int returnvalue = 1;
         //        string returnvalue2 = "tmp";
@@ -312,8 +312,8 @@ namespace PersistanceMap.Test.Integration
         //[Test]
         //public void ProcedureWithResultWithRetvalWithoutParameterNames()
         //{
-        //    var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = connection.Open())
+        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
+        //    using (var context = provider.Open())
         //    {
         //        int returnvalue = 1;
         //        string returnvalue2 = "tmp";
@@ -347,8 +347,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultAndFieldMappingsWithFor()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset without parameter names
                 var proc = context.Procedure("SalesByYear")
@@ -366,8 +366,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultAndFieldMappingsWithoutFor()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset without parameter names
                 var proc = context.Procedure("SalesByYear")
@@ -384,8 +384,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultAndIndexerFieldInMember()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 var products = context.Procedure("GetProducts")
                     .AddParameter("minprice", () => 17.50)
@@ -400,8 +400,8 @@ namespace PersistanceMap.Test.Integration
         [Description("Executes a procedure to a anonym object")]
         public void ProcedureWithResultToAnonymObject()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 var products = context.Procedure("GetProducts")
                     .AddParameter("minprice", () => 17.50)
@@ -424,8 +424,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void ProcedureWithResultWithMappings()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 // proc with resultset with parameter names and @ before name
                 var proc = context.Procedure("SalesByYear")

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Diagnostics;
+using System;
 using System.Data;
 
 namespace PersistanceMap.Test
@@ -11,9 +12,9 @@ namespace PersistanceMap.Test
     public class CallbackContextProvider : IContextProvider
     {
         //private readonly Action<string> _callback;
-        public event ContextProviderCallbackHandler Callback;
+        //public event ContextProviderCallbackHandler Callback;
 
-        private bool _callbackCalled = false;
+        //private bool _callbackCalled = false;
 
         public CallbackContextProvider()
         {
@@ -21,39 +22,47 @@ namespace PersistanceMap.Test
 
         public CallbackContextProvider(Action<string> callback)
         {
-            Callback = (s) => callback(s);
+            //Callback = (s) => callback(s);
+            ConnectionProvider = new CallbackConnectionProvider((s) => callback(s));
         }
 
-        public string ConnectionString { get; private set; }
+        public IConnectionProvider ConnectionProvider { get; private set; }
 
-        private IQueryCompiler _queryCompiler;
+        //public string ConnectionString { get; private set; }
 
-        public virtual IQueryCompiler QueryCompiler
+        //private IQueryCompiler _queryCompiler;
+
+        //public virtual IQueryCompiler QueryCompiler
+        //{
+        //    get
+        //    {
+        //        if (_queryCompiler == null)
+        //            _queryCompiler = new QueryCompiler();
+
+        //        return _queryCompiler;
+        //    }
+        //}
+
+        //public IReaderContext Execute(string query)
+        //{
+        //    return ExecuteNonQuery(query);
+        //}
+
+        //public IReaderContext ExecuteNonQuery(string query)
+        //{
+        //    if(Callback == null)
+        //        throw new ArgumentNullException("Callback was not set prior to execution");
+
+        //    Callback(query);
+
+        //    _callbackCalled = true;
+
+        //    return new CallbackReaderContext();
+        //}
+
+        public virtual DatabaseContext Open()
         {
-            get
-            {
-                if (_queryCompiler == null)
-                    _queryCompiler = new QueryCompiler();
-
-                return _queryCompiler;
-            }
-        }
-
-        public IReaderContext Execute(string query)
-        {
-            return ExecuteNonQuery(query);
-        }
-
-        public IReaderContext ExecuteNonQuery(string query)
-        {
-            if(Callback == null)
-                throw new ArgumentNullException("Callback was not set prior to execution");
-
-            Callback(query);
-
-            _callbackCalled = true;
-
-            return new CallbackReaderContext();
+            return new DatabaseContext(ConnectionProvider, new LoggerFactory());
         }
 
         #region IDisposeable Implementation
@@ -80,8 +89,7 @@ namespace PersistanceMap.Test
             {
                 if (disposing && !IsDisposed)
                 {
-                    if (_callbackCalled == false)
-                        throw new Exception("Callback was not called by client");
+                    ConnectionProvider.Dispose();
 
                     IsDisposed = true;
                     GC.SuppressFinalize(this);
@@ -287,6 +295,89 @@ namespace PersistanceMap.Test
             }
 
             #endregion
+        }
+
+        public class CallbackConnectionProvider : IConnectionProvider
+        {
+            public ContextProviderCallbackHandler Callback;
+            private bool _callbackCalled = false;
+
+            public CallbackConnectionProvider(ContextProviderCallbackHandler callback)
+            {
+                Callback = callback;
+            }
+
+            private IQueryCompiler _queryCompiler;
+            public virtual IQueryCompiler QueryCompiler
+            {
+                get
+                {
+                    if (_queryCompiler == null)
+                        _queryCompiler = new QueryCompiler();
+
+                    return _queryCompiler;
+                }
+            }
+
+            public IReaderContext Execute(string query)
+            {
+                return ExecuteNonQuery(query);
+            }
+
+            public IReaderContext ExecuteNonQuery(string query)
+            {
+                if (Callback == null)
+                    throw new ArgumentNullException("Callback was not set prior to execution");
+
+                Callback(query);
+
+                _callbackCalled = true;
+
+                return new CallbackReaderContext();
+            }
+
+            #region IDisposeable Implementation
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        internal bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases resources held by the object.
+        /// </summary>
+        public virtual void Dispose(bool disposing)
+        {
+            lock (this)
+            {
+                if (disposing && !IsDisposed)
+                {
+                    if (_callbackCalled == false)
+                        throw new Exception("Callback was not called by client");
+
+                    IsDisposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Releases resources before the object is reclaimed by garbage collection.
+        /// </summary>
+        ~CallbackConnectionProvider()
+        {
+            Dispose(false);
+        }
+
+        #endregion
         }
     }
 }

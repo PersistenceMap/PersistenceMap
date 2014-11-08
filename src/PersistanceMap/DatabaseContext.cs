@@ -13,14 +13,14 @@ namespace PersistanceMap
         readonly IList<IQueryCommand> _queryCommandStore;
         readonly ILoggerFactory _loggerFactory;
 
-        public DatabaseContext(IContextProvider provider, ILoggerFactory loggerFactory)
+        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
         {
-            ContextProvider = provider;
+            ConnectionProvider = provider;
             _queryCommandStore = new List<IQueryCommand>();
             _loggerFactory = loggerFactory;
         }
 
-        public IContextProvider ContextProvider { get; private set; }
+        public IConnectionProvider ConnectionProvider { get; private set; }
 
         public void Commit()
         {
@@ -57,7 +57,7 @@ namespace PersistanceMap
             get
             {
                 if (_kernel == null)
-                    _kernel = new QueryKernel(ContextProvider, _loggerFactory);
+                    _kernel = new QueryKernel(ConnectionProvider, _loggerFactory);
 
                 return _kernel;
             }
@@ -90,7 +90,7 @@ namespace PersistanceMap
                     // commit all uncommited transactions
                     Commit();
 
-                    ContextProvider.Dispose();
+                    ConnectionProvider.Dispose();
 
                     IsDisposed = true;
                     GC.SuppressFinalize(this);

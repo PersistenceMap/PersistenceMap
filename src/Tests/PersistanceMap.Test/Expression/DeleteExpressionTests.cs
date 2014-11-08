@@ -13,8 +13,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A simple delete statement that deletes all items in a table")]
         public void SimpleDelete()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee"));
+            using (var context = provider.Open())
             {
                 context.Delete<Employee>();
             }
@@ -24,8 +24,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement with a where operation")]
         public void SimpleDeleteWithWhere()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)"));
+            using (var context = provider.Open())
             {
                 context.Delete<Employee>(e => e.EmployeeID == 1);
                 context.Commit();
@@ -36,8 +36,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement that defines the deletestatement according to the values of a given entity")]
         public void DeleteEntity()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)"));
+            using (var context = provider.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 });
                 context.Commit();
@@ -48,8 +48,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
         public void DeleteEntityWithSpecialKey()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)"));
+            using (var context = provider.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID);
                 context.Commit();
@@ -61,8 +61,8 @@ namespace PersistanceMap.Test.Expression
         [ExpectedException(typeof(ArgumentException))]
         public void DeleteEntityWithExpressionKeyThatFails()
         {
-            var connection = new DatabaseConnection(new SqlContextProvider(null));
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(null);
+            using (var context = provider.Open())
             {
                 // this has to fail because the expression should only return the property instead of the boolean!
                 context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID == 1);
@@ -75,8 +75,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]
         public void DeleteEntityWithAnonymObjectContainingOneParam()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1)"));
+            using (var context = provider.Open())
             {
                 context.Delete<Employee>(() => new { EmployeeID = 1 });
                 context.Commit();
@@ -87,8 +87,8 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete statement that is build depending on the properties of a anonym object containing multile properties")]
         public void DeleteEntityWithAnonymObjectContainingMultipleParams()
         {
-            var connection = new DatabaseConnection(new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')")));
-            using (var context = connection.Open())
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee where (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')"));
+            using (var context = provider.Open())
             {
                 context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });
                 context.Commit();

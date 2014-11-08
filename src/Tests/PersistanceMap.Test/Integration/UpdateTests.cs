@@ -11,9 +11,9 @@ namespace PersistanceMap.Test.Integration
         public void UpdateIntegrationTest()
         {
             var logger = new MessageStackLogger();
-            var connection = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-            connection.Settings.AddLogger(logger);
-            using (var context = connection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
             {
                 context.Update<Orders>(() => new { Freight = 20 }, o => o.OrdersID == 10000000);
                 context.Commit();

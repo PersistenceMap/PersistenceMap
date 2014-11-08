@@ -40,10 +40,6 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -54,7 +50,8 @@
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="Diagnostics\LoggerCategory.cs" />
     <Compile Include="Diagnostics\TraceLogger.cs" />
-    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="IConnectionProvider.cs" />
+    <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\ILoggerFactory.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
@@ -95,6 +92,7 @@
     <Compile Include="QueryParts\ICallbackQueryPart.cs" />
     <Compile Include="QueryParts\IExpressionQueryPart.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SqlDatabaseContext.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
     <Compile Include="IProcedureQueryExpression.cs" />

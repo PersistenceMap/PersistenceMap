@@ -12,7 +12,7 @@ namespace PersistanceMap.QueryBuilder.Commands
 
         public void Execute(IDatabaseContext context)
         {
-            var expr = context.ContextProvider.QueryCompiler;
+            var expr = context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryPartsMap);
             context.Kernel.Execute(query);
         }

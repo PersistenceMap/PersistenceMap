@@ -10,13 +10,10 @@ namespace PersistanceMap.Test.Expression
         [Test(Description = "Testmethod containing update statements")]
         public void UpdateTests()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 });
                 context.Commit();
 

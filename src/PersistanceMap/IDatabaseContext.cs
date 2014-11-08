@@ -5,7 +5,9 @@ namespace PersistanceMap
 {
     public interface IDatabaseContext : IDisposable
     {
-        IContextProvider ContextProvider { get; }
+        //IContextProvider ContextProvider { get; }
+
+        IConnectionProvider ConnectionProvider { get; }
 
         void Commit();
 

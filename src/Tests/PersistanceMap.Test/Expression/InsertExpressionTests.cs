@@ -10,13 +10,10 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void InsertTests()
         {
-            var provider = new CallbackContextProvider();
-            var connection = new DatabaseConnection(provider);
-            using (var context = connection.Open())
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
             {
-                var sql = "";
-                provider.Callback += s => sql = s.Flatten();
-
                 // insert all elements used in the reference expression
                 context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" });
                 context.Commit();

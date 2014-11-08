@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 
 namespace PersistanceMap
 {
@@ -9,47 +8,17 @@ namespace PersistanceMap
         {
             connectionstring.EnsureArgumentNotNullOrEmpty(connectionstring);
 
-            ConnectionString = connectionstring;
+            ConnectionProvider = new SqlConnectionProvider(connectionstring);
+            Settings = new Settings();
         }
 
-        public string ConnectionString { get; private set; }
+        public Settings Settings { get; private set; }
 
-        private IQueryCompiler _queryCompiler;
-        public virtual IQueryCompiler QueryCompiler
+        public IConnectionProvider ConnectionProvider { get; private set; }
+
+        public virtual DatabaseContext Open()
         {
-            get
-            {
-                if (_queryCompiler == null)
-                    _queryCompiler = new QueryCompiler();
-
-                return _queryCompiler;
-            }
-        }
-
-        public virtual IReaderContext Execute(string query)
-        {
-            var connection = new SqlConnection(ConnectionString);
-
-            connection.Open();
-            var command = new SqlCommand(query, connection);
-
-            return new SqlContextReader(command.ExecuteReader(), connection, command);
-        }
-
-        /// <summary>
-        /// Executes a sql query without returning a resultset
-        /// </summary>
-        /// <param name="query"></param>
-        public IReaderContext ExecuteNonQuery(string query)
-        {
-            var connection = new SqlConnection(ConnectionString);
-
-            connection.Open();
-            var command = new SqlCommand(query, connection);
-
-            command.ExecuteNonQuery();
-
-            return new SqlContextReader(null, connection, command);
+            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
         }
 
         #region IDisposeable Implementation
