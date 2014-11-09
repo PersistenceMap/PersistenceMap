@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class DelegateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
+    public class DelegateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {
         public DelegateQueryPart(OperationType operation, Func<string> callback, string id = null)
         {

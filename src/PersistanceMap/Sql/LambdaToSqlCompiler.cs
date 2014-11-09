@@ -1,4 +1,4 @@
-﻿using PersistanceMap.Internals;
+﻿using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;

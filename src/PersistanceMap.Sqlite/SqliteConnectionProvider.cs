@@ -10,7 +10,7 @@ namespace PersistanceMap.Sqlite
             ConnectionString = connectionString;
         }
 
-        public string ConnectionString { get; private set; }
+        internal string ConnectionString { get; private set; }
 
         private IQueryCompiler _queryCompiler;
         public virtual IQueryCompiler QueryCompiler

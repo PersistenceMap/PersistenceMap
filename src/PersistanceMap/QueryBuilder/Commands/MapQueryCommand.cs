@@ -1,9 +1,9 @@
 ﻿
 namespace PersistanceMap.QueryBuilder.Commands
 {
-    internal class UpdateQueryCommand : IQueryCommand
+    public class MapQueryCommand : IQueryCommand
     {
-        public UpdateQueryCommand(IQueryPartsMap map)
+        public MapQueryCommand(IQueryPartsMap map)
         {
             QueryPartsMap = map;
         }

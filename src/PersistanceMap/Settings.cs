@@ -1,6 +1,6 @@
 ﻿using PersistanceMap.Configuration;
 using PersistanceMap.Diagnostics;
-using PersistanceMap.Internals;
+using PersistanceMap.Factories;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

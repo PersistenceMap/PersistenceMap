@@ -1,5 +1,5 @@
 ﻿using PersistanceMap.Diagnostics;
-using PersistanceMap.Internals;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;

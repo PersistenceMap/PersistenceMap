@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class QueryPartDecorator : IQueryPartDecorator, IQueryPart
+    public class QueryPartDecorator : IQueryPartDecorator, IQueryPart
     {
         public QueryPartDecorator(string id = null)
         {

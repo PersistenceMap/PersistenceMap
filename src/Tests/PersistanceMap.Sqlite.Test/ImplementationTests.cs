@@ -15,22 +15,22 @@ namespace PersistanceMap.Sqlite.Test
                 context.Database.Create();
 
                 // create table
-                context.Database.Table<Warrior>();
+                context.Database.Table<Warrior>().Create();
 
                 // ignore field
-                context.Database.Table<Warrior>().Ignore(w => w.SpecialSkill);
+                context.Database.Table<Warrior>().Ignore(w => w.SpecialSkill).Create();
 
                 // key
-                context.Database.Table<Warrior>().Key(w => w.ID);
+                context.Database.Table<Warrior>().Key(w => w.ID).Create();
 
                 // keys
-                context.Database.Table<Warrior>().Key(w => w.ID, w => w.WeaponID);
+                context.Database.Table<Warrior>().Key(w => w.ID, w => w.WeaponID).Create();
 
                 // foreign key
-                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID);
+                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID).Create();
 
                 // foreign key with name
-                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID, "FK_Warior_Weapong");
+                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID).Create();
             }
         }
     }

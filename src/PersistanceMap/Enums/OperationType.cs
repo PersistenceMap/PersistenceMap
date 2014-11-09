@@ -86,6 +86,13 @@ namespace PersistanceMap
         ThenByDesc = 29,
 
 
+        // Database
+        CreateTable = 34,
+        Drop = 35,
+        Column = 36,
+        TableKeys = 37,
+
+
 
         /// <summary>
         /// defines the value of a storeprocedure parameter

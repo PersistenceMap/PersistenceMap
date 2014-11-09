@@ -10,7 +10,7 @@ namespace PersistanceMap
             ConnectionString = connectionString;
         }
 
-        internal string ConnectionString { get; private set; }
+        public string ConnectionString { get; private set; }
 
         private IQueryCompiler _queryCompiler;
         public virtual IQueryCompiler QueryCompiler

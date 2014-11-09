@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap.Factories
 {
     //public delegate EmptyConstructorDelegate EmptyConstructorFactoryDelegate(Type type);
 

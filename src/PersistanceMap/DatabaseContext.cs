@@ -311,21 +311,21 @@ namespace PersistanceMap
     {
         internal static IDeleteQueryExpression AddToStore(this IDeleteQueryExpression expression)
         {
-            expression.Context.AddQuery(new DeleteQueryCommand(expression.QueryPartsMap));
+            expression.Context.AddQuery(new MapQueryCommand(expression.QueryPartsMap));
 
             return expression;
         }
 
         internal static IUpdateQueryExpression<T> AddToStore<T>(this IUpdateQueryExpression<T> expression)
         {
-            expression.Context.AddQuery(new UpdateQueryCommand(expression.QueryPartsMap));
+            expression.Context.AddQuery(new MapQueryCommand(expression.QueryPartsMap));
 
             return expression;
         }
 
         internal static IInsertQueryExpression<T> AddToStore<T>(this IInsertQueryExpression<T> expression)
         {
-            expression.Context.AddQuery(new InsertQueryCommand(expression.QueryPartsMap));
+            expression.Context.AddQuery(new MapQueryCommand(expression.QueryPartsMap));
 
             return expression;
         }

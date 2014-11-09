@@ -3,11 +3,11 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap.Factories
 {
-    internal static class FieldHelper
+    public static class FieldHelper
     {
-        internal static string TryExtractPropertyName(LambdaExpression propertyExpression)
+        public static string TryExtractPropertyName(LambdaExpression propertyExpression)
         {
             propertyExpression.EnsureArgumentNotNull("propertyExpression");
 

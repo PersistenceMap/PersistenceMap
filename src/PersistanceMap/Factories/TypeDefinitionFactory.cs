@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap.Factories
 {
-    internal static class TypeDefinitionFactory
+    public static class TypeDefinitionFactory
     {
         /// <summary>
         /// Gets all fielddefinitions that can be created by the type
@@ -17,6 +17,12 @@ namespace PersistanceMap.Internals
             return ExtractFieldDefinitions(typeof(T));
         }
 
+        /// <summary>
+        /// Gets a list of fields that are commonly used in two types like when using a concrete and anonymous type definition
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(Type type)
         {
             var definedFields = ExtractFieldDefinitions(typeof(T));

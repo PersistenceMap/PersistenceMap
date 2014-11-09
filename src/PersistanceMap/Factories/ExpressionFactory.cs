@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.Internals
+namespace PersistanceMap.Factories
 {
     internal static class ExpressionFactory
     {

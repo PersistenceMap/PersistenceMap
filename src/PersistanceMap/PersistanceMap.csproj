@@ -38,19 +38,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\IgnoreAttribute.cs" />
+    <Compile Include="Attributes\IgnoreAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="Diagnostics\LoggerCategory.cs" />
     <Compile Include="Diagnostics\TraceLogger.cs" />
     <Compile Include="IConnectionProvider.cs" />
+    <Compile Include="QueryBuilder\Commands\DelegateQueryCommand.cs" />
     <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\ILoggerFactory.cs" />
@@ -59,15 +63,13 @@
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="IDeleteQueryExpression.cs" />
     <Compile Include="IInsertQueryExpression.cs" />
-    <Compile Include="Internals\ExpressionFactory.cs" />
-    <Compile Include="Internals\FieldHelper.cs" />
+    <Compile Include="Factories\ExpressionFactory.cs" />
+    <Compile Include="Factories\FieldHelper.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="Configuration\PersistanceMapSection.cs" />
-    <Compile Include="QueryBuilder\Commands\DeleteQueryCommand.cs" />
-    <Compile Include="Internals\TypeDefinitionFactory.cs" />
+    <Compile Include="QueryBuilder\Commands\MapQueryCommand.cs" />
+    <Compile Include="Factories\TypeDefinitionFactory.cs" />
     <Compile Include="IQueryCommand.cs" />
-    <Compile Include="QueryBuilder\Commands\InsertQueryCommand.cs" />
-    <Compile Include="QueryBuilder\Commands\UpdateQueryCommand.cs" />
     <Compile Include="QueryBuilder\DeleteQueryBuilder.cs" />
     <Compile Include="QueryBuilder\InsertQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryPartsBuilders\ProcedureQueryPartsBuilder.cs" />
@@ -87,7 +89,7 @@
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
     <Compile Include="Extensions\TypeExtensionsForSql.cs" />
     <Compile Include="IQueryCompiler.cs" />
-    <Compile Include="Internals\InstanceFactory.cs" />
+    <Compile Include="Factories\InstanceFactory.cs" />
     <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryParts\ICallbackQueryPart.cs" />
     <Compile Include="QueryParts\IExpressionQueryPart.cs" />
