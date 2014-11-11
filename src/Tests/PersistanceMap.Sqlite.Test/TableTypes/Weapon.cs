@@ -3,7 +3,7 @@ namespace PersistanceMap.Sqlite.Test.TableTypes
 {
     public class Weapon
     {
-        public int WeaponID { get; set; }
+        public int ID { get; set; }
 
         public string Name { get; set; }
 

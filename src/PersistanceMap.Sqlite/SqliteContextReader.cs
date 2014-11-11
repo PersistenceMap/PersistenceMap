@@ -19,7 +19,9 @@ namespace PersistanceMap.Sqlite
                 
         public override void Close()
         {
-            DataReader.Close();
+            if (DataReader != null)
+                DataReader.Close();
+
             _connection.Close();
             _command.Dispose();
         }

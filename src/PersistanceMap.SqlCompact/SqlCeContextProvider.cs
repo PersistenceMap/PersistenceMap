@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Data.SqlServerCe;
-using System.Diagnostics;
 
 namespace PersistanceMap
 {

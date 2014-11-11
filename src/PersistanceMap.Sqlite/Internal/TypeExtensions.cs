@@ -42,7 +42,7 @@ namespace PersistanceMap.Sqlite.Internal
 
             _mappings.Add(typeof(Double), "float");
 
-            _mappings.Add(typeof(String), "varchar(max)");
+            _mappings.Add(typeof(String), "varchar(1000)");
             //Mappings.Add(typeof(String), "nchar");
             //Mappings.Add(typeof(String), "ntext");
             //Mappings.Add(typeof(String), "nvarchar");

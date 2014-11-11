@@ -75,9 +75,9 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
             Context.AddQuery(new DelegateQueryCommand(() =>
             {
-                var provider = Context.ConnectionProvider as SqliteConnectionProvider;
-                var db = provider.ConnectionString.Replace("data source=", "").Replace("Data Source=", "");
-                File.Create(db);
+                //var provider = Context.ConnectionProvider as SqliteConnectionProvider;
+                //var db = provider.ConnectionString.Replace("data source=", "").Replace("Data Source=", "");
+                //File.Create(db);
             }));
         }
 
@@ -110,7 +110,13 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 if (existing.Any())
                     continue;
 
-                var fieldPart = new DelegateQueryPart(OperationType.Column, () => string.Format("{0} {1}{2}{3}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "", QueryPartsMap.Parts.Last(p => p.OperationType == OperationType.Column).ID == field.MemberName ? "" : ", "), field.MemberName);
+                var fieldPart = new DelegateQueryPart(OperationType.Column,
+                    () => string.Format("{0} {1}{2}{3}",
+                        field.MemberName,
+                        field.MemberType.ToSqlDbType(),
+                        !field.IsNullable ? " NOT NULL" : "",
+                        QueryPartsMap.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == field.MemberName ? "" : ", "),
+                        field.MemberName);
 
                 QueryPartsMap.AddAfter(fieldPart, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
             }
@@ -147,12 +153,25 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-            var fieldPart = new DelegateQueryPart(OperationType.Column, () => string.Format("{0} {1} PRIMARY KEY{2}{3}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "", isAutoIncrement ? " AUTOINCREMENT" : ""), field.MemberName);
+            var fieldPart = new DelegateQueryPart(OperationType.Column, 
+                () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}", 
+                    field.MemberName, 
+                    field.MemberType.ToSqlDbType(), 
+                    !field.IsNullable ? " NOT NULL" : "", 
+                    isAutoIncrement ? " AUTOINCREMENT" : "",
+                    QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "), 
+                    field.MemberName);
+
             QueryPartsMap.AddBefore(fieldPart, OperationType.TableKeys);
 
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Marks a set of columns to be a combined primary key of a table
+        /// </summary>
+        /// <param name="keyFields">Properties marking the primary keys of the table</param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
             //
@@ -167,7 +186,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             sb.Append("PRIMARY KEY (");
             foreach (var key in keyFields)
             {
-                var memberName = FieldHelper.TryExtractPropertyName(keyFields.First());
+                var memberName = FieldHelper.TryExtractPropertyName(key);
                 var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
                 sb.Append(string.Format("{0}{1}", field.MemberName, key == last ? "" : ", "));                
@@ -178,12 +197,29 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => sb.ToString(), OperationType.TableKeys.ToString());
             QueryPartsMap.Add(fieldPart);
 
-            throw new NotImplementedException();
+            return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        public ITableQueryExpression<T> Key<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference)
+        /// <summary>
+        /// Marks a field to be a foreignkey column
+        /// </summary>
+        /// <typeparam name="TRef">The referenced table for the foreign key</typeparam>
+        /// <param name="field">The foreign key field</param>
+        /// <param name="reference">The key field in the referenced table</param>
+        /// <returns></returns>
+        public ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference)
         {
-            throw new NotImplementedException();
+            //
+            // FOREIGN KEY(trackartist) REFERENCES artist(artistid)
+            //
+
+            var memberName = FieldHelper.TryExtractPropertyName(field);
+            var referenceName = FieldHelper.TryExtractPropertyName(reference);
+
+            var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => string.Format("FOREIGN KEY({0}) REFERENCES {1}({2})", memberName, typeof(TRef).Name, referenceName), string.Format("{0}={1}", memberName, referenceName));
+            QueryPartsMap.Add(fieldPart);
+
+            return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -192,6 +228,19 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// <param name="keyFields">All items that make the key</param>
         /// <returns></returns>
         public ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a expression that is created for operations for a table field
+        /// </summary>
+        /// <param name="field">The field to alter</param>
+        /// <param name="operation">The type of operation for the field</param>
+        /// <param name="precision">Precision of the field</param>
+        /// <param name="isNullable">Is the field nullable</param>
+        /// <returns></returns>
+        public ITableQueryExpression<T> Field(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true)
         {
             throw new NotImplementedException();
         }

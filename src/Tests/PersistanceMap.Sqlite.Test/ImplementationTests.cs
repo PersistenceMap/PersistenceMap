@@ -12,7 +12,7 @@ namespace PersistanceMap.Sqlite.Test
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
-                context.Database.Create();
+                //context.Database.Create();
 
                 // create table
                 context.Database.Table<Warrior>().Create();
@@ -27,10 +27,10 @@ namespace PersistanceMap.Sqlite.Test
                 context.Database.Table<Warrior>().Key(w => w.ID, w => w.WeaponID).Create();
 
                 // foreign key
-                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID).Create();
+                context.Database.Table<Warrior>().Key(w => w.ID).ForeignKey<Weapon>(wrir => wrir.WeaponID, wpn => wpn.ID).Create();
 
                 // foreign key with name
-                context.Database.Table<Warrior>().Key(w => w.ID).Key<Weapon>(wrir => wrir.WeaponID, wpn => wpn.WeaponID).Create();
+                context.Database.Table<Warrior>().Key(w => w.ID).ForeignKey<Weapon>(wrir => wrir.WeaponID, wpn => wpn.ID).Create();
             }
         }
     }
