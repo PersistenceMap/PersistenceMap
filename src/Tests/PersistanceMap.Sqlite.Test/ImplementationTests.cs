@@ -28,9 +28,6 @@ namespace PersistanceMap.Sqlite.Test
 
                 // foreign key
                 context.Database.Table<Warrior>().Key(w => w.ID).ForeignKey<Weapon>(wrir => wrir.WeaponID, wpn => wpn.ID).Create();
-
-                // foreign key with name
-                context.Database.Table<Warrior>().Key(w => w.ID).ForeignKey<Weapon>(wrir => wrir.WeaponID, wpn => wpn.ID).Create();
             }
         }
     }

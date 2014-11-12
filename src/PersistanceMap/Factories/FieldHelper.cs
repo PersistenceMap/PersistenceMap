@@ -1,4 +1,4 @@
-﻿using PersistanceMap.Diagnostics;
+﻿using PersistanceMap.Tracing;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -29,7 +29,7 @@ namespace PersistanceMap.Factories
                 if (memberExpression == null)
                 {
                     //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
-                    PersistanceMap.Diagnostics.Logger.TraceLine("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
+                    Logger.TraceLine("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
 
                     try
                     {

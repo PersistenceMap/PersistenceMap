@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PersistanceMap.Diagnostics
+namespace PersistanceMap.Tracing
 {
     public interface ILoggerFactory
     {

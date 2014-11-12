@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PersistanceMap.Diagnostics
+namespace PersistanceMap.Tracing
 {
     public interface ILogger
     {
