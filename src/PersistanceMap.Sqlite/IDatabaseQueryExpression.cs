@@ -1,7 +1,7 @@
-﻿
-using System;
+﻿using System;
 using System.Linq.Expressions;
-namespace PersistanceMap.Sqlite
+
+namespace PersistanceMap
 {
     public interface IDatabaseQueryExpression : IQueryExpression
     {
@@ -12,12 +12,32 @@ namespace PersistanceMap.Sqlite
 
     public interface ITableQueryExpression<T> : IQueryExpression
     {
+        /// <summary>
+        /// Create a create table expression
+        /// </summary>
         void Create();
 
+        /// <summary>
+        /// Create a alter table expression
+        /// </summary>
         void Alter();
 
+        /// <summary>
+        /// Creates a expression to rename a table
+        /// </summary>
+        /// <typeparam name="TNew">The type of the new table</typeparam>
         void RenameTo<TNew>();
 
+        /// <summary>
+        /// Drops the table
+        /// </summary>
+        void Drop();
+
+        /// <summary>
+        /// Ignore the field when creating the table
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field);
 
         /// <summary>
@@ -60,11 +80,5 @@ namespace PersistanceMap.Sqlite
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
         ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true);
-
-
-        /// <summary>
-        /// Drops the table
-        /// </summary>
-        void Drop();
     }
 }

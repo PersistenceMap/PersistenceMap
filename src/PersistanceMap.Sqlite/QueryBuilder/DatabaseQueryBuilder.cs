@@ -1,11 +1,10 @@
 ﻿using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
-using System;
-using System.IO;
-using System.Linq.Expressions;
-using System.Linq;
 using PersistanceMap.Sqlite.Internal;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace PersistanceMap.Sqlite.QueryBuilder
@@ -71,16 +70,6 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         
         #region IDatabaseQueryExpression Implementation
 
-        //public virtual void Create()
-        //{
-        //    Context.AddQuery(new DelegateQueryCommand(() =>
-        //    {
-        //        //var provider = Context.ConnectionProvider as SqliteConnectionProvider;
-        //        //var db = provider.ConnectionString.Replace("data source=", "").Replace("Data Source=", "");
-        //        //File.Create(db);
-        //    }));
-        //}
-
         public ITableQueryExpression<T> Table<T>()
         {
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
@@ -98,6 +87,9 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
         #region ITableQueryExpression Implementation
 
+        /// <summary>
+        /// Create a create table expression
+        /// </summary>
         public void Create()
         {
             var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE IF NOT EXISTS {0} (", typeof(T).Name));
@@ -127,6 +119,9 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
+        /// <summary>
+        /// Create a alter table expression
+        /// </summary>
         public void Alter()
         {
             var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
@@ -135,6 +130,10 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
+        /// <summary>
+        /// Creates a expression to rename a table
+        /// </summary>
+        /// <typeparam name="TNew">The type of the new table</typeparam>
         public void RenameTo<TNew>()
         {
             var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
@@ -154,8 +153,11 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
-
-
+        /// <summary>
+        /// Ignore the field when creating the table
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
             var memberName = FieldHelper.TryExtractPropertyName(field);
