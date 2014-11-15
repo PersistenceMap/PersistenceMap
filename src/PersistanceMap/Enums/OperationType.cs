@@ -89,30 +89,34 @@ namespace PersistanceMap
         // Database
         CreateTable = 34,
         Drop = 35,
-        Column = 36,
-        TableKeys = 37,
+        // rename table
+        RenameTable = 36,
+        AlterTable = 37,
+        Column = 38,
+        TableKeys = 39,
+        AlterField = 40,
 
 
 
         /// <summary>
         /// defines the value of a storeprocedure parameter
         /// </summary>
-        Value = 40,
+        Value = 60,
 
         /// <summary>
         /// defines the operation to be a parameter
         /// </summary>
-        Parameter = 41,
+        Parameter = 61,
 
         /// <summary>
         /// defines the operation as the prefix of a out parameter (declare @outparam)
         /// </summary>
-        OutParameterPrefix = 42,
+        OutParameterPrefix = 62,
 
         /// <summary>
         /// defines the operation as a sufix of a out parameter (select @outparam)
         /// </summary>
-        OutParameterSufix = 43,
+        OutParameterSufix = 63,
 
         AfterMap = 200
     }

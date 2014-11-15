@@ -16,6 +16,8 @@ namespace PersistanceMap.Sqlite
 
         void Alter();
 
+        void RenameTo<TNew>();
+
         ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field);
 
         /// <summary>
@@ -42,22 +44,22 @@ namespace PersistanceMap.Sqlite
         /// <returns></returns>
         ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference);
 
-        /// <summary>
-        /// Drops the key definition.
-        /// </summary>
-        /// <param name="keyFields">All items that make the key</param>
-        /// <returns></returns>
-        ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields);
+        ///// <summary>
+        ///// Drops the key definition.
+        ///// </summary>
+        ///// <param name="keyFields">All items that make the key</param>
+        ///// <returns></returns>
+        //ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields);
 
         /// <summary>
         /// Creates a expression that is created for operations for a table field
         /// </summary>
-        /// <param name="field">The field to alter</param>
+        /// <param name="Column">The column to alter</param>
         /// <param name="operation">The type of operation for the field</param>
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        ITableQueryExpression<T> Field(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true);
+        ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true);
 
 
         /// <summary>

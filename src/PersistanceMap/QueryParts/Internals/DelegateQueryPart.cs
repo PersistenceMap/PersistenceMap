@@ -5,6 +5,11 @@ namespace PersistanceMap.QueryParts
 {
     public class DelegateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
     {
+        public DelegateQueryPart(OperationType operation, Func<string> callback)
+            : this(operation, callback, operation.ToString())
+        {
+        }
+
         public DelegateQueryPart(OperationType operation, Func<string> callback, string id = null)
         {
             OperationType = operation;

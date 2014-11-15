@@ -129,12 +129,40 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
         public void Alter()
         {
-            throw new NotImplementedException();
+            var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
+            QueryPartsMap.AddBefore(createPart, OperationType.None);
+
+            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
+
+        public void RenameTo<TNew>()
+        {
+            var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
+            QueryPartsMap.Add(part);
+
+            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+        }
+
+        /// <summary>
+        /// Drops the table
+        /// </summary>
+        public void Drop()
+        {
+            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE IF EXISTS {0}", typeof(T).Name));
+            QueryPartsMap.Add(part);
+
+            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+        }
+
+
 
         public ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
-            throw new NotImplementedException();
+            var memberName = FieldHelper.TryExtractPropertyName(field);
+            var part = new DelegateQueryPart(OperationType.Column, () => "", memberName);
+            QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+
+            return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -194,7 +222,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
             sb.Append(")");
 
-            var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => sb.ToString(), OperationType.TableKeys.ToString());
+            var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => sb.ToString());
             QueryPartsMap.Add(fieldPart);
 
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
@@ -222,36 +250,50 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        /// <summary>
-        /// Drops the key definition.
-        /// </summary>
-        /// <param name="keyFields">All items that make the key</param>
-        /// <returns></returns>
-        public ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Drops the key definition.
+        ///// </summary>
+        ///// <param name="keyFields">All items that make the key</param>
+        ///// <returns></returns>
+        //public ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         /// <summary>
         /// Creates a expression that is created for operations for a table field
         /// </summary>
-        /// <param name="field">The field to alter</param>
+        /// <param name="column">The field to alter</param>
         /// <param name="operation">The type of operation for the field</param>
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        public ITableQueryExpression<T> Field(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true)
+        public ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation, string precision = null, bool isNullable = true)
         {
-            throw new NotImplementedException();
-        }
+            var memberName = FieldHelper.TryExtractPropertyName(column);
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+            var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-        /// <summary>
-        /// Drops the table
-        /// </summary>
-        public void Drop()
-        {
-            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
+            string expression = "";
+
+            switch (operation)
+            {
+                case FieldOperation.Add:
+                    expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "");
+                    break;
+
+                default:
+                    throw new NotSupportedException("SQLite only supports ADD column");
+                //case FieldOperation.Alter:
+                //case FieldOperation.Drop:
+                //    throw new NotImplementedException();
+                //    break;
+            }
+
+            var part = new DelegateQueryPart(OperationType.AlterField, () => expression);
             QueryPartsMap.Add(part);
+
+            return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion
