@@ -157,7 +157,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithExtendedMapping()
         {
             var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-            
+
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
@@ -279,7 +279,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithINExpression()
         {
             var expected = "select ID, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
-               
+
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
@@ -292,6 +292,131 @@ namespace PersistanceMap.Test.Expression
                 context.From<Warrior>()
                     .Where(w => races.Contains(w.Race))
                     .Select();
+            }
+        }
+
+        [Test]
+        public void SelectWithOrderTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // join with simple order by
+                context.From<Orders>().OrderBy(o => o.OrderDate).Select();
+                string expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by
+                context.From<Orders>().Join<Customers>((c, o) => c.CustomerID == o.CustomerID).Map(c => c.CustomerID).Map(c => c.EmployeeID).OrderBy<Orders>(o => o.OrderDate).Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by desc
+                context.From<Orders>().OrderByDesc(o => o.OrderDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by desc
+                context.From<Orders>().Join<Customers>((c, o) => c.CustomerID == o.CustomerID).Map(c => c.CustomerID).Map(c => c.EmployeeID).OrderByDesc<Orders>(o => o.OrderDate).Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by with simple then by
+                context.From<Orders>().OrderBy(o => o.OrderDate).ThenBy(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by with simple then by
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderBy<Orders>(o => o.OrderDate)
+                    .ThenBy(o => o.RequiredDate)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by desc with simple then by
+                context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenBy(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by desc with simple then by
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderByDesc<Orders>(o => o.OrderDate)
+                    .ThenBy(o => o.RequiredDate)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by with generic then by
+                context.From<Orders>().OrderBy(o => o.OrderDate).ThenBy<Orders>(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by with generic then by
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderBy<Orders>(o => o.OrderDate)
+                    .ThenBy<Customers>(c => c.CompanyName)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by desc with generic then by
+                context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenBy<Orders>(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by desc with generic then by
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderByDesc<Orders>(o => o.OrderDate)
+                    .ThenBy<Customers>(c => c.CompanyName)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName asc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by with generic then by desc
+                context.From<Orders>().OrderBy(o => o.OrderDate).ThenByDesc<Orders>(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate desc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by with generic then by desc
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderBy<Orders>(o => o.OrderDate)
+                    .ThenByDesc<Customers>(c => c.CompanyName)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName desc";
+                Assert.AreEqual(sql, expected);
+
+                // join with simple order by desc with generic then by desc
+                context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenByDesc<Orders>(o => o.RequiredDate).Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate desc";
+                Assert.AreEqual(sql, expected);
+
+                // join with generic order by desc with generic then by desc
+                context.From<Orders>()
+                    .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
+                    .Map(c => c.CustomerID)
+                    .Map(c => c.EmployeeID)
+                    .OrderByDesc<Orders>(o => o.OrderDate)
+                    .ThenByDesc<Customers>(c => c.CompanyName)
+                    .Select();
+                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName desc";
+                Assert.AreEqual(sql, expected);
             }
         }
     }

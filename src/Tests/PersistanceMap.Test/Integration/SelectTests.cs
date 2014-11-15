@@ -199,14 +199,15 @@ namespace PersistanceMap.Test.Integration
 
 
         [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(FormatException))]
         public void SelectWithFormatException()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
                 // CustomerID should be a string
-                context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = 0 }).Select();
+                var query = context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = 0 });
+                
+                Assert.Throws<FormatException>(() => query.Select());
             }
         }
         //[Test]
@@ -673,20 +674,18 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(SqlException))]
         public void IncludeWithWrongLambdaExpressionFailTest()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
                 // fail test because Include doesn't return a property witch ends in a wrong sql statement
-                var tmp = context.From<Orders>()
+                var query = context.From<Orders>()
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     // this has to fail!
-                    .Map(i => i.OrdersID != 1)
-                    .Select<OrderWithDetailExtended>();
+                    .Map(i => i.OrdersID != 1);
 
-                Assert.Fail("This part should not have been reached!");
+                Assert.Throws<SqlException>(() => query.Select<OrderWithDetailExtended>());
             }
         }
 
@@ -1240,167 +1239,6 @@ namespace PersistanceMap.Test.Integration
                     .Select();
 
                 Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
-            }
-        }
-    }
-
-    [TestFixture]
-    public class OrderTests
-    {
-        [Test, TestCaseSource(typeof(OrderTestCases), "TestCases")]
-        public string OrderTest(IOrderQueryExpression<Orders> query)
-        {
-            // execute the query
-            var orders = query.Select();
-
-            Assert.IsTrue(orders.Any());
-
-            // return the query string
-            return query.CompileQuery<Orders>().Flatten();
-        }
-
-        class OrderTestCases : TestBase
-        {
-            public IEnumerable TestCases
-            {
-                get
-                {
-                    var provider = new SqlContextProvider(ConnectionString);
-                    using (var context = provider.Open())
-                    {
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderBy(o => o.OrderDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc")
-                            .SetName("join with simple order by")
-                            .SetDescription("join with simple order by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderBy<Orders>(o => o.OrderDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc")
-                            .SetName("join with generic order by")
-                            .SetDescription("join with generic order by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderByDesc(o => o.OrderDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc")
-                            .SetName("join with simple order by desc")
-                            .SetDescription("join with simple order by desc");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderByDesc<Orders>(o => o.OrderDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc")
-                            .SetName("join with generic order by desc")
-                            .SetDescription("join with generic order by desc");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderBy(o => o.OrderDate)
-                            .ThenBy(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
-                            .SetName("join with simple order by with simple then by")
-                            .SetDescription("join with simple order by with simple then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderBy<Orders>(o => o.OrderDate)
-                            .ThenBy(o => o.RequiredDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate asc")
-                            .SetName("join with generic order by with simple then by")
-                            .SetDescription("join with generic order by with simple then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderByDesc(o => o.OrderDate)
-                            .ThenBy(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
-                            .SetName("join with simple order by desc with simple then by")
-                            .SetDescription("join with simple order by desc with simple then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderByDesc<Orders>(o => o.OrderDate)
-                            .ThenBy(o => o.RequiredDate))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate asc")
-                            .SetName("join with generic order by desc with simple then by")
-                            .SetDescription("join with generic order by desc with simple then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderBy(o => o.OrderDate)
-                            .ThenBy<Orders>(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc")
-                            .SetName("join with simple order by with generic then by")
-                            .SetDescription("join with simple order by with generic then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderBy<Orders>(o => o.OrderDate)
-                            .ThenBy<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName asc")
-                            .SetName("join with generic order by with generic then by")
-                            .SetDescription("join with generic order by with generic then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderByDesc(o => o.OrderDate)
-                            .ThenBy<Orders>(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc")
-                            .SetName("join with simple order by desc with generic then by")
-                            .SetDescription("join with simple order by desc with generic then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderByDesc<Orders>(o => o.OrderDate)
-                            .ThenBy<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName asc")
-                            .SetName("join with generic order by desc with generic then by")
-                            .SetDescription("join with generic order by desc with generic then by");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderBy(o => o.OrderDate)
-                            .ThenByDesc<Orders>(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate desc")
-                            .SetName("join with simple order by with generic then by desc")
-                            .SetDescription("join with simple order by with generic then by desc");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderBy<Orders>(o => o.OrderDate)
-                            .ThenByDesc<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName desc")
-                            .SetName("join with generic order by with generic then by desc")
-                            .SetDescription("join with generic order by with generic then by desc");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .OrderByDesc(o => o.OrderDate)
-                            .ThenByDesc<Orders>(o => o.RequiredDate))
-                            .Returns("select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate desc")
-                            .SetName("join with simple order by desc with generic then by desc")
-                            .SetDescription("join with simple order by desc with generic then by desc");
-
-                        yield return new TestCaseData(context.From<Orders>()
-                            .Join<Customers>((c, o) => c.CustomerID == o.CustomerID)
-                            .Map(c => c.CustomerID)
-                            .Map(c => c.EmployeeID)
-                            .OrderByDesc<Orders>(o => o.OrderDate)
-                            .ThenByDesc<Customers>(c => c.CompanyName))
-                            .Returns("select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName desc")
-                            .SetName("join with generic order by desc with generic then by desc")
-                            .SetDescription("join with generic order by desc with generic then by desc");
-                    }
-                }
             }
         }
     }

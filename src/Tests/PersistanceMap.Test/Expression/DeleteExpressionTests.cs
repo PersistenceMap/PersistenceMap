@@ -58,16 +58,9 @@ namespace PersistanceMap.Test.Expression
 
         [Test]
         [Description("A failing delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ExpectedException(typeof(ArgumentException))]
         public void DeleteEntityWithExpressionKeyThatFails()
         {
-            var provider = new SqlContextProvider(null);
-            using (var context = provider.Open())
-            {
-                // this has to fail because the expression should only return the property instead of the boolean!
-                context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID == 1);
-                context.Commit();
-            }
+            Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
         }
 
 
