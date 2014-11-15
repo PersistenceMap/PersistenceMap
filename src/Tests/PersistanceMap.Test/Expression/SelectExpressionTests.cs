@@ -1,10 +1,7 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.Test.Expression
 {
@@ -256,7 +253,7 @@ namespace PersistanceMap.Test.Expression
 
         [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
-        public void Select_For_Anonym_ObjectType()
+        public void SelectForAnonymObjectType()
         {
             var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -550,6 +547,72 @@ namespace PersistanceMap.Test.Expression
                 expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
                 Assert.AreEqual(sql, expected);
 
+            }
+        }
+
+        [Test]
+        public void ISelectQueryExpressionWithIgnoringFields()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Ignore(w => w.SpecialSkill)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Ignore(w => w.SpecialSkill)
+                    .Map(w => w.Name)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+
+                // ignore a member in the select
+                context.From<WarriorWithName>()
+                    .Ignore(w => w.ID)
+                    .Ignore(w => w.Name)
+                    .Map(w => w.WeaponID, "TestFieldName")
+                    .Ignore(w => w.SpecialSkill)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
+            }
+        }
+
+        [Test]
+        public void SelectWithMultipleMapsToSameType()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // select the properties that are defined in the mapping
+                context.From<WarriorWithName>()
+                    .Map(w => w.WeaponID, "ID")
+                    .Map(w => w.WeaponID)
+                    .Map(w => w.Race, "Name")
+                    .Map(w => w.Race)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+
+                // map one property to a custom field
+                context.From<WarriorWithName>()
+                    .Map(w => w.WeaponID, "ID")
+                    .Map(w => w.Race, "Name")
+                    .Map(w => w.Race)
+                    .Select();
+
+                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
             }
         }
     }

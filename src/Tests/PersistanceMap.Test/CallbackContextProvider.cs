@@ -11,54 +11,16 @@ namespace PersistanceMap.Test
     /// </summary>
     public class CallbackContextProvider : IContextProvider
     {
-        //private readonly Action<string> _callback;
-        //public event ContextProviderCallbackHandler Callback;
-
-        //private bool _callbackCalled = false;
-
         public CallbackContextProvider()
         {
         }
 
         public CallbackContextProvider(Action<string> callback)
         {
-            //Callback = (s) => callback(s);
             ConnectionProvider = new CallbackConnectionProvider((s) => callback(s));
         }
 
         public IConnectionProvider ConnectionProvider { get; private set; }
-
-        //public string ConnectionString { get; private set; }
-
-        //private IQueryCompiler _queryCompiler;
-
-        //public virtual IQueryCompiler QueryCompiler
-        //{
-        //    get
-        //    {
-        //        if (_queryCompiler == null)
-        //            _queryCompiler = new QueryCompiler();
-
-        //        return _queryCompiler;
-        //    }
-        //}
-
-        //public IReaderContext Execute(string query)
-        //{
-        //    return ExecuteNonQuery(query);
-        //}
-
-        //public IReaderContext ExecuteNonQuery(string query)
-        //{
-        //    if(Callback == null)
-        //        throw new ArgumentNullException("Callback was not set prior to execution");
-
-        //    Callback(query);
-
-        //    _callbackCalled = true;
-
-        //    return new CallbackReaderContext();
-        //}
 
         public virtual DatabaseContext Open()
         {

@@ -210,207 +210,11 @@ namespace PersistanceMap.Test.Integration
                 Assert.Throws<FormatException>(() => query.Select());
             }
         }
-        //[Test]
-        //public void SelectWithAliasMapping()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // Map => To 
-        //        var query = context.From<Orders>()
-        //            .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
-        //            .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
-        //            // map a property from a join to a property in the result type
-        //            .Map(i => i.OrdersID);
-
-        //        var sql = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        // check the compiled sql
-        //        Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
-
-        //        // execute the query
-        //        var orders = query.Select<OrderWithDetailExtended>();
-
-        //        Assert.IsTrue(orders.Any());
-        //        Assert.IsTrue(orders.First().SpecialFreight > 0);
-        //    }
-        //}
-
-        //[Test]
-        //public void SelectWithExtendedMapping()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // Map => To 
-        //        var query = context.From<Orders>()
-        //            .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
-        //            .Map(i => i.OrdersID)
-        //            // map a property from a joni to a property in the result type
-        //            .Map<Orders, OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight);
-
-        //        var sql = query.CompileQuery<OrderWithDetailExtended>().Flatten();
-        //        var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        // check the compiled sql
-        //        Assert.AreEqual(sql, expected);
-
-        //        // execute the query
-        //        var orders = query.Select<OrderWithDetailExtended>();
-
-        //        Assert.IsTrue(orders.Any());
-        //        Assert.IsTrue(orders.First().SpecialFreight > 0);
-        //    }
-        //}
-
-        //[Test]
-        //public void Select_WithStringSelectStatement()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // select with string select statement
-        //        var orders = context.Execute<Orders>("Select * from Orders");
-
-        //        Assert.IsTrue(orders.Any());
-        //    }
-        //}
-
-
-        //[Test(Description = "Select with a anonym object definition")]
-        //public void Select_Anonym_ObjectTypeDefiniton()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        var anonymous = context.From<Orders>()
-        //            .Map(o => o.OrdersID)
-        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
-        //            .Select(() => new
-        //            {
-        //                ProductID = 0,
-        //                Quantity = 0.0
-        //            });
-
-        //        Assert.IsTrue(anonymous.Any());
-        //        Assert.IsTrue(anonymous.First().ProductID > 0);
-        //        Assert.IsTrue(anonymous.First().Quantity > 0);
-        //    }
-        //}
-
-        //[Test(Description = "Select to a anonym object")]
-        //public void Select_Anonym_Object()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        var query = context.From<Orders>()
-        //            .Map(o => o.OrdersID)
-        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
-
-        //        var anonymous = query.Select(od => new
-        //        {
-        //            ProductID = od.ProductID,
-        //            Quantity = od.Quantity
-        //        });
-
-        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
-        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        Assert.AreEqual(sql, expected);
-        //        Assert.IsTrue(anonymous.Any());
-        //        Assert.IsTrue(anonymous.First().ProductID > 0);
-        //        Assert.IsTrue(anonymous.First().Quantity > 0);
-        //    }
-        //}
-
-        //[Test(Description = "Select to a anonym object delegate")]
-        //public void Select_Anonym_Object2()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        var query = context.From<Orders>()
-        //            .Map(o => o.OrdersID)
-        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
-
-        //        // select into a anonymous object
-        //        var anonymous = query.Select(od => new
-        //        {
-        //            Prud = od.Quantity
-        //        });
-
-        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
-        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        Assert.AreEqual(sql, expected); 
-        //        Assert.IsTrue(anonymous.Any());
-        //        Assert.IsTrue(anonymous.First().Prud > 0);
-
-        //    }
-        //}
-
-        //[Test(Description = "Select to a type object delegate")]
-        //public void Select_Object_Delegate()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // select only the properties that are defined in the anony object
-        //        var query = context.From<Orders>()
-        //            .Map(o => o.OrdersID)
-        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID);
-
-        //        var orders = query.Select(od => new OrderWithDetail
-        //        {
-        //            // only select the properties defined
-        //            ProductID = od.ProductID,
-        //            Quantity = od.Quantity
-        //        });
-
-        //        var sql = query.CompileQuery<OrderDetails>().Flatten();
-        //        var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        Assert.AreEqual(sql, expected);
-        //        Assert.IsTrue(orders.Any());
-        //        Assert.IsTrue(orders.First().ProductID > 0);
-        //        Assert.IsTrue(orders.First().Quantity > 0);
-        //        Assert.IsTrue(orders.First().CustomerID == null);
-        //    }
-        //}
-
-        //[Test]
-        //[Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
-        //public void Select_For_Anonym_ObjectType()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // select only the properties that are defined in the anony object
-        //        var query = context.From<Orders>()
-        //            .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
-        //            .For(() => new
-        //            {
-        //                ProductID = 0,
-        //                Quantity = 0
-        //            });
-
-        //        var anonymous = query.Select();
-
-        //        var sql = query.CompileQuery().Flatten();
-        //        var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
-
-        //        Assert.AreEqual(sql, expected);
-
-        //        Assert.IsTrue(anonymous.Any());
-        //        Assert.IsTrue(anonymous.First().ProductID > 0);
-        //        Assert.IsTrue(anonymous.First().Quantity > 0);
-        //    }
-        //}
+        
 
         [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
-        public void Select_For_Anonym_To_DefinedType()
+        public void SelectForAnonymToDefinedType()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -439,7 +243,7 @@ namespace PersistanceMap.Test.Integration
 
         [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type using a delegate")]
-        public void Select_For_Anonym_CastTo_DefinedType_Delegate()
+        public void SelectForAnonymCastToDefinedTypeDelegate()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -494,7 +298,7 @@ namespace PersistanceMap.Test.Integration
         public class FromTests : TestBase
         {
             [Test]
-            public void Select_From_Direct()
+            public void SelectFromDirect()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -512,7 +316,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_From_WithAliasInFrom()
+            public void SelectFromWithAliasInFrom()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -530,7 +334,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_FromW_ithJoin_WithAlias()
+            public void SelectFromWithJoinWithAlias()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -553,7 +357,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_From_WithAlias()
+            public void SelectFromWithAlias()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -582,7 +386,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("A select statement where the map takes the alias from the previous operation")]
-            public void From_WithInclude_WithAlias_MapWithoutAlias()
+            public void FromWithIncludeWithAliasMapWithoutAlias()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -644,7 +448,7 @@ namespace PersistanceMap.Test.Integration
         public class JoinTests : TestBase
         {
             [Test]
-            public void Select_Join()
+            public void SelectJoin()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -660,7 +464,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_InFrom()
+            public void SelectJoinInFrom()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -682,7 +486,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithOn_WithProjection()
+            public void SelectJoinWithOnWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -698,7 +502,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithAlias_WithMaps_WithProjection()
+            public void SelectJoinWithAliasWithMapsWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -722,7 +526,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithAliasInFrom_WithMaps_WithProjection()
+            public void SelectJoinWithAliasInFromWithMapsWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -747,7 +551,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithOnAndInJoin_WithProjection()
+            public void SelectJoinWithOnAndInJoinWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -771,7 +575,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithAnd_WithProjection()
+            public void SelectJoinWithAndWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -797,7 +601,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Join_WithAnd_WithAlias_WithProjection()
+            public void SelectJoinWithAndWithAliasWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -819,14 +623,14 @@ namespace PersistanceMap.Test.Integration
                     Assert.AreEqual(sql, expected);
 
                     // execute the query
-                    var Employee = query.Select<Employee>();
+                    var employees = query.Select<Employee>();
 
-                    Assert.IsTrue(Employee.Any());
+                    Assert.IsTrue(employees.Any());
                 }
             }
 
             [Test]
-            public void Select_Join_WithOn_WithMap()
+            public void SelectJoinWithOnWithMap()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -851,7 +655,7 @@ namespace PersistanceMap.Test.Integration
             }
 
             [Test]
-            public void Select_Joins_WithOn_WithMaps()
+            public void SelectJoinsWithOnWithMaps()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -880,7 +684,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("A select statemenent with a join and a or operation")]
-            public void Select_Join_WithGenericOr()
+            public void SelectJoinWithGenericOr()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -913,7 +717,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select with a join that connects to a other table than the previous")]
-            public void Select_Join_ToOtherTable()
+            public void SelectJoinToOtherTable()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -942,7 +746,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select with a join that contains a alias connects to a other table than the previous")]
-            public void Select_Join_WithAlias_ToOtherTable()
+            public void SelectJoinWithAliasToOtherTable()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -971,7 +775,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select with a join that containes an alias and connects to a other table than the previous that also contains an alias")]
-            public void Select_Join_WithAlias_ToOtherTable_WithAlias()
+            public void SelectJoinWithAliasToOtherTableWithAlias()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1000,7 +804,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select expression containing a and with an alias for the source table")]
-            public void Select_Join_WithAnd_WithOnlySourceAlias_WithProjection()
+            public void SelectJoinWithAndWithOnlySourceAliasWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -1022,15 +826,15 @@ namespace PersistanceMap.Test.Integration
                     Assert.AreEqual(sql, expected);
 
                     // execute the query
-                    var Employee = query.Select<Employee>();
+                    var employees = query.Select<Employee>();
 
-                    Assert.IsTrue(Employee.Any());
+                    Assert.IsTrue(employees.Any());
                 }
             }
 
             [Test]
             [Description("select expression containing a and with an alias for the joined table")]
-            public void Select_Join_WithAnd_WithOnlyAlias_WithProjection()
+            public void SelectJoinWithAndWithOnlyAliasWithProjection()
             {
                 var dbConnection = new SqlContextProvider(ConnectionString);
                 using (var context = dbConnection.Open())
@@ -1052,9 +856,9 @@ namespace PersistanceMap.Test.Integration
                     Assert.AreEqual(sql, expected);
 
                     // execute the query
-                    var Employee = query.Select<Employee>();
+                    var employees = query.Select<Employee>();
 
-                    Assert.IsTrue(Employee.Any());
+                    Assert.IsTrue(employees.Any());
                 }
             }
         }
@@ -1112,71 +916,71 @@ namespace PersistanceMap.Test.Integration
                 }
             }
 
-            [Test]
-            public void SelectWithMultipleMapsToSameType()
-            {
-                var sql = "";
-                var provider = new CallbackContextProvider(s => sql = s.Flatten());
-                using (var context = provider.Open())
-                {
-                    // select the properties that are defined in the mapping
-                    context.From<WarriorWithName>()
-                        .Map(w => w.WeaponID, "ID")
-                        .Map(w => w.WeaponID)
-                        .Map(w => w.Race, "Name")
-                        .Map(w => w.Race)
-                        .Select();
+            //[Test]
+            //public void SelectWithMultipleMapsToSameType()
+            //{
+            //    var sql = "";
+            //    var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            //    using (var context = provider.Open())
+            //    {
+            //        // select the properties that are defined in the mapping
+            //        context.From<WarriorWithName>()
+            //            .Map(w => w.WeaponID, "ID")
+            //            .Map(w => w.WeaponID)
+            //            .Map(w => w.Race, "Name")
+            //            .Map(w => w.Race)
+            //            .Select();
 
-                    Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+            //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
 
-                    // map one property to a custom field
-                    context.From<WarriorWithName>()
-                        .Map(w => w.WeaponID, "ID")
-                        .Map(w => w.Race, "Name")
-                        .Map(w => w.Race)
-                        .Select();
+            //        // map one property to a custom field
+            //        context.From<WarriorWithName>()
+            //            .Map(w => w.WeaponID, "ID")
+            //            .Map(w => w.Race, "Name")
+            //            .Map(w => w.Race)
+            //            .Select();
 
-                    Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
-                }
-            }
+            //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+            //    }
+            //}
 
-            [Test]
-            public void ISelectQueryExpressionWithIgnoringFields()
-            {
-                var sql = "";
-                var provider = new CallbackContextProvider(s => sql = s.Flatten());
-                using (var context = provider.Open())
-                {
-                    // ignore a member in the select
-                    context.From<WarriorWithName>()
-                        .Ignore(w => w.ID)
-                        .Ignore(w => w.Name)
-                        .Ignore(w => w.SpecialSkill)
-                        .Select();
+            //[Test]
+            //public void ISelectQueryExpressionWithIgnoringFields()
+            //{
+            //    var sql = "";
+            //    var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            //    using (var context = provider.Open())
+            //    {
+            //        // ignore a member in the select
+            //        context.From<WarriorWithName>()
+            //            .Ignore(w => w.ID)
+            //            .Ignore(w => w.Name)
+            //            .Ignore(w => w.SpecialSkill)
+            //            .Select();
 
-                    Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+            //        Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
 
-                    // ignore a member in the select
-                    context.From<WarriorWithName>()
-                        .Ignore(w => w.ID)
-                        .Ignore(w => w.Name)
-                        .Ignore(w => w.SpecialSkill)
-                        .Map(w => w.Name)
-                        .Select();
+            //        // ignore a member in the select
+            //        context.From<WarriorWithName>()
+            //            .Ignore(w => w.ID)
+            //            .Ignore(w => w.Name)
+            //            .Ignore(w => w.SpecialSkill)
+            //            .Map(w => w.Name)
+            //            .Select();
 
-                    Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+            //        Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
 
-                    // ignore a member in the select
-                    context.From<WarriorWithName>()
-                        .Ignore(w => w.ID)
-                        .Ignore(w => w.Name)
-                        .Map(w => w.WeaponID, "TestFieldName")
-                        .Ignore(w => w.SpecialSkill)
-                        .Select();
+            //        // ignore a member in the select
+            //        context.From<WarriorWithName>()
+            //            .Ignore(w => w.ID)
+            //            .Ignore(w => w.Name)
+            //            .Map(w => w.WeaponID, "TestFieldName")
+            //            .Ignore(w => w.SpecialSkill)
+            //            .Select();
 
-                    Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
-                }
-            }
+            //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
+            //    }
+            //}
         }
 
         [TestFixture]
@@ -1184,7 +988,7 @@ namespace PersistanceMap.Test.Integration
         {
             [Test]
             [Description("select statement with where operation for generic type")]
-            public void Select_WhereForGenericType()
+            public void SelectWhereForGenericType()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1210,7 +1014,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with where operation for multiple generic types")]
-            public void Select_WhereForMultipeGnenericTypes()
+            public void SelectWhereForMultipeGnenericTypes()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1226,7 +1030,7 @@ namespace PersistanceMap.Test.Integration
                         .Where<Employee, Customers>((e, c) => e.EmployeeID != c.EmployeeID);
 
                     // execute the query
-                    var Employee = query.Select<Employee>();
+                    var employees = query.Select<Employee>();
 
                     var sql = query.CompileQuery<Employee>().Flatten();
                     var expected = "select Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders on (Orders.EmployeeID = Employee.EmployeeID) join Customers on (Customers.CustomerID = Orders.CustomerID) where (Employee.EmployeeID <> Customers.EmployeeID)";
@@ -1234,13 +1038,13 @@ namespace PersistanceMap.Test.Integration
                     // check the compiled sql
                     Assert.AreEqual(sql, expected);
 
-                    Assert.IsTrue(Employee.Any());
+                    Assert.IsTrue(employees.Any());
                 }
             }
 
             [Test]
             [Description("select statement with where operation and a simple generic and operation")]
-            public void Select_Where_WithGenericAnd()
+            public void SelectWhereWithGenericAnd()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1267,7 +1071,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where operationion and a and operation mapped to 2 differen types")]
-            public void Select_Where_WithMultyGenericAnd()
+            public void SelectWhereWithMultyGenericAnd()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1296,7 +1100,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where and a simple or operation")]
-            public void Select_Where_WithSimpleGenericOr2()
+            public void SelectWhereWithSimpleGenericOr2()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1330,7 +1134,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where and a or operation containing two entities")]
-            public void Select_Where_WithSimpleComplexGenericOr()
+            public void SelectWhereWithSimpleComplexGenericOr()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1364,7 +1168,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where operation and a or operation that has two genereic parameters")]
-            public void Select_Where_WithComplexGenericOr()
+            public void SelectWhereWithComplexGenericOr()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1395,7 +1199,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias")]
-            public void Select_Where_WithMultyGenericAnd_WithAlias()
+            public void SelectWhereWithMultyGenericAndWithAlias()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())
@@ -1424,7 +1228,7 @@ namespace PersistanceMap.Test.Integration
 
             [Test]
             [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias for the source")]
-            public void Select_Where_WithMultyGenericAnd_WithAliasForSource()
+            public void SelectWhereWithMultyGenericAndWithAliasForSource()
             {
                 var provider = new SqlContextProvider(ConnectionString);
                 using (var context = provider.Open())

@@ -2,7 +2,7 @@
 
 namespace PersistanceMap
 {
-    internal static class EnsureExtensions
+    public static class EnsureExtensions
     {
         public static void EnsureArgumentNotNull(this object argument, string name)
         {

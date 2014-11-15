@@ -75,7 +75,6 @@
     <Compile Include="Enums\FieldOperation.cs" />
     <Compile Include="IConnectionProvider.cs" />
     <Compile Include="QueryBuilder\Commands\DelegateQueryCommand.cs" />
-    <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="Tracing\ILogger.cs" />
     <Compile Include="Tracing\ILoggerFactory.cs" />
     <Compile Include="Tracing\Logger.cs" />
@@ -114,7 +113,6 @@
     <Compile Include="QueryParts\ICallbackQueryPart.cs" />
     <Compile Include="QueryParts\IExpressionQueryPart.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SqlDatabaseContext.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
     <Compile Include="IProcedureQueryExpression.cs" />
@@ -126,7 +124,6 @@
     <Compile Include="IReaderContext.cs" />
     <Compile Include="QueryParts\IEntityQueryPart.cs" />
     <Compile Include="ReaderContext.cs" />
-    <Compile Include="SqlContextReader.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="QueryCompiler.cs" />
@@ -163,7 +160,6 @@
     <Compile Include="QueryBuilder\SelectQueryBuilder.Where.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="SqlContextProvider.cs" />
     <Compile Include="FieldDefinition.cs" />
     <Compile Include="Sql\BaseDialectProvider.cs" />
     <Compile Include="Sql\DialectProvider.cs" />

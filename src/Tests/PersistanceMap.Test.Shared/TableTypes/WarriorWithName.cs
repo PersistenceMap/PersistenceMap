@@ -1,7 +1,7 @@
 ﻿
 namespace PersistanceMap.Test.TableTypes
 {
-    class WarriorWithName : Warrior
+    public class WarriorWithName : Warrior
     {
         public decimal ID { get; set; }
 

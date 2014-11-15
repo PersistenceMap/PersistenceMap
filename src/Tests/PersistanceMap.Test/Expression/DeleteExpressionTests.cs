@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
 using System;
-using System.Collections;
 
 namespace PersistanceMap.Test.Expression
 {
@@ -55,15 +54,7 @@ namespace PersistanceMap.Test.Expression
                 context.Commit();
             }
         }
-
-        [Test]
-        [Description("A failing delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        public void DeleteEntityWithExpressionKeyThatFails()
-        {
-            Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
-        }
-
-
+        
         [Test]
         [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]
         public void DeleteEntityWithAnonymObjectContainingOneParam()

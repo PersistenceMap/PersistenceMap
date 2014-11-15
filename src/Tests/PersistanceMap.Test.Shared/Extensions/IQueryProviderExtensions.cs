@@ -3,7 +3,7 @@ using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.Test
 {
-    internal static class IQueryProviderExtensions
+    public static class IQueryProviderExtensions
     {
         public static ISelectQueryExpressionBase<TRebase> Rebase<T, TRebase>(this ISelectQueryExpressionBase<T> query)
         {
