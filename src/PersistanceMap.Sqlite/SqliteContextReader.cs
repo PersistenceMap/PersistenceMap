@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace PersistanceMap.Sqlite
+namespace PersistanceMap
 {
     /// <summary>
     /// Implementation of IReaderContext for SQL Server Compact Databases

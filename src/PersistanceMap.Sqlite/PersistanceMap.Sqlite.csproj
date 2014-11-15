@@ -7,7 +7,7 @@
     <ProjectGuid>{1A648C38-3AD8-4C05-90B8-4C40D1F7CFA2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PersistanceMap.Sqlite</RootNamespace>
+    <RootNamespace>PersistanceMap</RootNamespace>
     <AssemblyName>PersistanceMap.Sqlite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -1,7 +1,8 @@
-﻿using PersistanceMap.Tracing;
+﻿using PersistanceMap.Sqlite;
 using PersistanceMap.Sqlite.QueryBuilder;
+using PersistanceMap.Tracing;
 
-namespace PersistanceMap.Sqlite
+namespace PersistanceMap
 {
     public class SqliteDatabaseContext : DatabaseContext, IDatabaseContext
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace PersistanceMap
+namespace PersistanceMap.Sqlite
 {
     public interface IDatabaseQueryExpression : IQueryExpression
     {

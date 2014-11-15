@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
 
-namespace PersistanceMap.Sqlite
+namespace PersistanceMap
 {
     public class SqliteConnectionProvider : IConnectionProvider
     {

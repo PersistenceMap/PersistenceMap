@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PersistanceMap.Sqlite
+namespace PersistanceMap
 {
     public class SqliteContextProvider : IContextProvider
     {

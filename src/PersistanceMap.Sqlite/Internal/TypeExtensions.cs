@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PersistanceMap.Sqlite.Internal
+namespace PersistanceMap.Sqlite
 {
     /// <summary>
     /// Extension class for types that are used for SQLite databases
