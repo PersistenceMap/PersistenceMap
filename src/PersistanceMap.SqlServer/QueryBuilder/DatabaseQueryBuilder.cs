@@ -2,20 +2,22 @@
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace PersistanceMap.Sqlite.QueryBuilder
+namespace PersistanceMap.SqlServer.QueryBuilder
 {
     internal class DatabaseQueryBuilderBase : IQueryExpression
     {
-        public DatabaseQueryBuilderBase(SqliteDatabaseContext context)
+        public DatabaseQueryBuilderBase(SqlDatabaseContext context)
         {
             _context = context;
         }
 
-        public DatabaseQueryBuilderBase(SqliteDatabaseContext context, IQueryPartsMap container)
+        public DatabaseQueryBuilderBase(SqlDatabaseContext context, IQueryPartsMap container)
         {
             _context = context;
             _queryPartsMap = container;
@@ -23,8 +25,8 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
         #region IQueryProvider Implementation
 
-        readonly SqliteDatabaseContext _context;
-        public SqliteDatabaseContext Context
+        readonly SqlDatabaseContext _context;
+        public SqlDatabaseContext Context
         {
             get
             {
@@ -52,22 +54,61 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         }
 
         #endregion
-
     }
 
     internal class DatabaseQueryBuilder : DatabaseQueryBuilderBase, IDatabaseQueryExpression, IQueryExpression
     {
-        public DatabaseQueryBuilder(SqliteDatabaseContext context)
+        public DatabaseQueryBuilder(SqlDatabaseContext context)
             : base(context)
         {
         }
 
-        public DatabaseQueryBuilder(SqliteDatabaseContext context, IQueryPartsMap container)
+        public DatabaseQueryBuilder(SqlDatabaseContext context, IQueryPartsMap container)
             : base(context, container)
         {
         }
-        
+
         #region IDatabaseQueryExpression Implementation
+
+        public void Create()
+        {
+            var database = Context.ConnectionProvider.Database;
+            var setdb = new DelegateQueryPart(OperationType.None, () =>
+            {
+                Context.ConnectionProvider.Database = "Master";
+                return string.Empty;
+            });
+            QueryPartsMap.Add(setdb);
+
+            //var part = new DelegateQueryPart(OperationType.CreateDatabase, () => string.Format("CREATE DATABASE {0}", database));
+
+            var sb = new StringBuilder();
+            sb.AppendLine("DECLARE @device_directory NVARCHAR(520)");
+            sb.AppendLine("SELECT @device_directory = SUBSTRING(filename, 1, CHARINDEX(N'master.mdf', LOWER(filename)) - 1)");
+            sb.AppendLine("FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1");
+            sb.AppendLine(string.Format("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
+
+            var part = new DelegateQueryPart(OperationType.CreateDatabase, () => sb.ToString());
+
+//            var part = new DelegateQueryPart(OperationType.CreateDatabase, () => string.Format(@"DECLARE @device_directory NVARCHAR(520)
+//SELECT @device_directory = SUBSTRING(filename, 1, CHARINDEX(N'master.mdf', LOWER(filename)) - 1)
+//FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1
+//EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
+
+            QueryPartsMap.Add(part);
+
+            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+
+
+            var resetdb = new DelegateQueryPart(OperationType.None, () =>
+            {
+                Context.ConnectionProvider.Database = database;
+                return string.Format("USE {0}", database);
+            });
+            var resetQueryMap = new QueryPartsMap();
+            resetQueryMap.Add(resetdb);
+            Context.AddQuery(new MapQueryCommand(resetQueryMap));
+        }
 
         public ITableQueryExpression<T> Table<T>()
         {
@@ -79,19 +120,16 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
     internal class TableQueryBuilder<T> : DatabaseQueryBuilderBase, ITableQueryExpression<T>
     {
-        public TableQueryBuilder(SqliteDatabaseContext context, IQueryPartsMap container)
+        public TableQueryBuilder(SqlDatabaseContext context, IQueryPartsMap container)
             : base(context, container)
         {
         }
 
         #region ITableQueryExpression Implementation
 
-        /// <summary>
-        /// Create a create table expression
-        /// </summary>
         public void Create()
         {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE IF NOT EXISTS {0} (", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE {0} (", typeof(T).Name));
             QueryPartsMap.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -118,9 +156,6 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
-        /// <summary>
-        /// Create a alter table expression
-        /// </summary>
         public void Alter()
         {
             var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
@@ -129,34 +164,19 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
-        /// <summary>
-        /// Creates a expression to rename a table
-        /// </summary>
-        /// <typeparam name="TNew">The type of the new table</typeparam>
         public void RenameTo<TNew>()
         {
-            var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
-            QueryPartsMap.Add(part);
-
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Drops the table
-        /// </summary>
         public void Drop()
         {
-            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE IF EXISTS {0}", typeof(T).Name));
+            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
             QueryPartsMap.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
-        /// <summary>
-        /// Ignore the field when creating the table
-        /// </summary>
-        /// <param name="field"></param>
-        /// <returns></returns>
         public ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
             var memberName = FieldHelper.TryExtractPropertyName(field);
@@ -166,29 +186,19 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        /// <summary>
-        /// Marks a column to be a primary key column
-        /// </summary>
-        /// <param name="key">The field that marks the key</param>
-        /// <param name="isAutoIncrement">Is the column a auto incrementing column</param>
-        /// <returns></returns>
         public ITableQueryExpression<T> Key(Expression<Func<T, object>> key, bool isAutoIncrement = false)
         {
-            //
-            // id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
-            // 
-
             var memberName = FieldHelper.TryExtractPropertyName(key);
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-            var fieldPart = new DelegateQueryPart(OperationType.Column, 
-                () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}", 
-                    field.MemberName, 
-                    field.MemberType.ToSqlDbType(), 
-                    !field.IsNullable ? " NOT NULL" : "", 
+            var fieldPart = new DelegateQueryPart(OperationType.Column,
+                () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}",
+                    field.MemberName,
+                    field.MemberType.ToSqlDbType(),
+                    !field.IsNullable ? " NOT NULL" : "",
                     isAutoIncrement ? " AUTOINCREMENT" : "",
-                    QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "), 
+                    QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
                     field.MemberName);
 
             QueryPartsMap.AddBefore(fieldPart, OperationType.TableKeys);
@@ -196,17 +206,8 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        /// <summary>
-        /// Marks a set of columns to be a combined primary key of a table
-        /// </summary>
-        /// <param name="keyFields">Properties marking the primary keys of the table</param>
-        /// <returns></returns>
         public ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
-            //
-            // CREATE TABLE something (column1, column2, column3, PRIMARY KEY (column1, column2));
-            //
-            
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
             var last = keyFields.Last();
@@ -218,7 +219,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 var memberName = FieldHelper.TryExtractPropertyName(key);
                 var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-                sb.Append(string.Format("{0}{1}", field.MemberName, key == last ? "" : ", "));                
+                sb.Append(string.Format("{0}{1}", field.MemberName, key == last ? "" : ", "));
             }
 
             sb.Append(")");
@@ -229,19 +230,8 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        /// <summary>
-        /// Marks a field to be a foreignkey column
-        /// </summary>
-        /// <typeparam name="TRef">The referenced table for the foreign key</typeparam>
-        /// <param name="field">The foreign key field</param>
-        /// <param name="reference">The key field in the referenced table</param>
-        /// <returns></returns>
         public ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference)
         {
-            //
-            // FOREIGN KEY(trackartist) REFERENCES artist(artistid)
-            //
-
             var memberName = FieldHelper.TryExtractPropertyName(field);
             var referenceName = FieldHelper.TryExtractPropertyName(reference);
 
@@ -251,24 +241,6 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
-        ///// <summary>
-        ///// Drops the key definition.
-        ///// </summary>
-        ///// <param name="keyFields">All items that make the key</param>
-        ///// <returns></returns>
-        //public ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        /// <summary>
-        /// Creates a expression that is created for operations for a table field
-        /// </summary>
-        /// <param name="column">The field to alter</param>
-        /// <param name="operation">The type of operation for the field</param>
-        /// <param name="precision">Precision of the field</param>
-        /// <param name="isNullable">Is the field nullable</param>
-        /// <returns></returns>
         public ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation, string precision = null, bool isNullable = true)
         {
             var memberName = FieldHelper.TryExtractPropertyName(column);
@@ -281,15 +253,19 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             {
                 case FieldOperation.Add:
                     //TODO: precision???
-                    expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "");
+                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "");
+                    break;
+
+                case FieldOperation.Drop:
+                    expression = string.Format("DROP COLUMN {0}", field.MemberName);
+                    break;
+
+                case FieldOperation.Alter:
+                    throw new NotImplementedException();
                     break;
 
                 default:
-                    throw new NotSupportedException("SQLite only supports ADD column");
-                //case FieldOperation.Alter:
-                //case FieldOperation.Drop:
-                //    throw new NotImplementedException();
-                //    break;
+                    throw new NotSupportedException("SQL Server only supports ADD column");
             }
 
             var part = new DelegateQueryPart(OperationType.AlterField, () => expression);

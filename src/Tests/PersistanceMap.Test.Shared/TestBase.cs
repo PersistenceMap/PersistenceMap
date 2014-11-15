@@ -11,5 +11,10 @@ namespace PersistanceMap.Test
                 return ConfigurationManager.ConnectionStrings["PersistanceMap.Test.Properties.Settings.ConnectionString"].ConnectionString;
             }
         }
+
+        protected string GetConnectionString(string name)
+        {
+            return ConfigurationManager.ConnectionStrings[name].ConnectionString;
+        }
     }
 }

@@ -84,6 +84,16 @@ namespace PersistanceMap
             return Kernel.Execute<T>(query);
         }
 
+        public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            return Kernel.Execute<T>(query);
+        }
+
         public void Execute(string queryString)
         {
             var query = new CompiledQuery

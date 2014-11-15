@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace PersistanceMap
 {
@@ -7,10 +8,36 @@ namespace PersistanceMap
     {
         public SqlConnectionProvider(string connectionString)
         {
-            ConnectionString = connectionString;
+            ConnectionString = connectionString
+                .Replace("Initial Catalog =", "Initial Catalog=")
+                .Replace("initial iatalog =", "Initial Catalog=")
+                .Replace("initial iatalog=", "Initial Catalog=")
+                .Replace("Database =", "Initial Catalog=")
+                .Replace("Database=", "Initial Catalog=")
+                .Replace("database =", "Initial Catalog=")
+                .Replace("database=", "Initial Catalog=");
         }
 
-        public string ConnectionString { get; private set; }
+        protected string ConnectionString { get; private set; }
+
+        public string Database
+        {
+            get
+            {
+                var regex = new Regex("Initial Catalog=([^;]*);");
+                var match = regex.Match(ConnectionString);
+                if (match.Success)
+                    return match.Value.Replace("Initial Catalog=", "").Replace(";", "");
+
+                return null;
+            }
+            set
+            {
+                // set new database name
+                var regex = new Regex("Initial Catalog=([^;]*);");
+                ConnectionString = regex.Replace(ConnectionString, string.Format("Initial Catalog={0};", value));
+            }
+        }
 
         private IQueryCompiler _queryCompiler;
         public virtual IQueryCompiler QueryCompiler

@@ -44,16 +44,16 @@ namespace PersistanceMap.Test.Expression
                 context.From<Warrior>().For(() => new { ID = 0, Race = "" }).GroupBy(w => w.Race).ThenBy(w => w.ID).Select();
                 Assert.AreEqual(sql, "select ID, Race from Warrior GROUP BY Race, ID");
 
-                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).For(() => new { Race = "" }).Select();
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).For(() => new { Race = "" }).Select();
                 Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
 
-                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).ThenBy<Weapon>(w => w.WeaponID).For(() => new { Race = "", WeaponID = 0 }).Select();
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).ThenBy<Weapon>(w => w.ID).For(() => new { Race = "", WeaponID = 0 }).Select();
                 Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
 
-                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "" }).GroupBy(w => w.Race).Select();
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "" }).GroupBy(w => w.Race).Select();
                 Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
 
-                context.From<Warrior>().Join<Weapon>((wep, war) => wep.WeaponID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "", WeaponID = 0 }).GroupBy(w => w.Race).ThenBy(w => w.WeaponID).Select();
+                context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "", WeaponID = 0 }).GroupBy(w => w.Race).ThenBy(w => w.WeaponID).Select();
                 Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.WeaponID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
             }
         }

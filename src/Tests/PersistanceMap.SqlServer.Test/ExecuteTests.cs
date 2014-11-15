@@ -24,6 +24,22 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
+        public void ExecuteAnonymSelectStatement()
+        {
+            var logger = new MessageStackLogger();
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
+            {
+                // select with string select statement
+                var orders = context.Execute("SELECT * FROM Orders", () => new { OrdersID = 0 });
+
+                Assert.IsTrue(orders.Any());
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "SELECT * FROM Orders");
+            }
+        }
+
+        [Test]
         public void ExecuteUpateStatement()
         {
             var logger = new MessageStackLogger();

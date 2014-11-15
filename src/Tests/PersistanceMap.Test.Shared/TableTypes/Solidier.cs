@@ -1,5 +1,5 @@
 ﻿
-namespace PersistanceMap.Sqlite.Test.TableTypes
+namespace PersistanceMap.Test.TableTypes
 {
     public class Solidier
     {

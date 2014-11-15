@@ -3,8 +3,8 @@ namespace PersistanceMap
 {
     public enum FieldOperation
     {
-        //Drop,
-        //Alter,
+        Drop,
+        Alter,
         Add
     }
 }

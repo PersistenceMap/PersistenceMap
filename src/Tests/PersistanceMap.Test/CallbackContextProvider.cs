@@ -269,6 +269,8 @@ namespace PersistanceMap.Test
                 Callback = callback;
             }
 
+            public string Database { get; set; }
+
             private IQueryCompiler _queryCompiler;
             public virtual IQueryCompiler QueryCompiler
             {

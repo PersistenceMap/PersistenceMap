@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using PersistanceMap.Sqlite.Test.TableTypes;
+using PersistanceMap.Test.TableTypes;
 using System;
 using System.IO;
 using System.Linq;

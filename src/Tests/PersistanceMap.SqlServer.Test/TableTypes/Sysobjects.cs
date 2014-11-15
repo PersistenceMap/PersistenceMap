@@ -1,12 +1,10 @@
 ﻿
 namespace PersistanceMap.Test.TableTypes
 {
-    public class Weapon
+    class Sysobjects
     {
-        public int ID { get; set; }
-
         public string Name { get; set; }
 
-        public int Damage { get; set; }
+        public string Type { get; set; }
     }
 }

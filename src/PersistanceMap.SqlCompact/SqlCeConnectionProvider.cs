@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlServerCe;
+using System.Text.RegularExpressions;
 
 namespace PersistanceMap
 {
@@ -7,10 +8,30 @@ namespace PersistanceMap
     {
         public SqlCeConnectionProvider(string connectionString)
         {
-            ConnectionString = connectionString;
+            // format the string
+            ConnectionString = connectionString.Replace("Data Source =", "Data Source=");
         }
 
-        public string ConnectionString { get; private set; }
+        protected string ConnectionString { get; private set; }
+
+        public string Database
+        {
+            get
+            {
+                var regex = new Regex("Data Source=([^;]*);");
+                var match = regex.Match(ConnectionString);
+                if (match.Success)
+                    return match.Value;
+
+                return null;
+            }
+            set
+            {
+                // set new database name
+                var regex = new Regex("(?<=Data Source=).*(?=;)");
+                ConnectionString = regex.Replace(ConnectionString, value);
+            }
+        }
 
         private IQueryCompiler _queryCompiler;
         public virtual IQueryCompiler QueryCompiler

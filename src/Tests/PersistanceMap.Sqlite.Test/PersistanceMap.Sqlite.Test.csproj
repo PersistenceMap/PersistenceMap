@@ -96,10 +96,7 @@
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="ImplementationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TableTypes\Solidier.cs" />
     <Compile Include="TableTypes\Sqlite_Master.cs" />
-    <Compile Include="TableTypes\Warrior.cs" />
-    <Compile Include="TableTypes\Weapon.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +107,10 @@
     <ProjectReference Include="..\..\PersistanceMap\PersistanceMap.csproj">
       <Project>{4160375c-5e51-484f-b07b-85a5eb9169f8}</Project>
       <Name>PersistanceMap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PersistanceMap.Test.Shared\PersistanceMap.Test.Shared.csproj">
+      <Project>{2d5d803e-de51-471b-b650-8e3b6272d89f}</Project>
+      <Name>PersistanceMap.Test.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

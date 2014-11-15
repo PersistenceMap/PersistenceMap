@@ -1,5 +1,7 @@
 ﻿using PersistanceMap.Tracing;
 using PersistanceMap.QueryBuilder;
+using PersistanceMap.SqlServer;
+using PersistanceMap.SqlServer.QueryBuilder;
 
 namespace PersistanceMap
 {
@@ -9,6 +11,18 @@ namespace PersistanceMap
             : base(provider, loggerFactory)
         {
         }
+
+        #region Database Expressions
+
+        public IDatabaseQueryExpression Database
+        {
+            get
+            {
+                return new DatabaseQueryBuilder(this);
+            }
+        }
+
+        #endregion
 
         #region Procedure Expressions
 
