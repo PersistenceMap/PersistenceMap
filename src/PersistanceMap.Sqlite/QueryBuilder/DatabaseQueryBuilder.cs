@@ -110,13 +110,13 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 if (existing.Any())
                     continue;
 
-                var expression = string.Format("{0} {1}{2}{3}",
+                Func<string> expression = () => string.Format("{0} {1}{2}{3}",
                     field.MemberName,
                     field.MemberType.ToSqlDbType(),
                     field.IsNullable ? "" : " NOT NULL",
                     QueryPartsMap.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == field.MemberName ? "" : ", ");
 
-                var fieldPart = new DelegateQueryPart(OperationType.Column, () => expression, field.MemberName);
+                var fieldPart = new DelegateQueryPart(OperationType.Column, expression, field.MemberName);
 
                 QueryPartsMap.AddAfter(fieldPart, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
             }

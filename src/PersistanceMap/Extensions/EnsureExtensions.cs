@@ -21,31 +21,5 @@ namespace PersistanceMap
             if (String.IsNullOrEmpty(argument))
                 throw new ArgumentException(message ?? "Cannot be null or empty", name);
         }
-
-        //public static void EnsureMappingTypeMatches(this Type keyType, Type mappedType)
-        //{
-        //    if (!keyType.IsAssignableFrom(mappedType))
-        //        throw new MappingMismatchException(mappedType, keyType);
-        //}
-
-        //public static void EnsureTypeIsImplemented(this Type type, Type basetype)
-        //{
-        //    EnsureMappingTypeMatches(basetype, type);
-        //}
-
-        //public static void EnsureTypeCanBeInstantiated(this Type type)
-        //{
-        //    if (type.IsAbstract || type.IsInterface)
-        //        throw new TypeCompositionException(type);
-        //}
-
-        //public static void EnsureTypeCanBeDefaultInstantiated(this Type type)
-        //{
-        //    if (type.IsAbstract || type.IsInterface)
-        //        throw new TypeCompositionException(type);
-
-        //    if (type.GetConstructor(new Type[0]) == null)
-        //        throw new TypeCompositionException(type);
-        //}
     }
 }

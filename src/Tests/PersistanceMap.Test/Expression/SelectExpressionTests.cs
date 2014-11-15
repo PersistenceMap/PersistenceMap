@@ -419,5 +419,138 @@ namespace PersistanceMap.Test.Expression
                 Assert.AreEqual(sql, expected);
             }
         }
+
+        [Test]
+        public void SelectTestForOrders()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // select statement with a FOR expression and mapping members/fields to a specific table
+                context.From<Orders>().Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Map<Orders>(o => o.OrdersID).Select();
+                var expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a FOR expression and ignoring fields in the resultset
+                context.From<Orders>()
+                    .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
+                    .For<Orders>()
+                    .Ignore(o => o.OrdersID)
+                    .Ignore(o => o.OrderDate)
+                    .Ignore(o => o.RequiredDate)
+                    .Select();
+                expected = "select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                Assert.AreEqual(sql, expected);
+
+                // select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type
+                context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Select();
+                expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                Assert.AreEqual(sql, expected);
+
+                // simple select from statement
+                context.From<Orders>().Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders";
+                Assert.AreEqual(sql, expected);
+            }
+        }
+
+        [Test]
+        public void SelectWithWhereTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // select statement with a where operation and a or operation that has two genereic parameters and alias for both types
+                context.From<Customers>("cust")
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                    .Where(e => e.FirstName.Contains("Davolio"))
+                    .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp")
+                    .Select();
+                var expected = "select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)";
+                    //"select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a where operation and a or operation that has two genereic parameters and a alias on the source type
+                context.From<Customers>()
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID)
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID, alias: "emp")
+                    .Where(e => e.FirstName.Contains("Davolio"))
+                    .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp")
+                    .Select();
+                expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)";
+                //expected = "select Customers.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a where operation and a or operation that has two genereic parameters and a alias on the type
+                context.From<Customers>("cust")
+                    .Map(e => e.EmployeeID)
+                    .Map(e => e.Address)
+                    .Map(e => e.City)
+                    .Map(e => e.PostalCode)
+                    .Join<Orders>((o, c) => o.EmployeeID == c.EmployeeID, source: "cust")
+                    .Join<Employee>((e, o) => e.EmployeeID == o.EmployeeID)
+                    .Where(e => e.FirstName.Contains("Davolio"))
+                    .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust")
+                    .Select();
+                expected = "select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)";
+                //expected = "select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)";
+                Assert.AreEqual(sql, expected);
+
+                // Select statement with a simple where operation
+                context.From<Orders>()
+                    .Map(o => o.OrdersID)
+                    .Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID)
+                    .Where(o => o.Discount > 0)
+                    .Rebase<OrderDetails, Orders>()
+                    .Select();
+                expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (OrderDetails.Discount > '0')";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a where and a simple or operation
+                context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("P"))
+                    .Or<Orders>(o => o.ShipCity == "London")
+                    .Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a where and a simple or operation
+                context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("P"))
+                    .Or<Orders>(o => o.ShipCity == "Paris")
+                    .Or<Orders>(o => o.ShipCity == "London")
+                    .Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')";
+                Assert.AreEqual(sql, expected);
+
+                // Select statement with a where and a generic OR operation
+                context.From<Orders>("ord")
+                    .Where(p => p.CustomerID.StartsWith("P"))
+                    .Or<Orders>(o => o.ShipCity == "London", "ord")
+                    .Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a where and a simple and operation
+                context.From<Orders>()
+                    .Where(p => p.CustomerID.StartsWith("se"))
+                    .And(o => o.ShipCity == "London")
+                    .Select();
+                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
+                Assert.AreEqual(sql, expected);
+
+            }
+        }
     }
 }
