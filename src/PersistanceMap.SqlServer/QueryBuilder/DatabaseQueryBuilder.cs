@@ -2,11 +2,9 @@
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.SqlServer.QueryBuilder
 {
@@ -70,15 +68,19 @@ namespace PersistanceMap.SqlServer.QueryBuilder
 
         #region IDatabaseQueryExpression Implementation
 
+        /// <summary>
+        /// Creates a create database expression
+        /// </summary>
         public void Create()
         {
             var database = Context.ConnectionProvider.Database;
-            var setdb = new DelegateQueryPart(OperationType.None, () =>
+            var setPart = new DelegateQueryPart(OperationType.None, () =>
             {
+                // set the connectionstring to master database
                 Context.ConnectionProvider.Database = "Master";
                 return string.Empty;
             });
-            QueryPartsMap.Add(setdb);
+            QueryPartsMap.Add(setPart);
 
             //var part = new DelegateQueryPart(OperationType.CreateDatabase, () => string.Format("CREATE DATABASE {0}", database));
 
@@ -89,27 +91,27 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             sb.AppendLine(string.Format("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
 
             var part = new DelegateQueryPart(OperationType.CreateDatabase, () => sb.ToString());
-
-//            var part = new DelegateQueryPart(OperationType.CreateDatabase, () => string.Format(@"DECLARE @device_directory NVARCHAR(520)
-//SELECT @device_directory = SUBSTRING(filename, 1, CHARINDEX(N'master.mdf', LOWER(filename)) - 1)
-//FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1
-//EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
-
             QueryPartsMap.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
 
 
-            var resetdb = new DelegateQueryPart(OperationType.None, () =>
+            var resetPart = new DelegateQueryPart(OperationType.None, () =>
             {
+                // reset the connectionstring to the created
                 Context.ConnectionProvider.Database = database;
                 return string.Format("USE {0}", database);
             });
             var resetQueryMap = new QueryPartsMap();
-            resetQueryMap.Add(resetdb);
+            resetQueryMap.Add(resetPart);
             Context.AddQuery(new MapQueryCommand(resetQueryMap));
         }
 
+        /// <summary>
+        /// Creates a table expression
+        /// </summary>
+        /// <typeparam name="T">The POCO type defining the table</typeparam>
+        /// <returns></returns>
         public ITableQueryExpression<T> Table<T>()
         {
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
@@ -127,6 +129,9 @@ namespace PersistanceMap.SqlServer.QueryBuilder
 
         #region ITableQueryExpression Implementation
 
+        /// <summary>
+        /// Create a create table expression
+        /// </summary>
         public void Create()
         {
             var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE {0} (", typeof(T).Name));
@@ -156,6 +161,9 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
+        /// <summary>
+        /// Create a alter table expression
+        /// </summary>
         public void Alter()
         {
             var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
@@ -164,11 +172,14 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
-        public void RenameTo<TNew>()
-        {
-            throw new NotImplementedException();
-        }
+        //public void RenameTo<TNew>()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
+        /// <summary>
+        /// Drops the table
+        /// </summary>
         public void Drop()
         {
             var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
@@ -177,6 +188,11 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             Context.AddQuery(new MapQueryCommand(QueryPartsMap));
         }
 
+        /// <summary>
+        /// Ignore the field when creating the table
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
             var memberName = FieldHelper.TryExtractPropertyName(field);
@@ -186,6 +202,12 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Marks a column to be a primary key column
+        /// </summary>
+        /// <param name="key">The field that marks the key</param>
+        /// <param name="isAutoIncrement">Is the column a auto incrementing column</param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Key(Expression<Func<T, object>> key, bool isAutoIncrement = false)
         {
             var memberName = FieldHelper.TryExtractPropertyName(key);
@@ -196,7 +218,7 @@ namespace PersistanceMap.SqlServer.QueryBuilder
                 () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}",
                     field.MemberName,
                     field.MemberType.ToSqlDbType(),
-                    !field.IsNullable ? " NOT NULL" : "",
+                    field.IsNullable ? "" : " NOT NULL",
                     isAutoIncrement ? " AUTOINCREMENT" : "",
                     QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
                     field.MemberName);
@@ -206,6 +228,11 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Marks a set of columns to be a combined primary key of a table
+        /// </summary>
+        /// <param name="keyFields">Properties marking the primary keys of the table</param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -230,6 +257,13 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Marks a field to be a foreignkey column
+        /// </summary>
+        /// <typeparam name="TRef">The referenced table for the foreign key</typeparam>
+        /// <param name="field">The foreign key field</param>
+        /// <param name="reference">The key field in the referenced table</param>
+        /// <returns></returns>
         public ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference)
         {
             var memberName = FieldHelper.TryExtractPropertyName(field);
@@ -241,6 +275,14 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             return new TableQueryBuilder<T>(Context, QueryPartsMap);
         }
 
+        /// <summary>
+        /// Creates a expression that is created for operations for a table field
+        /// </summary>
+        /// <param name="Column">The column to alter</param>
+        /// <param name="operation">The type of operation for the field</param>
+        /// <param name="precision">Precision of the field</param>
+        /// <param name="isNullable">Is the field nullable</param>
+        /// <returns></returns>
         public ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation, string precision = null, bool isNullable = true)
         {
             var memberName = FieldHelper.TryExtractPropertyName(column);

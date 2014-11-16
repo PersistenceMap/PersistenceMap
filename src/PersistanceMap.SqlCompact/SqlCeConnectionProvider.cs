@@ -9,7 +9,10 @@ namespace PersistanceMap
         public SqlCeConnectionProvider(string connectionString)
         {
             // format the string
-            ConnectionString = connectionString.Replace("Data Source =", "Data Source=");
+            ConnectionString = connectionString
+                .Replace("Data Source =", "Data Source=")
+                .Replace("data dource =", "Data Source=")
+                .Replace("data source=", "Data Source=");
         }
 
         protected string ConnectionString { get; private set; }
@@ -21,15 +24,15 @@ namespace PersistanceMap
                 var regex = new Regex("Data Source=([^;]*);");
                 var match = regex.Match(ConnectionString);
                 if (match.Success)
-                    return match.Value;
+                    return match.Value.Replace("Data Source=", "").Replace(";", "");
 
                 return null;
             }
             set
             {
                 // set new database name
-                var regex = new Regex("(?<=Data Source=).*(?=;)");
-                ConnectionString = regex.Replace(ConnectionString, value);
+                var regex = new Regex("Data Source=([^;]*);");
+                ConnectionString = regex.Replace(ConnectionString, string.Format("Data Source={0};", value));
             }
         }
 

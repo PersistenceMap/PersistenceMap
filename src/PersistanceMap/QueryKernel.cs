@@ -32,6 +32,12 @@ namespace PersistanceMap
             _logger = new Lazy<ILogger>(() => loggerFactory.CreateLogger());
         }
 
+        /// <summary>
+        /// Executes a CompiledQuery that returnes a resultset against the RDBMS
+        /// </summary>
+        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
+        /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
@@ -55,6 +61,10 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Executes a CompiledQuery against the RDBMS
+        /// </summary>
+        /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public void Execute(CompiledQuery compiledQuery)
         {
             //TODO: Add more information to log like time and duration
@@ -78,6 +88,11 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
+        /// </summary>
+        /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
+        /// <param name="expressions"></param>
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
             //TODO: Add more information to log like time and duration
@@ -109,6 +124,13 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Maps the resultset to a POCO
+        /// </summary>
+        /// <typeparam name="T">The type to map to</typeparam>
+        /// <param name="context">The readercontext containing the datareader with the result</param>
+        /// <param name="fields">The fields to map to</param>
+        /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext context, FieldDefinition[] fields)
         {
             context.EnsureArgumentNotNull("context");
@@ -158,6 +180,12 @@ namespace PersistanceMap
             return rows;
         }
 
+        /// <summary>
+        /// Maps the resultset to a POCO
+        /// </summary>
+        /// <typeparam name="T">The type to map to</typeparam>
+        /// <param name="context">The readercontext containing the datareader with the result</param>
+        /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext context)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToArray();
@@ -185,6 +213,13 @@ namespace PersistanceMap
             return rows;
         }
 
+        /// <summary>
+        /// Maps the result to a dictionary containing the key/value
+        /// </summary>
+        /// <param name="context">The readercontext containing the datareader with the result</param>
+        /// <param name="objectDefs"></param>
+        /// <param name="indexCache"></param>
+        /// <returns></returns>
         public Dictionary<string, object> ReadToDictionary(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs, Dictionary<string, int> indexCache)
         {
             var row = new Dictionary<string, object>();

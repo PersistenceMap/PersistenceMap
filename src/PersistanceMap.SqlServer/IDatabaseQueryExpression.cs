@@ -5,8 +5,16 @@ namespace PersistanceMap.SqlServer
 {
     public interface IDatabaseQueryExpression : IQueryExpression
     {
+        /// <summary>
+        /// Creates a create database expression
+        /// </summary>
         void Create();
 
+        /// <summary>
+        /// Creates a table expression
+        /// </summary>
+        /// <typeparam name="T">The POCO type defining the table</typeparam>
+        /// <returns></returns>
         ITableQueryExpression<T> Table<T>();
     }
 
@@ -22,11 +30,11 @@ namespace PersistanceMap.SqlServer
         /// </summary>
         void Alter();
 
-        /// <summary>
-        /// Creates a expression to rename a table
-        /// </summary>
-        /// <typeparam name="TNew">The type of the new table</typeparam>
-        void RenameTo<TNew>();
+        ///// <summary>
+        ///// Creates a expression to rename a table
+        ///// </summary>
+        ///// <typeparam name="TNew">The type of the new table</typeparam>
+        //void RenameTo<TNew>();
 
         /// <summary>
         /// Drops the table
