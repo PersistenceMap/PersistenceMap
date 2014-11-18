@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace PersistanceMap.SqlServer
+namespace PersistanceMap
 {
     public interface IDatabaseQueryExpression : IQueryExpression
     {
@@ -29,12 +29,6 @@ namespace PersistanceMap.SqlServer
         /// Create a alter table expression
         /// </summary>
         void Alter();
-
-        ///// <summary>
-        ///// Creates a expression to rename a table
-        ///// </summary>
-        ///// <typeparam name="TNew">The type of the new table</typeparam>
-        //void RenameTo<TNew>();
 
         /// <summary>
         /// Drops the table
@@ -71,13 +65,6 @@ namespace PersistanceMap.SqlServer
         /// <param name="reference">The key field in the referenced table</param>
         /// <returns></returns>
         ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference);
-
-        ///// <summary>
-        ///// Drops the key definition.
-        ///// </summary>
-        ///// <param name="keyFields">All items that make the key</param>
-        ///// <returns></returns>
-        //ITableQueryExpression<T> DropKey(params Expression<Func<T, object>>[] keyFields);
 
         /// <summary>
         /// Creates a expression that is created for operations for a table field

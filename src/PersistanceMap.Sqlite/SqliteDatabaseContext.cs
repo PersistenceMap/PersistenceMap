@@ -1,6 +1,4 @@
-﻿using PersistanceMap.Sqlite;
-using PersistanceMap.Sqlite.QueryBuilder;
-using PersistanceMap.Tracing;
+﻿using PersistanceMap.Tracing;
 
 namespace PersistanceMap
 {
@@ -11,11 +9,11 @@ namespace PersistanceMap
         {
         }
 
-        public IDatabaseQueryExpression Database
+        public PersistanceMap.Sqlite.IDatabaseQueryExpression Database
         {
             get
             {
-                return new DatabaseQueryBuilder(this);
+                return new PersistanceMap.Sqlite.QueryBuilder.DatabaseQueryBuilder(this);
             }
         }
     }

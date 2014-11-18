@@ -35,7 +35,6 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="Internal\TypeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />

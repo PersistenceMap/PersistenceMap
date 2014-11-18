@@ -70,6 +70,9 @@
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
+    <Compile Include="IDatabaseQueryExpression.cs" />
+    <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
+    <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
     <Compile Include="Enums\FieldOperation.cs" />
