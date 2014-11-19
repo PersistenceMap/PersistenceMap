@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>PersistanceMap.Sqlite</id>
+    <version>0.2.2-RC1</version>
+    <title>PersistanceMap.Sqlite</title>
+    <authors>Christian Walpen</authors>
+    <owners>Christian Walpen</owners>
+    <licenseUrl>https://github.com/PersistanceMap/PersistanceMap/raw/master/License.txt</licenseUrl>
+    <projectUrl>http://wicked-flame.blogspot.ch/p/persistancemap.html</projectUrl>
+    <iconUrl>https://github.com/PersistanceMap/PersistanceMap/raw/master/assets/PersistanceMap.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      PersistanceMap is a small, extremely lightweight and intuitive ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The Queries are executed against a RDBMS using ADO.NET. The resulting data is automaticaly mapped into Dataobjects/POCO's.
+      The synthax is simple and easy to use and resemles the SQL or LINQ synthax.
+      PersistanceMap is extremely lightweight and leaves no traces in the client code.
+      The current versions only support MSSql Servers.
+    </description>
+    <summary>A etremely lightweight and intuitive ORM framework for .NET</summary>
+    <tags>O/RM Persistancy Database Data Sqlite</tags>
+  </metadata>
+  <files>
+    <file src="PersistanceMap.Sqlite\bin\Release\PersistanceMap.Sqlite.dll" target="lib\net45\PersistanceMap.Sqlite.dll" />
+    <file src="PersistanceMap.Sqlite\bin\Release\PersistanceMap.Sqlite.XML" target="lib\net45\PersistanceMap.Sqlite.XML" />
+    <file src="PersistanceMap\bin\Release\PersistanceMap.dll" target="lib\net45\PersistanceMap.dll" />
+    <file src="PersistanceMap\bin\Release\PersistanceMap.XML" target="lib\net45\PersistanceMap.XML" />
+  </files>
+</package>

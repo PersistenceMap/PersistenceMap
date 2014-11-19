@@ -12,6 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1710980-9178-4F25-93E0-24B85D91B64D}"
 	ProjectSection(SolutionItems) = preProject
 		assets\Architecture\ContextSelectTests_SimpleSelectTest.sequencediagram = assets\Architecture\ContextSelectTests_SimpleSelectTest.sequencediagram
+		src\PersistanceMap.nuspec = src\PersistanceMap.nuspec
+		src\PersistanceMap.Sqlite.nuspec = src\PersistanceMap.Sqlite.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.SqlCompact", "src\PersistanceMap.SqlCompact\PersistanceMap.SqlCompact.csproj", "{47F9FB8D-13D8-4B07-ADF5-FFD1BF529906}"
