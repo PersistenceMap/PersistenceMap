@@ -17,7 +17,7 @@ namespace PersistanceMap.Test.Expression
                 // insert all elements used in the reference expression
                 context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" });
                 context.Commit();
-                Assert.AreEqual(sql, "INSERT INTO Warrior (ID, WeaponID, Race, SpecialSkill) VALUES (1, 0, 'Dwarf', NULL)");
+                Assert.AreEqual(sql, "INSERT INTO Warrior (ID, Name, WeaponID, Race, SpecialSkill) VALUES (1, NULL, 0, 'Dwarf', NULL)");
 
                 // insert all fields defined in the anonym object
                 context.Insert<Warrior>(() => new { ID = 1, Race = "Dwarf" });
@@ -27,7 +27,7 @@ namespace PersistanceMap.Test.Expression
                 // insert all except ignored elements used in the reference expression
                 context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" }).Ignore(w => w.ID).Ignore(w => w.WeaponID);
                 context.Commit();
-                Assert.AreEqual(sql, "INSERT INTO Warrior (Race, SpecialSkill) VALUES ('Dwarf', NULL)");
+                Assert.AreEqual(sql, "INSERT INTO Warrior (Name, Race, SpecialSkill) VALUES (NULL, 'Dwarf', NULL)");
             }
         }
 

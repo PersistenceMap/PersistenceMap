@@ -17,12 +17,12 @@ namespace PersistanceMap.Test.Expression
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 });
                 context.Commit();
 
-                Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "UPDATE Warrior SET Name = NULL, WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrior.ID = 1)");
 
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
                 context.Commit();
 
-                Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "UPDATE Warrior SET Name = NULL, WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrior.ID = 1)");
 
                 context.Update<Warrior>(() => new { ID = 1, Race = "Elf" });
                 context.Commit();
@@ -44,7 +44,7 @@ namespace PersistanceMap.Test.Expression
 
                 Assert.AreEqual(sql, "UPDATE Warrior SET Race = 'Elf' where ((Warrior.ID = 1) AND (Warrior.SpecialSkill is null))");
 
-                context.Update<Warrior>(() => new Warrior { ID = 1, Race = "Elf" }).Ignore(w => w.SpecialSkill);
+                context.Update<Warrior>(() => new Warrior { ID = 1, Race = "Elf" }).Ignore(w => w.SpecialSkill).Ignore(w => w.Name);
                 context.Commit();
 
                 Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 0, Race = 'Elf' where (Warrior.ID = 1)");

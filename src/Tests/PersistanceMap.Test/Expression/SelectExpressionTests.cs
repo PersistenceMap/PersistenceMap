@@ -19,12 +19,12 @@ namespace PersistanceMap.Test.Expression
                 context.From<Warrior>(w => w.ID == 1)
                     .Select();
 
-                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
 
                 // ignore a member in the select
                 context.Select<Warrior>(w => w.ID == 1);
 
-                Assert.AreEqual(sql, "select ID, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
             }
         }
 
@@ -35,10 +35,10 @@ namespace PersistanceMap.Test.Expression
             var provider = new CallbackContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
-                context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).GroupBy(w => w.Race).Select();
+                context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).Ignore(w => w.Name).GroupBy(w => w.Race).Select();
                 Assert.AreEqual(sql, "select Race from Warrior GROUP BY Race");
 
-                context.From<Warrior>().GroupBy(w => w.Race).ThenBy(w => w.WeaponID).For<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Select();
+                context.From<Warrior>().GroupBy(w => w.Race).ThenBy(w => w.WeaponID).For<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.Name).Select();
                 Assert.AreEqual(sql, "select WeaponID, Race from Warrior GROUP BY Race, WeaponID");
 
                 context.From<Warrior>().For(() => new { ID = 0, Race = "" }).GroupBy(w => w.Race).ThenBy(w => w.ID).Select();
@@ -275,7 +275,7 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithINExpression()
         {
-            var expected = "select ID, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
+            var expected = "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())

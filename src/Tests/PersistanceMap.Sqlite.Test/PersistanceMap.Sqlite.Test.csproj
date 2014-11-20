@@ -96,6 +96,7 @@
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="ImplementationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectTests.cs" />
     <Compile Include="TableTypes\Sqlite_Master.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>

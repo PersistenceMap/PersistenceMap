@@ -44,6 +44,8 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="MessageStackLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableTypes\Armour.cs" />
+    <Compile Include="TableTypes\ArmourPart.cs" />
     <Compile Include="TableTypes\Customers.cs" />
     <Compile Include="TableTypes\Employee.cs" />
     <Compile Include="TableTypes\EmployeeTerritories.cs" />
