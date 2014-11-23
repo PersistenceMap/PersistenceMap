@@ -95,9 +95,9 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        internal IFieldQueryPart AddFieldQueryMap(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias)
+        internal IFieldQueryPart AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter)
         {
-            var part = new FieldQueryPart(field, alias, null /*EntityAlias*/, entity)
+            var part = new FieldQueryPart(field, alias, entityalias, entity, alias ?? field, ConvertExpression(valueConverter))
             {
                 OperationType = OperationType.Include
             };
@@ -107,12 +107,26 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
+        /// <summary>
+        /// Converts a Func{T,object} expression to a Func{object,object} expression
+        /// </summary>
+        /// <typeparam name="TProp"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        static Expression<Func<object, object>> ConvertExpression<TProp>(Expression<Func<TProp, object>> expression)
+        {
+            if (expression == null)
+                return null;
+
+            var p = Expression.Parameter(typeof(object));
+
+            return Expression.Lambda<Func<object, object>>(Expression.Invoke(expression, Expression.Convert(p, typeof(TProp))), p);
+        }
+
         internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
         {
             foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
             {
-                //if (!map.IsSealded)
-                //{
                 // add all mapped fields to a collection to ensure that they are used in the query
                 var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();
 
@@ -144,7 +158,6 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                 {
                     map.Remove(field);
                 }
-                //}
 
                 var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;
                 if (last != null)

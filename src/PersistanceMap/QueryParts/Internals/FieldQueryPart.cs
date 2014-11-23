@@ -1,21 +1,29 @@
-﻿using System.Text;
+﻿using System;
+using System.Linq.Expressions;
+using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
     internal class FieldQueryPart : IFieldQueryPart, IEntityQueryPart, IQueryPart
     {
-        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null)
+        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null)
         {
             EntityAlias = entityalias;
             Field = field;
             FieldAlias = fieldalias;
             Entity = entity;
-            ID = id;
+            ID = id ?? fieldalias ?? field;
+            Converter = converter;
         }
 
         public string ID { get; set; }
 
         public string Sufix { get; set; }
+
+        /// <summary>
+        /// A expression that converts the db value to the object value
+        /// </summary>
+        public Expression<Func<object,object>> Converter { get; private set; }
 
         #region IEntityQueryPart Implementation
 

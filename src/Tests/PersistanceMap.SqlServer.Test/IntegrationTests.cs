@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
+using PersistanceMap.Test.TableTypes;
 using System;
+using System.Linq;
 
 namespace PersistanceMap.Test.Expression
 {
@@ -12,5 +14,7 @@ namespace PersistanceMap.Test.Expression
         {
             Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
         }
+
+        
     }
 }

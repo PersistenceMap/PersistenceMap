@@ -44,6 +44,29 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
+        public void ProcedureWithResultWithMapToMultipleFields()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                // proc with resultset without parameter names
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
+                    .AddParameter(() => DateTime.Today)
+                    .For<SalesByYearWithBaseExt>()
+                    .Map("OrdersID", p => p.ID)
+                    .Map("OrdersID", p => p.ExtraOrdersID)
+                    .Map("TestForBool", p => p.IsTestForBool)
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+                Assert.IsTrue(proc.First().ID > 0);
+                Assert.AreEqual(proc.First().ID, proc.First().OrdersID);
+                Assert.AreEqual(proc.First().ID, proc.First().ExtraOrdersID);
+            }
+        }
+
+        [Test]
         public void ProcedureWithResultWithParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);

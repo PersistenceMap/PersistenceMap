@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
 using System;
-using System.Collections;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -1254,5 +1253,39 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
+        [Test]
+        public void SelectWithMapAndValueConverter()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                var query = context.From<Orders>()
+                    .Map(o => o.OrderDate, "StringDate", date => date.ToShortDateString())
+                    .Map(o => o.OrderDate, "IsDateInAutum", date => date.Month >= 6 ? true : false)
+                    .Map(o => o.OrderDate)
+                    .For(() => new
+                    {
+                        IsDateInAutum = false,
+                        StringDate = "",
+                        OrderDate = DateTime.MinValue
+                    });
+
+                var expected = "select Orders.OrderDate as StringDate, Orders.OrderDate as IsDateInAutum, Orders.OrderDate from Orders";
+                var sql = query.CompileQuery().Flatten();
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                // execute the query
+                var orders = query.Select();
+
+                Assert.IsTrue(orders.Any());
+                Assert.AreEqual(orders.First().StringDate, orders.First().OrderDate.ToShortDateString());
+                Assert.AreEqual(orders.First().OrderDate.Month >= 6 ? true : false, orders.First().IsDateInAutum);
+
+                Assert.AreEqual(orders.Last().StringDate, orders.Last().OrderDate.ToShortDateString());
+                Assert.AreEqual(orders.Last().OrderDate.Month >= 6 ? true : false, orders.Last().IsDateInAutum);
+            }
+        }
     }
 }

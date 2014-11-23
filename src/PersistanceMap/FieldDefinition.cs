@@ -42,5 +42,10 @@ namespace PersistanceMap
         public PropertyGetterDelegate GetValueFunction { get; set; }
 
         public PropertySetterDelegate SetValueFunction { get; set; }
+
+        /// <summary>
+        /// The converter that converts the databasevalue to the property value
+        /// </summary>
+        public Func<object, object> Converter { get; set; }
     }
 }

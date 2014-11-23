@@ -21,4 +21,9 @@ namespace PersistanceMap.Test.TableTypes
 
         public bool IsTestForBool { get; set; }
     }
+
+    public class SalesByYearWithBaseExt : SalesByYearWithBase
+    {
+        public int ExtraOrdersID { get; set; }
+    }
 }

@@ -615,5 +615,19 @@ namespace PersistanceMap.Test.Expression
                 Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
             }
         }
+
+
+        //[Test]
+        //public void SelectWithMapAndValueConverter()
+        //{
+        //    var sql = "";
+        //    var provider = new CallbackContextProvider(s => sql = s.Flatten());
+        //    using (var context = provider.Open())
+        //    {
+        //        // select the max id with grouping
+        //        context.From<Warrior>().Map(w => w.Race, "ID", opt => opt.ConvertValue<int>(id => id > 0 ? "ID is greader than 0" : "ID is smaller than 0")).GroupBy(w => w.Race).Select();
+        //        Assert.AreEqual(sql, "select ID AS Race, Warrior.Race from Warrior GROUP BY Race");
+        //    }
+        //}
     }
 }

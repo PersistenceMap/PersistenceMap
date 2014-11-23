@@ -58,20 +58,14 @@ namespace PersistanceMap
         IJoinQueryExpression<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null);
 
         /// <summary>
-        /// Map a Property that is included in the result that belongs to a joined type
-        /// </summary>
-        /// <param name="predicate">The expression that returns the Property</param>
-        /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryExpression<T> Map(Expression<Func<T, object>> predicate);
-
-        /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
         /// </summary>
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
+        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryExpression<T> Map(Expression<Func<T, object>> source, string alias);
-
+        ISelectQueryExpression<T> Map<TProp>(Expression<Func<T, TProp>> source, string alias = null, Expression<Func<TProp, object>> valueConverter = null);
+        
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>

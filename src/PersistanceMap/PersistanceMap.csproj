@@ -76,6 +76,7 @@
     <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
+    <Compile Include="QueryParts\MapValueConverter.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
     <Compile Include="Enums\FieldOperation.cs" />

@@ -47,7 +47,7 @@ namespace PersistanceMap
             {
                 using (var reader = _connectionProvider.Execute(compiledQuery.QueryString))
                 {
-                    return this.Map<T>(reader);
+                    return Map<T>(reader, compiledQuery);
                 }
             }
             catch (Exception ex)
@@ -153,7 +153,8 @@ namespace PersistanceMap
                     var objectDefs = fields.Select(f => new ObjectDefinition
                     {
                         Name = f.FieldName,
-                        ObjectType = f.MemberType
+                        ObjectType = f.MemberType,
+                        Converter = f.Converter
                     });
 
                     // read all data to a dictionary
@@ -186,9 +187,22 @@ namespace PersistanceMap
         /// <typeparam name="T">The type to map to</typeparam>
         /// <param name="context">The readercontext containing the datareader with the result</param>
         /// <returns></returns>
-        public IEnumerable<T> Map<T>(IReaderContext context)
+        public IEnumerable<T> Map<T>(IReaderContext context, CompiledQuery compiledQuery)
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToArray();
+
+            if (compiledQuery.Converters != null)
+            {
+                // copy all valueconverters to the fielddefinitions
+                foreach (var converter in compiledQuery.Converters)
+                {
+                    var field = fields.FirstOrDefault(f => f.FieldName == converter.ID);
+                    if (field != null)
+                    {
+                        field.Converter = converter.Converter.Compile();
+                    }
+                }
+            }
 
             return Map<T>(context, fields);
         }
@@ -310,7 +324,17 @@ namespace PersistanceMap
             if (HandledDbNullValue(context, fieldDef, colIndex, instance))
                 return;
 
-            var convertedValue = ConvertDatabaseValueToTypeValue(context.DataReader.GetValue(colIndex), fieldDef.MemberType);
+            var dbValue = context.DataReader.GetValue(colIndex);
+
+            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, fieldDef.MemberType);
+            if (convertedValue == null)
+                convertedValue = dbValue;
+
+            if (fieldDef.Converter != null)
+            {
+                convertedValue = fieldDef.Converter.Invoke(convertedValue);
+            }
+
             if (convertedValue == null)
                 return;
 
@@ -329,7 +353,18 @@ namespace PersistanceMap
             if (HandledDbNullValue(objectDef, colIndex))
                 return null;
 
-            return ConvertDatabaseValueToTypeValue(context.DataReader.GetValue(colIndex), objectDef.ObjectType);
+            var dbValue = context.DataReader.GetValue(colIndex);
+
+            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDef.ObjectType);
+            if (convertedValue == null)
+                convertedValue = dbValue;
+
+            if (objectDef.Converter != null)
+            {
+                convertedValue = objectDef.Converter.Invoke(convertedValue);
+            }
+
+            return convertedValue;
         }
 
         public bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)

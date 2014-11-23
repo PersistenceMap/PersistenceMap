@@ -73,7 +73,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region Map Expressions
 
-        protected ISelectQueryExpression<T> Map(string source, string alias, string entity, string entityalias)
+        protected ISelectQueryExpression<T> Map<TProp>(string source, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter = null)
         {
             //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
@@ -90,7 +90,7 @@ namespace PersistanceMap.QueryBuilder
                 parent.IsSealded = false;
             }
 
-            SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias);
+            SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias, valueConverter);
 
             if (parent != null)
             {
@@ -99,35 +99,19 @@ namespace PersistanceMap.QueryBuilder
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
-
-
-        /// <summary>
-        /// Map a Property that is included in the result that belongs to a joined type
-        /// </summary>
-        /// <param name="predicate">The expression that returns the Property</param>
-        /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryExpression<T> Map(Expression<Func<T, object>> predicate)
-        {
-            var source = FieldHelper.TryExtractPropertyName(predicate);
-            var entity = typeof(T).Name;
-
-            return Map(source, null, entity, entity);
-        }
-
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
         /// </summary>
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
+        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryExpression<T> Map(Expression<Func<T, object>> source, string alias)
+        public ISelectQueryExpression<T> Map<TProp>(Expression<Func<T, TProp>> source, string alias = null, Expression<Func<TProp, object>> valueConverter = null)
         {
-            alias.EnsureArgumentNotNullOrEmpty("alias");
-
             var sourceField = FieldHelper.TryExtractPropertyName(source);
             var entity = typeof(T).Name;
 
-            return Map(sourceField, alias, entity, null);
+            return Map(sourceField, alias, entity, null, valueConverter);
         }
 
         /// <summary>
@@ -156,7 +140,7 @@ namespace PersistanceMap.QueryBuilder
             var sourceField = FieldHelper.TryExtractPropertyName(source);
             var entity = typeof(TSource).Name;
 
-            return Map(sourceField, aliasField, entity, null);
+            return Map<object>(sourceField, aliasField, entity, null);
         }
 
         /// <summary>
@@ -355,23 +339,21 @@ namespace PersistanceMap.QueryBuilder
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile<T2>(QueryPartsMap);
 
+            // extract all fields with valueConverter
+            var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
+            query.Converters = selector != null ? selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }) : null;
+
             return Context.Kernel.Execute<T2>(query);
         }
 
         public IEnumerable<T> Select()
         {
-            var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile<T>(QueryPartsMap);
-
-            return Context.Kernel.Execute<T>(query);
+            return Select<T>();
         }
 
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym)
         {
-            var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile<TSelect>(QueryPartsMap);
-
-            return Context.Kernel.Execute<TSelect>(query);
+            return Select<TSelect>();
         }
 
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym)
@@ -387,11 +369,6 @@ namespace PersistanceMap.QueryBuilder
                 yield return expression.Invoke(item);
             }
         }
-
-        //public T2 Single<T2>()
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         /// <summary>
         /// Defines the fields that will be used in the query
