@@ -26,4 +26,13 @@ namespace PersistanceMap.Test.TableTypes
     {
         public int ExtraOrdersID { get; set; }
     }
+
+    public class SalesByYearCustomValues
+    {
+        public DateTime ShippedDate { get; set; }
+
+        public bool IsDateInAutum { get; set; }
+
+        public string StringDate { get; set; }
+    }
 }

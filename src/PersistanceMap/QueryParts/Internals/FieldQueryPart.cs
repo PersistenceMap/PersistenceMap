@@ -23,7 +23,7 @@ namespace PersistanceMap.QueryParts
         /// <summary>
         /// A expression that converts the db value to the object value
         /// </summary>
-        public Expression<Func<object,object>> Converter { get; private set; }
+        public Expression<Func<object, object>> Converter { get; private set; }
 
         #region IEntityQueryPart Implementation
 

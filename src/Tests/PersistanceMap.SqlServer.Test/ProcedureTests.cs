@@ -67,6 +67,56 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
+        public void ProcedureWithResultWithMapAndValueConverters()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                // proc with resultset without parameter names
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter(() => new DateTime(1970, 1, 1))
+                    .AddParameter(() => DateTime.Today)
+                    .For<SalesByYearCustomValues>()
+                    .Map("ShippedDate", p => p.IsDateInAutum, value => ((DateTime)value).Month > 6 ? true : false)
+                    .Map("ShippedDate", p=> p.StringDate,value => ((DateTime)value).ToShortDateString())
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+
+                Assert.AreEqual(proc.First().StringDate, proc.First().ShippedDate.ToShortDateString());
+                Assert.AreEqual(proc.First().IsDateInAutum, proc.First().ShippedDate.Month > 6);
+
+                Assert.AreEqual(proc.Last().StringDate, proc.Last().ShippedDate.ToShortDateString());
+                Assert.AreEqual(proc.Last().IsDateInAutum, proc.Last().ShippedDate.Month > 6);
+            }
+        }
+
+        //[Test]
+        //public void ProcedureWithResultWithMapAndValueConvertersOnCustomType()
+        //{
+        //    var provider = new SqlContextProvider(ConnectionString);
+        //    using (var context = provider.Open())
+        //    {
+        //        // proc with resultset without parameter names
+        //        var proc = context.Procedure("SalesByYear")
+        //            .AddParameter(() => new DateTime(1970, 1, 1))
+        //            .AddParameter(() => DateTime.Today)
+        //            .For<SalesByYear>()
+        //            .Map("ShippedDate", p => p.IsDateInAutum, value => ((DateTime)value).Month > 6 ? true : false)
+        //            .Map("ShippedDate", p => p.StringDate, value => ((DateTime)value).ToShortDateString())
+        //            .Execute<SalesByYearCustomValues>();
+
+        //        Assert.IsTrue(proc.Any());
+
+        //        Assert.AreEqual(proc.First().StringDate, proc.First().ShippedDate.ToShortDateString());
+        //        Assert.AreEqual(proc.First().IsDateInAutum, proc.First().ShippedDate.Month > 6);
+
+        //        Assert.AreEqual(proc.Last().StringDate, proc.Last().ShippedDate.ToShortDateString());
+        //        Assert.AreEqual(proc.Last().IsDateInAutum, proc.Last().ShippedDate.Month > 6);
+        //    }
+        //}
+
+        [Test]
         public void ProcedureWithResultWithParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);

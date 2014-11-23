@@ -225,14 +225,15 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
+        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias)
+        public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/)
+            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, valueConverter)
             {
                 OperationType = OperationType.Include
             };
@@ -312,14 +313,15 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
+        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias)
+        public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/)
+            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, valueConverter)
             {
                 OperationType = OperationType.Include
             };
@@ -337,18 +339,18 @@ namespace PersistanceMap.QueryBuilder
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
+            foreach (var map in QueryPartsMap.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
             {
-                var map = p as IFieldQueryPart;
-                if (map == null)
-                    continue;
-
                 var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
                 if (field == null)
                     continue;
 
                 //field.MemberName = map.FieldAlias;
                 field.FieldName = map.Field;
+                if (map.Converter != null)
+                {
+                    field.Converter = map.Converter.Compile();
+                }
             }
 
 
@@ -370,17 +372,17 @@ namespace PersistanceMap.QueryBuilder
         {
             var mapfields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
+            foreach (var map in QueryPartsMap.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
             {
-                var map = p as IFieldQueryPart;
-                if (map == null)
-                    continue;
-
                 var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
                 if (field == null)
                     continue;
 
                 field.MemberName = map.FieldAlias;
+                if (map.Converter != null)
+                {
+                    field.Converter = map.Converter.Compile();
+                }
             }
 
             var fields = new List<FieldDefinition>();
