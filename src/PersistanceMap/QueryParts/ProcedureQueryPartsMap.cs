@@ -38,7 +38,7 @@ namespace PersistanceMap.QueryParts
             }
 
             // create the exec statement
-            sb.Append(string.Format("exec {0} ", ProcedureName));
+            sb.Append(string.Format("EXEC {0} ", ProcedureName));
 
             var conv = new LambdaToSqlCompiler();
             conv.PrefixFieldWithTableName = false;
@@ -57,7 +57,7 @@ namespace PersistanceMap.QueryParts
                 bool separator = true;
                 if (string.IsNullOrEmpty(selectoutput))
                 {
-                    selectoutput = "select";
+                    selectoutput = "SELECT";
                     separator = false;
                 }
 
@@ -79,25 +79,6 @@ namespace PersistanceMap.QueryParts
         #endregion
 
         #region Properties
-
-        //IEnumerable<IQueryPart> IQueryPartsMap.Parts
-        //{
-        //    get
-        //    {
-        //        return Parts;
-        //    }
-        //}
-
-        //private IList<IQueryPart> _parts;
-        //public IList<IQueryPart> Parts
-        //{
-        //    get
-        //    {
-        //        if (_parts == null)
-        //            _parts = new List<IQueryPart>();
-        //        return _parts;
-        //    }
-        //}
 
         internal IEnumerable<IParameterQueryPart> Parameters
         {

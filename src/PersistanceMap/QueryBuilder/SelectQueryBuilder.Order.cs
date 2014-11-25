@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PersistanceMap.QueryParts;
+using System;
 using System.Linq.Expressions;
+using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -35,7 +37,10 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
+            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => string.Format(", {0} DESC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -46,7 +51,10 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenByDesc, predicate);
+            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => string.Format(", {0} DESC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion

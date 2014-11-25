@@ -69,17 +69,17 @@ namespace PersistanceMap.QueryParts
                     sufix = "desc";
                     break;
 
-                case OperationType.ThenBy:
-                    // just return the quotated value
-                    prefix = ",";
-                    sufix = "asc";
-                    break;
+                //case OperationType.ThenBy:
+                //    // just return the quotated value
+                //    prefix = ",";
+                //    sufix = "asc";
+                //    break;
 
-                case OperationType.ThenByDesc:
-                    // just return the quotated value
-                    prefix = ",";
-                    sufix = "desc";
-                    break;
+                //case OperationType.ThenByDesc:
+                //    // just return the quotated value
+                //    prefix = ",";
+                //    sufix = "desc";
+                //    break;
             }
 
             var sb = new StringBuilder();

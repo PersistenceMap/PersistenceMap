@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -56,7 +57,7 @@ namespace PersistanceMap.QueryBuilder
         {
             // create the begining for the select operation
             //SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
-            var selectPart = new DelegateQueryPart(OperationType.Select, () => "select ");
+            var selectPart = new DelegateQueryPart(OperationType.Select, () => "SELECT ");
             QueryPartsMap.Add(selectPart);
 
             // add the from operation
@@ -71,7 +72,7 @@ namespace PersistanceMap.QueryBuilder
 
             // create the begining for the select operation
             //SelectQueryPartsBuilder.Instance.AppendSimpleQueryPart(QueryPartsMap, OperationType.Select);
-            var selectPart = new DelegateQueryPart(OperationType.Select, () => "select ");
+            var selectPart = new DelegateQueryPart(OperationType.Select, () => "SELECT ");
             QueryPartsMap.Add(selectPart);
 
             // add the from operation with a alias
@@ -148,12 +149,18 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> ThenBy(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         private SelectQueryBuilder<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.ThenBy, predicate);
+            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         #endregion

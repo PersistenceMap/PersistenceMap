@@ -19,12 +19,12 @@ namespace PersistanceMap.Test.Expression
                 context.From<Warrior>(w => w.ID == 1)
                     .Select();
 
-                Assert.AreEqual(sql, "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "SELECT ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
 
-                // ignore a member in the select
+                // ignore a member in the SELECT
                 context.Select<Warrior>(w => w.ID == 1);
 
-                Assert.AreEqual(sql, "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
+                Assert.AreEqual(sql, "SELECT ID, Name, WeaponID, Race, SpecialSkill from Warrior where (Warrior.ID = 1)");
             }
         }
 
@@ -36,25 +36,25 @@ namespace PersistanceMap.Test.Expression
             using (var context = provider.Open())
             {
                 context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).Ignore(w => w.Name).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT Race from Warrior GROUP BY Race");
 
                 context.From<Warrior>().GroupBy(w => w.Race).ThenBy(w => w.WeaponID).For<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.Name).Select();
-                Assert.AreEqual(sql, "select WeaponID, Race from Warrior GROUP BY Race, WeaponID");
+                Assert.AreEqual(sql, "SELECT WeaponID, Race from Warrior GROUP BY Race, WeaponID");
 
                 context.From<Warrior>().For(() => new { ID = 0, Race = "" }).GroupBy(w => w.Race).ThenBy(w => w.ID).Select();
-                Assert.AreEqual(sql, "select ID, Race from Warrior GROUP BY Race, ID");
+                Assert.AreEqual(sql, "SELECT ID, Race from Warrior GROUP BY Race, ID");
 
                 context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).For(() => new { Race = "" }).Select();
-                Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT Race from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
 
                 context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).GroupBy<Warrior>(w => w.Race).ThenBy<Warrior>(w => w.WeaponID).For(() => new { Race = "", WeaponID = 0 }).Select();
-                Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
+                Assert.AreEqual(sql, "SELECT Race, WeaponID from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
 
                 context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "" }).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select Race from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT Race from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race");
 
                 context.From<Warrior>().Join<Weapon>((wep, war) => wep.ID == war.WeaponID).Where(w => w.Damage > 20).For(() => new { Race = "", WeaponID = 0 }).GroupBy(w => w.Race).ThenBy(w => w.WeaponID).Select();
-                Assert.AreEqual(sql, "select Race, WeaponID from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
+                Assert.AreEqual(sql, "SELECT Race, WeaponID from Warrior join Weapon on (Weapon.ID = Warrior.WeaponID) where (Weapon.Damage > 20) GROUP BY Race, WeaponID");
             }
         }
 
@@ -67,18 +67,18 @@ namespace PersistanceMap.Test.Expression
             {
                 // select the max id
                 context.From<Warrior>().Max(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MAX(ID) AS ID from Warrior");
+                Assert.AreEqual(sql, "SELECT MAX(ID) AS ID from Warrior");
 
-                // select the max id with grouping
+                // SELECT the max id with grouping
                 context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 // select the max id with grouping
                 context.From<Warrior>().Max(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
-                Assert.AreEqual(sql, "select MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT MAX(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 context.From<Warrior>().Max(w => w.ID, "MaxID").For(() => new { MaxID = 0 }).Select();
-                Assert.AreEqual(sql, "select MAX(ID) AS MaxID from Warrior");
+                Assert.AreEqual(sql, "SELECT MAX(ID) AS MaxID from Warrior");
             }
         }
 
@@ -91,19 +91,19 @@ namespace PersistanceMap.Test.Expression
             {
                 // select the min id
                 context.From<Warrior>().Min(w => w.ID).Select();
-                Assert.AreEqual(sql, "select MIN(ID) AS ID from Warrior");
+                Assert.AreEqual(sql, "SELECT MIN(ID) AS ID from Warrior");
 
                 // select the min id with grouping
                 context.From<Warrior>().Min(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 // select the min id with grouping
                 context.From<Warrior>().Min(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
-                Assert.AreEqual(sql, "select MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT MIN(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 // select the min id
                 context.From<Warrior>().Min(w => w.ID, "MinID").For(() => new { MinID = 0 }).Select();
-                Assert.AreEqual(sql, "select MIN(ID) AS MinID from Warrior");
+                Assert.AreEqual(sql, "SELECT MIN(ID) AS MinID from Warrior");
             }
         }
 
@@ -116,26 +116,26 @@ namespace PersistanceMap.Test.Expression
             {
                 // select the min id
                 context.From<Warrior>().Count(w => w.ID).Select();
-                Assert.AreEqual(sql, "select COUNT(ID) AS ID from Warrior");
+                Assert.AreEqual(sql, "SELECT COUNT(ID) AS ID from Warrior");
 
                 // select the min id with grouping
                 context.From<Warrior>().Count(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).Select();
-                Assert.AreEqual(sql, "select COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 // select the min id with grouping
                 context.From<Warrior>().Count(w => w.ID).Map(w => w.Race).GroupBy(w => w.Race).For<Warrior>().Select();
-                Assert.AreEqual(sql, "select COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
+                Assert.AreEqual(sql, "SELECT COUNT(ID) AS ID, Warrior.Race from Warrior GROUP BY Race");
 
                 // select the min id
                 context.From<Warrior>().Count(w => w.ID, "IdCount").For(() => new { IdCount = 0 }).Select();
-                Assert.AreEqual(sql, "select COUNT(ID) AS IdCount from Warrior");
+                Assert.AreEqual(sql, "SELECT COUNT(ID) AS IdCount from Warrior");
             }
         }
 
         [Test]
         public void SelectWithAliasMapping()
         {
-            var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -153,7 +153,7 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithExtendedMapping()
         {
-            var expected = "select Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -171,7 +171,7 @@ namespace PersistanceMap.Test.Expression
         [Test(Description = "Select with a anonym object definition")]
         public void SelectAnonymObjectTypeDefiniton()
         {
-            var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -189,7 +189,7 @@ namespace PersistanceMap.Test.Expression
         [Test(Description = "Select to a anonym object")]
         public void SelectAnonymObject()
         {
-            var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -210,7 +210,7 @@ namespace PersistanceMap.Test.Expression
         [Test(Description = "Select to a anonym object delegate")]
         public void SelectAnonymObject2()
         {
-            var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -218,7 +218,7 @@ namespace PersistanceMap.Test.Expression
                 var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
-                    // select into a anonymous object
+                    // SELECT into a anonymous object
                     .Select(od => new
                     {
                         Prud = od.Quantity
@@ -231,12 +231,12 @@ namespace PersistanceMap.Test.Expression
         [Test(Description = "Select to a type object delegate")]
         public void SelectCustomObjectWithDelegate()
         {
-            var expected = "select Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
-                // select only the properties that are defined in the anony object
+                // SELECT only the properties that are defined in the anony object
                 var items = context.From<Orders>()
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID)
@@ -255,7 +255,7 @@ namespace PersistanceMap.Test.Expression
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
         public void SelectForAnonymObjectType()
         {
-            var expected = "select ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT ProductID, Quantity from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -275,7 +275,7 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithINExpression()
         {
-            var expected = "select ID, Name, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
+            var expected = "SELECT ID, Name, WeaponID, Race, SpecialSkill from Warrior where Warrior.Race In ('Elf','Dwarf')";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -301,27 +301,27 @@ namespace PersistanceMap.Test.Expression
             {
                 // join with simple order by
                 context.From<Orders>().OrderBy(o => o.OrderDate).Select();
-                string expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc";
+                string expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by
                 context.From<Orders>().Join<Customers>((c, o) => c.CustomerID == o.CustomerID).Map(c => c.CustomerID).Map(c => c.EmployeeID).OrderBy<Orders>(o => o.OrderDate).Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by desc
                 context.From<Orders>().OrderByDesc(o => o.OrderDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by desc
                 context.From<Orders>().Join<Customers>((c, o) => c.CustomerID == o.CustomerID).Map(c => c.CustomerID).Map(c => c.EmployeeID).OrderByDesc<Orders>(o => o.OrderDate).Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by with simple then by
                 context.From<Orders>().OrderBy(o => o.OrderDate).ThenBy(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by with simple then by
@@ -332,12 +332,12 @@ namespace PersistanceMap.Test.Expression
                     .OrderBy<Orders>(o => o.OrderDate)
                     .ThenBy(o => o.RequiredDate)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by desc with simple then by
                 context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenBy(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by desc with simple then by
@@ -348,12 +348,12 @@ namespace PersistanceMap.Test.Expression
                     .OrderByDesc<Orders>(o => o.OrderDate)
                     .ThenBy(o => o.RequiredDate)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by with generic then by
                 context.From<Orders>().OrderBy(o => o.OrderDate).ThenBy<Orders>(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate asc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by with generic then by
@@ -364,12 +364,12 @@ namespace PersistanceMap.Test.Expression
                     .OrderBy<Orders>(o => o.OrderDate)
                     .ThenBy<Customers>(c => c.CompanyName)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName asc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by desc with generic then by
                 context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenBy<Orders>(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate asc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by desc with generic then by
@@ -380,12 +380,12 @@ namespace PersistanceMap.Test.Expression
                     .OrderByDesc<Orders>(o => o.OrderDate)
                     .ThenBy<Customers>(c => c.CompanyName)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName asc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName ASC";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by with generic then by desc
                 context.From<Orders>().OrderBy(o => o.OrderDate).ThenByDesc<Orders>(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate desc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate asc , Orders.RequiredDate DESC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by with generic then by desc
@@ -396,12 +396,12 @@ namespace PersistanceMap.Test.Expression
                     .OrderBy<Orders>(o => o.OrderDate)
                     .ThenByDesc<Customers>(c => c.CompanyName)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName desc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate asc , Customers.CompanyName DESC";
                 Assert.AreEqual(sql, expected);
 
                 // join with simple order by desc with generic then by desc
                 context.From<Orders>().OrderByDesc(o => o.OrderDate).ThenByDesc<Orders>(o => o.RequiredDate).Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate desc";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders order by Orders.OrderDate desc , Orders.RequiredDate DESC";
                 Assert.AreEqual(sql, expected);
 
                 // join with generic order by desc with generic then by desc
@@ -412,7 +412,7 @@ namespace PersistanceMap.Test.Expression
                     .OrderByDesc<Orders>(o => o.OrderDate)
                     .ThenByDesc<Customers>(c => c.CompanyName)
                     .Select();
-                expected = "select Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName desc";
+                expected = "SELECT Customers.CustomerID, Customers.EmployeeID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join Customers on (Customers.CustomerID = Orders.CustomerID) order by Orders.OrderDate desc , Customers.CompanyName DESC";
                 Assert.AreEqual(sql, expected);
             }
         }
@@ -426,7 +426,7 @@ namespace PersistanceMap.Test.Expression
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
                 context.From<Orders>().Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Map<Orders>(o => o.OrdersID).Select();
-                var expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a FOR expression and ignoring fields in the resultset
@@ -437,17 +437,17 @@ namespace PersistanceMap.Test.Expression
                     .Ignore(o => o.OrderDate)
                     .Ignore(o => o.RequiredDate)
                     .Select();
-                expected = "select CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                expected = "SELECT CustomerID, EmployeeID, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
                 Assert.AreEqual(sql, expected);
 
                 // select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type
                 context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Select();
-                expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
+                expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)";
                 Assert.AreEqual(sql, expected);
 
                 // simple select from statement
                 context.From<Orders>().Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders";
                 Assert.AreEqual(sql, expected);
             }
         }
@@ -470,7 +470,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(e => e.FirstName.Contains("Davolio"))
                     .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, "cust", "emp")
                     .Select();
-                var expected = "select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)";
+                var expected = "SELECT cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)";
                     //"select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (cust.EmployeeID = emp.EmployeeID)";
                 Assert.AreEqual(sql, expected);
 
@@ -485,7 +485,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(e => e.FirstName.Contains("Davolio"))
                     .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, source: "emp")
                     .Select();
-                expected = "select Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)";
+                expected = "SELECT Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)";
                 //expected = "select Customers.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers join Orders on (Orders.EmployeeID = Customers.EmployeeID) join Employee emp on (emp.EmployeeID = Orders.EmployeeID) where emp.FirstName like '%Davolio%' or (Customers.EmployeeID = emp.EmployeeID)";
                 Assert.AreEqual(sql, expected);
 
@@ -500,7 +500,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(e => e.FirstName.Contains("Davolio"))
                     .Or<Customers, Employee>((c, e) => c.EmployeeID == e.EmployeeID, alias: "cust")
                     .Select();
-                expected = "select cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)";
+                expected = "SELECT cust.EmployeeID, cust.Address, cust.City, cust.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)";
                 //expected = "select cust.EmployeeID, OrdersID, CustomerID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Customers cust join Orders on (Orders.EmployeeID = cust.EmployeeID) join Employee on (Employee.EmployeeID = Orders.EmployeeID) where Employee.FirstName like '%Davolio%' or (cust.EmployeeID = Employee.EmployeeID)";
                 Assert.AreEqual(sql, expected);
 
@@ -511,7 +511,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(o => o.Discount > 0)
                     .Rebase<OrderDetails, Orders>()
                     .Select();
-                expected = "select Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (OrderDetails.Discount > '0')";
+                expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID) where (OrderDetails.Discount > '0')";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a where and a simple or operation
@@ -519,7 +519,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(p => p.CustomerID.StartsWith("P"))
                     .Or<Orders>(o => o.ShipCity == "London")
                     .Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'London')";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a where and a simple or operation
@@ -528,7 +528,7 @@ namespace PersistanceMap.Test.Expression
                     .Or<Orders>(o => o.ShipCity == "Paris")
                     .Or<Orders>(o => o.ShipCity == "London")
                     .Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'P%' or (Orders.ShipCity = 'Paris') or (Orders.ShipCity = 'London')";
                 Assert.AreEqual(sql, expected);
 
                 // Select statement with a where and a generic OR operation
@@ -536,7 +536,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(p => p.CustomerID.StartsWith("P"))
                     .Or<Orders>(o => o.ShipCity == "London", "ord")
                     .Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders ord where ord.CustomerID like 'P%' or (ord.ShipCity = 'London')";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a where and a simple and operation
@@ -544,7 +544,7 @@ namespace PersistanceMap.Test.Expression
                     .Where(p => p.CustomerID.StartsWith("se"))
                     .And(o => o.ShipCity == "London")
                     .Select();
-                expected = "select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
+                expected = "SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Orders where Orders.CustomerID like 'se%' and (Orders.ShipCity = 'London')";
                 Assert.AreEqual(sql, expected);
 
             }
@@ -564,7 +564,7 @@ namespace PersistanceMap.Test.Expression
                     .Ignore(w => w.SpecialSkill)
                     .Select();
 
-                Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WeaponID, Race from WarriorWithName");
 
                 // ignore a member in the select
                 context.From<WarriorWithName>()
@@ -574,7 +574,7 @@ namespace PersistanceMap.Test.Expression
                     .Map(w => w.Name)
                     .Select();
 
-                Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.Name, WeaponID, Race from WarriorWithName");
 
                 // ignore a member in the select
                 context.From<WarriorWithName>()
@@ -584,7 +584,7 @@ namespace PersistanceMap.Test.Expression
                     .Ignore(w => w.SpecialSkill)
                     .Select();
 
-                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
             }
         }
 
@@ -603,7 +603,7 @@ namespace PersistanceMap.Test.Expression
                     .Map(w => w.Race)
                     .Select();
 
-                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
 
                 // map one property to a custom field
                 context.From<WarriorWithName>()
@@ -612,7 +612,7 @@ namespace PersistanceMap.Test.Expression
                     .Map(w => w.Race)
                     .Select();
 
-                Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
             }
         }
 
@@ -626,7 +626,7 @@ namespace PersistanceMap.Test.Expression
         //    {
         //        // select the max id with grouping
         //        context.From<Warrior>().Map(w => w.Race, "ID", opt => opt.ConvertValue<int>(id => id > 0 ? "ID is greader than 0" : "ID is smaller than 0")).GroupBy(w => w.Race).Select();
-        //        Assert.AreEqual(sql, "select ID AS Race, Warrior.Race from Warrior GROUP BY Race");
+        //        Assert.AreEqual(sql, "SELECT ID AS Race, Warrior.Race from Warrior GROUP BY Race");
         //    }
         //}
     }
