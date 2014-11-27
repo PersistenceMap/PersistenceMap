@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class ExpressionQueryPart : QueryPartDecorator, IExpressionQueryPart, IQueryPartDecorator, IQueryPart
+    internal class ExpressionQueryPart : QueryPartDecorator, IExpressionPart,/*IExpressionQueryPart,*/ IQueryPartDecorator, IQueryPart
     {
         public ExpressionQueryPart(OperationType operationtype, LambdaExpression expression)
         {
@@ -38,36 +38,36 @@ namespace PersistanceMap.QueryParts
             string sufix = string.Empty;
             switch (OperationType)
             {
-                case OperationType.On:
-                    prefix = "on";
-                    break;
+                //case OperationType.On:
+                //    prefix = "ON";
+                //    break;
 
-                case OperationType.And:
-                    prefix = "and";
-                    break;
+                //case OperationType.And:
+                //    prefix = "and";
+                //    break;
 
-                case OperationType.Or:
-                    prefix = "or";
-                    break;
+                //case OperationType.Or:
+                //    prefix = "or";
+                //    break;
 
                 case OperationType.Value:
                     // just return the quotated value
                     prefix = string.Empty;
                     break;
 
-                case OperationType.Where:
-                    prefix = "where";
-                    break;
+                //case OperationType.Where:
+                //    prefix = "WHERE";
+                //    break;
 
-                case OperationType.OrderBy:
-                    prefix = "order by";
-                    sufix = "asc";
-                    break;
+                //case OperationType.OrderBy:
+                //    prefix = "order by";
+                //    sufix = "asc";
+                //    break;
 
-                case OperationType.OrderByDesc:
-                    prefix = "order by";
-                    sufix = "desc";
-                    break;
+                //case OperationType.OrderByDesc:
+                //    prefix = "order by";
+                //    sufix = "desc";
+                //    break;
 
                 //case OperationType.ThenBy:
                 //    // just return the quotated value

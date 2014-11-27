@@ -1,5 +1,4 @@
 ﻿using PersistanceMap.Factories;
-using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;
@@ -102,7 +101,8 @@ namespace PersistanceMap.QueryBuilder
                 setPart.Add(keyValuePart);
             }
 
-            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+            QueryPartsMap.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -147,7 +147,8 @@ namespace PersistanceMap.QueryBuilder
                 setPart.Add(keyValuePart);
             }
 
-            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+            QueryPartsMap.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
         }

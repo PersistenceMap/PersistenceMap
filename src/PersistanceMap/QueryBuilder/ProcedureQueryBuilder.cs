@@ -161,7 +161,7 @@ namespace PersistanceMap.QueryBuilder
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
 
-                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IExpressionQueryPart) as IExpressionQueryPart;
+                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IExpressionPart) as IExpressionPart;
                         if (queryMap == null)
                             return null;
 

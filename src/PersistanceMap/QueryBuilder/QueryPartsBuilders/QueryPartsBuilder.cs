@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -58,21 +59,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return entity;
         }
 
-        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T, bool>> predicate, OperationType operation)
-        {
-            var expression = new ExpressionQueryPart(OperationType.On, predicate);
-
-            return AppendEntityQueryPart<T>(queryParts, new IExpressionQueryPart[] { expression }, operation);
-        }
-
-        internal EntityQueryPart AppendEntityQueryPart<T, T2>(IQueryPartsMap queryParts, Expression<Func<T, T2, bool>> predicate, OperationType operation)
-        {
-            var expression = new ExpressionQueryPart(OperationType.On, predicate);
-
-            return AppendEntityQueryPart<T>(queryParts, new IExpressionQueryPart[] { expression }, operation);
-        }
-
-        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart[] parts, OperationType maptype)
+        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IQueryPart[] parts, OperationType maptype)
         {
             var operationParts = parts.Where(p => p.OperationType == OperationType.On || p.OperationType == OperationType.And || p.OperationType == OperationType.Or).ToArray();
 
@@ -85,14 +72,6 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             queryParts.Add(entity);
 
             return entity;
-        }
-
-        internal IExpressionQueryPart AddExpressionQueryPart(IQueryPartsMap queryParts, LambdaExpression predicate, OperationType operation)
-        {
-            var part = new ExpressionQueryPart(operation, predicate);
-            queryParts.Add(part);
-
-            return part;
         }
 
         internal IFieldQueryPart AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter)

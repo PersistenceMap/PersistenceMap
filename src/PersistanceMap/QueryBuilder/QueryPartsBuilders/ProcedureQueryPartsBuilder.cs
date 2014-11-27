@@ -35,7 +35,7 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                     name = string.Format("@{0}", name);
             }
 
-            var part = new ParameterQueryPart(new IExpressionQueryPart[] { new ParameterQueryMap(OperationType.Value, name, predicate) })
+            var part = new ParameterQueryPart(new IQueryPart[] { new ParameterQueryMap(OperationType.Value, name, predicate) })
             {
                 OperationType = OperationType.Parameter
             };
@@ -45,9 +45,9 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             return part;
         }
 
-        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IExpressionQueryPart map, Action<T> callback)
+        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IQueryPart map, Action<T> callback)
         {
-            var part = new CallbackParameterQueryPart<T>(new IExpressionQueryPart[] { map }, callback)
+            var part = new CallbackParameterQueryPart<T>(new IQueryPart[] { map }, callback)
             {
                 OperationType = OperationType.Parameter
             };

@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -69,7 +70,8 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, where, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(where)));
+            QueryPartsMap.Add(part);
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
@@ -95,7 +97,8 @@ namespace PersistanceMap.QueryBuilder
 
             QueryPartsBuilder.Instance.AppendEntityQueryPart<T>(QueryPartsMap, OperationType.From);
 
-            QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, whereexpr, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+            QueryPartsMap.Add(part);
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);
         }
@@ -126,7 +129,8 @@ namespace PersistanceMap.QueryBuilder
             foreach (var expr in expressions)
             {
                 // add all expressions to the queryexpression
-                QueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, expr, first == expr ? OperationType.Where : OperationType.And);
+                var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => string.Format("{0} {1} ", first == expr ? "WHERE" : "and", LambdaToSqlCompiler.Compile(expr)));
+                QueryPartsMap.Add(part);
             }
 
             return new DeleteQueryBuilder(Context, QueryPartsMap);

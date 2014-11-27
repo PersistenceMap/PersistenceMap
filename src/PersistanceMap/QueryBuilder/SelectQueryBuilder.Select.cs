@@ -1,6 +1,7 @@
 ﻿using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -225,7 +226,10 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation)
         {
-            var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
+            //var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
+            var expressionPart = new ExpressionPart(operation);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(expressionPart)));
+            QueryPartsMap.Add(part);
 
             // check if the last part that was added containes a alias
             var last = QueryPartsMap.Parts.Last(l => 
@@ -236,21 +240,23 @@ namespace PersistanceMap.QueryBuilder
                 l.OperationType == OperationType.RightJoin) as IEntityQueryPart;
 
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && last.Entity == typeof(T).Name)
-                part.AliasMap.Add(typeof(T), last.EntityAlias);
+                expressionPart.AliasMap.Add(typeof(T), last.EntityAlias);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> operation)
         {
-            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(operation)));
+            QueryPartsMap.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> operation)
         {
-            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
+            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(operation)));
+            QueryPartsMap.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
@@ -266,7 +272,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> OrderBy(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.OrderBy, predicate);
+            return OrderBy<T>(predicate);
         }
 
         /// <summary>
@@ -277,7 +283,10 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(OperationType.OrderBy, predicate);
+            var part = new DelegateQueryPart(OperationType.OrderBy, () => string.Format("ORDER BY {0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
 
         /// <summary>
@@ -287,7 +296,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> OrderByDesc(Expression<Func<T, object>> predicate)
         {
-            return CreateExpressionQueryPart<T>(OperationType.OrderByDesc, predicate);
+            return OrderByDesc<T>(predicate);
         }
 
         /// <summary>
@@ -298,7 +307,10 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            return CreateExpressionQueryPart<T2>(OperationType.OrderByDesc, predicate);
+            var part = new DelegateQueryPart(OperationType.OrderByDesc, () => string.Format("ORDER BY {0} DESC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            QueryPartsMap.Add(part);
+
+            return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
 
         #endregion

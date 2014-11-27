@@ -67,12 +67,12 @@ namespace PersistanceMap.QueryParts
 
     internal class CallbackParameterQueryPart<T> : ParameterQueryPart, ICallbackQueryPart<T>, IParameterQueryPart, ICallbackHandlerQueryPart, /*IQueryMapCollection,*/ IQueryPartDecorator, IQueryPart
     {
-        public CallbackParameterQueryPart(IExpressionQueryPart[] parts)
+        public CallbackParameterQueryPart(IQueryPart[] parts)
             : this(parts, null)
         {
         }
 
-        public CallbackParameterQueryPart(IExpressionQueryPart[] parts, Action<T> callback)
+        public CallbackParameterQueryPart(IQueryPart[] parts, Action<T> callback)
             : base(parts)
         {
             Callback = callback;

@@ -82,32 +82,22 @@ namespace PersistanceMap.QueryBuilder
             return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
         }
 
-        private SelectQueryBuilder<T2> CreateExpressionQueryPart<T2>(OperationType operation, LambdaExpression predicate)
-        {
-            SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, predicate, operation);
-
-            return new SelectQueryBuilder<T2>(Context, QueryPartsMap);
-        }
-
         private IJoinQueryExpression<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart(QueryPartsMap, predicate, operation);
+            var partMap = new ExpressionPart(predicate);
+
+            // add aliases to mapcollections
+            if (!string.IsNullOrEmpty(source))
+                partMap.AliasMap.Add(typeof(T2), source);
+
+            if (!string.IsNullOrEmpty(alias))
+                partMap.AliasMap.Add(typeof(T1), alias);
+
+            var partOn = new DelegateQueryPart(OperationType.On, () => string.Format("ON {0} ", LambdaToSqlCompiler.Compile(partMap)));
+
+            var part = SelectQueryPartsBuilder.Instance.AppendEntityQueryPart<T1>(QueryPartsMap, new IQueryPart[] { partOn }, operation);
             if (!string.IsNullOrEmpty(alias))
                 part.EntityAlias = alias;
-
-            foreach (var itm in part.Parts)
-            {
-                var map = itm as IExpressionQueryPart;
-                if (map == null)
-                    continue;
-
-                // add aliases to mapcollections
-                if (!string.IsNullOrEmpty(source))
-                    map.AliasMap.Add(typeof(T2), source);
-
-                if (!string.IsNullOrEmpty(alias))
-                    map.AliasMap.Add(typeof(T1), alias);
-            }
 
             return new SelectQueryBuilder<T1>(Context, QueryPartsMap);
         }
@@ -119,28 +109,32 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.Or, operation);
-
+            var partMap = new ExpressionPart(operation);
+            var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            QueryPartsMap.Add(part);
+            
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
-                part.AliasMap.Add(typeof(T), alias);
+                partMap.AliasMap.Add(typeof(T), alias);
 
             if (!string.IsNullOrEmpty(source))
-                part.AliasMap.Add(typeof(TOr), source);
+                partMap.AliasMap.Add(typeof(TOr), source);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
 
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
-            var part = SelectQueryPartsBuilder.Instance.AppendExpressionQueryPartToLast(Context, QueryPartsMap, OperationType.And, operation);
+            var partMap = new ExpressionPart(operation);
+            var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            QueryPartsMap.Add(part);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(alias))
-                part.AliasMap.Add(typeof(T), alias);
+                partMap.AliasMap.Add(typeof(T), alias);
 
             if (!string.IsNullOrEmpty(source))
-                part.AliasMap.Add(typeof(TAnd), source);
+                partMap.AliasMap.Add(typeof(TAnd), source);
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }

@@ -18,7 +18,7 @@ namespace PersistanceMap.Test.Integration
                 context.Update<Orders>(() => new { Freight = 20 }, o => o.OrdersID == 10000000);
                 context.Commit();
 
-                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "UPDATE Orders SET Freight = 20 where (Orders.OrdersID = 10000000)");
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "UPDATE Orders SET Freight = 20 WHERE (Orders.OrdersID = 10000000)");
             }
         }
     }

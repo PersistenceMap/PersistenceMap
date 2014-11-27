@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryParts
             // create the exec statement
             sb.Append(string.Format("EXEC {0} ", ProcedureName));
 
-            var conv = new LambdaToSqlCompiler();
+            var conv = new LambdaCompiler();
             conv.PrefixFieldWithTableName = false;
 
             // add parameters

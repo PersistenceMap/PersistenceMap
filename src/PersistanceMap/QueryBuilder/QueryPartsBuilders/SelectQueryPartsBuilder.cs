@@ -25,21 +25,5 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                 return _instance;
             }
         }
-
-        /// <summary>
-        /// Creates an ExpressionQueryPart and adds it to the last Join, LeftJoin, FullJoin, RightJoin or Where operation
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="queryPartsMap"></param>
-        /// <param name="operation">The operationtype for the new querypart</param>
-        /// <param name="predicate">The predicate containing the expression to execute</param>
-        /// <returns>A new instance of selectqueryprovider containing a cumlated view of the complete expression</returns>
-        internal IExpressionQueryPart AppendExpressionQueryPartToLast(IDatabaseContext context, SelectQueryPartsMap queryPartsMap, OperationType operation, LambdaExpression predicate)
-        {
-            var part = new ExpressionQueryPart(operation, predicate);
-            queryPartsMap.AddToLast(part, p => p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.FullJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.Where);
-
-            return part;
-        }
     }
 }

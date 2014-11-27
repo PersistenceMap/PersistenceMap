@@ -14,6 +14,30 @@ namespace PersistanceMap.Sql
 {
     public class LambdaToSqlCompiler
     {
+        static LambdaCompiler instance;
+        public static LambdaCompiler Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new LambdaCompiler();
+                return instance;
+            }
+        }
+
+        public static object Compile(IExpressionPart part)
+        {
+            return Instance.Compile(part);
+        }
+
+        public static object Compile(Expression exp)
+        {
+            return Instance.Compile(exp);
+        }
+    }
+
+    public class LambdaCompiler
+    {
         //TODO: separator has to be set as an option!
         readonly string _separator = " ";
 
@@ -23,19 +47,7 @@ namespace PersistanceMap.Sql
 
         public bool PrefixFieldWithTableName { get; set; }
 
-        static LambdaToSqlCompiler instance;
-        public static LambdaToSqlCompiler Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new LambdaToSqlCompiler();
-                return instance;
-            }
-        }
-
-
-        public LambdaToSqlCompiler()
+        public LambdaCompiler()
         {
             PrefixFieldWithTableName = true;
             _aliasMap = new Dictionary<Type, string>();
@@ -43,7 +55,7 @@ namespace PersistanceMap.Sql
 
         #region Compilers
 
-        internal virtual object Compile(IExpressionQueryPart part)
+        internal virtual object Compile(IExpressionPart part)
         {
             _aliasMap = part.AliasMap;
 
