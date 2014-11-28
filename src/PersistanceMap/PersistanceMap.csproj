@@ -109,7 +109,7 @@
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
-    <Compile Include="QueryParts\IFieldQueryPart.cs" />
+    <Compile Include="QueryParts\IFieldMap.cs" />
     <Compile Include="QueryParts\IQueryPartDecorator.cs" />
     <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />

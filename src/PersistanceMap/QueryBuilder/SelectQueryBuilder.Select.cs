@@ -24,7 +24,7 @@ namespace PersistanceMap.QueryBuilder
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
                 // remove all previous mappings of the ignored field
-                var subparts = map.Parts.OfType<IFieldQueryPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName);
+                var subparts = map.Parts.OfType<IFieldMap>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
                 foreach (var subpart in subparts.ToList())
                 {
                     map.Remove(subpart);

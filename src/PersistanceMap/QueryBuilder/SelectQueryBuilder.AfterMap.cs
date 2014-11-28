@@ -60,7 +60,7 @@ namespace PersistanceMap.QueryBuilder
 
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
-                var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName) as IFieldQueryPart;
+                var subpart = map.Parts.OfType<IFieldMap>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
                 if (subpart != null)
                 {
                     subpart.EntityAlias = typeof (TSource).Name;
