@@ -76,10 +76,7 @@
     <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
-    <Compile Include="QueryParts\Internals\ExpressionPart.cs" />
-    <Compile Include="QueryParts\Internals\ExpressionQueryPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="QueryParts\Internals\ExpressionMap.cs" />
     <Compile Include="QueryParts\MapValueConverter.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
@@ -122,7 +119,7 @@
     <Compile Include="Factories\InstanceFactory.cs" />
     <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryParts\ICallbackQueryPart.cs" />
-    <Compile Include="QueryParts\IExpressionPart.cs" />
+    <Compile Include="QueryParts\IExpressionMap.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />

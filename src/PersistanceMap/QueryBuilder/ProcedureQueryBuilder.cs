@@ -145,9 +145,9 @@ namespace PersistanceMap.QueryBuilder
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
 
-            var map = new ParameterQueryMap(OperationType.Value, name, predicate);
+            var queryMap = new ParameterQueryMap(OperationType.Value, name, predicate);
 
-            var cb = ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, map, callback);
+            var cb = ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, queryMap, callback);
             if (cb.CanHandleCallback)
             {
                 // get the index of the parameter in the collection to create the name of the out parameter
@@ -160,10 +160,6 @@ namespace PersistanceMap.QueryBuilder
                     {
                         if (string.IsNullOrEmpty(cb.CallbackName))
                             return string.Empty;
-
-                        var queryMap = cb.Parts.FirstOrDefault(o => o.OperationType == OperationType.Value && o is IExpressionPart) as IExpressionPart;
-                        if (queryMap == null)
-                            return null;
 
                         // get the return value of the expression
                         var value = queryMap.Expression.Compile().DynamicInvoke();

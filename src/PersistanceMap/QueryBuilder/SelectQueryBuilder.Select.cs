@@ -227,7 +227,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation)
         {
             //var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
-            var expressionPart = new ExpressionPart(operation);
+            var expressionPart = new ExpressionMap(operation);
             var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(expressionPart)));
             QueryPartsMap.Add(part);
 
@@ -353,7 +353,10 @@ namespace PersistanceMap.QueryBuilder
 
             // extract all fields with valueConverter
             var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
-            query.Converters = selector != null ? selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }) : null;
+            if (selector != null)
+            {
+                query.Converters = selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter {Converter = p.Converter, ID = p.ID});
+            }
 
             return Context.Kernel.Execute<T2>(query);
         }

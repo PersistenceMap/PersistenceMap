@@ -12,7 +12,7 @@ using System.Text;
 
 namespace PersistanceMap.Sql
 {
-    public class LambdaToSqlCompiler
+    public static class LambdaToSqlCompiler
     {
         static LambdaCompiler instance;
         public static LambdaCompiler Instance
@@ -25,7 +25,7 @@ namespace PersistanceMap.Sql
             }
         }
 
-        public static object Compile(IExpressionPart part)
+        public static object Compile(IExpressionMap part)
         {
             return Instance.Compile(part);
         }
@@ -55,7 +55,7 @@ namespace PersistanceMap.Sql
 
         #region Compilers
 
-        internal virtual object Compile(IExpressionPart part)
+        internal virtual object Compile(IExpressionMap part)
         {
             _aliasMap = part.AliasMap;
 

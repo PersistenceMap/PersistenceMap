@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryParts
 {
-    class ExpressionPart : IExpressionPart
+    internal class ExpressionMap : IExpressionMap
     {
-        public ExpressionPart(LambdaExpression expression)
+        public ExpressionMap(LambdaExpression expression)
         {
             Expression = expression;
             AliasMap = new Dictionary<Type,string>();

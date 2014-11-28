@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class ParameterQueryMap : /*QueryPartDecorator*/ ExpressionQueryPart, INamedQueryPart
+    internal class ParameterQueryMap : QueryPartDecorator, INamedQueryPart
     {
         public ParameterQueryMap(OperationType operationtype, LambdaExpression expression)
             : this(operationtype, null, expression)
@@ -11,26 +11,19 @@ namespace PersistanceMap.QueryParts
         }
 
         public ParameterQueryMap(OperationType operationtype, string name, LambdaExpression expression)
-            : base(operationtype, expression)
         {
             Name = name;
+
+            Expression = expression;
+            OperationType = operationtype;
         }
-
-        //public ParameterQueryMap(OperationType operationtype, string name, LambdaExpression expression)
-        ////: base(operationtype)
-        //{
-        //    Name = name;
-
-        //    Expression = expression;
-        //    OperationType = operationtype;
-        //}
 
         /// <summary>
         /// Gets the name of the parameter
         /// </summary>
         public string Name { get; private set; }
 
-        //public LambdaExpression Expression { get; private set; }
+        public LambdaExpression Expression { get; private set; }
 
         public override string Compile()
         {

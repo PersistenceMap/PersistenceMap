@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class ExpressionQueryPart : QueryPartDecorator, IExpressionPart,/*IExpressionQueryPart,*/ IQueryPartDecorator, IQueryPart
+    internal class ExpressionQueryPart : QueryPartDecorator, IExpressionMap,/*IExpressionQueryPart,*/ IQueryPartDecorator, IQueryPart
     {
         public ExpressionQueryPart(OperationType operationtype, LambdaExpression expression)
         {

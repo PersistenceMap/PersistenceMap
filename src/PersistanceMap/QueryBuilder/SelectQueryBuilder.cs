@@ -84,7 +84,7 @@ namespace PersistanceMap.QueryBuilder
 
         private IJoinQueryExpression<T1> CreateEntityQueryPart<T1, T2>(Expression<Func<T1, T2, bool>> predicate, OperationType operation, string alias = null, string source = null)
         {
-            var partMap = new ExpressionPart(predicate);
+            var partMap = new ExpressionMap(predicate);
 
             // add aliases to mapcollections
             if (!string.IsNullOrEmpty(source))
@@ -109,7 +109,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
-            var partMap = new ExpressionPart(operation);
+            var partMap = new ExpressionMap(operation);
             var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
             QueryPartsMap.Add(part);
             
@@ -125,7 +125,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
-            var partMap = new ExpressionPart(operation);
+            var partMap = new ExpressionMap(operation);
             var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
             QueryPartsMap.Add(part);
 
