@@ -76,6 +76,7 @@
     <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
+    <Compile Include="QueryParts\Internals\EntityDelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\ExpressionMap.cs" />
     <Compile Include="QueryParts\MapValueConverter.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
@@ -129,7 +130,7 @@
     <Compile Include="QueryParts\INamedQueryPart.cs" />
     <Compile Include="QueryParts\IParameterQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
-    <Compile Include="QueryParts\IEntityQueryPart.cs" />
+    <Compile Include="QueryParts\IEntityMap.cs" />
     <Compile Include="ReaderContext.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
@@ -150,7 +151,6 @@
     <Compile Include="QueryParts\IQueryPart.cs" />
     <Compile Include="QueryParts\Internals\ParameterQueryMap.cs" />
     <Compile Include="QueryParts\Internals\FieldQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\EntityQueryPart.cs" />
     <Compile Include="QueryParts\SelectQueryPartsMap.cs" />
     <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

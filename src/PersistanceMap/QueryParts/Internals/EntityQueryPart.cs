@@ -2,7 +2,7 @@
 
 namespace PersistanceMap.QueryParts
 {
-    internal class EntityQueryPart : QueryPartDecorator, IEntityQueryPart, IQueryPartDecorator, IQueryPart
+    internal class EntityQueryPart : QueryPartDecorator, IEntityMap, IQueryPartDecorator, IQueryPart
     {
         public EntityQueryPart(string entity)
             : this(entity, null)
@@ -37,13 +37,13 @@ namespace PersistanceMap.QueryParts
 
             switch (OperationType)
             {
-                case OperationType.From:
-                    sb.Append("from");
-                    break;
+                //case OperationType.From:
+                //    sb.Append("from");
+                //    break;
 
-                case OperationType.Join:
-                    sb.Append("join");
-                    break;
+                //case OperationType.Join:
+                //    sb.Append("join");
+                //    break;
 
                 case OperationType.LeftJoin:
                     sb.Append("left join");

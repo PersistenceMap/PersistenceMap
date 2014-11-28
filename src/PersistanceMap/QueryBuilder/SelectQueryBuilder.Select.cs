@@ -53,7 +53,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryExpression<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
+            return Join<TJoin,T>(predicate, alias, source);
         }
 
         /// <summary>
@@ -67,7 +67,27 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryExpression<TJoin> Join<TJoin, TOrig>(Expression<Func<TJoin, TOrig, bool>> predicate, string alias = null, string source = null)
         {
-            return CreateEntityQueryPart(predicate, OperationType.Join, alias, source);
+            // create the join expression
+            var entity = typeof(TJoin).Name;
+            var sql = string.Format("JOIN {0}{1} ", entity, string.IsNullOrEmpty(alias) ? string.Empty : string.Format(" {0}", alias));
+
+            var entityPart = new EntityDelegateQueryPart(OperationType.Join, () => sql, entity, alias);
+            QueryPartsMap.Add(entityPart);
+
+            // create the expressionmap for the lambdacompilert to add the alias if needed
+            var partMap = new ExpressionMap(predicate);
+
+            // add aliases to the maps
+            if (!string.IsNullOrEmpty(source))
+                partMap.AliasMap.Add(typeof(TOrig), source);
+
+            if (!string.IsNullOrEmpty(alias))
+                partMap.AliasMap.Add(typeof(TJoin), alias);
+
+            // add the on keyword
+            entityPart.Add(new DelegateQueryPart(OperationType.On, () => string.Format("ON {0} ", LambdaToSqlCompiler.Compile(partMap))));
+
+            return new SelectQueryBuilder<TJoin>(Context, QueryPartsMap);
         }
 
         #endregion
@@ -76,9 +96,8 @@ namespace PersistanceMap.QueryBuilder
 
         protected ISelectQueryExpression<T> Map<TProp>(string source, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter = null)
         {
-            //TODO: is this the corect place to do this? shouldn't the QueryPart map its own children with the right alias?
             // if there is a alias on the last item it has to be used with the map
-            var last = QueryPartsMap.Parts.OfType<IEntityQueryPart>().LastOrDefault(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join) as IEntityQueryPart;
+            var last = QueryPartsMap.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
                 entity = last.EntityAlias;
 
@@ -237,7 +256,7 @@ namespace PersistanceMap.QueryBuilder
                 l.OperationType == OperationType.Join ||
                 l.OperationType == OperationType.FullJoin ||
                 l.OperationType == OperationType.LeftJoin ||
-                l.OperationType == OperationType.RightJoin) as IEntityQueryPart;
+                l.OperationType == OperationType.RightJoin) as IEntityMap;
 
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && last.Entity == typeof(T).Name)
                 expressionPart.AliasMap.Add(typeof(T), last.EntityAlias);

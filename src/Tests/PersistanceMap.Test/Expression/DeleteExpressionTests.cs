@@ -12,7 +12,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A simple delete statement that deletes all items in a table")]
         public void SimpleDelete()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee"));
             using (var context = provider.Open())
             {
                 context.Delete<Employee>();
@@ -23,7 +23,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement with a where operation")]
         public void SimpleDeleteWithWhere()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee WHERE (Employee.EmployeeID = 1)"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
             using (var context = provider.Open())
             {
                 context.Delete<Employee>(e => e.EmployeeID == 1);
@@ -35,7 +35,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement that defines the deletestatement according to the values of a given entity")]
         public void DeleteEntity()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee WHERE (Employee.EmployeeID = 1)"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
             using (var context = provider.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 });
@@ -47,7 +47,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
         public void DeleteEntityWithSpecialKey()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee WHERE (Employee.EmployeeID = 1)"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
             using (var context = provider.Open())
             {
                 context.Delete(() => new Employee { EmployeeID = 1 }, key => key.EmployeeID);
@@ -59,7 +59,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]
         public void DeleteEntityWithAnonymObjectContainingOneParam()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee WHERE (Employee.EmployeeID = 1)"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
             using (var context = provider.Open())
             {
                 context.Delete<Employee>(() => new { EmployeeID = 1 });
@@ -71,7 +71,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete statement that is build depending on the properties of a anonym object containing multile properties")]
         public void DeleteEntityWithAnonymObjectContainingMultipleParams()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE from Employee WHERE (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')"));
             using (var context = provider.Open())
             {
                 context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });

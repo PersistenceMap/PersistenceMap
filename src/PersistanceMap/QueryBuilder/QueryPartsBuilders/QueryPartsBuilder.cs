@@ -1,5 +1,4 @@
 ﻿using PersistanceMap.QueryParts;
-using PersistanceMap.Sql;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,52 +25,6 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
 
                 return instance;
             }
-        }
-
-        //internal SimpleQueryPart AppendSimpleQueryPart(IQueryPartsMap queryParts, OperationType operation)
-        //{
-        //    var part = new SimpleQueryPart(operation);
-
-        //    queryParts.Add(part);
-
-        //    return part;
-        //}
-
-        internal IQueryPart AppendQueryPart(IQueryPartsMap queryParts, OperationType operation, Func<string> predicate)
-        {
-            var part = new DelegateQueryPart(operation, predicate);
-
-            queryParts.Add(part);
-
-            return part;
-        }
-
-        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, OperationType operation)
-        {
-            var type = typeof(T);
-            var entity = new EntityQueryPart(type.Name)
-            {
-                OperationType = operation
-            };
-
-            queryParts.Add(entity);
-
-            return entity;
-        }
-
-        internal EntityQueryPart AppendEntityQueryPart<T>(IQueryPartsMap queryParts, IQueryPart[] parts, OperationType maptype)
-        {
-            var operationParts = parts.Where(p => p.OperationType == OperationType.On || p.OperationType == OperationType.And || p.OperationType == OperationType.Or).ToArray();
-
-            var type = typeof(T);
-            var entity = new EntityQueryPart(type.Name, null, operationParts)
-            {
-                OperationType = maptype
-            };
-
-            queryParts.Add(entity);
-
-            return entity;
         }
 
         internal IFieldQueryPart AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter)

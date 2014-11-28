@@ -19,7 +19,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = context.Select<Orders>();
                 /* *Expected Query*
                 select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
-                from Orders
+                FROM Orders
                 */
 
                 Assert.IsNotNull(orders);
@@ -35,7 +35,7 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
 
-                var sql = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery().Flatten(), sql);
@@ -58,7 +58,7 @@ namespace PersistanceMap.Test.Integration
                 // select the max id
                 var query1 = context.From<Orders>().Max(w => w.OrdersID);
 
-                var expected = "SELECT MAX(OrdersID) AS OrdersID from Orders";
+                var expected = "SELECT MAX(OrdersID) AS OrdersID FROM Orders";
                 var sql = query1.CompileQuery().Flatten();
                 Assert.AreEqual(sql, expected);
 
@@ -73,7 +73,7 @@ namespace PersistanceMap.Test.Integration
                 // select the max id with grouping
                 var query2 = context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
 
-                expected = "SELECT MAX(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+                expected = "SELECT MAX(OrdersID) AS OrdersID, Orders.CustomerID FROM Orders GROUP BY CustomerID";
                 sql = query2.CompileQuery().Flatten();
                 Assert.AreEqual(sql, expected);
 
@@ -88,7 +88,7 @@ namespace PersistanceMap.Test.Integration
                 // select the max id with grouping
                 var query3 = context.From<Orders>().Max(w => w.OrdersID, "MaxID").For(() => new { MaxID = 0 });
 
-                expected = "SELECT MAX(OrdersID) AS MaxID from Orders";
+                expected = "SELECT MAX(OrdersID) AS MaxID FROM Orders";
                 sql = query3.CompileQuery().Flatten();
                 Assert.AreEqual(sql, expected);
 
@@ -108,7 +108,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // select the min id
                 var query1 = context.From<Orders>().Min(w => w.OrdersID);
-                var sql = "SELECT MIN(OrdersID) AS OrdersID from Orders";
+                var sql = "SELECT MIN(OrdersID) AS OrdersID FROM Orders";
 
                 Assert.AreEqual(query1.CompileQuery().Flatten(), sql);
 
@@ -122,7 +122,7 @@ namespace PersistanceMap.Test.Integration
 
                 // select the min id with grouping
                 var query2 = context.From<Orders>().Min(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
-                sql = "SELECT MIN(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+                sql = "SELECT MIN(OrdersID) AS OrdersID, Orders.CustomerID FROM Orders GROUP BY CustomerID";
 
                 Assert.AreEqual(query2.CompileQuery().Flatten(), sql);
 
@@ -136,7 +136,7 @@ namespace PersistanceMap.Test.Integration
 
                 // select the min id with grouping
                 var query3 = context.From<Orders>().Min(w => w.OrdersID, "MinID").For(() => new { MinID = 0 });
-                sql = "SELECT MIN(OrdersID) AS MinID from Orders";
+                sql = "SELECT MIN(OrdersID) AS MinID FROM Orders";
 
                 Assert.AreEqual(query3.CompileQuery().Flatten(), sql);
 
@@ -156,7 +156,7 @@ namespace PersistanceMap.Test.Integration
             {
                 // select the min id
                 var query1 = context.From<Orders>().Count(w => w.OrdersID);
-                var sql = "SELECT COUNT(OrdersID) AS OrdersID from Orders";
+                var sql = "SELECT COUNT(OrdersID) AS OrdersID FROM Orders";
 
                 Assert.AreEqual(query1.CompileQuery().Flatten(), sql);
 
@@ -170,7 +170,7 @@ namespace PersistanceMap.Test.Integration
 
                 // select the min id with grouping
                 var query2 = context.From<Orders>().Count(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = "" });
-                sql = "SELECT COUNT(OrdersID) AS OrdersID, Orders.CustomerID from Orders GROUP BY CustomerID";
+                sql = "SELECT COUNT(OrdersID) AS OrdersID, Orders.CustomerID FROM Orders GROUP BY CustomerID";
 
                 Assert.AreEqual(query2.CompileQuery().Flatten(), sql);
 
@@ -184,7 +184,7 @@ namespace PersistanceMap.Test.Integration
 
                 // select the min id with grouping
                 var query3 = context.From<Orders>().Count(w => w.OrdersID, "IdCount").For(() => new { IdCount = 0 });
-                sql = "SELECT COUNT(OrdersID) AS IdCount from Orders";
+                sql = "SELECT COUNT(OrdersID) AS IdCount FROM Orders";
 
                 Assert.AreEqual(query3.CompileQuery().Flatten(), sql);
 
@@ -212,7 +212,7 @@ namespace PersistanceMap.Test.Integration
 
 
         [Test]
-        [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
+        [Description("select statement that compiles FROM a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
         public void SelectForAnonymToDefinedType()
         {
             var provider = new SqlContextProvider(ConnectionString);
@@ -230,7 +230,7 @@ namespace PersistanceMap.Test.Integration
                 var anonymous = query.Select<OrderDetails>();
 
                 var sql = query.CompileQuery().Flatten();
-                var expected = "SELECT ProductID, Quantity from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
                 Assert.IsTrue(anonymous.Any());
@@ -241,7 +241,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries and mapped to a defined type using a delegate")]
+        [Description("select statement that compiles FROM a FOR operation with a anonym object defining the resultset entries and mapped to a defined type using a delegate")]
         public void SelectForAnonymCastToDefinedTypeDelegate()
         {
             var provider = new SqlContextProvider(ConnectionString);
@@ -259,7 +259,7 @@ namespace PersistanceMap.Test.Integration
                 var anonymous = query.Select(tmp => new OrderDetails { ProductID = tmp.ProductID, Quantity = tmp.Quantity });
 
                 var sql = query.CompileQuery().Flatten();
-                var expected = "SELECT ProductID, Quantity from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 Assert.AreEqual(sql, expected);
                 Assert.IsTrue(anonymous.Any());
@@ -299,7 +299,7 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Products>();
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Products>().Flatten(), "SELECT ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products");
+                Assert.AreEqual(query.CompileQuery<Products>().Flatten(), "SELECT ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued FROM Products");
 
                 // execute the query
                 var prsAbt = query.Select<Products>();
@@ -317,7 +317,7 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Products>("prod");
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Products>().Flatten(), "SELECT ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued from Products prod");
+                Assert.AreEqual(query.CompileQuery<Products>().Flatten(), "SELECT ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued FROM Products prod");
 
                 // execute the query
                 var products = query.Select<Products>();
@@ -337,10 +337,11 @@ namespace PersistanceMap.Test.Integration
                     .Map(o => o.OrdersID)
                     .Join<OrderDetails>((det, order) => det.OrdersID == order.OrdersID, "detail", "orders");
 
-                var sql = "SELECT orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail ON (detail.OrdersID = orders.OrdersID)";
+                var expected = "SELECT orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders orders JOIN OrderDetails detail ON (detail.OrdersID = orders.OrdersID)";
+                var sql = query.CompileQuery<OrderDetails>().Flatten();
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<OrderDetails>().Flatten(), sql);
+                Assert.AreEqual(sql, expected);
 
                 // execute the query
                 var orders = query.Select<OrderDetails>();
@@ -355,7 +356,7 @@ namespace PersistanceMap.Test.Integration
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
             {
-                // multiple joins using On<T> with include and includeoperation in from expression
+                // multiple joins using On<T> with include and includeoperation in FROM expression
                 var query = context
                     .From<Orders>()
                     .Map(p => p.OrdersID)
@@ -365,7 +366,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(p => p.UnitPrice);
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "SELECT Orders.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) join Products ON (Products.ProductID = OrderDetails.ProductID)";
+                var expected = "SELECT Orders.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) JOIN Products ON (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -378,7 +379,7 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
-        [Description("A select statement where the map takes the alias from the previous operation")]
+        [Description("A select statement where the map takes the alias FROM the previous operation")]
         public void FromWithIncludeWithAliasMapWithoutAlias()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
@@ -394,7 +395,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(p => p.UnitPrice);
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "SELECT ord.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount from Orders ord join OrderDetails ON (OrderDetails.OrdersID = ord.OrdersID) join Products ON (Products.ProductID = OrderDetails.ProductID)";
+                var expected = "SELECT ord.OrdersID, Products.ProductID, Products.UnitPrice, Quantity, Discount FROM Orders ord JOIN OrderDetails ON (OrderDetails.OrdersID = ord.OrdersID) JOIN Products ON (Products.ProductID = OrderDetails.ProductID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -471,7 +472,7 @@ namespace PersistanceMap.Test.Integration
             {
                 var query = context.From<Orders, OrderDetails>((det, order) => det.OrdersID == order.OrdersID);
 
-                var sql = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetail>().Flatten(), sql);
@@ -514,7 +515,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<OrderWithDetail>();
 
                 var sql = query.CompileQuery<OrderWithDetail>().Flatten();
-                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails detail ON (detail.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails detail ON (detail.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -536,7 +537,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID, "detail", "orders");
 
                 var sql = query.CompileQuery<OrderWithDetail>().Flatten();
-                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders orders join OrderDetails detail ON (detail.OrdersID = orders.OrdersID)";
+                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders orders JOIN OrderDetails detail ON (detail.OrdersID = orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -559,7 +560,7 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Orders>()
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID && detail.Quantity > 5);
 
-                var sql = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON ((OrderDetails.OrdersID = Orders.OrdersID) AND (OrderDetails.Quantity > 5))";
+                var sql = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON ((OrderDetails.OrdersID = Orders.OrdersID) AND (OrderDetails.Quantity > 5))";
                 var output = query.CompileQuery<OrderWithDetail>().Flatten();
 
                 // check the compiled sql
@@ -591,7 +592,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.PostalCode);
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery<Employee>().Flatten(), "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ON (Orders.EmployeeID = Customers.EmployeeID) join Employee ON (Employee.EmployeeID = Orders.EmployeeID) AND (Employee.EmployeeID = Customers.EmployeeID)");
+                Assert.AreEqual(query.CompileQuery<Employee>().Flatten(), "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Customers JOIN Orders ON (Orders.EmployeeID = Customers.EmployeeID) JOIN Employee ON (Employee.EmployeeID = Orders.EmployeeID) AND (Employee.EmployeeID = Customers.EmployeeID)");
 
                 // execute the query
                 var emloyees = query.Select<Employee>();
@@ -617,7 +618,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.PostalCode);
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers customer join Orders ord ON (ord.EmployeeID = customer.EmployeeID) join Employee empl ON (empl.EmployeeID = ord.EmployeeID) AND (empl.EmployeeID = customer.EmployeeID)";
+                var expected = "SELECT empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Customers customer JOIN Orders ord ON (ord.EmployeeID = customer.EmployeeID) JOIN Employee empl ON (empl.EmployeeID = ord.EmployeeID) AND (empl.EmployeeID = customer.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -644,7 +645,7 @@ namespace PersistanceMap.Test.Integration
 
                 /* *Expected Query*
                  select OrderDetails.OrdersID, ProductID, UnitPrice, Quantity, Discount 
-                 from Orders 
+                 FROM Orders 
                  join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)
                 */
 
@@ -671,7 +672,7 @@ namespace PersistanceMap.Test.Integration
 
                 /* *Expected Query*
                  select Products.ProductID, Products.UnitPrice, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, Quantity, Discount 
-                 from Orders 
+                 FROM Orders 
                  join OrderDetails on (OrderDetails.OrdersID = Orders.OrdersID)
                  join Products on (Products.ProductID = OrderDetails.ProductID)
                 */
@@ -706,7 +707,7 @@ namespace PersistanceMap.Test.Integration
                 var customers = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Customers.CustomerID = Orders.CustomerID) OR (Customers.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Customers.CustomerID = Orders.CustomerID) OR (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -735,7 +736,7 @@ namespace PersistanceMap.Test.Integration
                 var customers = query.Select<Employee>();
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Customers.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -764,7 +765,7 @@ namespace PersistanceMap.Test.Integration
                 var customers = query.Select<Employee>();
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers cust ON (cust.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers cust ON (cust.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -793,7 +794,7 @@ namespace PersistanceMap.Test.Integration
                 var customers = query.Select<Employee>();
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT emp.EmployeeID, emp.Address, emp.City, emp.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee emp join Orders ON (Orders.EmployeeID = emp.EmployeeID) join Customers cust ON (cust.EmployeeID = emp.EmployeeID)";
+                var expected = "SELECT emp.EmployeeID, emp.Address, emp.City, emp.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Employee emp JOIN Orders ON (Orders.EmployeeID = emp.EmployeeID) JOIN Customers cust ON (cust.EmployeeID = emp.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -820,7 +821,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.PostalCode);
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ord ON (ord.EmployeeID = Customers.EmployeeID) join Employee empl ON (empl.EmployeeID = ord.EmployeeID) AND (empl.EmployeeID = Customers.EmployeeID)";
+                var expected = "SELECT empl.EmployeeID, empl.Address, empl.City, empl.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Customers JOIN Orders ord ON (ord.EmployeeID = Customers.EmployeeID) JOIN Employee empl ON (empl.EmployeeID = ord.EmployeeID) AND (empl.EmployeeID = Customers.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -850,7 +851,7 @@ namespace PersistanceMap.Test.Integration
                     .Map(e => e.PostalCode);
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers cust join Orders ord ON (ord.EmployeeID = cust.EmployeeID) join Employee ON (Employee.EmployeeID = ord.EmployeeID) AND (Employee.EmployeeID = cust.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Customers cust JOIN Orders ord ON (ord.EmployeeID = cust.EmployeeID) JOIN Employee ON (Employee.EmployeeID = ord.EmployeeID) AND (Employee.EmployeeID = cust.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -875,12 +876,12 @@ namespace PersistanceMap.Test.Integration
             {
                 // Map => To in join with string
                 var query = context.From<Orders>()
-                    // map the property from this join to the Property in the result type
+                    // map the property FROM this join to the Property in the result type
                     .Map(source => source.Freight, "SpecialFreight")
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -900,12 +901,12 @@ namespace PersistanceMap.Test.Integration
             {
                 // Map => To in join with predicate
                 var query = context.From<Orders>()
-                    // map the property from this join to the Property in the result type
+                    // map the property FROM this join to the Property in the result type
                     .Map<OrderWithDetailExtended>(source => source.Freight, alias => alias.SpecialFreight)
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -932,7 +933,7 @@ namespace PersistanceMap.Test.Integration
         //            .Map(w => w.Race)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
 
         //        // map one property to a custom field
         //        context.From<WarriorWithName>()
@@ -941,7 +942,7 @@ namespace PersistanceMap.Test.Integration
         //            .Map(w => w.Race)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill from WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
         //    }
         //}
 
@@ -959,7 +960,7 @@ namespace PersistanceMap.Test.Integration
         //            .Ignore(w => w.SpecialSkill)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WeaponID, Race from WarriorWithName");
+        //        Assert.AreEqual(sql, "select WeaponID, Race FROM WarriorWithName");
 
         //        // ignore a member in the select
         //        context.From<WarriorWithName>()
@@ -969,7 +970,7 @@ namespace PersistanceMap.Test.Integration
         //            .Map(w => w.Name)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race from WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race FROM WarriorWithName");
 
         //        // ignore a member in the select
         //        context.From<WarriorWithName>()
@@ -979,7 +980,7 @@ namespace PersistanceMap.Test.Integration
         //            .Ignore(w => w.SpecialSkill)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race from WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race FROM WarriorWithName");
         //    }
         //}
 
@@ -1001,7 +1002,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<OrderDetails>();
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) WHERE (Orders.Freight > '0')";
+                var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) WHERE (Orders.Freight > '0')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1031,7 +1032,7 @@ namespace PersistanceMap.Test.Integration
                 var employees = query.Select<Employee>();
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID <> Customers.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID <> Customers.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1058,7 +1059,7 @@ namespace PersistanceMap.Test.Integration
                 var orderdetails = query.Select();
 
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
-                var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount from Orders join OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) WHERE (Orders.OrdersID = OrderDetails.OrdersID) AND (OrderDetails.Quantity > 10)";
+                var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) WHERE (Orders.OrdersID = OrderDetails.OrdersID) AND (OrderDetails.Quantity > 10)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1087,7 +1088,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Orders.CustomerID = Orders.CustomerID) WHERE Customers.ContactName like '%a%' AND (Customers.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Orders.CustomerID = Orders.CustomerID) WHERE Customers.ContactName like '%a%' AND (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1121,7 +1122,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID = Customers.EmployeeID) OR (Orders.Freight > '0')";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID = Customers.EmployeeID) OR (Orders.Freight > '0')";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1155,7 +1156,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Customers>();
 
                 var sql = query.CompileQuery<Customers>().Flatten();
-                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID = Customers.EmployeeID) OR (Customers.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Employee.EmployeeID, Employee.Address, Employee.City, Employee.PostalCode, Customers.Region, Customers.CustomerID, Customers.Country, CompanyName, ContactName, ContactTitle, Phone, Fax FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers ON (Customers.CustomerID = Orders.CustomerID) WHERE (Employee.EmployeeID = Customers.EmployeeID) OR (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1186,7 +1187,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Employee>();
 
                 var sql = query.CompileQuery<Employee>().Flatten();
-                var expected = "SELECT Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo from Customers join Orders ON (Orders.EmployeeID = Customers.EmployeeID) join Employee ON (Employee.EmployeeID = Orders.EmployeeID) WHERE Employee.FirstName like '%Davolio%' OR (Customers.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Customers.EmployeeID, Customers.Address, Customers.City, Customers.PostalCode, LastName, FirstName, Title, BirthDate, HireDate, ReportsTo FROM Customers JOIN Orders ON (Orders.EmployeeID = Customers.EmployeeID) JOIN Employee ON (Employee.EmployeeID = Orders.EmployeeID) WHERE Employee.FirstName like '%Davolio%' OR (Customers.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1215,7 +1216,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee join Orders ON (Orders.EmployeeID = Employee.EmployeeID) join Customers cust ON (Orders.CustomerID = Orders.CustomerID) WHERE cust.ContactName like '%a%' AND (cust.EmployeeID = Employee.EmployeeID)";
+                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Employee JOIN Orders ON (Orders.EmployeeID = Employee.EmployeeID) JOIN Customers cust ON (Orders.CustomerID = Orders.CustomerID) WHERE cust.ContactName like '%a%' AND (cust.EmployeeID = Employee.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1244,7 +1245,7 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select<Orders>();
 
                 var sql = query.CompileQuery<Orders>().Flatten();
-                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry from Employee emp join Orders ON (Orders.EmployeeID = emp.EmployeeID) join Customers ON (Orders.CustomerID = Orders.CustomerID) WHERE Customers.ContactName like '%a%' AND (Customers.EmployeeID = emp.EmployeeID)";
+                var expected = "SELECT Orders.EmployeeID, Orders.CustomerID, OrdersID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Employee emp JOIN Orders ON (Orders.EmployeeID = emp.EmployeeID) JOIN Customers ON (Orders.CustomerID = Orders.CustomerID) WHERE Customers.ContactName like '%a%' AND (Customers.EmployeeID = emp.EmployeeID)";
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1270,7 +1271,7 @@ namespace PersistanceMap.Test.Integration
                         OrderDate = DateTime.MinValue
                     });
 
-                var expected = "SELECT Orders.OrderDate as StringDate, Orders.OrderDate as IsDateInAutum, Orders.OrderDate from Orders";
+                var expected = "SELECT Orders.OrderDate as StringDate, Orders.OrderDate as IsDateInAutum, Orders.OrderDate FROM Orders";
                 var sql = query.CompileQuery().Flatten();
 
                 // check the compiled sql

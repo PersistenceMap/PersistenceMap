@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class FieldQueryPart : IFieldQueryPart, IEntityQueryPart, IQueryPart
+    internal class FieldQueryPart : IFieldQueryPart, IEntityMap, IQueryPart
     {
         public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null)
         {

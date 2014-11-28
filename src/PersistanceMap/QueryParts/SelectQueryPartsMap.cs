@@ -10,13 +10,13 @@ namespace PersistanceMap.QueryParts
     {
         #region Properties
 
-        public IEnumerable<IEntityQueryPart> Joins
+        public IEnumerable<IEntityMap> Joins
         {
             get
             {
                 return Parts.Where(p => 
                     (p.OperationType == OperationType.From || p.OperationType == OperationType.Join || p.OperationType == OperationType.LeftJoin || p.OperationType == OperationType.RightJoin || p.OperationType == OperationType.FullJoin)
-                    && p is IEntityQueryPart).Cast<IEntityQueryPart>();
+                    && p is IEntityMap).Cast<IEntityMap>();
             }
         }
 
@@ -33,31 +33,32 @@ namespace PersistanceMap.QueryParts
                 case OperationType.LeftJoin:
                 case OperationType.RightJoin:
                 case OperationType.FullJoin:
-                    var entity = map as IEntityQueryPart;
-                    entity.EnsureArgumentNotNull("map");
+                    //var entity = map as IEntityQueryPart;
+                    //entity.EnsureArgumentNotNull("map");
 
-                    Parts.Add(entity);
+                    //Parts.Add(entity);
+                    Parts.Add(map);
 
                     break;
 
                 case OperationType.Include:
                     var field = map as FieldQueryPart;
-                    if (field == null)
-                    {
-                        // try to create a field query part
-                        var expr = map as IExpressionMap;
-                        if (expr != null)
-                        {
-                            var last = Joins.LastOrDefault();
-                            var id = last != null ? string.IsNullOrEmpty(last.EntityAlias) ? last.Entity : last.EntityAlias : null;
-                            var ent = last != null ? last.Entity : null;
+                    //if (field == null)
+                    //{
+                    //    // try to create a field query part
+                    //    var expr = map as IExpressionMap;
+                    //    if (expr != null)
+                    //    {
+                    //        var last = Joins.LastOrDefault();
+                    //        var id = last != null ? string.IsNullOrEmpty(last.EntityAlias) ? last.Entity : last.EntityAlias : null;
+                    //        var ent = last != null ? last.Entity : null;
 
-                            field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(expr.Expression), id, ent)
-                            {
-                                OperationType = OperationType.Include
-                            };
-                        }
-                    }
+                    //        field = new FieldQueryPart(FieldHelper.TryExtractPropertyName(expr.Expression), id, ent)
+                    //        {
+                    //            OperationType = OperationType.Include
+                    //        };
+                    //    }
+                    //}
 
                     if (field != null)
                     {
