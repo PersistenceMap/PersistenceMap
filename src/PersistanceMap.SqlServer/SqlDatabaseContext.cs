@@ -1,6 +1,5 @@
 ﻿using PersistanceMap.Tracing;
 using PersistanceMap.QueryBuilder;
-using PersistanceMap.SqlServer;
 using PersistanceMap.SqlServer.QueryBuilder;
 
 namespace PersistanceMap

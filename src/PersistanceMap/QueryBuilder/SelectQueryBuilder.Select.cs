@@ -374,7 +374,7 @@ namespace PersistanceMap.QueryBuilder
             var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
             if (selector != null)
             {
-                query.Converters = selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter {Converter = p.Converter, ID = p.ID});
+                query.Converters = selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID });
             }
 
             return Context.Kernel.Execute<T2>(query);
