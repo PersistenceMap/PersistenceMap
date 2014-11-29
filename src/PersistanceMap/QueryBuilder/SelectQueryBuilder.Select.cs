@@ -94,7 +94,7 @@ namespace PersistanceMap.QueryBuilder
 
         #region Map Expressions
 
-        protected ISelectQueryExpression<T> Map<TProp>(string source, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter = null)
+        protected ISelectQueryExpression<T> Map<TProp>(string source, string alias, string entity, string entityalias, Expression<Func<TProp, object>> converter = null)
         {
             // if there is a alias on the last item it has to be used with the map
             var last = QueryPartsMap.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
@@ -110,7 +110,7 @@ namespace PersistanceMap.QueryBuilder
                 parent.IsSealded = false;
             }
 
-            SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias, valueConverter);
+            SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias, converter);
 
             if (parent != null)
             {
@@ -124,14 +124,14 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <param name="source">The expression that returns the Property</param>
         /// <param name="alias">The alias name the field will get (... as Alias)</param>
-        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        public ISelectQueryExpression<T> Map<TProp>(Expression<Func<T, TProp>> source, string alias = null, Expression<Func<TProp, object>> valueConverter = null)
+        public ISelectQueryExpression<T> Map<TProp>(Expression<Func<T, TProp>> source, string alias = null, Expression<Func<TProp, object>> converter = null)
         {
             var sourceField = FieldHelper.TryExtractPropertyName(source);
             var entity = typeof(T).Name;
 
-            return Map(sourceField, alias, entity, null, valueConverter);
+            return Map(sourceField, alias, entity, null, converter);
         }
 
         /// <summary>
@@ -370,7 +370,7 @@ namespace PersistanceMap.QueryBuilder
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile<T2>(QueryPartsMap);
 
-            // extract all fields with valueConverter
+            // extract all fields with converter
             var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
             if (selector != null)
             {

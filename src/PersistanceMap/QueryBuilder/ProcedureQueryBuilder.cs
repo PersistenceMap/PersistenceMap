@@ -221,15 +221,15 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
-        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null)
+        public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, valueConverter)
+            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, converter)
             {
                 OperationType = OperationType.Include
             };
@@ -309,15 +309,15 @@ namespace PersistanceMap.QueryBuilder
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
-        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null)
+        public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null)
         {
             var aliasField = FieldHelper.TryExtractPropertyName(alias);
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, valueConverter)
+            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, converter)
             {
                 OperationType = OperationType.Include
             };

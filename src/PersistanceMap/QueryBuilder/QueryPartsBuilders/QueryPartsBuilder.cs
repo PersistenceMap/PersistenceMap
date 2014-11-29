@@ -27,9 +27,9 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             }
         }
 
-        internal IFieldMap AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> valueConverter)
+        internal IFieldMap AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> converter)
         {
-            var part = new FieldQueryPart(field, alias, entityalias, entity, alias ?? field, ConvertExpression(valueConverter))
+            var part = new FieldQueryPart(field, alias, entityalias, entity, alias ?? field, ConvertExpression(converter))
             {
                 OperationType = OperationType.Include
             };

@@ -55,9 +55,9 @@ namespace PersistanceMap
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
-        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null);
+        IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null);
 
         /// <summary>
         /// Execute the Procedure without reading the resultset
@@ -80,9 +80,9 @@ namespace PersistanceMap
         /// <typeparam name="TOut">The Property Type</typeparam>
         /// <param name="source">The name of the element in the resultset</param>
         /// <param name="alias">The Property to map to</param>
-        /// <param name="valueConverter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>IProcedureQueryProvider</returns>
-        IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> valueConverter = null);
+        IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null);
 
         /// <summary>
         /// Execute the Procedure
