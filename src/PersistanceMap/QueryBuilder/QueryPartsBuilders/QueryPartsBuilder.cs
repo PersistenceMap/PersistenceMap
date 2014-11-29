@@ -27,18 +27,6 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             }
         }
 
-        internal IFieldMap AddFieldQueryMap<TProp>(IQueryPartsMap queryParts, string field, string alias, string entity, string entityalias, Expression<Func<TProp, object>> converter)
-        {
-            var part = new FieldQueryPart(field, alias, entityalias, entity, alias ?? field, ConvertExpression(converter))
-            {
-                OperationType = OperationType.Include
-            };
-
-            queryParts.Add(part);
-            
-            return part;
-        }
-
         internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
         {
             foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
@@ -79,22 +67,6 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
                 if (last != null)
                     last.Sufix = " ";
             }
-        }
-
-        /// <summary>
-        /// Converts a Func{T,object} expression to a Func{object,object} expression
-        /// </summary>
-        /// <typeparam name="TProp"></typeparam>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        internal Expression<Func<object, object>> ConvertExpression<TProp>(Expression<Func<TProp, object>> expression)
-        {
-            if (expression == null)
-                return null;
-
-            var p = Expression.Parameter(typeof(object));
-
-            return Expression.Lambda<Func<object, object>>(Expression.Invoke(expression, Expression.Convert(p, typeof(TProp))), p);
         }
     }
 }

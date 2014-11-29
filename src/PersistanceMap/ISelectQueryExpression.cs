@@ -72,8 +72,9 @@ namespace PersistanceMap
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryExpression<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias);
+        ISelectQueryExpression<T> Map<TAlias>(Expression<Func<T, object>> source, Expression<Func<TAlias, object>> alias, Expression<Func<object, object>> converter = null);
 
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
@@ -82,8 +83,9 @@ namespace PersistanceMap
         /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
-        ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias);
+        ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias, Expression<Func<object, object>> converter = null);
 
         /// <summary>
         /// Marks a field to be ignored in the query

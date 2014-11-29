@@ -1290,6 +1290,36 @@ namespace PersistanceMap.Test.Integration
         }
 
         [Test]
+        public void SelectWithMapExtendedAndValueConverter()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                var query = context.From<Orders>()
+                    .Map(o => o.OrderDate, "Date")
+                    .Map<Orders>(o => o.OrderDate, o2 => o2.OrderDate, date => ((DateTime)date).ToShortDateString())
+                    .For(() => new
+                    {
+                        Date = DateTime.MinValue,
+                        OrderDate = ""
+                    });
+
+                var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate as OrderDate FROM Orders";
+                var sql = query.CompileQuery().Flatten();
+
+                // check the compiled sql
+                Assert.AreEqual(sql, expected);
+
+                // execute the query
+                var orders = query.Select();
+
+                Assert.IsTrue(orders.Any());
+                Assert.AreEqual(orders.First().Date.ToShortDateString(), orders.First().OrderDate);
+                Assert.AreEqual(orders.Last().Date.ToShortDateString(), orders.Last().OrderDate);
+            }
+        }
+
+        [Test]
         public void SelectWithMapWitoutAliasAndValueConverter()
         {
             var provider = new SqlContextProvider(ConnectionString);
