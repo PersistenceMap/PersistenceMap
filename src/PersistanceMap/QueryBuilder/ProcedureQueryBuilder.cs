@@ -2,8 +2,10 @@
 using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
+using PersistanceMap.Tracing;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -62,29 +64,72 @@ namespace PersistanceMap.QueryBuilder
 
         protected void ReadReturnValues(IReaderContext reader, QueryKernel kernel)
         {
-            //var kernel = new QueryKernel(Context.ContextProvider);
+            //var objectDefs = QueryPartsMap.Parts.Where(p => p.OperationType== OperationType.Parameter).OfType<IParameterQueryPart>().Where(p => p.CanHandleCallback)
+            //    .Select(p =>
+            //        new ObjectDefinition
+            //        {
+            //            Name = p.CallbackName,
+            //            ObjectType = p.CallbackType
+            //        }).ToArray();
 
-            var objectDefs = QueryPartsMap.Parameters.Where(p => p.CanHandleCallback)
+            var objectDefs = QueryPartsMap.Callbacks
                 .Select(p =>
                     new ObjectDefinition
                     {
-                        Name = p.CallbackName,
-                        ObjectType = p.CallbackType
+                        Name = p.Id,
+                        ObjectType = p.CallbackValueType
                     }).ToArray();
+
 
             var mapping = kernel.MapToDictionary(reader, objectDefs).FirstOrDefault();
 
             if (mapping == null || !mapping.Any())
                 return;
 
-            foreach (var param in QueryPartsMap.Parameters.Where(p => p.CanHandleCallback))
+            //foreach (var param in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Parameter).OfType<IParameterQueryPart>().Where(p => p.CanHandleCallback))
+            foreach(var param in QueryPartsMap.Callbacks)
             {
                 object value = null;
-                if (!mapping.TryGetValue(param.CallbackName, out value))
+                if (!mapping.TryGetValue(param.Id, out value))
                     continue;
 
-                param.TryHandleCallback(value);
+                try
+                {
+                    param.Callback(value);
+                }
+                catch (Exception e)
+                {
+                    //Trace.WriteLine(e);
+                    //TODO: log instad of trace
+                    Logger.TraceLine(e.Message);
+                }
             }
+        }
+
+        protected string CreateParameterValue<T>(string name, Expression<Func<T>> predicate)
+        {
+            // get the value. Dont compile the expression to sql
+            var value = predicate.Compile().Invoke();
+            if (value != null)
+            {
+                // quotate and format the value if needed
+                var quotated = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+
+                // return only the formated value if the parameter has no name
+                if (string.IsNullOrEmpty(name) && quotated != null)
+                {
+                    return quotated;
+                }
+
+                // return the name with the formated value
+                if (quotated != null)
+                    return string.Format("{0}={1}", name, quotated);
+
+                // return the name with the unformated value
+                return string.Format("{0}={1}", name, value);
+            }
+
+            return string.Empty;
         }
 
         #endregion
@@ -112,9 +157,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryExpression AddParameter<T>(Expression<Func<T>> predicate)
         {
-            ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate);
-
-            return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
+            return AddParameter<T>(null, predicate);
         }
 
         /// <summary>
@@ -126,7 +169,15 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate)
         {
-            ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, predicate, name);
+            if (!string.IsNullOrEmpty(name))
+            {
+                // parameters have to start with @
+                if (!name.StartsWith("@"))
+                    name = string.Format("@{0}", name);
+            }
+
+            var paramPart = new DelegateQueryPart(OperationType.Parameter, () => CreateParameterValue(name, predicate));
+            QueryPartsMap.Add(paramPart);
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }
@@ -144,51 +195,46 @@ namespace PersistanceMap.QueryBuilder
             // parameters have to start with @
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
+            
+            //
+            // declare @p1 datetime
+            // set @p1='2012-01-01 00:00:00'
+            //
+            // exec procname @p1 output
+            //
+            // select @p1 as p1
+            // 
 
-            var queryMap = new ParameterQueryMap(OperationType.Value, name, predicate);
+            var paramName = string.Format("p{0}", QueryPartsMap.Parts.Count(p => p.OperationType == OperationType.OutParameterPrefix) + 1);
 
-            var cb = ProcedureQueryPartsBuilder.Instance.AppendParameterQueryPart(QueryPartsMap, queryMap, callback);
-            if (cb.CanHandleCallback)
+            // declare @p1 datetime
+            // set @p1='2012-01-01 00:00:00'
+            var outDecl = new DelegateQueryPart(OperationType.OutParameterPrefix, () => 
             {
-                // get the index of the parameter in the collection to create the name of the out parameter
-                var index = QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Parameter).ToList().IndexOf(cb);
-                cb.CallbackName = string.Format("p{0}", index);
+                // get the return value of the expression
+                var value = predicate.Compile().Invoke();
 
-                // create output parameters 
-                QueryPartsMap.AddBefore(
-                    new DelegateQueryPart(OperationType.OutParameterPrefix, () =>
-                    {
-                        if (string.IsNullOrEmpty(cb.CallbackName))
-                            return string.Empty;
+                // set the value into the right format
+                var quotatedvalue = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
 
-                        // get the return value of the expression
-                        var value = queryMap.Expression.Compile().DynamicInvoke();
+                var sb = new StringBuilder();
+                sb.AppendLine(string.Format("declare @{0} {1}", paramName, typeof(T).ToSqlDbType()));
+                sb.AppendLine(string.Format("set @{0}={1}", paramName, quotatedvalue ?? value.ToString()));
 
-                        // set the value into the right format
-                        var quotatedvalue = DialectProvider.Instance.GetQuotedValue(value, value.GetType());
+                return sb.ToString();
+            });
+            QueryPartsMap.AddBefore(outDecl, OperationType.Parameter);
 
-                        //
-                        // declare @p1 datetime
-                        // set @p1='2012-01-01 00:00:00'
-                        //
+            // parameter=@p1 output
+            var queryMap = new DelegateQueryPart(OperationType.Parameter, () => string.Format("{0}=@{1} output", name, paramName));
+            QueryPartsMap.AddAfter(queryMap, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Parameter) ? OperationType.Parameter : OperationType.OutParameterPrefix);
 
-                        var sb = new StringBuilder();
-                        sb.AppendLine(string.Format("declare @{0} {1}", cb.CallbackName, typeof (T).ToSqlDbType()));
-                        sb.AppendLine(string.Format("set @{0}={1}", cb.CallbackName, quotatedvalue ?? value));
+            // create value for selecting output parameters
+            // select @p1 as p1
+            QueryPartsMap.AddAfter(new DelegateQueryPart(OperationType.OutParameterSufix, () => string.Format("@{0} as {0}", paramName)), QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.OutParameterSufix) ? OperationType.OutParameterSufix : OperationType.Parameter);
 
-                        return sb.ToString();
-                    }), OperationType.Parameter);
-
-                // create value for selecting output parameters
-                QueryPartsMap.AddAfter(new DelegateQueryPart(OperationType.OutParameterSufix, () =>
-                    {
-                        if (string.IsNullOrEmpty(cb.CallbackName))
-                            return string.Empty;
-
-                        // @p1 as p1
-                        return string.Format("@{0} as {0}", cb.CallbackName);
-                    }), OperationType.Parameter);
-            }
+            // pass the callback further on to be executed when the procedure was executed
+            QueryPartsMap.Add(new CallbackMap(paramName, cb => callback((T)cb), typeof(T)));
 
             return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
         }

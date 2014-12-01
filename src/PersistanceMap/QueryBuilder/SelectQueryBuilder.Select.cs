@@ -75,7 +75,7 @@ namespace PersistanceMap.QueryBuilder
             QueryPartsMap.Add(entityPart);
 
             // create the expressionmap for the lambdacompilert to add the alias if needed
-            var partMap = new ExpressionMap(predicate);
+            var partMap = new ExpressionAliasMap(predicate);
 
             // add aliases to the maps
             if (!string.IsNullOrEmpty(source))
@@ -269,7 +269,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation)
         {
             //var part = SelectQueryPartsBuilder.Instance.AddExpressionQueryPart(QueryPartsMap, operation, OperationType.Where);
-            var expressionPart = new ExpressionMap(operation);
+            var expressionPart = new ExpressionAliasMap(operation);
             var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(expressionPart)));
             QueryPartsMap.Add(part);
 

@@ -26,35 +26,35 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             }
         }
 
-        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T>> predicate, string name = null)
-        {
-            if (!string.IsNullOrEmpty(name))
-            {
-                // parameters have to start with @
-                if (!name.StartsWith("@"))
-                    name = string.Format("@{0}", name);
-            }
+        //public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, Expression<Func<T>> predicate, string name = null)
+        //{
+        //    if (!string.IsNullOrEmpty(name))
+        //    {
+        //        // parameters have to start with @
+        //        if (!name.StartsWith("@"))
+        //            name = string.Format("@{0}", name);
+        //    }
 
-            var part = new ParameterQueryPart(new IQueryPart[] { new ParameterQueryMap(OperationType.Value, name, predicate) })
-            {
-                OperationType = OperationType.Parameter
-            };
+        //    var part = new ParameterQueryPart(new IQueryPart[] { new ParameterQueryMap(OperationType.Value, name, predicate) })
+        //    {
+        //        OperationType = OperationType.Parameter
+        //    };
 
-            queryParts.Add(part);
+        //    queryParts.Add(part);
 
-            return part;
-        }
+        //    return part;
+        //}
 
-        public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IQueryPart map, Action<T> callback)
-        {
-            var part = new CallbackParameterQueryPart<T>(new IQueryPart[] { map }, callback)
-            {
-                OperationType = OperationType.Parameter
-            };
+        //public IParameterQueryPart AppendParameterQueryPart<T>(IQueryPartsMap queryParts, IQueryPart map, Action<T> callback)
+        //{
+        //    var part = new CallbackParameterQueryPart<T>(new IQueryPart[] { map }, callback)
+        //    {
+        //        OperationType = OperationType.Parameter
+        //    };
 
-            queryParts.Add(part);
+        //    queryParts.Add(part);
 
-            return part;
-        }
+        //    return part;
+        //}
     }
 }

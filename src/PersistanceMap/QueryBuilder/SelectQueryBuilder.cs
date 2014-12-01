@@ -90,7 +90,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
-            var partMap = new ExpressionMap(operation);
+            var partMap = new ExpressionAliasMap(operation);
             var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
             QueryPartsMap.Add(part);
             
@@ -106,7 +106,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
-            var partMap = new ExpressionMap(operation);
+            var partMap = new ExpressionAliasMap(operation);
             var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
             QueryPartsMap.Add(part);
 

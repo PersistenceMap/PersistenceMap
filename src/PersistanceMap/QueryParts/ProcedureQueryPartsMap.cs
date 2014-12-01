@@ -44,10 +44,11 @@ namespace PersistanceMap.QueryParts
             conv.PrefixFieldWithTableName = false;
 
             // add parameters
-            foreach (var param in Parameters)
+            var prameters = Parts.Where(p => p.OperationType == OperationType.Parameter).ToList();
+            foreach (var param in prameters)
             {
                 var value = param.Compile();
-                sb.Append(string.Format("{0}{1}", value, Parameters.Last() == param ? "" : ", "));
+                sb.Append(string.Format("{0}{1}", value, prameters.Last() == param ? "" : ", "));
             }
 
             // add the select for all output parameters
@@ -80,15 +81,35 @@ namespace PersistanceMap.QueryParts
 
         #region Properties
 
-        internal IEnumerable<IParameterQueryPart> Parameters
+        //internal IEnumerable<IParameterQueryPart> Parameters
+        //{
+        //    get
+        //    {
+        //        return Parts.Where(p => p is IParameterQueryPart).Cast<IParameterQueryPart>();
+        //    }
+        //}
+
+        public string ProcedureName { get; private set; }
+
+        private IList<CallbackMap> _callbacks;
+
+        internal IEnumerable<CallbackMap> Callbacks
         {
             get
             {
-                return Parts.Where(p => p is IParameterQueryPart).Cast<IParameterQueryPart>();
+                if (_callbacks == null)
+                    _callbacks = new List<CallbackMap>();
+                return _callbacks;
             }
         }
 
-        public string ProcedureName { get; private set; }
+        internal void Add(CallbackMap callback)
+        {
+            if (_callbacks == null)
+                    _callbacks = new List<CallbackMap>();
+
+            _callbacks.Add(callback);
+        }
 
         #endregion
     }
