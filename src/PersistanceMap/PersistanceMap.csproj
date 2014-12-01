@@ -76,7 +76,6 @@
     <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
-    <Compile Include="QueryBuilder\QueryPartsBuilders\SelectQueryPartsBuilder.cs" />
     <Compile Include="QueryParts\Internals\CallbackMap.cs" />
     <Compile Include="QueryParts\Internals\EntityDelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\ExpressionAliasMap.cs" />
@@ -102,7 +101,6 @@
     <Compile Include="IQueryCommand.cs" />
     <Compile Include="QueryBuilder\DeleteQueryBuilder.cs" />
     <Compile Include="QueryBuilder\InsertQueryBuilder.cs" />
-    <Compile Include="QueryBuilder\QueryPartsBuilders\QueryPartsBuilder.cs" />
     <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>

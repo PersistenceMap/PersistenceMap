@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 
@@ -84,7 +83,6 @@ namespace PersistanceMap.QueryBuilder
         }
 
         #endregion
-
 
         #region Private Generalized Implementation of Interfaces
 

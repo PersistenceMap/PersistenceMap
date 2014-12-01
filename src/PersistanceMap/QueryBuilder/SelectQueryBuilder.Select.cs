@@ -1,5 +1,4 @@
 ﻿using PersistanceMap.Factories;
-using PersistanceMap.QueryBuilder.QueryPartsBuilders;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;
@@ -437,7 +436,7 @@ namespace PersistanceMap.QueryBuilder
             var members = typeof(TNew).GetSelectionMembers();
             var fields = members.Select(m => m.ToFieldQueryPart(null, null));
 
-            SelectQueryPartsBuilder.Instance.AddFiedlParts(QueryPartsMap, fields.ToArray());
+            FieldQueryPart.FiedlPartsFactory(QueryPartsMap, fields.ToArray());
 
             foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
             {

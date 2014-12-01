@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -76,6 +77,50 @@ namespace PersistanceMap.QueryParts
         public override string ToString()
         {
             return string.Format("{0} - Entity: {1} Field: {2} [{2}.{3}]", GetType().Name, Entity, EntityAlias ?? Entity, Field);
+        }
+
+
+        internal static void FiedlPartsFactory(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
+        {
+            //TODO: this method should be removed!
+            foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
+            {
+                // add all mapped fields to a collection to ensure that they are used in the query
+                var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();
+
+                foreach (var field in fields)
+                {
+                    // check if the field was allready mapped previously
+                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
+                    if (mappedFields.Any())
+                    {
+                        foreach (var mappedField in mappedFields)
+                        {
+                            mappedField.Sufix = ", ";
+                            unusedMappedFields.Remove(mappedField);
+                        }
+
+                        continue;
+                    }
+
+                    if (map.IsSealded)
+                        continue;
+
+                    // add the new field
+                    field.Sufix = ", ";
+                    map.Add(field);
+                }
+
+                // remove all mapped fields that were not included in the select fields
+                foreach (var field in unusedMappedFields)
+                {
+                    map.Remove(field);
+                }
+
+                var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;
+                if (last != null)
+                    last.Sufix = " ";
+            }
         }
     }
 

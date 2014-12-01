@@ -27,46 +27,46 @@ namespace PersistanceMap.QueryBuilder.QueryPartsBuilders
             }
         }
 
-        internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
-        {
-            foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
-            {
-                // add all mapped fields to a collection to ensure that they are used in the query
-                var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();
+        //internal void AddFiedlParts(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
+        //{
+        //    foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
+        //    {
+        //        // add all mapped fields to a collection to ensure that they are used in the query
+        //        var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();
 
-                foreach (var field in fields)
-                {
-                    // check if the field was allready mapped previously
-                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
-                    if (mappedFields.Any())
-                    {
-                        foreach (var mappedField in mappedFields)
-                        {
-                            mappedField.Sufix = ", ";
-                            unusedMappedFields.Remove(mappedField);
-                        }
+        //        foreach (var field in fields)
+        //        {
+        //            // check if the field was allready mapped previously
+        //            var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
+        //            if (mappedFields.Any())
+        //            {
+        //                foreach (var mappedField in mappedFields)
+        //                {
+        //                    mappedField.Sufix = ", ";
+        //                    unusedMappedFields.Remove(mappedField);
+        //                }
 
-                        continue;
-                    }
+        //                continue;
+        //            }
 
-                    if (map.IsSealded)
-                        continue;
+        //            if (map.IsSealded)
+        //                continue;
 
-                    // add the new field
-                    field.Sufix = ", ";
-                    map.Add(field);
-                }
+        //            // add the new field
+        //            field.Sufix = ", ";
+        //            map.Add(field);
+        //        }
 
-                // remove all mapped fields that were not included in the select fields
-                foreach (var field in unusedMappedFields)
-                {
-                    map.Remove(field);
-                }
+        //        // remove all mapped fields that were not included in the select fields
+        //        foreach (var field in unusedMappedFields)
+        //        {
+        //            map.Remove(field);
+        //        }
 
-                var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;
-                if (last != null)
-                    last.Sufix = " ";
-            }
-        }
+        //        var last = map.Parts.LastOrDefault(p => p is FieldQueryPart) as FieldQueryPart;
+        //        if (last != null)
+        //            last.Sufix = " ";
+        //    }
+        //}
     }
 }
