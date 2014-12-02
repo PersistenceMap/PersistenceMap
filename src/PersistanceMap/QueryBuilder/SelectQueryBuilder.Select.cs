@@ -387,10 +387,29 @@ namespace PersistanceMap.QueryBuilder
 
         #region Select Expressions
 
-        public IEnumerable<T2> Select<T2>()
+        private CompiledQuery Compile<T2>()
         {
+            // get all members on the type to be composed
+            var members = typeof(T2).GetSelectionMembers();
+
+            // don't set entity alias to prevent fields being set with a default alias of the from expression
+            var fields = members.Select(m => m.ToFieldQueryPart(null, null));
+            FieldQueryPart.FiedlPartsFactory(QueryPartsMap, fields.ToArray());
+
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile<T2>(QueryPartsMap);
+
+            return query;
+        }
+
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <typeparam name="T2">The type to return</typeparam>
+        /// <returns></returns>
+        public IEnumerable<T2> Select<T2>()
+        {
+            var query = Compile<T2>();
 
             // extract all fields with converter
             var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
@@ -402,22 +421,35 @@ namespace PersistanceMap.QueryBuilder
             return Context.Kernel.Execute<T2>(query);
         }
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<T> Select()
         {
             return Select<T>();
         }
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <typeparam name="TSelect">The type to return</typeparam>
+        /// <param name="anonym">The type to return</param>
+        /// <returns></returns>
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym)
         {
             return Select<TSelect>();
         }
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type and executes all objects to the delegate
+        /// </summary>
+        /// <typeparam name="TSelect">The type to return</typeparam>
+        /// <param name="anonym">The delegate that gets executed for each returned object</param>
+        /// <returns></returns>
         public IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym)
         {
-            var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile<T>(QueryPartsMap);
-
-            var elements = Context.Kernel.Execute<T>(query);
+            var elements = Select<T>();
             var expression = anonym.Compile();
 
             foreach (var item in elements)
@@ -463,12 +495,11 @@ namespace PersistanceMap.QueryBuilder
         /// <summary>
         /// Compiles the Query to a sql statement for the given type
         /// </summary>
-        /// <typeparam name="T">The select type</typeparam>
+        /// <typeparam name="T2">The select type</typeparam>
         /// <returns>The sql string</returns>
         public string CompileQuery<T2>()
         {
-            var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile<T2>(QueryPartsMap);
+            var query = Compile<T2>();
 
             return query.QueryString;
         }

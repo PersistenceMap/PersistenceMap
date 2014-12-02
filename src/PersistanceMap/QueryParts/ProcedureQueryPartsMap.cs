@@ -81,14 +81,6 @@ namespace PersistanceMap.QueryParts
 
         #region Properties
 
-        //internal IEnumerable<IParameterQueryPart> Parameters
-        //{
-        //    get
-        //    {
-        //        return Parts.Where(p => p is IParameterQueryPart).Cast<IParameterQueryPart>();
-        //    }
-        //}
-
         public string ProcedureName { get; private set; }
 
         private IList<CallbackMap> _callbacks;

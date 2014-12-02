@@ -6,12 +6,33 @@ namespace PersistanceMap
 {
     public interface ISelectQueryExpressionBase<T> : IQueryExpression
     {
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <typeparam name="T2">The type to return</typeparam>
+        /// <returns></returns>
         IEnumerable<T2> Select<T2>();
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<T> Select();
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type
+        /// </summary>
+        /// <typeparam name="TSelect">The type to return</typeparam>
+        /// <param name="anonym">The type to return</param>
+        /// <returns></returns>
         IEnumerable<TSelect> Select<TSelect>(Expression<Func<TSelect>> anonym);
 
+        /// <summary>
+        /// Executes a select expression and maps the returnvalue to objects of the defined type and executes all objects to the delegate
+        /// </summary>
+        /// <typeparam name="TSelect">The type to return</typeparam>
+        /// <param name="anonym">The delegate that gets executed for each returned object</param>
+        /// <returns></returns>
         IEnumerable<TSelect> Select<TSelect>(Expression<Func<T, TSelect>> anonym);
 
         //T2 Single<T2>();
