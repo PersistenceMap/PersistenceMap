@@ -214,12 +214,12 @@ namespace PersistanceMap.QueryBuilder
         /// <summary>
         /// Creates a expression that is created for operations for a table field
         /// </summary>
-        /// <param name="Column">The column to alter</param>
+        /// <param name="column">The column to alter</param>
         /// <param name="operation">The type of operation for the field</param>
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        public virtual ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation, string precision = null, bool isNullable = true)
+        public virtual ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation, string precision = null, bool? isNullable = null)
         {
             var memberName = FieldHelper.TryExtractPropertyName(column);
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -231,11 +231,55 @@ namespace PersistanceMap.QueryBuilder
             {
                 case FieldOperation.Add:
                     //TODO: precision???
-                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), !field.IsNullable ? " NOT NULL" : "");
+                    var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
+                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
                     break;
 
                 case FieldOperation.Drop:
                     expression = string.Format("DROP COLUMN {0}", field.MemberName);
+                    break;
+
+                case FieldOperation.Alter:
+                    throw new NotImplementedException();
+                    break;
+
+                default:
+                    throw new NotSupportedException("SQL Server only supports ADD column");
+            }
+
+            var part = new DelegateQueryPart(OperationType.AlterField, () => expression);
+            QueryPartsMap.Add(part);
+
+            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+        }
+
+        /// <summary>
+        /// Creates a expression that is created for operations for a table field
+        /// </summary>
+        /// <param name="column">The column to alter</param>
+        /// <param name="operation">The type of operation for the field</param>
+        /// <param name="fieldType">The type of the column</param>
+        /// <param name="precision">Precision of the field</param>
+        /// <param name="isNullable">Is the field nullable</param>
+        /// <returns></returns>
+        public virtual ITableQueryExpression<T> Column(string column, FieldOperation operation, Type fieldType = null, string precision = null, bool? isNullable = null)
+        {
+            string expression = "";
+
+            switch (operation)
+            {
+                case FieldOperation.Add:
+                    //TODO: precision???
+                    if (fieldType == null)
+                    {
+                        throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
+                    }
+
+                    expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
+                    break;
+
+                case FieldOperation.Drop:
+                    expression = string.Format("DROP COLUMN {0}", column);
                     break;
 
                 case FieldOperation.Alter:

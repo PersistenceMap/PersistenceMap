@@ -218,5 +218,28 @@ namespace PersistanceMap.Sqlite.Test
                 Assert.IsFalse(tables.Any(t => t.Name == typeof(Warrior).Name));
             }
         }
+
+        [Test]
+        public void AddFieldByString()
+        {
+            var provider = new SqliteContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();
+                context.Database.Table<Warrior>().Column("Race", FieldOperation.Add, typeof(string)).Alter();
+                context.Commit();
+            }
+        }
+
+        [Test]
+        public void AddFieldByStringFail()
+        {
+            var provider = new SqliteContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();
+                Assert.Throws<ArgumentNullException>(() => context.Database.Table<Warrior>().Column("Race", FieldOperation.Add).Alter());
+            }
+        }
     }
 }

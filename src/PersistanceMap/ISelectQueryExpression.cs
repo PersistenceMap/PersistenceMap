@@ -119,20 +119,23 @@ namespace PersistanceMap
         /// Marks a field to return the max value of
         /// </summary>
         /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
+        /// <param name="alias">the alias for the field</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate, string alias = null);
 
         /// <summary>
         /// Marks a field to return the min value of
         /// </summary>
-        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
+        /// <param name="alias">the alias for the field</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate, string alias = null);
 
         /// <summary>
         /// Marks a field to return the count of
         /// </summary>
-        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from<</param>
+        /// <param name="predicate">The expression that returns the Proerty to retrieve the value from</param>
+        /// <param name="alias">the alias for the field</param>
         /// <returns>ISelectQueryProvider containing the maps</returns>
         ISelectQueryExpression<T> Count(Expression<Func<T, object>> predicate, string alias = null);
 

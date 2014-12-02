@@ -69,11 +69,22 @@ namespace PersistanceMap
         /// <summary>
         /// Creates a expression that is created for operations for a table field
         /// </summary>
-        /// <param name="Column">The column to alter</param>
+        /// <param name="field">The column to alter</param>
         /// <param name="operation">The type of operation for the field</param>
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool isNullable = true);
+        ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool? isNullable = null);
+
+        /// <summary>
+        /// Creates a expression that is created for operations for a table field
+        /// </summary>
+        /// <param name="field">The column to alter</param>
+        /// <param name="operation">The type of operation for the field</param>
+        /// <param name="fieldType">Thy type of the column</param>
+        /// <param name="precision">Precision of the field</param>
+        /// <param name="isNullable">Is the field nullable</param>
+        /// <returns></returns>
+        ITableQueryExpression<T> Column(string field, FieldOperation operation, Type fieldType = null, string precision = null, bool? isNullable = null);
     }
 }

@@ -258,9 +258,7 @@ namespace PersistanceMap.SqlServer.Test
             using (var context = provider.Open())
             {
                 // create a table to drop later in the test
-                context.Database.Table<Weapon>()
-                    .Key(wpn => wpn.ID)
-                    .Create();
+                context.Database.Table<Weapon>().Key(wpn => wpn.ID).Create();
 
                 context.Commit();
 
@@ -268,8 +266,7 @@ namespace PersistanceMap.SqlServer.Test
                 Assert.IsTrue(tables.Any(t => t.Name == typeof(Weapon).Name));
 
                 // drop the table
-                context.Database.Table<Weapon>()
-                    .Drop();
+                context.Database.Table<Weapon>().Drop();
 
                 context.Commit();
 
@@ -301,5 +298,46 @@ namespace PersistanceMap.SqlServer.Test
         //        Assert.IsFalse(tables.Any(t => t.Name == typeof(Warrior).Name));
         //    }
         //}
+
+        [Test]
+        public void AddFieldByString()
+        {
+            CreateDatabaseIfNotExists();
+
+            var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
+            using (var context = provider.Open())
+            {
+                context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();
+                context.Database.Table<Warrior>().Column("Race", FieldOperation.Add, typeof(string)).Alter();
+                context.Commit();
+            }
+        }
+
+        [Test]
+        public void AddFieldByStringFail()
+        {
+            CreateDatabaseIfNotExists();
+
+            var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
+            using (var context = provider.Open())
+            {
+                context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();
+                Assert.Throws<ArgumentNullException>(() => context.Database.Table<Warrior>().Column("Race", FieldOperation.Add).Alter());
+            }
+        }
+
+        [Test]
+        public void DeleteField()
+        {
+            CreateDatabaseIfNotExists();
+
+            var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
+            using (var context = provider.Open())
+            {
+                context.Database.Table<Warrior>().Create();
+                context.Database.Table<Warrior>().Column("Race", FieldOperation.Drop).Alter();
+                context.Commit();
+            }
+        }
     }
 }
