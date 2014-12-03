@@ -14,10 +14,10 @@ PersistanceMap currently supports MSSql and SQLite RDMBS Servers.
 ------------------------------
 PersistanceMap can be installed from [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) through the package manager console.
 
-MSSql Server:
+MSSql Server:  
 PM > Install-Package PersistanceMap
 
-SQLite:
+SQLite:  
 PM > Install-Package PersistanceMap.Sqlite
 
 # Examples
