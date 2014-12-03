@@ -6,26 +6,34 @@ PersistanceMap
 PersistanceMap is a small, extremely lightweight and intuitive code fist ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The Queries are executed against a RDBMS using ADO.NET. The resulting data is automaticaly mapped into Dataobjects/POCO's.
 The synthax is simple and easy to use and resemles the SQL or LINQ synthax.
 PersistanceMap is extremely lightweight and leaves no traces in the client code.
-The current versions only support MSSql Servers.
 
 PersistanceMap currently supports MSSql and SQLite RDMBS Servers.
 
 ## Installation
 ------------------------------
 PersistanceMap can be installed from [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) through the package manager console.
-
 MSSql Server:  
+```
 PM > Install-Package PersistanceMap
-
-SQLite:  
+```
+SQLite: 
+``` 
 PM > Install-Package PersistanceMap.Sqlite
-
+```
 # Examples
 ------------------------------
 ## Context
-The databaseConnection opens a IDatabaseContext. IDatabaseContext containes Extensionmethods that can be used to select, insert, update or delete data from a Database.
+The ContextProvider opens a IDatabaseContext for a Databaseconnection. IDatabaseContext containes methods that can be used to select, insert, update or delete data from a Database and to create or alter Database, Tables and Fields.
 ```csharp
+// Sql Database
 var provider = new SqlContextProvider(connectionString);
+using (var context = provider.Open())
+{
+	// use context to create Queries
+}
+
+// Sqlite Database
+var provider = new SqliteContextProvider(connectionString);
 using (var context = provider.Open())
 {
 	// use context to create Queries
