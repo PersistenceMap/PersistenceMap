@@ -18,8 +18,15 @@ namespace PersistanceMap
 
         public Settings Settings { get; private set; }
 
+        /// <summary>
+        /// The connection to a SqlCe database
+        /// </summary>
         public IConnectionProvider ConnectionProvider { get; private set; }
 
+        /// <summary>
+        /// Creates a context for connecting to a SqlCe database
+        /// </summary>
+        /// <returns></returns>
         public virtual SqlCeDatabaseContext Open()
         {
             return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory);

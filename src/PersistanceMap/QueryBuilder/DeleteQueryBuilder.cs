@@ -132,7 +132,7 @@ namespace PersistanceMap.QueryBuilder
             foreach (var expr in expressions)
             {
                 // add all expressions to the queryexpression
-                var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => string.Format("{0} {1} ", first == expr ? "WHERE" : "and", LambdaToSqlCompiler.Compile(expr)));
+                var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => string.Format("{0} {1} ", first == expr ? "WHERE" : "AND", LambdaToSqlCompiler.Compile(expr)));
                 QueryPartsMap.Add(part);
             }
 

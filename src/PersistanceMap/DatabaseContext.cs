@@ -25,8 +25,14 @@ namespace PersistanceMap
 
         #region IDatabaseContext Implementation
 
+        /// <summary>
+        /// Provides a connection to a specific RDBMS
+        /// </summary>
         public IConnectionProvider ConnectionProvider { get; private set; }
 
+        /// <summary>
+        /// Commit the queries contained in the commandstore
+        /// </summary>
         public void Commit()
         {
             var command = QueryCommandStore.FirstOrDefault();
@@ -39,11 +45,18 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Add a query to the commandstore
+        /// </summary>
+        /// <param name="command"></param>
         public void AddQuery(IQueryCommand command)
         {
             _queryCommandStore.Add(command);
         }
 
+        /// <summary>
+        /// The commandstore containing all queries that have not been executed
+        /// </summary>
         public IEnumerable<IQueryCommand> QueryCommandStore
         {
             get
@@ -55,7 +68,7 @@ namespace PersistanceMap
 
         private QueryKernel _kernel;
         /// <summary>
-        /// Gets or sets a MappingStrategy
+        /// The kernel providing the execution of the query and mapping of the data
         /// </summary>
         public QueryKernel Kernel
         {

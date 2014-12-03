@@ -17,6 +17,9 @@ namespace PersistanceMap
 
         protected string ConnectionString { get; private set; }
 
+        /// <summary>
+        /// The name of the database
+        /// </summary>
         public string Database
         {
             get
@@ -37,6 +40,9 @@ namespace PersistanceMap
         }
 
         private IQueryCompiler _queryCompiler;
+        /// <summary>
+        /// The querycompiler that is needed to compiel a querypartsmap to a sql statement
+        /// </summary>
         public virtual IQueryCompiler QueryCompiler
         {
             get
@@ -48,6 +54,11 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Execute the sql string to the RDBMS
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public virtual IReaderContext Execute(string query)
         {
             var connection = new SqlCeConnection(ConnectionString);
@@ -59,19 +70,19 @@ namespace PersistanceMap
         }
 
         /// <summary>
-        /// Executes a sql query without returning a resultset
+        /// Execute the sql string to the RDBMS
         /// </summary>
         /// <param name="query"></param>
-        public IReaderContext ExecuteNonQuery(string query)
+        public void ExecuteNonQuery(string query)
         {
-            var connection = new SqlCeConnection(ConnectionString);
-
-            connection.Open();
-            var command = new SqlCeCommand(query, connection);
-
-            command.ExecuteNonQuery();
-
-            return new SqlCeContextReader(null, connection, command);
+            using (var connection = new SqlCeConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCeCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         #region IDisposeable Implementation

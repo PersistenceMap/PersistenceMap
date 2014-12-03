@@ -7,6 +7,10 @@ namespace PersistanceMap
     /// </summary>
     public interface IQueryCommand
     {
+        /// <summary>
+        /// Execute the query contained in the command
+        /// </summary>
+        /// <param name="context"></param>
         void Execute(IDatabaseContext context);
     }
 }

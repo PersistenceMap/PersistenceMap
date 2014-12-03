@@ -2,16 +2,14 @@
 
 namespace PersistanceMap
 {
+    /// <summary>
+    /// Provides a database context
+    /// </summary>
     public interface IContextProvider : IDisposable
     {
-        //string ConnectionString { get; }
-
-        //IQueryCompiler QueryCompiler { get; }
-
-        //IReaderContext Execute(string query);
-
-        //IReaderContext ExecuteNonQuery(string query);
-
+        /// <summary>
+        /// The connection to a RDBMS
+        /// </summary>
         IConnectionProvider ConnectionProvider { get; }
     }
 }

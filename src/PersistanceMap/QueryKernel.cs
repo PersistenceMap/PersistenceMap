@@ -72,10 +72,7 @@ namespace PersistanceMap
 
             try
             {
-                using (var reader = _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString))
-                {
-                    // make sure Disposed is called on reader!
-                }
+                _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString);
             }
             catch (Exception ex)
             {

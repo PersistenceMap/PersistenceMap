@@ -14,8 +14,15 @@ namespace PersistanceMap
 
         public Settings Settings { get; private set; }
 
+        /// <summary>
+        /// The connection to a Sql Server database
+        /// </summary>
         public IConnectionProvider ConnectionProvider { get; private set; }
 
+        /// <summary>
+        /// Creates a context for connecting to a Sql Server database
+        /// </summary>
+        /// <returns></returns>
         public virtual SqlDatabaseContext Open()
         {
             return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory);

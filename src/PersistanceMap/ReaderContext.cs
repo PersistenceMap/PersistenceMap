@@ -13,8 +13,14 @@ namespace PersistanceMap
             DataReader = reader;
         }
 
+        /// <summary>
+        /// The datareader that was returned from the database
+        /// </summary>
         public IDataReader DataReader { get; private set; }
 
+        /// <summary>
+        /// Close all connections to the reader and the database
+        /// </summary>
         public virtual void Close()
         {
         }

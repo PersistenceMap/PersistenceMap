@@ -2,16 +2,32 @@
 
 namespace PersistanceMap
 {
+    /// <summary>
+    /// The connection to a specific RDBMS
+    /// </summary>
     public interface IConnectionProvider : IDisposable
     {
-        //string ConnectionString { get; }
-
+        /// <summary>
+        /// The name of the database
+        /// </summary>
         string Database { get; set; }
 
+        /// <summary>
+        /// The querycompiler that is needed to compiel a querypartsmap to a sql statement
+        /// </summary>
         IQueryCompiler QueryCompiler { get; }
 
+        /// <summary>
+        /// Execute the sql string to the RDBMS
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
         IReaderContext Execute(string query);
 
-        IReaderContext ExecuteNonQuery(string query);
+        /// <summary>
+        /// Execute the sql string to the RDBMS
+        /// </summary>
+        /// <param name="query"></param>
+        void ExecuteNonQuery(string query);
     }
 }

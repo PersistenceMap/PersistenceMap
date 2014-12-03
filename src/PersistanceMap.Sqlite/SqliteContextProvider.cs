@@ -15,8 +15,15 @@ namespace PersistanceMap
 
         public Settings Settings { get; private set; }
 
+        /// <summary>
+        /// The connection to a Sqlite database
+        /// </summary>
         public IConnectionProvider ConnectionProvider { get; private set; }
 
+        /// <summary>
+        /// Creates a context for connecting to a Sqlite database
+        /// </summary>
+        /// <returns></returns>
         public virtual SqliteDatabaseContext Open()
         {
             return new SqliteDatabaseContext(ConnectionProvider, Settings.LoggerFactory);

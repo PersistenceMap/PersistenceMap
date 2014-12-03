@@ -71,7 +71,7 @@ namespace PersistanceMap.Test.Expression
         [Description("A delete statement that is build depending on the properties of a anonym object containing multile properties")]
         public void DeleteEntityWithAnonymObjectContainingMultipleParams()
         {
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')"));
+            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1) AND (Employee.LastName = 'Lastname') AND (Employee.FirstName = 'Firstname')"));
             using (var context = provider.Open())
             {
                 context.Delete<Employee>(() => new { EmployeeID = 1, LastName = "Lastname", FirstName = "Firstname" });

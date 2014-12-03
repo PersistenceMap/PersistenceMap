@@ -1,7 +1,4 @@
-﻿using PersistanceMap.Tracing;
-using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryParts;
-using System.Linq;
+﻿using PersistanceMap.QueryBuilder;
 
 namespace PersistanceMap
 {
@@ -10,15 +7,22 @@ namespace PersistanceMap
     /// </summary>
     public class QueryCompiler : IQueryCompiler
     {
-        //public QueryCompiler(ILoggerFactory loggerFactory)
-        //{
-        //}
-
+        /// <summary>
+        /// Compile IQueryPartsMap to a QueryString
+        /// </summary>
+        /// <param name="queryParts"></param>
+        /// <returns></returns>
         public virtual CompiledQuery Compile(IQueryPartsMap queryParts)
         {
             return queryParts.Compile();
         }
 
+        /// <summary>
+        /// Compile IQueryPartsMap to a QueryString
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryParts"></param>
+        /// <returns></returns>
         public virtual CompiledQuery Compile<T>(IQueryPartsMap queryParts)
         {
             ////TODO: field parts should be added before the compiler

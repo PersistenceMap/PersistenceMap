@@ -285,10 +285,12 @@ namespace PersistanceMap.Test
 
             public IReaderContext Execute(string query)
             {
-                return ExecuteNonQuery(query);
+                ExecuteNonQuery(query);
+
+                return new CallbackReaderContext();
             }
 
-            public IReaderContext ExecuteNonQuery(string query)
+            public void ExecuteNonQuery(string query)
             {
                 if (Callback == null)
                     throw new ArgumentNullException("Callback was not set prior to execution");
@@ -296,8 +298,6 @@ namespace PersistanceMap.Test
                 Callback(query);
 
                 _callbackCalled = true;
-
-                return new CallbackReaderContext();
             }
 
             #region IDisposeable Implementation
