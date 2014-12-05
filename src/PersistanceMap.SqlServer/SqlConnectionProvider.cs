@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 
@@ -7,33 +6,20 @@ namespace PersistanceMap
 {
     public class SqlConnectionProvider : IConnectionProvider
     {
-        static SqlConnectionProvider()
-        {
-            // create a set of patterns how the catalog could be displayed in the connectionstring
-            CatalogPatterns = new List<string>
-            {
-                "Initial Catalog =",
-                "initial iatalog =",
-                "initial iatalog=",
-                "Database =",
-                "Database=",
-                "database =",
-                "database="
-            };
-        }
-
-        private static readonly IEnumerable<string> CatalogPatterns;
-
         public SqlConnectionProvider(string connectionString)
         {
-            ConnectionString = connectionString;
+            ConnectionString = connectionString
+                .Replace("Initial Catalog =", "Initial Catalog=")
+                .Replace("initial iatalog =", "Initial Catalog=")
+                .Replace("initial iatalog=", "Initial Catalog=")
+                .Replace("Database =", "Initial Catalog=")
+                .Replace("Database=", "Initial Catalog=")
+                .Replace("database =", "Initial Catalog=")
+                .Replace("database=", "Initial Catalog=");
         }
 
-        /// <summary>
-        /// The Connectionstring
-        /// </summary>
         protected string ConnectionString { get; private set; }
-        
+
         /// <summary>
         /// The name of the database
         /// </summary>
@@ -41,31 +27,18 @@ namespace PersistanceMap
         {
             get
             {
-                foreach (var pattern in CatalogPatterns)
-                {
-                    var regex = new Regex(string.Format("{0}([^;]*);", pattern));
-                    var match = regex.Match(ConnectionString);
-                    if (match.Success)
-                    {
-                        return match.Value.Replace(pattern, "").Replace(";", "");
-                    }
-                }
+                var regex = new Regex("Initial Catalog=([^;]*);");
+                var match = regex.Match(ConnectionString);
+                if (match.Success)
+                    return match.Value.Replace("Initial Catalog=", "").Replace(";", "");
 
                 return null;
             }
             set
             {
                 // set new database name
-                foreach (var pattern in CatalogPatterns)
-                {
-                    var regex = new Regex(string.Format("{0}([^;]*);", pattern));
-                    var match = regex.Match(ConnectionString);
-                    if (match.Success)
-                    {
-                        ConnectionString = regex.Replace(ConnectionString, string.Format("{0}{1};", pattern, value));
-                        return;
-                    }
-                }
+                var regex = new Regex("Initial Catalog=([^;]*);");
+                ConnectionString = regex.Replace(ConnectionString, string.Format("Initial Catalog={0};", value));
             }
         }
 
