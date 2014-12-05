@@ -18,7 +18,7 @@ namespace PersistanceMap
         readonly IConnectionProvider _connectionProvider;
 
         readonly Lazy<ILogger> _logger;
-        private ILogger Logger
+        internal ILogger Logger
         {
             get
             {

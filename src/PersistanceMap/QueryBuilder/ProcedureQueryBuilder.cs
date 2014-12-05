@@ -63,21 +63,12 @@ namespace PersistanceMap.QueryBuilder
 
         protected void ReadReturnValues(IReaderContext reader, QueryKernel kernel)
         {
-            //var objectDefs = QueryPartsMap.Parts.Where(p => p.OperationType== OperationType.Parameter).OfType<IParameterQueryPart>().Where(p => p.CanHandleCallback)
-            //    .Select(p =>
-            //        new ObjectDefinition
-            //        {
-            //            Name = p.CallbackName,
-            //            ObjectType = p.CallbackType
-            //        }).ToArray();
-
-            var objectDefs = QueryPartsMap.Callbacks
-                .Select(p =>
-                    new ObjectDefinition
-                    {
-                        Name = p.Id,
-                        ObjectType = p.CallbackValueType
-                    }).ToArray();
+            var objectDefs = QueryPartsMap.Callbacks.Select(p =>
+                new ObjectDefinition
+                {
+                    Name = p.Id,
+                    ObjectType = p.CallbackValueType
+                }).ToArray();
 
 
             var mapping = kernel.MapToDictionary(reader, objectDefs).FirstOrDefault();
@@ -98,9 +89,7 @@ namespace PersistanceMap.QueryBuilder
                 }
                 catch (Exception e)
                 {
-                    //Trace.WriteLine(e);
-                    //TODO: log instad of trace
-                    Logger.TraceLine(e.Message);
+                    kernel.Logger.Write(e.Message);
                 }
             }
         }
@@ -335,11 +324,6 @@ namespace PersistanceMap.QueryBuilder
 
     public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryExpression<T>, IQueryExpression
     {
-        public ProcedureQueryProvider(IDatabaseContext context, string procName)
-            : this(context, procName, null)
-        {
-        }
-
         public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
             : base(context, procName, queryPartsMap)
         {

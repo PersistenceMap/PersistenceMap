@@ -125,8 +125,6 @@
     <Compile Include="IProcedureQueryExpression.cs" />
     <Compile Include="IQueryPartsMap.cs" />
     <Compile Include="QueryParts\ProcedureQueryPartsMap.cs" />
-    <Compile Include="QueryParts\INamedQueryPart.cs" />
-    <Compile Include="QueryParts\IParameterQueryPart.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="QueryParts\IEntityMap.cs" />
     <Compile Include="ReaderContext.cs" />
