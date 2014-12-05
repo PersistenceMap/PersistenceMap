@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlServerCe;
 using System.Text.RegularExpressions;
 
@@ -6,15 +7,28 @@ namespace PersistanceMap
 {
     public class SqlCeConnectionProvider : IConnectionProvider
     {
+        static SqlCeConnectionProvider()
+        {
+            // create a set of patterns how the catalog could be displayed in the connectionstring
+            CatalogPatterns = new List<string>
+            {
+                "Data Source =",
+                "data dource =",
+                "data source="
+            };
+        }
+
+        private static readonly IEnumerable<string> CatalogPatterns;
+
         public SqlCeConnectionProvider(string connectionString)
         {
             // format the string
-            ConnectionString = connectionString
-                .Replace("Data Source =", "Data Source=")
-                .Replace("data dource =", "Data Source=")
-                .Replace("data source=", "Data Source=");
+            ConnectionString = connectionString;
         }
 
+        /// <summary>
+        /// The connectionstring
+        /// </summary>
         protected string ConnectionString { get; private set; }
 
         /// <summary>
@@ -24,18 +38,31 @@ namespace PersistanceMap
         {
             get
             {
-                var regex = new Regex("Data Source=([^;]*);");
-                var match = regex.Match(ConnectionString);
-                if (match.Success)
-                    return match.Value.Replace("Data Source=", "").Replace(";", "");
+                foreach (var pattern in CatalogPatterns)
+                {
+                    var regex = new Regex(string.Format("{0}([^;]*);", pattern));
+                    var match = regex.Match(ConnectionString);
+                    if (match.Success)
+                    {
+                        return match.Value.Replace(pattern, "").Replace(";", "");
+                    }
+                }
 
                 return null;
             }
             set
             {
                 // set new database name
-                var regex = new Regex("Data Source=([^;]*);");
-                ConnectionString = regex.Replace(ConnectionString, string.Format("Data Source={0};", value));
+                foreach (var pattern in CatalogPatterns)
+                {
+                    var regex = new Regex(string.Format("{0}([^;]*);", pattern));
+                    var match = regex.Match(ConnectionString);
+                    if (match.Success)
+                    {
+                        ConnectionString = regex.Replace(ConnectionString, string.Format("{0}{1};", pattern, value));
+                        return;
+                    }
+                }
             }
         }
 
