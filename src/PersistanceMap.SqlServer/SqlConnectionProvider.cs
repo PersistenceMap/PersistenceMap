@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions;
 
 namespace PersistanceMap
 {
     public class SqlConnectionProvider : IConnectionProvider
     {
+        private readonly Lazy<ConnectionStringFactory> _connectionStringFactory;
+
         public SqlConnectionProvider(string connectionString)
         {
-            ConnectionString = connectionString
-                .Replace("Initial Catalog =", "Initial Catalog=")
-                .Replace("initial iatalog =", "Initial Catalog=")
-                .Replace("initial iatalog=", "Initial Catalog=")
-                .Replace("Database =", "Initial Catalog=")
-                .Replace("Database=", "Initial Catalog=")
-                .Replace("database =", "Initial Catalog=")
-                .Replace("database=", "Initial Catalog=");
+            ConnectionString = connectionString;
+            _connectionStringFactory = new Lazy<ConnectionStringFactory>(() => new ConnectionStringFactory());
         }
 
+        /// <summary>
+        /// The connectionstring
+        /// </summary>
         protected string ConnectionString { get; private set; }
 
         /// <summary>
@@ -27,18 +25,12 @@ namespace PersistanceMap
         {
             get
             {
-                var regex = new Regex("Initial Catalog=([^;]*);");
-                var match = regex.Match(ConnectionString);
-                if (match.Success)
-                    return match.Value.Replace("Initial Catalog=", "").Replace(";", "");
-
-                return null;
+                return _connectionStringFactory.Value.GetDatabase(ConnectionString);
             }
             set
             {
                 // set new database name
-                var regex = new Regex("Initial Catalog=([^;]*);");
-                ConnectionString = regex.Replace(ConnectionString, string.Format("Initial Catalog={0};", value));
+                ConnectionString = _connectionStringFactory.Value.SetDatabase(value, ConnectionString);
             }
         }
 

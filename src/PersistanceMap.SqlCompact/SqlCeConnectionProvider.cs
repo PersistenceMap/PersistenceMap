@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Data.SqlServerCe;
-using System.Text.RegularExpressions;
 
 namespace PersistanceMap
 {
     public class SqlCeConnectionProvider : IConnectionProvider
     {
+        private readonly Lazy<ConnectionStringFactory> _connectionStringFactory;
+
         public SqlCeConnectionProvider(string connectionString)
         {
             // format the string
-            ConnectionString = connectionString
-                .Replace("Data Source =", "Data Source=")
-                .Replace("data dource =", "Data Source=")
-                .Replace("data source=", "Data Source=");
+            ConnectionString = connectionString;
+            _connectionStringFactory = new Lazy<ConnectionStringFactory>(() => new ConnectionStringFactory());
         }
 
+        /// <summary>
+        /// The connectionstring
+        /// </summary>
         protected string ConnectionString { get; private set; }
 
         /// <summary>
@@ -24,18 +26,12 @@ namespace PersistanceMap
         {
             get
             {
-                var regex = new Regex("Data Source=([^;]*);");
-                var match = regex.Match(ConnectionString);
-                if (match.Success)
-                    return match.Value.Replace("Data Source=", "").Replace(";", "");
-
-                return null;
+                return _connectionStringFactory.Value.GetDatabase(ConnectionString);
             }
             set
             {
                 // set new database name
-                var regex = new Regex("Data Source=([^;]*);");
-                ConnectionString = regex.Replace(ConnectionString, string.Format("Data Source={0};", value));
+                ConnectionString = _connectionStringFactory.Value.SetDatabase(value, ConnectionString);
             }
         }
 
