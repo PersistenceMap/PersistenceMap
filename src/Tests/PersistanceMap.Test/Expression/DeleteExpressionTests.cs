@@ -63,7 +63,7 @@ namespace PersistanceMap.Test.Expression
             using (var context = provider.Open())
             {
                 ((CallbackContextProvider.CallbackConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
-
+                
                 Assert.Throws<ArgumentException>(() => context.Delete(() => new Employee {EmployeeID = 1}, key => key.EmployeeID == 1));
                 context.Commit();
             }

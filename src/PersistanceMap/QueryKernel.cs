@@ -17,19 +17,34 @@ namespace PersistanceMap
         protected const int NotFound = -1;
         readonly IConnectionProvider _connectionProvider;
 
-        readonly Lazy<ILogger> _logger;
+        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
+        {
+            _connectionProvider = provider;
+            _loggerFactory = loggerFactory;
+        }
+
+        readonly ILoggerFactory _loggerFactory;
+
+        /// <summary>
+        /// Gets the Loggerfactory for logging
+        /// </summary>
+        internal ILoggerFactory LoggerFactory
+        {
+            get
+            {
+                return _loggerFactory;
+            }
+        }
+
+        ILogger _logger;
         internal ILogger Logger
         {
             get
             {
-                return _logger.Value;
+                if (_logger == null)
+                    _logger = LoggerFactory.CreateLogger();
+                return _logger;
             }
-        }
-
-        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
-        {
-            _connectionProvider = provider;
-            _logger = new Lazy<ILogger>(() => loggerFactory.CreateLogger());
         }
 
         /// <summary>

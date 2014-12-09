@@ -14,27 +14,17 @@ namespace PersistanceMap
     public class DatabaseContext : IDatabaseContext
     {
         readonly IList<IQueryCommand> _queryCommandStore;
-        readonly ILoggerFactory _loggerFactory;
 
         public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
         {
             ConnectionProvider = provider;
             _queryCommandStore = new List<IQueryCommand>();
-            _loggerFactory = loggerFactory;
+            LoggerFactory = loggerFactory;
         }
 
         #region IDatabaseContext Implementation
 
-        /// <summary>
-        /// Gets the Loggerfactory for logging
-        /// </summary>
-        public ILoggerFactory LoggerFactory
-        {
-            get
-            {
-                return _loggerFactory;
-            }
-        }
+        internal ILoggerFactory LoggerFactory { get; private set; }
 
         /// <summary>
         /// Provides a connection to a specific RDBMS
@@ -86,7 +76,7 @@ namespace PersistanceMap
             get
             {
                 if (_kernel == null)
-                    _kernel = new QueryKernel(ConnectionProvider, _loggerFactory);
+                    _kernel = new QueryKernel(ConnectionProvider, LoggerFactory);
 
                 return _kernel;
             }

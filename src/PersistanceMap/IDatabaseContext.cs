@@ -10,11 +10,6 @@ namespace PersistanceMap
     public interface IDatabaseContext : IDisposable
     {
         /// <summary>
-        /// Gets the Loggerfactory for logging
-        /// </summary>
-        ILoggerFactory LoggerFactory { get; }
-
-        /// <summary>
         /// Provides a connection to a specific RDBMS
         /// </summary>
         IConnectionProvider ConnectionProvider { get; }

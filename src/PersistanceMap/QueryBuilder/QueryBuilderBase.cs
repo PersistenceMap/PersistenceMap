@@ -22,7 +22,7 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_logger == null)
-                    _logger = Context.LoggerFactory.CreateLogger();
+                    _logger = Context.Kernel.LoggerFactory.CreateLogger();
                 return _logger;
             }
         }
