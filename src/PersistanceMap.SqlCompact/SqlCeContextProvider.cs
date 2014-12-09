@@ -16,6 +16,9 @@ namespace PersistanceMap
             Settings = new Settings();
         }
 
+        /// <summary>
+        /// The settings for the context
+        /// </summary>
         public Settings Settings { get; private set; }
 
         /// <summary>
