@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
 
 namespace PersistanceMap.Test.Expression
@@ -47,6 +48,32 @@ namespace PersistanceMap.Test.Expression
                 context.Commit();
 
                 Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 0, Race = 'Elf' WHERE (Warrior.ID = 1)");
+            }
+        }
+
+        [Test]
+        public void UpdateTestWithKeyExpression()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
+                context.Commit();
+            }
+        }
+
+        [Test]
+        public void UpdateTestWithKeyExpression_Fail()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                ((CallbackContextProvider.CallbackConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
+
+                Assert.Throws<ArgumentException>(() => context.Update(() => new Warrior {ID = 1, Race = "Elf", WeaponID = 2}, e => e.ID == 1));
+                context.Commit();
             }
         }
     }

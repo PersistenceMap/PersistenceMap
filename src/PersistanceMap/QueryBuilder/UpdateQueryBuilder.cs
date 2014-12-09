@@ -4,6 +4,7 @@ using PersistanceMap.Sql;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using PersistanceMap.Tracing;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -20,6 +21,16 @@ namespace PersistanceMap.QueryBuilder
             _queryPartsMap = container;
         }
 
+        private ILogger _logger;
+        protected ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                    _logger = Context.LoggerFactory.CreateLogger();
+                return _logger;
+            }
+        }
      
         #region IQueryProvider Implementation
 
@@ -66,12 +77,12 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="T">Tabletype to update</typeparam>
         /// <param name="dataPredicate">Expression providing the object containing the data</param>
-        /// <param name="where">The expression providing the where statement</param>
+        /// <param name="identification">The expression providing the identification/key property  on the entity</param>
         /// <returns></returns>
-        public IUpdateQueryExpression<T> Update(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> where = null)
+        public IUpdateQueryExpression<T> Update(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> identification = null)
         {
             // create expression containing key and value for the where statement
-            var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, where);
+            var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, identification);
             if (whereexpr == null)
             {
                 // find the property called ID or {objectname}ID to define the where expression

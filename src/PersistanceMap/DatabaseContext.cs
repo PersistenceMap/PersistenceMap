@@ -26,6 +26,17 @@ namespace PersistanceMap
         #region IDatabaseContext Implementation
 
         /// <summary>
+        /// Gets the Loggerfactory for logging
+        /// </summary>
+        public ILoggerFactory LoggerFactory
+        {
+            get
+            {
+                return _loggerFactory;
+            }
+        }
+
+        /// <summary>
         /// Provides a connection to a specific RDBMS
         /// </summary>
         public IConnectionProvider ConnectionProvider { get; private set; }
@@ -197,11 +208,11 @@ namespace PersistanceMap
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="dataObject">The entity to delete</param>
-        /// <param name="where">The property defining the key on the entity</param>
-        public IDeleteQueryExpression Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        /// <param name="identification">The property defining the identification/key property on the entity</param>
+        public IDeleteQueryExpression Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> identification = null)
         {
             return new DeleteQueryBuilder(this)
-                .Delete(dataObject, where)
+                .Delete(dataObject, identification)
                 .AddToStore();
         }
 
@@ -227,12 +238,12 @@ namespace PersistanceMap
         /// </summary>
         /// <typeparam name="T">Tabletype to update</typeparam>
         /// <param name="dataObject">Expression providing the object containing the data</param>
-        /// <param name="where">The expression providing the where statement</param>
+        /// <param name="identification">The expression providing the identification/key property on the entity</param>
         /// <returns></returns>
-        public IUpdateQueryExpression<T> Update<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        public IUpdateQueryExpression<T> Update<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> identification = null)
         {
             return new UpdateQueryBuilder<T>(this)
-                .Update(dataObject, where)
+                .Update(dataObject, identification)
                 .AddToStore();
         }
 

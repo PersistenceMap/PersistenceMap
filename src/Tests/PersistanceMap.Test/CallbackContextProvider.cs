@@ -267,7 +267,10 @@ namespace PersistanceMap.Test
             public CallbackConnectionProvider(ContextProviderCallbackHandler callback)
             {
                 Callback = callback;
+                CheckCallbackCall = true;
             }
+
+            public bool CheckCallbackCall { get; set; }
 
             public string Database { get; set; }
 
@@ -324,7 +327,7 @@ namespace PersistanceMap.Test
             {
                 if (disposing && !IsDisposed)
                 {
-                    if (_callbackCalled == false)
+                    if (CheckCallbackCall && _callbackCalled == false)
                         throw new Exception("Callback was not called by client");
 
                     IsDisposed = true;

@@ -1,4 +1,5 @@
 ﻿using PersistanceMap.QueryParts;
+using PersistanceMap.Tracing;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -13,6 +14,17 @@ namespace PersistanceMap.QueryBuilder
         {
             _context = context;
             _queryPartsMap = container;
+        }
+
+        private ILogger _logger;
+        protected ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                    _logger = Context.LoggerFactory.CreateLogger();
+                return _logger;
+            }
         }
 
         #region IQueryProvider Implementation

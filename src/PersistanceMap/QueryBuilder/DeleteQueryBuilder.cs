@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
+using PersistanceMap.Tracing;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -21,6 +22,17 @@ namespace PersistanceMap.QueryBuilder
         {
             _context = context;
             _queryPartsMap = container;
+        }
+
+        private ILogger _logger;
+        protected ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                    _logger = Context.LoggerFactory.CreateLogger();
+                return _logger;
+            }
         }
 
         #region IQueryProvider Implementation
@@ -82,27 +94,35 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         /// <typeparam name="T">The Type that defines the Table to delete from</typeparam>
         /// <param name="dataObject">The entity to delete</param>
-        /// <param name="where">The property defining the key on the entity</param>
-        public IDeleteQueryExpression Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> where = null)
+        /// <param name="identification">The property defining the identification/key property on the entity</param>
+        public IDeleteQueryExpression Delete<T>(Expression<Func<T>> dataObject, Expression<Func<T, object>> identification = null)
         {
-            // create expression containing key and value for the where statement
-            var whereexpr = ExpressionFactory.CreateKeyExpression(dataObject, where);
-            if (whereexpr == null)
+            try
             {
-                // find the property called ID or {objectname}ID to define the where expression
-                whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
+                // create expression containing key and value for the where statement
+                var whereexpr = ExpressionFactory.CreateKeyExpression(dataObject, identification);
+                if (whereexpr == null)
+                {
+                    // find the property called ID or {objectname}ID to define the where expression
+                    whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
+                }
+
+                var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
+                QueryPartsMap.Add(deletePart);
+
+                var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof (T).Name));
+                QueryPartsMap.Add(entityPart);
+
+                var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+                QueryPartsMap.Add(part);
+
+                return new DeleteQueryBuilder(Context, QueryPartsMap);
             }
-
-            var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
-            QueryPartsMap.Add(deletePart);
-
-            var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof(T).Name));
-            QueryPartsMap.Add(entityPart);
-
-            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
-            QueryPartsMap.Add(part);
-
-            return new DeleteQueryBuilder(Context, QueryPartsMap);
+            catch (Exception e)
+            {
+                Logger.Write(e.Message, category: LoggerCategory.Error, logtime: DateTime.Now);
+                throw;
+            }
         }
 
         /// <summary>

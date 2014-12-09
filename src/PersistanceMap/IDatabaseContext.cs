@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PersistanceMap.Tracing;
 
 namespace PersistanceMap
 {
@@ -8,6 +9,11 @@ namespace PersistanceMap
     /// </summary>
     public interface IDatabaseContext : IDisposable
     {
+        /// <summary>
+        /// Gets the Loggerfactory for logging
+        /// </summary>
+        ILoggerFactory LoggerFactory { get; }
+
         /// <summary>
         /// Provides a connection to a specific RDBMS
         /// </summary>

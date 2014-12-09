@@ -54,6 +54,20 @@ namespace PersistanceMap.Test.Expression
                 context.Commit();
             }
         }
+
+        [Test]
+        [Description("A delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
+        public void DeleteEntityWithSpecialKey_Fail()
+        {
+            var provider = new CallbackContextProvider(s => Assert.Fail("This should not be reached"));
+            using (var context = provider.Open())
+            {
+                ((CallbackContextProvider.CallbackConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
+
+                Assert.Throws<ArgumentException>(() => context.Delete(() => new Employee {EmployeeID = 1}, key => key.EmployeeID == 1));
+                context.Commit();
+            }
+        }
         
         [Test]
         [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]

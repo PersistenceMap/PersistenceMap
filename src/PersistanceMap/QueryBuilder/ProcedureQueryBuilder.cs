@@ -25,6 +25,17 @@ namespace PersistanceMap.QueryBuilder
                 _queryPartsMap = queryPartsMap;
         }
 
+        private ILogger _logger;
+        protected ILogger Logger
+        {
+            get
+            {
+                if (_logger == null)
+                    _logger = Context.LoggerFactory.CreateLogger();
+                return _logger;
+            }
+        }
+
         #region IQueryProvider Implementation
 
         public string ProcedureName { get; private set; }
