@@ -35,12 +35,24 @@ namespace PersistanceMap
         /// </summary>
         public PropertyInfo PropertyInfo { get; set; }
 
+        /// <summary>
+        /// Gets a value indicating if the property is nullable
+        /// </summary>
         public bool IsNullable { get; set; }
 
+        /// <summary>
+        /// Gets a vlaue indicating if the property is a primary key property
+        /// </summary>
         public bool IsPrimaryKey { get; set; }
 
+        /// <summary>
+        /// Returnes the delegate that is used to get the value from the property
+        /// </summary>
         public PropertyGetterDelegate GetValueFunction { get; set; }
 
+        /// <summary>
+        /// Returnes a delegate that is used to set the value to the property
+        /// </summary>
         public PropertySetterDelegate SetValueFunction { get; set; }
 
         /// <summary>
