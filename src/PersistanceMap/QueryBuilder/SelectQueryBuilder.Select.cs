@@ -109,7 +109,7 @@ namespace PersistanceMap.QueryBuilder
             return Expression.Lambda<Func<object, object>>(Expression.Invoke(expression, Expression.Convert(p, typeof(TProp))), p);
         }
 
-        protected ISelectQueryExpression<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter = null)
+        protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter = null)
         {
             // if there is a alias on the last item it has to be used with the map
             var last = QueryPartsMap.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
@@ -123,6 +123,10 @@ namespace PersistanceMap.QueryBuilder
             {
                 isSealed = parent.IsSealded;
                 parent.IsSealded = false;
+
+                var duplicate = parent.Parts.FirstOrDefault(p => p.ID == (alias ?? source));
+                if (duplicate != null)
+                    parent.Remove(duplicate);
             }
 
             //SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias, converter);
@@ -139,6 +143,7 @@ namespace PersistanceMap.QueryBuilder
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
         }
+        
         /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias defined (Table.Field as Alias)
         /// </summary>

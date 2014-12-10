@@ -8,14 +8,6 @@ namespace PersistanceMap.QueryBuilder
 {
     public partial class SelectQueryBuilder<T> : IAfterMapQueryExpression<T>, IQueryExpression
     {
-        //public IAfterMapQueryExpression<T> AfterMap(Action<T> predicate)
-        //{
-        //    //QueryPartsMap.Add(new 
-
-
-        //    throw new NotImplementedException();
-        //}
-
         /// <summary>
         /// Marks the provided field as ignored. The field will not be included in the select.
         /// </summary>
@@ -23,24 +15,6 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IAfterMapQueryProvider{T}</returns>
         IAfterMapQueryExpression<T> IAfterMapQueryExpression<T>.Ignore(Expression<Func<T, object>> predicate)
         {
-            //foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
-            //{
-            //    var map = part as IQueryPartDecorator;
-            //    if (map == null)
-            //        continue;
-
-            //    var fieldName = FieldHelper.TryExtractPropertyName(predicate);
-
-            //    //var subpart = map.Parts.FirstOrDefault(f => f is IFieldQueryPart && ((IFieldQueryPart)f).Field == fieldName || ((IFieldQueryPart)f).FieldAlias == fieldName);
-            //    var subpart = map.Parts.OfType<IFieldQueryPart>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
-            //    if (subpart != null)
-            //        map.Remove(subpart);
-
-            //    map.Add(new IgnoreFieldQueryPart(subpart.Field, subpart.FieldAlias));
-            //}
-
-            //return new SelectQueryBuilder<T>(Context, QueryPartsMap);
-
             return Ignore(predicate);
         }
 
@@ -68,6 +42,23 @@ namespace PersistanceMap.QueryBuilder
             }
 
             return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+        }
+
+        /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
+        /// </summary>
+        /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
+        /// <param name="source">The source expression returning the source property</param>
+        /// <param name="alias">The select expression returning the alias property</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        IAfterMapQueryExpression<T> IAfterMapQueryExpression<T>.Map<TAlias>(Expression<Func<TAlias, object>> source, Expression<Func<T, object>> alias = null, Expression<Func<object, object>> converter = null)
+        {
+            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var sourceField = FieldHelper.TryExtractPropertyName(source);
+            var entity = typeof(TAlias).Name;
+
+            return Map(sourceField, aliasField, entity, null, converter);
         }
 
         /// <summary>

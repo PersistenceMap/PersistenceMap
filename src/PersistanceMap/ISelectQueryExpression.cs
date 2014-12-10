@@ -369,6 +369,16 @@ namespace PersistanceMap
         IAfterMapQueryExpression<T> Map<TSource>(Expression<Func<TSource, object>> predicate);
 
         /// <summary>
+        /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
+        /// </summary>
+        /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
+        /// <param name="source">The source expression returning the source property</param>
+        /// <param name="alias">The select expression returning the alias property</param>
+        /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
+        /// <returns>ISelectQueryProvider containing the maps</returns>
+        IAfterMapQueryExpression<T> Map<TAlias>(Expression<Func<TAlias, object>> source, Expression<Func<T, object>> alias = null, Expression<Func<object, object>> converter = null);
+
+        /// <summary>
         /// Marks a field to be grouped by
         /// </summary>
         /// <param name="predicate">The property to group by</param>

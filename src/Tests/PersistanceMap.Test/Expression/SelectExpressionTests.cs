@@ -453,6 +453,33 @@ namespace PersistanceMap.Test.Expression
         }
 
         [Test]
+        public void SelectTestWithForAndCustomMaps()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // select statement with a FOR expression and mapping members/fields to a specific table
+                context.From<Orders>().Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Map<Orders>(o => o.OrdersID).Select();
+                var expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                Assert.AreEqual(sql, expected);
+
+                // select statement with a FOR expression and ignoring fields in the resultset
+                context.From<Warrior>().Join<Weapon>((wpn, wrir) => wpn.ID == wrir.WeaponID)
+                    .For(() => new 
+                    { 
+                        WarriorName = "", 
+                        WeaponName = "" 
+                    })
+                    .Map<Warrior>(wrir => wrir.Name, a => a.WarriorName)
+                    .Map<Weapon>(wpn => wpn.Name, a => a.WeaponName)
+                    .Select();
+                expected = "SELECT Warrior.Name as WarriorName, Weapon.Name as WeaponName FROM Warrior JOIN Weapon ON (Weapon.ID = Warrior.WeaponID)";
+                Assert.AreEqual(sql, expected);
+            }
+        }
+
+        [Test]
         public void SelectWithWhereTest()
         {
             var sql = "";
