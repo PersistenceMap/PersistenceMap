@@ -426,7 +426,7 @@ namespace PersistanceMap.Test.Expression
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
                 context.From<Orders>().Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Map<Orders>(o => o.OrdersID).Select();
-                var expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, Orders.OrdersID FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a FOR expression and ignoring fields in the resultset
@@ -461,7 +461,7 @@ namespace PersistanceMap.Test.Expression
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
                 context.From<Orders>().Join<OrderDetails>((od, o) => od.OrdersID == o.OrdersID).For<Orders>().Map<Orders>(o => o.OrdersID).Select();
-                var expected = "SELECT Orders.OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = "SELECT CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, Orders.OrdersID FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
                 Assert.AreEqual(sql, expected);
 
                 // select statement with a FOR expression and ignoring fields in the resultset

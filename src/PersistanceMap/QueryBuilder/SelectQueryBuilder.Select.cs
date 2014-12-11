@@ -109,7 +109,7 @@ namespace PersistanceMap.QueryBuilder
             return Expression.Lambda<Func<object, object>>(Expression.Invoke(expression, Expression.Convert(p, typeof(TProp))), p);
         }
 
-        protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter = null)
+        protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter)
         {
             // if there is a alias on the last item it has to be used with the map
             var last = QueryPartsMap.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
@@ -129,7 +129,6 @@ namespace PersistanceMap.QueryBuilder
                     parent.Remove(duplicate);
             }
 
-            //SelectQueryPartsBuilder.Instance.AddFieldQueryMap(QueryPartsMap, source, alias, entity, entityalias, converter);
             var part = new FieldQueryPart(source, alias, entityalias, entity, alias ?? source, converter)
             {
                 OperationType = OperationType.Include

@@ -19,44 +19,21 @@ namespace PersistanceMap.QueryBuilder
         }
 
         /// <summary>
-        /// Maps the provided field to a specific table. This helps to avoid Ambiguous column errors.
-        /// </summary>
-        /// <typeparam name="TSource">The source Table to map the member from</typeparam>
-        /// <param name="predicate">Marks the member to be mapped</param>
-        /// <returns>IAfterMapQueryProvider{T}</returns>
-        public IAfterMapQueryExpression<T> Map<TSource>(Expression<Func<TSource, object>> predicate)
-        {
-            foreach (var part in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Select))
-            {
-                var map = part as IQueryPartDecorator;
-                if (map == null)
-                    continue;
-
-                var fieldName = FieldHelper.TryExtractPropertyName(predicate);
-
-                var subpart = map.Parts.OfType<IFieldMap>().FirstOrDefault(f => f.Field == fieldName || f.FieldAlias == fieldName);
-                if (subpart != null)
-                {
-                    subpart.EntityAlias = typeof (TSource).Name;
-                }
-            }
-
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
-        }
-
-        /// <summary>
         /// Map a Property that is included in the result that belongs to a joined type with an alias from the select type
         /// </summary>
-        /// <typeparam name="TAlias">The select type containig the alias property</typeparam>
+        /// <typeparam name="TSource">The select type containig the source property</typeparam>
         /// <param name="source">The source expression returning the source property</param>
         /// <param name="alias">The select expression returning the alias property</param>
         /// <param name="converter">The converter that converts the database value to the desired value in the dataobject</param>
-        /// <returns>ISelectQueryProvider containing the maps</returns>
-        IAfterMapQueryExpression<T> IAfterMapQueryExpression<T>.Map<TAlias>(Expression<Func<TAlias, object>> source, Expression<Func<T, object>> alias = null, Expression<Func<object, object>> converter = null)
+        /// <returns>IAfterMapQueryProvider{T} containing the maps</returns>
+        IAfterMapQueryExpression<T> IAfterMapQueryExpression<T>.Map<TSource>(Expression<Func<TSource, object>> source, Expression<Func<T, object>> alias = null, Expression<Func<object, object>> converter = null)
         {
-            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            string aliasField = null;
+            if(alias != null)
+                aliasField = FieldHelper.TryExtractPropertyName(alias);
+
             var sourceField = FieldHelper.TryExtractPropertyName(source);
-            var entity = typeof(TAlias).Name;
+            var entity = typeof(TSource).Name;
 
             return Map(sourceField, aliasField, entity, null, converter);
         }
