@@ -91,31 +91,6 @@ namespace PersistanceMap.Test.Integration
             }
         }
 
-        //[Test]
-        //public void ProcedureWithResultWithMapAndValueConvertersOnCustomType()
-        //{
-        //    var provider = new SqlContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        // proc with resultset without parameter names
-        //        var proc = context.Procedure("SalesByYear")
-        //            .AddParameter(() => new DateTime(1970, 1, 1))
-        //            .AddParameter(() => DateTime.Today)
-        //            .For<SalesByYear>()
-        //            .Map("ShippedDate", p => p.IsDateInAutum, value => ((DateTime)value).Month > 6 ? true : false)
-        //            .Map("ShippedDate", p => p.StringDate, value => ((DateTime)value).ToShortDateString())
-        //            .Execute<SalesByYearCustomValues>();
-
-        //        Assert.IsTrue(proc.Any());
-
-        //        Assert.AreEqual(proc.First().StringDate, proc.First().ShippedDate.ToShortDateString());
-        //        Assert.AreEqual(proc.First().IsDateInAutum, proc.First().ShippedDate.Month > 6);
-
-        //        Assert.AreEqual(proc.Last().StringDate, proc.Last().ShippedDate.ToShortDateString());
-        //        Assert.AreEqual(proc.Last().IsDateInAutum, proc.Last().ShippedDate.Month > 6);
-        //    }
-        //}
-
         [Test]
         public void ProcedureWithResultWithParamNames()
         {
@@ -145,6 +120,30 @@ namespace PersistanceMap.Test.Integration
                     .Execute<SalesByYear>();
 
                 Assert.IsTrue(proc.Any());
+            }
+        }
+
+        [Test]
+        public void ProcedureWithResultDefinedAsAnonymousObject()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                // proc with resultset with parameter names and @ before name
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .Execute(() => new
+                    {
+                        ShippedDate = DateTime.MinValue,
+                        OrdersID = 0,
+                        Subtotal = 0.0,
+                        SpecialSubtotal = 0.0,
+                        Year = 0
+                    });
+
+                Assert.IsTrue(proc.Any());
+                Assert.IsTrue(proc.First().ShippedDate > DateTime.MinValue);
             }
         }
 

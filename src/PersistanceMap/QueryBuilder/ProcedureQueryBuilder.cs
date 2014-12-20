@@ -330,6 +330,18 @@ namespace PersistanceMap.QueryBuilder
             return values;
         }
 
+
+        /// <summary>
+        /// Execute the Procedure and returns a list of the type defined by the anonymous object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="anonymous"></param>
+        /// <returns></returns>
+        public IEnumerable<T> Execute<T>(Expression<Func<T>> anonymous)
+        {
+            return Execute<T>();
+        }
+
         #endregion
     }
 
