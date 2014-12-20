@@ -365,6 +365,9 @@ namespace PersistanceMap
             if (HandledDbNullValue(objectDef, colIndex))
                 return null;
 
+            if (colIndex < 0)
+                return null;
+
             var dbValue = context.DataReader.GetValue(colIndex);
 
             var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDef.ObjectType);
