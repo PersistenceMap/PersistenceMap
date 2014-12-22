@@ -56,6 +56,19 @@ namespace PersistanceMap.Sqlite.Test
         }
 
         [Test]
+        public void GetDatabaseFromConnectionStringTest()
+        {
+            var provider = new SqliteContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                Assert.AreEqual(DatabaseName, context.ConnectionProvider.Database);
+
+                context.ConnectionProvider.Database = "Test.db";
+                Assert.AreEqual(context.ConnectionProvider.Database, "Test.db");
+            }
+        }
+
+        [Test]
         public void CreateTableMultyKey()
         {
             var provider = new SqliteContextProvider(ConnectionString);

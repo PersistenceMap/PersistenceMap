@@ -21,6 +21,7 @@ namespace PersistanceMap
                 "database =",
                 "database=",
                 "Data Source =",
+                "Data Source=",
                 "data dource =",
                 "data source="
             };
@@ -45,6 +46,14 @@ namespace PersistanceMap
                 }
             }
 
+            // sqlite connectionstring could be "data source=datebase.db"
+            foreach (var pattern in CatalogPatterns)
+            {
+                var index = connectionString.IndexOf(pattern);
+                if (index >= 0)
+                    return connectionString.Substring(index + pattern.Length);
+            }
+
             return null;
         }
 
@@ -65,6 +74,14 @@ namespace PersistanceMap
                 {
                     return regex.Replace(connectionString, string.Format("{0}{1};", pattern, database));
                 }
+            }
+
+            // sqlite connectionstring could be "data source=datebase.db"
+            foreach (var pattern in CatalogPatterns)
+            {
+                var index = connectionString.IndexOf(pattern);
+                if (index >= 0)
+                    return string.Format("{0}{1}", connectionString.Substring(0, index + pattern.Length), database);
             }
 
             return connectionString;
