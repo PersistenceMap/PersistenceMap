@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using PersistanceMap.Test;
 using PersistanceMap.Test.TableTypes;
 using System;
 using System.IO;
@@ -112,6 +113,29 @@ namespace PersistanceMap.Sqlite.Test
                 var tables = context.Select<Sqlite_Master>(m => m.Type == "table");
                 Assert.IsTrue(tables.Any(t => t.Name == typeof(Warrior).Name));
                 Assert.IsTrue(tables.Any(t => t.Name == typeof(Weapon).Name));
+            }
+        }
+
+        [Test]
+        public void CreateTableNotNullableColumn()
+        {
+            var provider = new SqliteContextProvider(ConnectionString);
+            var logger = new MessageStackLogger();
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
+            {
+                // table with a foreign key
+                context.Database.Table<Warrior>()
+                    .Column(wrir => wrir.Race, isNullable: false)
+                    .Create();
+
+                Assert.IsFalse(File.Exists(DatabaseName));
+
+                //context.QueryCommandStore.First().Execute(context);
+
+                context.Commit();
+
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE IF NOT EXISTS Warrior (ID int NOT NULL, Name varchar(1000), WeaponID int NOT NULL, SpecialSkill varchar(1000), Race varchar(1000) NOT NULL)");
             }
         }
 
@@ -236,6 +260,8 @@ namespace PersistanceMap.Sqlite.Test
         public void AddFieldByString()
         {
             var provider = new SqliteContextProvider(ConnectionString);
+            var logger = new MessageStackLogger();
+            provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
             {
                 context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();

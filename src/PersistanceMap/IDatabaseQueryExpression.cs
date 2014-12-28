@@ -74,7 +74,7 @@ namespace PersistanceMap
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation, string precision = null, bool? isNullable = null);
+        ITableQueryExpression<T> Column(Expression<Func<T, object>> field, FieldOperation operation = FieldOperation.None, string precision = null, bool? isNullable = null);
 
         /// <summary>
         /// Creates a expression that is created for operations for a table field
@@ -85,6 +85,6 @@ namespace PersistanceMap
         /// <param name="precision">Precision of the field</param>
         /// <param name="isNullable">Is the field nullable</param>
         /// <returns></returns>
-        ITableQueryExpression<T> Column(string field, FieldOperation operation, Type fieldType = null, string precision = null, bool? isNullable = null);
+        ITableQueryExpression<T> Column(string field, FieldOperation operation = FieldOperation.None, Type fieldType = null, string precision = null, bool? isNullable = null);
     }
 }

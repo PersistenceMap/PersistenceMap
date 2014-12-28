@@ -94,8 +94,9 @@ namespace PersistanceMap
         RenameTable = 36,
         AlterTable = 37,
         Column = 38,
-        TableKeys = 39,
-        AlterField = 40,
+        IgnoreColumn = 39,
+        TableKeys = 40,
+        AlterField = 41,
 
 
 

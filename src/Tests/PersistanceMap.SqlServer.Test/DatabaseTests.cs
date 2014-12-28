@@ -339,5 +339,26 @@ namespace PersistanceMap.SqlServer.Test
                 context.Commit();
             }
         }
+
+        [Test]
+        public void CreateTableNotNullableColumn()
+        {
+            CreateDatabaseIfNotExists();
+
+            var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
+            var logger = new MessageStackLogger();
+            provider.Settings.AddLogger(logger);
+            using (var context = provider.Open())
+            {
+                // table with a foreign key
+                context.Database.Table<Warrior>()
+                    .Column(wrir => wrir.Race, isNullable: false)
+                    .Create();
+
+                context.Commit();
+
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE Warrior (ID int NOT NULL, Name varchar(max), WeaponID int NOT NULL, SpecialSkill varchar(max), Race varchar(max) NOT NULL)");
+            }
+        }
     }
 }
