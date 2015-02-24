@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistanceMap.Test.TableTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -668,5 +669,85 @@ namespace PersistanceMap.Test.Expression
         //        Assert.AreEqual(sql, "SELECT ID AS Race, Warrior.Race from Warrior GROUP BY Race");
         //    }
         //}
+
+        [Test]
+        public void SelectWithDifferenctCasesInMappedPropertyNamesTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                var query = context.From<ArbeitsPlan>()
+                        .Map(ap => ap.PlanID)
+                        .Map<int>(ap => ap.Status, converter: value => value == 1 ? Status.Active : Status.Inactive)
+                        .Map<ArbeitsPlanHeader>(ap => ap.PlanID, aph => aph.ID)
+                        .Map<ArbeitsPlanHeader>(ap => ap.ATID, aph => aph.ArbeitsTageId)
+                        .Map(ap => ap.Name)
+                        .Join<Schemas>((s, ap) => s.SchemaID == ap.SchemaID)
+                        .Map(s => s.SchemaID)
+                        .Where(ap => ap.Status == 1)
+                        .For<ArbeitsPlanHeader>()
+                        .Ignore(aph => aph.Layout)
+                        .Select();
+
+                Assert.AreEqual(sql, "SELECT ArbeitsPlan.PlanID, ArbeitsPlan.Status, ArbeitsPlan.PlanID as ID, ArbeitsPlan.ATID as ArbeitsTageId, Schemas.SchemaID, JahrId, Von, Bis FROM ArbeitsPlan JOIN Schemas ON (Schemas.SchemaID = ArbeitsPlan.SchemaID) WHERE (Schemas.Status = 1)");
+            }
+        }
+
+
+
+
+
+        public class ArbeitsPlan
+        {
+            public int PlanID { get; set; }
+
+            public int SchmaID { get; set; }
+
+            public int ATID { get; set; }
+
+            public string Name { get; set; }
+
+            public int JahrID { get; set; }
+
+            public int SchemaID { get; set; }
+
+            public DateTime Von { get; set; }
+
+            public DateTime Bis { get; set; }
+
+            public int Status { get; set; }
+
+            public string Mandid { get; set; }
+        }
+
+        class Schemas
+        {
+            public int SchemaID { get; set; }
+
+            public string Name { get; set; }
+
+            public int Status { get; set; }
+
+            public string MandId { get; set; }
+        }
+
+        public class ArbeitsPlanHeader : ItemBase
+        {
+            public int PlanId { get; set; }
+            public int ArbeitsTageId { get; set; }
+            public int JahrId { get; set; }
+            public int SchemaId { get; set; }
+            public DateTime Von { get; set; }
+            public DateTime Bis { get; set; }
+            public Status Status { get; set; }
+            public string Layout { get; set; }
+        }
+
+        public enum Status
+        {
+            Active,
+            Inactive
+        }
     }
 }

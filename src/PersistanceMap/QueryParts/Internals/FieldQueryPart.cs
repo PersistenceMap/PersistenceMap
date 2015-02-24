@@ -91,7 +91,7 @@ namespace PersistanceMap.QueryParts
                 foreach (var field in fields)
                 {
                     // check if the field was allready mapped previously
-                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => f.Field == field.Field || f.FieldAlias == field.Field);
+                    var mappedFields = map.Parts.OfType<FieldQueryPart>().Where(f => string.Equals(f.Field, field.Field, StringComparison.OrdinalIgnoreCase) || string.Equals(f.FieldAlias, field.Field, StringComparison.OrdinalIgnoreCase));
                     if (mappedFields.Any())
                     {
                         foreach (var mappedField in mappedFields)

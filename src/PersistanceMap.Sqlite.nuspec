@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>PersistanceMap.Sqlite</id>
-    <version>0.3.3-RC4</version>
+    <version>0.3.3-RC5</version>
     <title>PersistanceMap.Sqlite</title>
     <authors>Christian Walpen</authors>
     <owners>Christian Walpen</owners>
