@@ -62,6 +62,7 @@
     <Compile Include="TableTypes\SimpleSalesByYear.cs" />
     <Compile Include="TableTypes\Solidier.cs" />
     <Compile Include="TableTypes\Warrior.cs" />
+    <Compile Include="TableTypes\WarriorDerivate.cs" />
     <Compile Include="TableTypes\WarriorWithName.cs" />
     <Compile Include="TableTypes\Weapon.cs" />
     <Compile Include="TestBase.cs" />

@@ -48,6 +48,12 @@ namespace PersistanceMap.Test.Expression
                 context.Commit();
 
                 Assert.AreEqual(sql, "UPDATE Warrior SET WeaponID = 0, Race = 'Elf' WHERE (Warrior.ID = 1)");
+
+                var id = 1;
+                context.Update<Warrior>(() => new { ID = 1, Race = "Elf" }, e => e.ID == id);
+                context.Commit();
+
+                Assert.AreEqual(sql, "UPDATE Warrior SET Race = 'Elf' WHERE (Warrior.ID = 1)");
             }
         }
 

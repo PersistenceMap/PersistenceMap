@@ -643,6 +643,18 @@ namespace PersistanceMap.Test.Expression
             }
         }
 
+        [Test]
+        public void SelectWithConstraintInBaseClass()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // select the properties that are defined in the mapping
+                context.From<WarriorDerivate>(a => a.ID == 5).Select(() => new { ID = 0 }).FirstOrDefault();
+                Assert.AreEqual(sql, "SELECT ID FROM WarriorDerivate WHERE (WarriorDerivate.ID = 5)");
+            }
+        }
 
         //[Test]
         //public void SelectWithMapAndValueConverter()

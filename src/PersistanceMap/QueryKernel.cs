@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace PersistanceMap
 {
@@ -67,7 +68,12 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occured while executing a query with PersistanceMap");
+                sb.AppendLine(string.Format("Query: {0}", compiledQuery.QueryString));
+                sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
+
+                Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
@@ -91,7 +97,12 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occured while executing a query with PersistanceMap");
+                sb.AppendLine(string.Format("Query: {0}", compiledQuery.QueryString));
+                sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
+
+                Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
@@ -127,7 +138,12 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("An error occured while executing a query:\n {0}", compiledQuery.QueryString), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occured while executing a query with PersistanceMap");
+                sb.AppendLine(string.Format("Query: {0}", compiledQuery.QueryString));
+                sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
+
+                Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
