@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.QueryParts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -145,6 +146,7 @@ namespace PersistanceMap.Factories
                 MemberName = propertyInfo.Name/*.ToLower()*/,
                 EntityName = propertyInfo.DeclaringType.Name,
                 MemberType = propertyType,
+                FieldType = propertyType,
                 EntityType = propertyInfo.DeclaringType,
                 IsNullable = isNullable,
                 PropertyInfo = propertyInfo,
@@ -162,5 +164,33 @@ namespace PersistanceMap.Factories
         }
 
         #endregion
+
+        internal static void MatchFields(FieldDefinition[] fields, IQueryPartsMap queryParts)
+        {
+            if (queryParts == null)
+                return;
+
+            // match all properties that are need to be passed over to the fielddefinitions
+            var fieldParts = queryParts.Parts.OfType<IQueryPartDecorator>().SelectMany(p => p.Parts.OfType<FieldQueryPart>());
+            foreach (var part in fieldParts.Where(f => f.FieldType != null))
+            {
+                var field = fields.FirstOrDefault(f => f.FieldName == part.ID);
+                if (field != null)
+                {
+                    field.FieldType = part.FieldType;
+                }
+            }
+
+            // extract all fields with converter
+            // copy all valueconverters to the fielddefinitions
+            foreach (var converter in fieldParts.Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }))
+            {
+                var field = fields.FirstOrDefault(f => f.FieldName == converter.ID);
+                if (field != null)
+                {
+                    field.Converter = converter.Converter.Compile();
+                }
+            }
+        }
     }
 }

@@ -70,6 +70,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConverterTests.cs" />
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="ExecuteTests.cs" />

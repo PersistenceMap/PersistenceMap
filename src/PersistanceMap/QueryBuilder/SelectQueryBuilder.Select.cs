@@ -109,7 +109,7 @@ namespace PersistanceMap.QueryBuilder
             return Expression.Lambda<Func<object, object>>(Expression.Invoke(expression, Expression.Convert(p, typeof(TProp))), p);
         }
 
-        protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter)
+        protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter, Type fieldType)
         {
             // if there is a alias on the last item it has to be used with the map
             var last = QueryPartsMap.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
@@ -131,6 +131,7 @@ namespace PersistanceMap.QueryBuilder
 
             var part = new FieldQueryPart(source, alias, entityalias, entity, alias ?? source, converter)
             {
+                FieldType = fieldType,
                 OperationType = OperationType.Include
             };
             QueryPartsMap.Add(part);
@@ -155,7 +156,7 @@ namespace PersistanceMap.QueryBuilder
             var sourceField = FieldHelper.TryExtractPropertyName(source);
             var entity = typeof(T).Name;
 
-            return Map(sourceField, alias, entity, null, ConvertExpression(converter));
+            return Map(sourceField, alias, entity, null, ConvertExpression(converter), typeof(TProp));
         }
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace PersistanceMap.QueryBuilder
             var sourceField = FieldHelper.TryExtractPropertyName(source);
             var entity = typeof(TSource).Name;
 
-            return Map(sourceField, aliasField, entity, null, converter);
+            return Map(sourceField, aliasField, entity, null, converter, source.GetType());
         }
 
         /// <summary>
@@ -414,13 +415,6 @@ namespace PersistanceMap.QueryBuilder
         public IEnumerable<T2> Select<T2>()
         {
             var query = Compile<T2>();
-
-            // extract all fields with converter
-            var selector = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Select && p.Parts.OfType<FieldQueryPart>().Any(f => f.Converter != null));
-            if (selector != null)
-            {
-                query.Converters = selector.Parts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID });
-            }
 
             return Context.Kernel.Execute<T2>(query);
         }

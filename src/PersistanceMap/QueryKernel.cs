@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {
@@ -219,18 +220,7 @@ namespace PersistanceMap
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToArray();
 
-            if (compiledQuery.Converters != null)
-            {
-                // copy all valueconverters to the fielddefinitions
-                foreach (var converter in compiledQuery.Converters)
-                {
-                    var field = fields.FirstOrDefault(f => f.FieldName == converter.ID);
-                    if (field != null)
-                    {
-                        field.Converter = converter.Converter.Compile();
-                    }
-                }
-            }
+            TypeDefinitionFactory.MatchFields(fields, compiledQuery.QueryParts);
 
             return Map<T>(context, fields);
         }
@@ -354,7 +344,16 @@ namespace PersistanceMap
 
             var dbValue = context.DataReader.GetValue(colIndex);
 
+            // try to convert the value to the value that the destination type has.
+            // if the destination type is named same as the source (table) type it can be that the types don't match
             var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, fieldDef.MemberType);
+
+            // try to convert to the source type inside the original table.
+            // this type is not necessarily the same as the destination typ if a converter is used
+            if (convertedValue == null && fieldDef.FieldType != fieldDef.MemberType)
+                convertedValue = ConvertDatabaseValueToTypeValue(dbValue, fieldDef.FieldType);
+
+            // if still no match than just pass the db value and hope it works...
             if (convertedValue == null)
                 convertedValue = dbValue;
 

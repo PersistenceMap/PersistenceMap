@@ -48,6 +48,11 @@ namespace PersistanceMap.QueryParts
         /// </summary>
         public string FieldAlias { get; private set; }
 
+        /// <summary>
+        /// The type inside the original table
+        /// </summary>
+        public Type FieldType { get; set; }
+
         #endregion
 
         #region IQueryPart Implementation

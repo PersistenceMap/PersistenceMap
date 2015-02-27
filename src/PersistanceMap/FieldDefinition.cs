@@ -26,6 +26,11 @@ namespace PersistanceMap
         public Type MemberType { get; set; }
 
         /// <summary>
+        /// Gets or sets the type that the field has
+        /// </summary>
+        public Type FieldType { get; set; }
+
+        /// <summary>
         /// The type of the class containing this member
         /// </summary>
         public Type EntityType { get; set; }
