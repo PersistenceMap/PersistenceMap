@@ -402,7 +402,7 @@ namespace PersistanceMap.QueryBuilder
             FieldQueryPart.FiedlPartsFactory(QueryPartsMap, fields.ToArray());
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile<T2>(QueryPartsMap);
+            var query = expr.Compile(QueryPartsMap);
 
             return query;
         }

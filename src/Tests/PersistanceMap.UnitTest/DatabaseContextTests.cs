@@ -25,7 +25,6 @@ namespace PersistanceMap.UnitTest
             var reader = new ReaderContext(dr.Object);
 
             var compiler = new Mock<IQueryCompiler>();
-            compiler.Setup(c => c.Compile<string>(It.IsAny<IQueryPartsMap>())).Returns(new CompiledQuery());
             compiler.Setup(c => c.Compile(It.IsAny<IQueryPartsMap>())).Returns(new CompiledQuery());
 
             _provider = new Mock<IConnectionProvider>();

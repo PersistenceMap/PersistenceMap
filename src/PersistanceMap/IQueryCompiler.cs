@@ -13,13 +13,5 @@ namespace PersistanceMap
         /// <param name="queryParts"></param>
         /// <returns></returns>
         CompiledQuery Compile(IQueryPartsMap queryParts);
-
-        /// <summary>
-        /// Compile IQueryPartsMap to a QueryString
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="queryParts"></param>
-        /// <returns></returns>
-        CompiledQuery Compile<T>(IQueryPartsMap queryParts);
     }
 }
