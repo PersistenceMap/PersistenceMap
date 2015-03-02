@@ -87,7 +87,7 @@ namespace PersistanceMap.QueryBuilder
             QueryPartsMap.Add(selectPart);
 
             // add the from operation with a alias
-            var entity = typeof (T).Name;
+            var entity = typeof(T).Name;
             var entityPart = new EntityDelegateQueryPart(OperationType.From, () => string.Format("FROM {0}{1} ", entity, string.IsNullOrEmpty(alias) ? string.Empty : string.Format(" {0}", alias)), entity, alias);
             QueryPartsMap.Add(entityPart);
 

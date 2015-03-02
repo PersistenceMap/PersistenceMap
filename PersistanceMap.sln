@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.SqlServer.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Test.Shared", "src\Tests\PersistanceMap.Test.Shared\PersistanceMap.Test.Shared.csproj", "{2D5D803E-DE51-471B-B650-8E3B6272D89F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.UnitTest", "src\Tests\PersistanceMap.UnitTest\PersistanceMap.UnitTest.csproj", "{6BE89835-4637-48E5-8D97-DA84FB85DCE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,12 @@ Global
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F}.Release|x86.ActiveCfg = Release|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,5 +122,6 @@ Global
 		{A38CBF04-F0AD-4679-AC00-FDF3B166E7F2} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{E99038FE-D0C9-47FA-A60F-F550976CBBAE} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F} = {554CB4F9-23E8-45E3-A418-695F1D979249}
+		{6BE89835-4637-48E5-8D97-DA84FB85DCE0} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 	EndGlobalSection
 EndGlobal

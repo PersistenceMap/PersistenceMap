@@ -28,12 +28,11 @@ namespace PersistanceMap.Factories
 
                 if (memberExpression == null)
                 {
-                    //throw new ArgumentException("Property is not a MemberAccessExpression", "propertyExpression");
                     Logger.TraceLine("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
 
                     try
                     {
-                        return propertyExpression.Compile().DynamicInvoke().ToString(); //    .Body.ToString();
+                        return propertyExpression.Compile().DynamicInvoke().ToString();
                     }
                     catch (Exception e)
                     {
@@ -52,7 +51,6 @@ namespace PersistanceMap.Factories
 
             if (propertyInfo.GetGetMethod(true).IsStatic)
             {
-                //throw new ArgumentException("Property is static", "propertyExpression");
                 Logger.TraceLine("Property is static");
                 return memberExpression.Member.ToString();
             }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace PersistanceMap.Tracing
 {
-    class Logger : ILogger
+    public class Logger : ILogger
     {
         readonly ILoggerFactory _loggerFactory;
 

@@ -88,28 +88,8 @@ namespace PersistanceMap.Factories
             var right = Expression.Constant(value);
             var e1 = Expression.Equal(left, right);
 
-            //return Expression.Lambda(e1);
             return Expression.Lambda<Func<T, bool>>(e1, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
         }
-
-        //public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<object>> entity, Expression<Func<T, bool>> key)
-        //{
-        //    if (key == null)
-        //        return null;
-
-        //    var value = key.Compile().Invoke(entity.Compile().Invoke());
-
-        //    ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
-
-        //    // x => (x.Property == value)
-        //    // Create an expression tree that represents the expression 'x.Property == value'.
-        //    var left = Expression.Property(pe, GetProperty(key));
-        //    var right = Expression.Constant(value);
-        //    var e1 = Expression.Equal(left, right);
-
-        //    //return Expression.Lambda(e1);
-        //    return Expression.Lambda<Func<T, bool>>(e1, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
-        //}
 
         public static IEnumerable<Expression<Func<T,bool>>> CreateKeyValueEqualityExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields, IEnumerable<FieldDefinition> tableFields)
         {
