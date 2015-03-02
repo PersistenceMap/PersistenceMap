@@ -148,14 +148,17 @@ namespace PersistanceMap.Factories
             if (queryParts == null)
                 return fields;
 
+            // cast to list to ensure that there is no multiple enumeration
+            var definitions = fields.ToList();
+
             // match all properties that are need to be passed over to the fielddefinitions
             var fieldParts = queryParts.Parts.OfType<IQueryPartDecorator>().SelectMany(p => p.Parts.OfType<FieldQueryPart>());
             foreach (var part in fieldParts.Where(f => f.FieldType != null))
             {
-                var field = fields.FirstOrDefault(f => f.FieldName == part.ID);
-                if (field != null)
+                var definition = definitions.FirstOrDefault(f => f.FieldName == part.ID);
+                if (definition != null)
                 {
-                    field.FieldType = part.FieldType;
+                    definition.FieldType = part.FieldType;
                 }
             }
 
@@ -163,14 +166,14 @@ namespace PersistanceMap.Factories
             // copy all valueconverters to the fielddefinitions
             foreach (var converter in fieldParts.Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }))
             {
-                var field = fields.FirstOrDefault(f => f.FieldName == converter.ID);
+                var field = definitions.FirstOrDefault(f => f.FieldName == converter.ID);
                 if (field != null)
                 {
                     field.Converter = converter.Converter.Compile();
                 }
             }
 
-            return fields;
+            return definitions;
         }
 
         #endregion

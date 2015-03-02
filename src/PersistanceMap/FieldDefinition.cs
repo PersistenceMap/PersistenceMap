@@ -64,5 +64,10 @@ namespace PersistanceMap
         /// The converter that converts the databasevalue to the property value
         /// </summary>
         public Func<object, object> Converter { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Field: {0} [{1}] Member: {2} [{3}]", FieldName, FieldType, MemberName, MemberType);
+        }
     }
 }
