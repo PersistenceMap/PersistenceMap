@@ -122,6 +122,11 @@ namespace PersistanceMap
 
         #region Select Expressions
 
+        /// <summary>
+        /// Executes a select statement for the Table defined by the type parameter
+        /// </summary>
+        /// <typeparam name="T">The type of table containing the information</typeparam>
+        /// <returns>A list of all entries int the table defined by the type</returns>
         public IEnumerable<T> Select<T>()
         {
             var query = new SelectQueryBuilder<T>(this)
@@ -130,6 +135,12 @@ namespace PersistanceMap
             return query.Select<T>();
         }
 
+        /// <summary>
+        /// Executes a select statement for the Table defined by the type parameter
+        /// </summary>
+        /// <typeparam name="T">The type of table containing the information</typeparam>
+        /// <param name="predicate">The condition for the select statement</param>
+        /// <returns>A list of all entries int the table defined by the type that satisfy the condition</returns>
         public IEnumerable<T> Select<T>(Expression<Func<T, bool>> predicate)
         {
             var query = new SelectQueryBuilder<T>(this)
@@ -139,18 +150,36 @@ namespace PersistanceMap
             return query.Select<T>();
         }
 
+        /// <summary>
+        /// Starts a select statement for the table defined by the type parameter
+        /// </summary>
+        /// <typeparam name="T">The type of table containing the information</typeparam>
+        /// <returns>A ISelectQueryExpression for fürther manipulation</returns>
         public ISelectQueryExpression<T> From<T>()
         {
             return new SelectQueryBuilder<T>(this)
                 .From<T>();
         }
 
+        /// <summary>
+        /// Starts a select statement for the table defined by the type parameter with a alias for the table
+        /// </summary>
+        /// <typeparam name="T">The type of table containing the information</typeparam>
+        /// <param name="alias">The alias for the table used in the select statement. This helps separate multiple joins to the same table</param>
+        /// <returns>A ISelectQueryExpression for fürther manipulation</returns>
         public ISelectQueryExpression<T> From<T>(string alias)
         {
             return new SelectQueryBuilder<T>(this)
                 .From<T>(alias);
         }
 
+        /// <summary>
+        /// Starts a select statement for the table defined by the type parameters and joins to the seccond type using the statement in the predicate
+        /// </summary>
+        /// <typeparam name="T">The type defining the table to start the join from</typeparam>
+        /// <typeparam name="TJoin">The type defining the table to join to</typeparam>
+        /// <param name="predicate">The condition for the join</param>
+        /// <returns>A ISelectQueryExpression for fürther manipulation</returns>
         public ISelectQueryExpression<TJoin> From<T, TJoin>(Expression<Func<TJoin, T, bool>> predicate)
         {
             return new SelectQueryBuilder<T>(this)
@@ -158,6 +187,12 @@ namespace PersistanceMap
                 .Join<TJoin>(predicate);
         }
 
+        /// <summary>
+        /// Starts a select statement for the table defined by the type parameter and adds a condition for the table select
+        /// </summary>
+        /// <typeparam name="T">The type defining the table to start the select from</typeparam>
+        /// <param name="predicate">The condition for the statement</param>
+        /// <returns>A IWhereQueryExpression for further manipulation</returns>
         public IWhereQueryExpression<T> From<T>(Expression<Func<T, bool>> predicate)
         {
             return new SelectQueryBuilder<T>(this)
