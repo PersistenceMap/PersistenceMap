@@ -18,6 +18,11 @@ namespace PersistanceMap.Factories
             return ExtractFieldDefinitions(typeof(T));
         }
 
+        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsMap queryParts)
+        {
+            return ExtractFieldDefinitions(typeof(T), queryParts);
+        }
+
         /// <summary>
         /// Gets a list of fields that are commonly used in two types like when using a concrete and anonymous type definition
         /// </summary>
@@ -70,31 +75,7 @@ namespace PersistanceMap.Factories
             return ExtractFieldDefinitions(obj.GetType());
         }
 
-        //public static IEnumerable<FieldDefinition> GetFiedlDefinitions<T>(this Type type)
-        //{
-        //    var definedFields = ExtractFieldDefinitions(typeof(T));
-        //    var objectDefinitions = ExtractFieldDefinitions(type);
-
-        //    foreach (var field in objectDefinitions)
-        //    {
-        //        // merge the fields from the defined type to the provided type (anonymous object)
-        //        var defined = definedFields.FirstOrDefault(f => f.MemberName == field.MemberName);
-        //        if (defined == null)
-        //            continue;
-
-        //        field.IsNullable = defined.IsNullable;
-        //        field.IsPrimaryKey = defined.IsPrimaryKey;
-        //        field.EntityName = defined.EntityName;
-        //        field.EntityType = defined.EntityType;
-        //    }
-
-        //    return objectDefinitions;
-        //}
-
         #region Internal Implementation
-
-        ////// is used to make the FieldDefinitions thread safe
-        ////static object _lockobject = new object();
 
         static Dictionary<Type, IEnumerable<FieldDefinition>> fieldDefinitionCache;
 
@@ -111,7 +92,7 @@ namespace PersistanceMap.Factories
             }
         }
 
-        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type)
+        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type, IQueryPartsMap queryParts = null)
         {
             //TODO: This lock causes minor performance issues! Find a better way to ensure thread safety!
             ////lock (_lockobject)
@@ -124,8 +105,7 @@ namespace PersistanceMap.Factories
                 FieldDefinitionCache.Add(type, fields);
             }
 
-            return fields;
-
+            return MatchFieldInformation(fields, queryParts);
             ////}
         }
 
@@ -163,12 +143,10 @@ namespace PersistanceMap.Factories
                    propertyName.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
-        #endregion
-
-        internal static void MatchFields(FieldDefinition[] fields, IQueryPartsMap queryParts)
+        internal static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsMap queryParts)
         {
             if (queryParts == null)
-                return;
+                return fields;
 
             // match all properties that are need to be passed over to the fielddefinitions
             var fieldParts = queryParts.Parts.OfType<IQueryPartDecorator>().SelectMany(p => p.Parts.OfType<FieldQueryPart>());
@@ -191,6 +169,10 @@ namespace PersistanceMap.Factories
                     field.Converter = converter.Converter.Compile();
                 }
             }
+
+            return fields;
         }
+
+        #endregion
     }
 }
