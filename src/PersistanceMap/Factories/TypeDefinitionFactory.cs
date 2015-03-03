@@ -9,7 +9,7 @@ namespace PersistanceMap.Factories
     public static class TypeDefinitionFactory
     {
         /// <summary>
-        /// Gets all fielddefinitions that can be created by the type
+        /// Gets all fielddefinitions that can be created from the type
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -18,13 +18,19 @@ namespace PersistanceMap.Factories
             return ExtractFieldDefinitions(typeof(T));
         }
 
+        /// <summary>
+        /// Gets all fielddefinitions that can be created from the type and matches them with the queryparts
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryParts"></param>
+        /// <returns></returns>
         public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsMap queryParts)
         {
             return ExtractFieldDefinitions(typeof(T), queryParts);
         }
 
         /// <summary>
-        /// Gets a list of fields that are commonly used in two types like when using a concrete and anonymous type definition
+        /// Gets a list of fields that are common to two types. This is used when a concrete and anonymous type definition have to be matched
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="type"></param>
@@ -46,6 +52,7 @@ namespace PersistanceMap.Factories
                 field.EntityName = defined.EntityName;
                 field.EntityType = defined.EntityType;
                 field.PropertyInfo = defined.PropertyInfo;
+                field.FieldType = defined.FieldType;
                 //field.SetValueFunction = defined.SetValueFunction;
                 //yield return defined;
 
@@ -117,9 +124,6 @@ namespace PersistanceMap.Factories
 
             var propertyType = isNullableType ? Nullable.GetUnderlyingType(propertyInfo.PropertyType) : propertyInfo.PropertyType;
 
-            //var getter = propertyInfo.GetPropertyGetter();
-            //var setter = propertyInfo.GetPropertySetter();
-
             return new FieldDefinition
             {
                 FieldName = propertyInfo.Name,
@@ -143,7 +147,7 @@ namespace PersistanceMap.Factories
                    propertyName.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
-        internal static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsMap queryParts)
+        private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsMap queryParts)
         {
             if (queryParts == null)
                 return fields;

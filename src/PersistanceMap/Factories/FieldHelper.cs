@@ -75,6 +75,12 @@ namespace PersistanceMap.Factories
 
         /// <summary>
         /// Extracts the type of the property inside the lambdaexpression or of the return value
+        /// - UnaryExpression: Expression{Func{Warrior, object}} unaryObject = w => w.ID; --> int
+        /// - MemberExpression: Expression{Func{Warrior, int}} memberInt = w => w.ID; --> int
+        /// - BinaryExpression: Expression{Func{Warrior, bool}} binaryInt = w => w.ID == 1; --> int (Takes the left side and casts to MemberExpression)
+        /// - BinaryExpression: Expression{Func{Warrior, bool}} binaryInt = w => 1 == w.ID; --> int (Takes the right side and casts to MemberExpression)
+        /// - Compiled Expression: Expression{Func{int}} binaryInt = () => 5; --> int
+        /// - Compiled Expression: Expression{Func{Warrior, bool}} binaryInt = w => 1 == 1; --> bool
         /// </summary>
         /// <param name="propertyExpression"></param>
         /// <returns></returns>

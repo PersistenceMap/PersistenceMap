@@ -171,13 +171,11 @@ namespace PersistanceMap
 
             if (typeof(T).IsAnonymousType())
             {
-                //
                 // Anonymous objects have a constructor that accepts all arguments in the same order as defined
                 // To populate a anonymous object the data has to be passed in the same order as defined to the constructor
-                //
                 while (context.DataReader.Read())
                 {
-                    //http://stackoverflow.com/questions/478013/how-do-i-create-and-access-a-new-instance-of-an-anonymous-class-passed-as-a-para
+                    // http://stackoverflow.com/questions/478013/how-do-i-create-and-access-a-new-instance-of-an-anonymous-class-passed-as-a-para
                     // convert all fielddefinitions to objectdefinitions
                     var objectDefs = fields.Select(f => new ObjectDefinition
                     {
@@ -187,7 +185,7 @@ namespace PersistanceMap
                     });
 
                     // read all data to a dictionary
-                    var dict = ReadToDictionary(context, objectDefs, indexCache);
+                    var dict = ReadData(context, objectDefs, indexCache);
 
                     // create a list of the data objects that can be injected to the instance generator
                     var args = dict.Values;
@@ -202,7 +200,7 @@ namespace PersistanceMap
                 while (context.DataReader.Read())
                 {
                     // Create a instance of T and inject all the data
-                    var row = ReadToObject<T>(context, fields, indexCache);
+                    var row = ReadData<T>(context, fields, indexCache);
                     rows.Add(row);
                 }
             }
@@ -223,7 +221,13 @@ namespace PersistanceMap
             return Map<T>(context, fields);
         }
 
-        public IEnumerable<Dictionary<string, object>> MapToDictionary(IReaderContext context, ObjectDefinition[] objectDefs)
+        /// <summary>
+        /// Maps the resultset to a key/value collection. The key represents the name of the field or property
+        /// </summary>
+        /// <param name="context">The readercontext containig the datareader with the result</param>
+        /// <param name="objectDefs">A collection of definitons of the objects that have to be read from the datareader</param>
+        /// <returns>A collection of dictionaries containing the data</returns>
+        public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, ObjectDefinition[] objectDefs)
         {
             context.EnsureArgumentNotNull("context");
 
@@ -235,7 +239,7 @@ namespace PersistanceMap
 
             while (context.DataReader.Read())
             {
-                var row = ReadToDictionary(context, objectDefs, indexCache);
+                var row = ReadData(context, objectDefs, indexCache);
 
                 rows.Add(row);
             }
@@ -247,10 +251,10 @@ namespace PersistanceMap
         /// Maps the result to a dictionary containing the key/value
         /// </summary>
         /// <param name="context">The readercontext containing the datareader with the result</param>
-        /// <param name="objectDefs"></param>
-        /// <param name="indexCache"></param>
-        /// <returns></returns>
-        public Dictionary<string, object> ReadToDictionary(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs, Dictionary<string, int> indexCache)
+        /// <param name="objectDefs">A collection of definitons of the objects that have to be read from the datareader</param>
+        /// <param name="indexCache">A collection of the keys with the indexes inside the datareader</param>
+        /// <returns>A collection of key/value pairs containing the data</returns>
+        private Dictionary<string, object> ReadData(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs, Dictionary<string, int> indexCache)
         {
             var row = new Dictionary<string, object>();
 
@@ -290,7 +294,15 @@ namespace PersistanceMap
             return row;
         }
 
-        public T ReadToObject<T>(IReaderContext context, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
+        /// <summary>
+        /// Reads the data from the datareader and populates the dataobjects
+        /// </summary>
+        /// <typeparam name="T">The type of object to populate</typeparam>
+        /// <param name="context">The readercontext containing the datareader</param>
+        /// <param name="fieldDefinitions">The definitions of the fields to populate</param>
+        /// <param name="indexCache">The collection that matches the field names with the index in the datareader</param>
+        /// <returns>A object containing the data from the datareader</returns>
+        private T ReadData<T>(IReaderContext context, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
         {
             var objWithProperties = InstanceFactory.CreateInstance<T>();
 
@@ -304,21 +316,12 @@ namespace PersistanceMap
                         if (!indexCache.TryGetValue(fieldDefinition.MemberName, out index))
                         {
                             index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
-                            //if (index == NotFound)
-                            //{
-                            //    index = TryGuessColumnIndex(fieldDef.FieldName, dataReader);
-                            //}
-
                             indexCache.Add(fieldDefinition.MemberName, index);
                         }
                     }
                     else
                     {
                         index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
-                        //if (index == NotFound)
-                        //{
-                        //    index = TryGuessColumnIndex(fieldDef.FieldName, dataReader);
-                        //}
                     }
 
                     SetValue(context, fieldDefinition, index, objWithProperties);
@@ -335,7 +338,11 @@ namespace PersistanceMap
         /// <summary>
         /// Populates row fields during re-hydration of results.
         /// </summary>
-        public virtual void SetValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
+        /// <param name="context">The readercontext containing the datareader</param>
+        /// <param name="fieldDef">The definition of the field to populate</param>
+        /// <param name="colIndex">The index of the value in the datareader</param>
+        /// <param name="instance">The object to populate</param>
+        private void SetValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
         {
             if (HandledDbNullValue(context, fieldDef, colIndex, instance))
                 return;
@@ -376,7 +383,14 @@ namespace PersistanceMap
             }
         }
 
-        public virtual object GetValue(IReaderContext context, ObjectDefinition objectDef, int colIndex)
+        /// <summary>
+        /// Reads and converts the value from the datareader
+        /// </summary>
+        /// <param name="context">The readercontext containing the datareader</param>
+        /// <param name="objectDef">The definition of the field to populate</param>
+        /// <param name="colIndex">The index of the value in the datareader</param>
+        /// <returns>The value contained in the datareader</returns>
+        private object GetValue(IReaderContext context, ObjectDefinition objectDef, int colIndex)
         {
             if (HandledDbNullValue(objectDef, colIndex))
                 return null;
@@ -398,7 +412,7 @@ namespace PersistanceMap
             return convertedValue;
         }
 
-        public bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
+        private bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
         {
             if (fieldDef == null || fieldDef.SetValueFunction == null || colIndex == NotFound)
                 return true;
@@ -433,16 +447,10 @@ namespace PersistanceMap
         /// <param name="value">The value to convert</param>
         /// <param name="memberType">The type to cast the value to</param>
         /// <returns>The value as a .net value type</returns>
-        public virtual object ConvertDatabaseValueToTypeValue(object value, Type memberType)
+        private object ConvertDatabaseValueToTypeValue(object value, Type memberType)
         {
             if (value == null || value is DBNull)
                 return null;
-
-            //var strValue = value as string;
-            //if (strValue != null && OrmLiteConfig.StringFilter != null)
-            //{
-            //    value = OrmLiteConfig.StringFilter(strValue);
-            //}
 
             if (value.GetType() == memberType)
             {
@@ -509,16 +517,6 @@ namespace PersistanceMap
                 }
             }
 
-            //try
-            //{
-            //    return OrmLiteConfig.DialectProvider.StringSerializer.DeserializeFromString(value.ToString(), type);
-            //}
-            //catch (Exception e)
-            //{
-            //    Trace.WriteLine(e);
-            //    throw;
-            //}
-
             if (memberType == typeof(bool))
             {
                 if (strValue != null)
@@ -537,7 +535,7 @@ namespace PersistanceMap
             return null;
         }
 
-        public static ulong ConvertToULong(byte[] bytes)
+        private static ulong ConvertToULong(byte[] bytes)
         {
             // Correct Endianness
             Array.Reverse(bytes);

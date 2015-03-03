@@ -82,7 +82,7 @@ namespace PersistanceMap.QueryBuilder
                 }).ToArray();
 
 
-            var mapping = kernel.MapToDictionary(reader, objectDefs).FirstOrDefault();
+            var mapping = kernel.Map(reader, objectDefs).FirstOrDefault();
 
             if (mapping == null || !mapping.Any())
                 return;
