@@ -28,7 +28,7 @@ namespace PersistanceMap
         /// <summary>
         /// The commandstore containing all queries that have not been executed
         /// </summary>
-        IEnumerable<IQueryCommand> QueryCommandStore { get; }
+        IEnumerable<IQueryCommand> QueryStore { get; }
 
         /// <summary>
         /// The kernel providing the execution of the query and mapping of the data

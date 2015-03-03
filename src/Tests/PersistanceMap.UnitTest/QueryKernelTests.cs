@@ -531,16 +531,16 @@ namespace PersistanceMap.UnitTest
             //}
         }
 
-        [Test]
-        public void ConvertToULongTest()
-        {
-            Assert.Fail();
-            //public static ulong ConvertToULong(byte[] bytes)
-            //{
-            //    // Correct Endianness
-            //    Array.Reverse(bytes);
-            //    return BitConverter.ToUInt64(bytes, 0);
-            //}
-        }
+        //[Test]
+        //public void ConvertToULongTest()
+        //{
+        //    Assert.Fail();
+        //    //public static ulong ConvertToULong(byte[] bytes)
+        //    //{
+        //    //    // Correct Endianness
+        //    //    Array.Reverse(bytes);
+        //    //    return BitConverter.ToUInt64(bytes, 0);
+        //    //}
+        //}
     }
 }

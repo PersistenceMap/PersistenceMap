@@ -134,17 +134,17 @@ namespace PersistanceMap.Factories
                 EntityType = propertyInfo.DeclaringType,
                 IsNullable = isNullable,
                 PropertyInfo = propertyInfo,
-                IsPrimaryKey = CheckPrimaryKey(propertyInfo.Name, propertyInfo.DeclaringType.Name),
+                IsPrimaryKey = CheckPrimaryKey(propertyInfo, propertyInfo.DeclaringType.Name),
                 GetValueFunction = propertyInfo.GetPropertyGetter(),
                 SetValueFunction = propertyInfo.GetPropertySetter(),
             };
         }
 
-        private static bool CheckPrimaryKey(string propertyName, string memberName)
+        private static bool CheckPrimaryKey(PropertyInfo propertyInfo, string memberName)
         {
             // extremely simple convention that says the key element has to be called ID or {Member}ID
-            return propertyName.ToLower().Equals("id") ||
-                   propertyName.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
+            return propertyInfo.Name.ToLower().Equals("id") ||
+                   propertyInfo.Name.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
         private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsMap queryParts)

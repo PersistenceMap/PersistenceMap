@@ -14,7 +14,7 @@ namespace PersistanceMap.Factories
         }
 
         /// <summary>
-        /// Creates a lambdaexpression that returnes the id propterty with the value contained by the property
+        /// Creates a lambdaexpression that returnes the id propterty with the value contained by the property. The ID is provided by the typedefinitionfactory and is based on common conventions.
         /// x => x.Property == value
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -22,6 +22,7 @@ namespace PersistanceMap.Factories
         /// <returns></returns>
         public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<T>> entity)
         {
+            // get the field that represents the primary key
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var pk = fields.FirstOrDefault(f => f.IsPrimaryKey);
             if (pk == null)

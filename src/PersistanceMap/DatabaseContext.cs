@@ -13,12 +13,12 @@ namespace PersistanceMap
     /// </summary>
     public class DatabaseContext : IDatabaseContext
     {
-        readonly IList<IQueryCommand> _queryCommandStore;
+        readonly IList<IQueryCommand> _queryStore;
 
         public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
         {
             ConnectionProvider = provider;
-            _queryCommandStore = new List<IQueryCommand>();
+            _queryStore = new List<IQueryCommand>();
             LoggerFactory = loggerFactory;
         }
 
@@ -36,13 +36,13 @@ namespace PersistanceMap
         /// </summary>
         public void Commit()
         {
-            var command = QueryCommandStore.FirstOrDefault();
+            var command = QueryStore.FirstOrDefault();
             while (command != null)
             {
                 command.Execute(this);
 
-                _queryCommandStore.Remove(command);
-                command = QueryCommandStore.FirstOrDefault();
+                _queryStore.Remove(command);
+                command = QueryStore.FirstOrDefault();
             }
         }
 
@@ -52,17 +52,17 @@ namespace PersistanceMap
         /// <param name="command"></param>
         public void AddQuery(IQueryCommand command)
         {
-            _queryCommandStore.Add(command);
+            _queryStore.Add(command);
         }
 
         /// <summary>
         /// The commandstore containing all queries that have not been executed
         /// </summary>
-        public IEnumerable<IQueryCommand> QueryCommandStore
+        public IEnumerable<IQueryCommand> QueryStore
         {
             get
             {
-                return _queryCommandStore;
+                return _queryStore;
             }
         }
         
