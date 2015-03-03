@@ -7,6 +7,17 @@ namespace PersistanceMap.Factories
 {
     public static class FieldHelper
     {
+        /// <summary>
+        /// Extracts the name of the property inside the lambdaexpression
+        /// - UnaryExpression: Expression{Func{Warrior, object}} unaryObject = w => w.ID; --> ID
+        /// - MemberExpression: Expression{Func{Warrior, int}} memberInt = w => w.ID; --> ID
+        /// - BinaryExpression: Expression{Func{Warrior, bool}} binaryInt = w => w.ID == 1; --> ID (Takes the left side and casts to MemberExpression)
+        /// - BinaryExpression: Expression{Func{Warrior, bool}} binaryInt = w => 1 == w.ID; --> ID (Takes the right side and casts to MemberExpression)
+        /// - Compiled Expression: Expression{Func{int}} binaryInt = () => 5; --> 5
+        /// - ToString: Expression{Func{Warrior, bool}} binaryInt = w => 1 == 1; --> w => True
+        /// </summary>
+        /// <param name="propertyExpression"></param>
+        /// <returns></returns>
         public static string TryExtractPropertyName(LambdaExpression propertyExpression)
         {
             propertyExpression.EnsureArgumentNotNull("propertyExpression");
@@ -23,12 +34,16 @@ namespace PersistanceMap.Factories
                 {
                     var binary = propertyExpression.Body as BinaryExpression;
                     if (binary != null)
+                    {
                         memberExpression = binary.Left as MemberExpression;
+                        if (memberExpression == null)
+                            memberExpression = binary.Right as MemberExpression;
+                    }
                 }
 
                 if (memberExpression == null)
                 {
-                    Logger.TraceLine("PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
+                    Logger.TraceLine("## PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
 
                     try
                     {
@@ -45,19 +60,24 @@ namespace PersistanceMap.Factories
             var propertyInfo = memberExpression.Member as PropertyInfo;
             if (propertyInfo == null)
             {
-                Logger.TraceLine("Property is not a PropertyInfo");
+                Logger.TraceLine(string.Format("## PersistanceMap - Property {0} is not a PropertyInfo", memberExpression.Member));
                 return memberExpression.Member.ToString();
             }
 
             if (propertyInfo.GetGetMethod(true).IsStatic)
             {
-                Logger.TraceLine("Property is static");
-                return memberExpression.Member.ToString();
+                Logger.TraceLine(string.Format("## PersistanceMap - Property {0} is static", memberExpression.Member.Name));
+                return memberExpression.Member.Name;
             }
 
             return memberExpression.Member.Name;
         }
 
+        /// <summary>
+        /// Extracts the type of the property inside the lambdaexpression or of the return value
+        /// </summary>
+        /// <param name="propertyExpression"></param>
+        /// <returns></returns>
         public static Type TryExtractPropertyType(LambdaExpression propertyExpression)
         {
             propertyExpression.EnsureArgumentNotNull("propertyExpression");
@@ -74,7 +94,13 @@ namespace PersistanceMap.Factories
                 {
                     var binary = propertyExpression.Body as BinaryExpression;
                     if (binary != null)
+                    {
                         memberExpression = binary.Left as MemberExpression;
+                        if (memberExpression == null)
+                        {
+                            memberExpression = binary.Right as MemberExpression;
+                        }
+                    }
                 }
 
                 if (memberExpression == null)
@@ -90,20 +116,6 @@ namespace PersistanceMap.Factories
                     }
                 }
             }
-
-            //var propertyInfo = memberExpression.Member as PropertyInfo;
-            //if (propertyInfo == null)
-            //{
-            //    Logger.TraceLine("Property is not a PropertyInfo");
-            //    return memberExpression.Type;
-            //}
-
-            //if (propertyInfo.GetGetMethod(true).IsStatic)
-            //{
-            //    //throw new ArgumentException("Property is static", "propertyExpression");
-            //    Logger.TraceLine("Property is static");
-            //    return memberExpression.Type;
-            //}
 
             return memberExpression.Type;
 

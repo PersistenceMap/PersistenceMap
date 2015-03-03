@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using Moq;
 using NUnit.Framework;
-using Moq;
 using PersistanceMap.QueryBuilder;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Tracing;
-using System.Linq;
-using System.Data;
 using PersistanceMap.UnitTest.TableTypes;
+using System;
+using System.Data;
+using System.Linq;
 
 namespace PersistanceMap.UnitTest
 {
@@ -29,7 +27,6 @@ namespace PersistanceMap.UnitTest
 
             _provider = new Mock<IConnectionProvider>();
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
-            //_provider.Setup(p => p.ExecuteNonQuery(It.IsAny<string>()));
             _provider.Setup(p => p.QueryCompiler).Returns(compiler.Object);
 
             _loggerFactory = new Mock<ILoggerFactory>();
