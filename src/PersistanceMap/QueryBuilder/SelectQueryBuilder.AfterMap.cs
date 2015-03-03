@@ -33,9 +33,10 @@ namespace PersistanceMap.QueryBuilder
                 aliasField = FieldHelper.TryExtractPropertyName(alias);
 
             var sourceField = FieldHelper.TryExtractPropertyName(source);
+            var sourceType = FieldHelper.TryExtractPropertyType(source);
             var entity = typeof(TSource).Name;
 
-            return Map(sourceField, aliasField, entity, null, converter, source.GetType());
+            return Map(sourceField, aliasField, entity, null, converter, sourceType);
         }
 
         /// <summary>

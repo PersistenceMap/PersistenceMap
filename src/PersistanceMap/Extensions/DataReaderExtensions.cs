@@ -59,7 +59,7 @@ namespace PersistanceMap
             }
             catch (IndexOutOfRangeException)
             {
-                Logger.TraceLine(string.Format("GetColumnIndex on IDataReader - Field {0} not found in reader", fieldName));
+                Logger.TraceLine(string.Format("## PersistanceMap - GetColumnIndex on IDataReader - Field {0} not found in reader", fieldName));
 
                 return NotFound;
             }

@@ -218,9 +218,7 @@ namespace PersistanceMap
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext context, CompiledQuery compiledQuery)
         {
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToArray();
-
-            TypeDefinitionFactory.MatchFields(fields, compiledQuery.QueryParts);
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>(compiledQuery.QueryParts).ToArray();
 
             return Map<T>(context, fields);
         }
@@ -355,7 +353,10 @@ namespace PersistanceMap
 
             // if still no match than just pass the db value and hope it works...
             if (convertedValue == null)
+            {
+                Logger.Write(string.Format("Cannot convert value {0} from type {1} to type {2}", dbValue, dbValue.GetType(), fieldDef.MemberType), GetType().Name, LoggerCategory.Error, DateTime.Now);
                 convertedValue = dbValue;
+            }
 
             if (fieldDef.Converter != null)
             {
@@ -533,9 +534,6 @@ namespace PersistanceMap
                 }
             }
 
-            Logger.Write(string.Format("Cannot convert value {0} to type {1}", value, memberType), GetType().Name, LoggerCategory.Error, DateTime.Now);
-
-            //throw new NotImplementedException();
             return null;
         }
 
