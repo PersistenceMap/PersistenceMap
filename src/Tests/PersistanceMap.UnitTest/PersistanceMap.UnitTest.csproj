@@ -80,6 +80,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DatabaseContextTests.cs" />
+    <Compile Include="Factories\ConnectionStringBuilderTests.cs" />
     <Compile Include="Factories\FieldHelperTests.cs" />
     <Compile Include="Factories\TypeDefinitionFactoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

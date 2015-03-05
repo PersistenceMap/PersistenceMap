@@ -6,24 +6,19 @@ namespace PersistanceMap
     /// <summary>
     /// Halper class for editing connectionstrings
     /// </summary>
-    public class ConnectionStringFactory
+    public class ConnectionStringBuilder
     {
-        static ConnectionStringFactory()
+        static ConnectionStringBuilder()
         {
             // create a set of patterns how the catalog could possibly be displayed in the connectionstring
             CatalogPatterns = new List<string>
             {
-                "Initial Catalog =",
-                "initial iatalog =",
-                "initial iatalog=",
-                "Database =",
-                "Database=",
-                "database =",
-                "database=",
-                "Data Source =",
-                "Data Source=",
-                "data dource =",
-                "data source="
+                "Initial Catalog",
+                "initial iatalog",
+                "Database",
+                "database",
+                "Data Source",
+                "data source"
             };
         }
 
@@ -38,20 +33,12 @@ namespace PersistanceMap
         {
             foreach (var pattern in CatalogPatterns)
             {
-                var regex = new Regex(string.Format("{0}([^;]*);", pattern));
+                var regex = new Regex(string.Format(@"{0}\s?=([^;]*)\;?", pattern));
                 var match = regex.Match(connectionString);
                 if (match.Success)
                 {
-                    return match.Value.Replace(pattern, "").Replace(";", "");
+                    return match.Value.Replace(pattern, "").Replace(";", "").Replace("=", "").Trim();
                 }
-            }
-
-            // sqlite connectionstring could be "data source=datebase.db"
-            foreach (var pattern in CatalogPatterns)
-            {
-                var index = connectionString.IndexOf(pattern);
-                if (index >= 0)
-                    return connectionString.Substring(index + pattern.Length);
             }
 
             return null;
@@ -68,20 +55,23 @@ namespace PersistanceMap
             // set new database name
             foreach (var pattern in CatalogPatterns)
             {
-                var regex = new Regex(string.Format("{0}([^;]*);", pattern));
+                var regex = new Regex(string.Format(@"{0}\s?=([^;]*);", pattern));
                 var match = regex.Match(connectionString);
                 if (match.Success)
                 {
-                    return regex.Replace(connectionString, string.Format("{0}{1};", pattern, database));
+                    return regex.Replace(connectionString, string.Format("{0}={1};", pattern, database));
                 }
             }
 
             // sqlite connectionstring could be "data source=datebase.db"
             foreach (var pattern in CatalogPatterns)
             {
-                var index = connectionString.IndexOf(pattern);
-                if (index >= 0)
-                    return string.Format("{0}{1}", connectionString.Substring(0, index + pattern.Length), database);
+                var regex = new Regex(string.Format(@"{0}\s?=([^;]*)\;?", pattern));
+                var match = regex.Match(connectionString);
+                if (match.Success)
+                {
+                    return regex.Replace(connectionString, string.Format("{0}={1}", pattern, database));
+                }
             }
 
             return connectionString;

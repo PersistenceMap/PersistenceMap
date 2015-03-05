@@ -5,13 +5,13 @@ namespace PersistanceMap
 {
     public class SqlCeConnectionProvider : IConnectionProvider
     {
-        private readonly Lazy<ConnectionStringFactory> _connectionStringFactory;
+        private readonly Lazy<ConnectionStringBuilder> _connectionStringBuilder;
 
         public SqlCeConnectionProvider(string connectionString)
         {
             // format the string
             ConnectionString = connectionString;
-            _connectionStringFactory = new Lazy<ConnectionStringFactory>(() => new ConnectionStringFactory());
+            _connectionStringBuilder = new Lazy<ConnectionStringBuilder>(() => new ConnectionStringBuilder());
         }
 
         /// <summary>
@@ -26,12 +26,12 @@ namespace PersistanceMap
         {
             get
             {
-                return _connectionStringFactory.Value.GetDatabase(ConnectionString);
+                return _connectionStringBuilder.Value.GetDatabase(ConnectionString);
             }
             set
             {
                 // set new database name
-                ConnectionString = _connectionStringFactory.Value.SetDatabase(value, ConnectionString);
+                ConnectionString = _connectionStringBuilder.Value.SetDatabase(value, ConnectionString);
             }
         }
 
