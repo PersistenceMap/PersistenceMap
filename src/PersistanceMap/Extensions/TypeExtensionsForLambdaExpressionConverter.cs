@@ -60,7 +60,6 @@ namespace PersistanceMap
 
                 default:
                         return false;
-
             }
         }
 

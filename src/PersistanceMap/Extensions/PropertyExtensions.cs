@@ -22,12 +22,10 @@ namespace PersistanceMap
                 var objectInstanceParam = Expression.Parameter(typeof(object), "objectInstanceParam");
                 var instanceParam = Expression.Convert(objectInstanceParam, propertyInfo.DeclaringType);
 
-                var exprCallPropertyGetFn = Expression.Call(instanceParam, getMethodInfo);
-                var oExprCallPropertyGetFn = Expression.Convert(exprCallPropertyGetFn, typeof(object));
+                var propertyGetExpression = Expression.Call(instanceParam, getMethodInfo);
+                var objectPropertyGetExpression = Expression.Convert(propertyGetExpression, typeof(object));
 
-                var propertyGetFn = Expression.Lambda<PropertyGetterDelegate>(oExprCallPropertyGetFn, objectInstanceParam).Compile();
-
-                return propertyGetFn;
+                return Expression.Lambda<PropertyGetterDelegate>(objectPropertyGetExpression, objectInstanceParam).Compile();
             }
             catch (Exception ex)
             {

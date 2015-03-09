@@ -47,8 +47,8 @@ namespace PersistanceMap
                 snapshot = DefaultValueTypes;
                 newCache = new Dictionary<Type, object>(DefaultValueTypes);
                 newCache[type] = defaultValue;
-
-            } while (!ReferenceEquals(Interlocked.CompareExchange(ref DefaultValueTypes, newCache, snapshot), snapshot));
+            } 
+            while (!ReferenceEquals(Interlocked.CompareExchange(ref DefaultValueTypes, newCache, snapshot), snapshot));
 
             return defaultValue;
         }
@@ -63,25 +63,10 @@ namespace PersistanceMap
 
                 type = type.BaseType;
             }
+
             return null;
         }
         
-        //public static Type GetTypeWithGenericTypeDefinitionOfAny(this Type type, params Type[] genericTypeDefinitions)
-        //{
-        //    foreach (var genericTypeDefinition in genericTypeDefinitions)
-        //    {
-        //        var genericType = type.GetTypeWithGenericTypeDefinitionOf(genericTypeDefinition);
-        //        if (genericType == null && type == genericTypeDefinition)
-        //        {
-        //            genericType = type;
-        //        }
-
-        //        if (genericType != null)
-        //            return genericType;
-        //    }
-        //    return null;
-        //}
-
         public static Type GetTypeWithGenericTypeDefinitionOf(this Type type, Type genericTypeDefinition)
         {
             foreach (var t in type.GetInterfaces())

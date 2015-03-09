@@ -189,21 +189,18 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="predicate">The Expression containing the value</param>
         /// <param name="callback">The callback for returning the output value</param>
         /// <returns>IProcedureQueryProvider</returns>
+        /// <example>
+        /// declare @p1 datetime
+        /// set @p1='2012-01-01 00:00:00' 
+        /// exec procname @p1 output 
+        /// select @p1 as p1
+        /// </example>
         public IProcedureQueryExpression AddParameter<T>(string name, Expression<Func<T>> predicate, Action<T> callback)
         {
             // parameters have to start with @
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
             
-            //
-            // declare @p1 datetime
-            // set @p1='2012-01-01 00:00:00'
-            //
-            // exec procname @p1 output
-            //
-            // select @p1 as p1
-            // 
-
             var paramName = string.Format("P{0}", QueryPartsMap.Parts.Count(p => p.OperationType == OperationType.OutParameterPrefix) + 1);
 
             // declare @p1 datetime

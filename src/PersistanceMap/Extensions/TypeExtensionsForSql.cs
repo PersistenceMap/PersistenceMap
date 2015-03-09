@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace PersistanceMap.Sql
+namespace PersistanceMap
 {
     internal static class TypeExtensionsForSql
     {

@@ -1,7 +1,6 @@
 ﻿using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
-using PersistanceMap.Sql;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
