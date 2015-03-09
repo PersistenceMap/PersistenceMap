@@ -7,20 +7,14 @@ namespace PersistanceMap.Factories
 {
     internal static class ExpressionFactory
     {
-        public static LambdaExpression CreateExpression(string value)
-        {
-            Expression<Func<string>> expression = () => value;
-            return expression;
-        }
-
         /// <summary>
         /// Creates a lambdaexpression that returnes the id propterty with the value contained by the property. The ID is provided by the typedefinitionfactory and is based on common conventions.
         /// x => x.Property == value
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<T>> entity)
+        /// <typeparam name="T">The object type that the satement is created with</typeparam>
+        /// <param name="property">The property returning the value in the object</param>
+        /// <returns>A expression providing a equality statement</returns>
+        public static Expression<Func<T, bool>> CreateEqualityExpression<T>(Expression<Func<T>> property)
         {
             // get the field that represents the primary key
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -28,7 +22,7 @@ namespace PersistanceMap.Factories
             if (pk == null)
                 return null;
 
-            var obj = entity.Compile().Invoke();
+            var obj = property.Compile().Invoke();
             var value = pk.PropertyInfo.GetValue(obj);
 
 
@@ -40,19 +34,25 @@ namespace PersistanceMap.Factories
             var right = Expression.Constant(value);
             var expression = Expression.Equal(left, right);
 
-            //return Expression.Lambda(e1);
             return Expression.Lambda<Func<T, bool>>(expression, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
         }
 
-        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<object>> entity)
+        /// <summary>
+        /// Creates a equality statement/expression by finding the key property using a custom convention
+        /// Expression: x => x.Property == value
+        /// </summary>
+        /// <typeparam name="T">The object type that the satement is created with</typeparam>
+        /// <param name="valueExpression">The expression providing the value that will be used in the equality statement</param>
+        /// <returns>A expression providing a equality statement</returns>
+        public static Expression<Func<T, bool>> CreateEqualityExpression<T>(Expression<Func<object>> valueExpression)
         {
-            var valueObject = entity.Compile().Invoke();
+            var valueObject = valueExpression.Compile().Invoke();
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>(valueObject.GetType());
             var pk = fields.FirstOrDefault(f => f.IsPrimaryKey);
             if (pk == null)
                 return null;
 
-            var value = pk.GetValueFunction(entity.Compile().Invoke());
+            var value = pk.GetValueFunction(valueExpression.Compile().Invoke());
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
 
@@ -67,19 +67,19 @@ namespace PersistanceMap.Factories
         }
 
         /// <summary>
-        /// Creates a lambdaexpression that returnes the id propterty with the value contained by the property
-        /// x => x.Property == value
+        /// Creates a lambdaexpression that returnes the id propterty with the constant value returned by the expression
+        /// Expression: x => x.Property == value
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entity"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static Expression<Func<T, bool>> CreateKeyExpression<T>(Expression<Func<T>> entity, Expression<Func<T, object>> key)
+        /// <typeparam name="T">The type of the value provided by the value expression</typeparam>
+        /// <param name="valueExpression">The expression providing the value that will be used in the equality statement</param>
+        /// <param name="key">The function providing the property that will be used in the equality statement</param>
+        /// <returns>A expression providing a equality statement</returns>
+        public static Expression<Func<T, bool>> CreateEqualityExpression<T>(Expression<Func<T>> valueExpression, Expression<Func<T, object>> key)
         {
             if (key == null)
                 return null;
 
-            var value = key.Compile().Invoke(entity.Compile().Invoke());
+            var value = key.Compile().Invoke(valueExpression.Compile().Invoke());
 
             ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
 
@@ -92,7 +92,7 @@ namespace PersistanceMap.Factories
             return Expression.Lambda<Func<T, bool>>(e1, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
         }
 
-        public static IEnumerable<Expression<Func<T,bool>>> CreateKeyValueEqualityExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields, IEnumerable<FieldDefinition> tableFields)
+        public static IEnumerable<Expression<Func<T, bool>>> CreateEqualityExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields, IEnumerable<FieldDefinition> tableFields)
         {
             ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
 
@@ -106,55 +106,8 @@ namespace PersistanceMap.Factories
                 var left = Expression.Property(pe, entityField.PropertyInfo);
                 var right = Expression.Constant(value);
 
-                yield return Expression.Lambda<Func<T, bool>>(Expression.Equal(left, right), new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
+                yield return Expression.Lambda<Func<T, bool>>(Expression.Equal(left, right), new ParameterExpression[] { Expression.Parameter(typeof (T), null) });
             }
         }
-
-        public static IEnumerable<LambdaExpression> CreateKeyExpressions<T>(object entity, IEnumerable<FieldDefinition> valueFields)
-        {
-            ParameterExpression pe = Expression.Parameter(typeof(T), "exp");
-
-            foreach (var valueField in valueFields)
-            {
-                var value = valueField.GetValueFunction(entity);
-
-                // x => (x.Property == value)
-                // Create an expression tree that represents the expression 'x.Property == value'.
-                var left = Expression.Property(pe, valueField.PropertyInfo);
-                var right = Expression.Constant(value, valueField.MemberType);
-
-                var expression = Expression.Assign(left, right);
-
-                yield return Expression.Lambda(expression, new ParameterExpression[] { Expression.Parameter(typeof(T), null) });
-            }
-        }
-
-        ///// <summary>
-        ///// Extracts the propertyinfo out of a expression
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="expression"></param>
-        ///// <returns></returns>
-        //public static PropertyInfo GetProperty<T>(Expression<Func<T, object>> expression)
-        //{
-        //    // sometimes the expression comes in as Convert(originalexpression)
-        //    if (expression.Body is UnaryExpression)
-        //    {
-        //        var exp = (UnaryExpression)expression.Body;
-        //        if (exp.Operand is MemberExpression)
-        //        {
-        //            return (PropertyInfo)((MemberExpression)exp.Operand).Member;
-        //        }
-                
-        //        throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
-        //    }
-            
-        //    if (expression.Body is MemberExpression)
-        //    {
-        //        return (PropertyInfo)((MemberExpression)expression.Body).Member;
-        //    }
-
-        //    throw new ArgumentException(string.Format("Property cannot be extracted from Expression {0}", expression.ToString()));
-        //}
     }
 }

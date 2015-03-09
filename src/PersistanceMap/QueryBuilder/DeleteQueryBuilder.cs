@@ -100,11 +100,11 @@ namespace PersistanceMap.QueryBuilder
             try
             {
                 // create expression containing key and value for the where statement
-                var whereexpr = ExpressionFactory.CreateKeyExpression(dataObject, identification);
+                var whereexpr = ExpressionFactory.CreateEqualityExpression(dataObject, identification);
                 if (whereexpr == null)
                 {
                     // find the property called ID or {objectname}ID to define the where expression
-                    whereexpr = ExpressionFactory.CreateKeyExpression(dataObject);
+                    whereexpr = ExpressionFactory.CreateEqualityExpression(dataObject);
                 }
 
                 var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
@@ -146,7 +146,7 @@ namespace PersistanceMap.QueryBuilder
             QueryPartsMap.Add(entityPart);
 
             // create expressions of all properties and theyr values
-            var expressions = ExpressionFactory.CreateKeyValueEqualityExpressions<T>(obj, anonymFields, tableFields).ToList();
+            var expressions = ExpressionFactory.CreateEqualityExpressions<T>(obj, anonymFields, tableFields).ToList();
 
             var first = expressions.FirstOrDefault();
             foreach (var expr in expressions)

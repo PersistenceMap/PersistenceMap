@@ -82,11 +82,11 @@ namespace PersistanceMap.QueryBuilder
         public IUpdateQueryExpression<T> Update(Expression<Func<T>> dataPredicate, Expression<Func<T, object>> identification = null)
         {
             // create expression containing key and value for the where statement
-            var whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate, identification);
+            var whereexpr = ExpressionFactory.CreateEqualityExpression(dataPredicate, identification);
             if (whereexpr == null)
             {
                 // find the property called ID or {objectname}ID to define the where expression
-                whereexpr = ExpressionFactory.CreateKeyExpression(dataPredicate);
+                whereexpr = ExpressionFactory.CreateEqualityExpression(dataPredicate);
             }
 
             var updatePart = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
@@ -132,7 +132,7 @@ namespace PersistanceMap.QueryBuilder
             if (whereexpr == null)
             {
                 // find the property called ID or {objectname}ID to define the where expression
-                whereexpr = ExpressionFactory.CreateKeyExpression<T>(anonym);
+                whereexpr = ExpressionFactory.CreateEqualityExpression<T>(anonym);
             }
 
             var entity = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
