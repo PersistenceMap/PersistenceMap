@@ -11,7 +11,7 @@ namespace PersistanceMap.UnitTest
         public void CompileQueryTest()
         {
             // setup
-            var parts = new Mock<IQueryPartsMap>();
+            var parts = new Mock<IQueryPartsContainer>();
             parts.Setup(p => p.Compile()).Returns(new CompiledQuery());
 
             // Act

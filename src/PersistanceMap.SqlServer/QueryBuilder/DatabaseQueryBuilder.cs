@@ -12,7 +12,7 @@ namespace PersistanceMap.SqlServer.QueryBuilder
         {
         }
 
-        public DatabaseQueryBuilder(SqlDatabaseContext context, IQueryPartsMap container)
+        public DatabaseQueryBuilder(SqlDatabaseContext context, IQueryPartsContainer container)
             : base(context, container)
         {
         }
@@ -31,7 +31,7 @@ namespace PersistanceMap.SqlServer.QueryBuilder
                 Context.ConnectionProvider.Database = "Master";
                 return string.Empty;
             });
-            QueryPartsMap.Add(setPart);
+            QueryParts.Add(setPart);
 
             //var part = new DelegateQueryPart(OperationType.CreateDatabase, () => string.Format("CREATE DATABASE {0}", database));
 
@@ -43,9 +43,9 @@ namespace PersistanceMap.SqlServer.QueryBuilder
             sb.AppendLine(string.Format("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''{0}'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''{0}_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
 
             var part = new DelegateQueryPart(OperationType.CreateDatabase, () => sb.ToString());
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
 
 
             var resetPart = new DelegateQueryPart(OperationType.None, () =>
@@ -54,7 +54,7 @@ namespace PersistanceMap.SqlServer.QueryBuilder
                 Context.ConnectionProvider.Database = database;
                 return string.Format("USE {0}", database);
             });
-            var resetQueryMap = new QueryPartsMap();
+            var resetQueryMap = new QueryPartsContainer();
             resetQueryMap.Add(resetPart);
             Context.AddQuery(new MapQueryCommand(resetQueryMap));
         }
@@ -66,7 +66,7 @@ namespace PersistanceMap.SqlServer.QueryBuilder
         /// <returns></returns>
         public ITableQueryExpression<T> Table<T>()
         {
-            return new TableQueryBuilder<T, SqlDatabaseContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, SqlDatabaseContext>(Context, QueryParts);
         }
 
         #endregion

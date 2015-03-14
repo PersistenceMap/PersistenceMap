@@ -6,16 +6,16 @@ using PersistanceMap.Sql;
 
 namespace PersistanceMap.QueryParts
 {
-    public class ProcedureQueryPartsMap : QueryPartsMap, IQueryPartsMap
+    public class ProcedureQueryPartsContainer : QueryPartsContainer, IQueryPartsContainer
     {
-        public ProcedureQueryPartsMap(string procedure)
+        public ProcedureQueryPartsContainer(string procedure)
         {
             procedure.EnsureArgumentNotNullOrEmpty("procedure");
 
             ProcedureName = procedure;
         }
 
-        #region IQueryPartsMap Implementation
+        #region IQueryPartsContainer Implementation
 
         public override CompiledQuery Compile()
         {

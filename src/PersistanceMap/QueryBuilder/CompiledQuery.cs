@@ -5,7 +5,7 @@ namespace PersistanceMap.QueryBuilder
     {
         public string QueryString { get; internal set; }
 
-        public IQueryPartsMap QueryParts { get; internal set; }
+        public IQueryPartsContainer QueryParts { get; internal set; }
 
         ///// <summary>
         ///// Converters that convert a db value to the desired object value

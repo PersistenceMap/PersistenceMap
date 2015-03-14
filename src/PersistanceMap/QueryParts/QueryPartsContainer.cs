@@ -7,11 +7,11 @@ using System.Text;
 namespace PersistanceMap.QueryParts
 {
     /// <summary>
-    /// Base Class for IQueryPartsMap implementations
+    /// Base Class for IQueryPartsContainer implementations
     /// </summary>
-    public class QueryPartsMap : IQueryPartsMap
+    public class QueryPartsContainer : IQueryPartsContainer
     {
-        #region IQueryPartsMap Implementation
+        #region IQueryPartsContainer Implementation
 
         public virtual void Add(IQueryPart part)
         {
@@ -56,7 +56,7 @@ namespace PersistanceMap.QueryParts
             last.Add(part);
         }
 
-        IEnumerable<IQueryPart> IQueryPartsMap.Parts
+        IEnumerable<IQueryPart> IQueryPartsContainer.Parts
         {
             get
             {

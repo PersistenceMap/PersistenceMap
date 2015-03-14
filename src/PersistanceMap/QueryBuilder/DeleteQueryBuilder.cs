@@ -18,10 +18,10 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
         }
 
-        public DeleteQueryBuilder(IDatabaseContext context, IQueryPartsMap container)
+        public DeleteQueryBuilder(IDatabaseContext context, IQueryPartsContainer container)
         {
             _context = context;
-            _queryPartsMap = container;
+            _queryParts = container;
         }
 
         private ILogger _logger;
@@ -46,14 +46,14 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap _queryPartsMap;
-        public IQueryPartsMap QueryPartsMap
+        IQueryPartsContainer _queryParts;
+        public IQueryPartsContainer QueryParts
         {
             get
             {
-                if (_queryPartsMap == null)
-                    _queryPartsMap = new QueryPartsMap();
-                return _queryPartsMap;
+                if (_queryParts == null)
+                    _queryParts = new QueryPartsContainer();
+                return _queryParts;
             }
         }
 
@@ -62,12 +62,12 @@ namespace PersistanceMap.QueryBuilder
         public IDeleteQueryExpression Delete<T>()
         {
             var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
-            QueryPartsMap.Add(deletePart);
+            QueryParts.Add(deletePart);
 
             var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof(T).Name));
-            QueryPartsMap.Add(entityPart);
+            QueryParts.Add(entityPart);
 
-            return new DeleteQueryBuilder(Context, QueryPartsMap);
+            return new DeleteQueryBuilder(Context, QueryParts);
         }
 
         /// <summary>
@@ -78,15 +78,15 @@ namespace PersistanceMap.QueryBuilder
         public IDeleteQueryExpression Delete<T>(Expression<Func<T, bool>> where)
         {
             var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
-            QueryPartsMap.Add(deletePart);
+            QueryParts.Add(deletePart);
 
             var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof(T).Name));
-            QueryPartsMap.Add(entityPart);
+            QueryParts.Add(entityPart);
 
             var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(where)));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new DeleteQueryBuilder(Context, QueryPartsMap);
+            return new DeleteQueryBuilder(Context, QueryParts);
         }
 
         /// <summary>
@@ -108,15 +108,15 @@ namespace PersistanceMap.QueryBuilder
                 }
 
                 var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
-                QueryPartsMap.Add(deletePart);
+                QueryParts.Add(deletePart);
 
                 var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof (T).Name));
-                QueryPartsMap.Add(entityPart);
+                QueryParts.Add(entityPart);
 
                 var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
-                QueryPartsMap.Add(part);
+                QueryParts.Add(part);
 
-                return new DeleteQueryBuilder(Context, QueryPartsMap);
+                return new DeleteQueryBuilder(Context, QueryParts);
             }
             catch (Exception e)
             {
@@ -140,10 +140,10 @@ namespace PersistanceMap.QueryBuilder
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
             var deletePart = new DelegateQueryPart(OperationType.Delete, () => "DELETE ");
-            QueryPartsMap.Add(deletePart);
+            QueryParts.Add(deletePart);
 
             var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof(T).Name));
-            QueryPartsMap.Add(entityPart);
+            QueryParts.Add(entityPart);
 
             // create expressions of all properties and theyr values
             var expressions = ExpressionFactory.CreateEqualityExpressions<T>(obj, anonymFields, tableFields).ToList();
@@ -153,10 +153,10 @@ namespace PersistanceMap.QueryBuilder
             {
                 // add all expressions to the queryexpression
                 var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => string.Format("{0} {1} ", first == expr ? "WHERE" : "AND", LambdaToSqlCompiler.Compile(expr)));
-                QueryPartsMap.Add(part);
+                QueryParts.Add(part);
             }
 
-            return new DeleteQueryBuilder(Context, QueryPartsMap);
+            return new DeleteQueryBuilder(Context, QueryParts);
         }
     }
 }

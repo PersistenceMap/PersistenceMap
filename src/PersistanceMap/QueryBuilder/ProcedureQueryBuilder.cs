@@ -13,7 +13,7 @@ namespace PersistanceMap.QueryBuilder
 {
     public abstract class ProcedureQueryProviderBase : IQueryExpression
     {
-        public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
+        public ProcedureQueryProviderBase(IDatabaseContext context, string procName, ProcedureQueryPartsContainer container)
         {
             context.EnsureArgumentNotNull("context");
             procName.EnsureArgumentNotNullOrEmpty("procName");
@@ -21,8 +21,8 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
             ProcedureName = procName;
 
-            if (queryPartsMap != null)
-                _queryPartsMap = queryPartsMap;
+            if (container != null)
+                _queryParts = container;
         }
 
         private ILogger _logger;
@@ -49,22 +49,22 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        ProcedureQueryPartsMap _queryPartsMap;
-        public ProcedureQueryPartsMap QueryPartsMap
+        ProcedureQueryPartsContainer _queryParts;
+        public ProcedureQueryPartsContainer QueryParts
         {
             get
             {
-                if (_queryPartsMap == null)
-                    _queryPartsMap = new ProcedureQueryPartsMap(ProcedureName);
-                return _queryPartsMap;
+                if (_queryParts == null)
+                    _queryParts = new ProcedureQueryPartsContainer(ProcedureName);
+                return _queryParts;
             }
         }
 
-        IQueryPartsMap IQueryExpression.QueryPartsMap
+        IQueryPartsContainer IQueryExpression.QueryParts
         {
             get
             {
-                return QueryPartsMap;
+                return QueryParts;
             }
         }
 
@@ -74,7 +74,7 @@ namespace PersistanceMap.QueryBuilder
 
         protected void ReadReturnValues(IReaderContext reader, QueryKernel kernel)
         {
-            var objectDefs = QueryPartsMap.Callbacks.Select(p =>
+            var objectDefs = QueryParts.Callbacks.Select(p =>
                 new ObjectDefinition
                 {
                     Name = p.Id,
@@ -87,8 +87,7 @@ namespace PersistanceMap.QueryBuilder
             if (mapping == null || !mapping.Any())
                 return;
 
-            //foreach (var param in QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Parameter).OfType<IParameterQueryPart>().Where(p => p.CanHandleCallback))
-            foreach(var param in QueryPartsMap.Callbacks)
+            foreach(var param in QueryParts.Callbacks)
             {
                 object value = null;
                 if (!mapping.TryGetValue(param.Id, out value))
@@ -141,8 +140,8 @@ namespace PersistanceMap.QueryBuilder
         {
         }
 
-        public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-            : base(context, procName, queryPartsMap)
+        public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsContainer container)
+            : base(context, procName, container)
         {
         }
 
@@ -176,9 +175,9 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var paramPart = new DelegateQueryPart(OperationType.Parameter, () => CreateParameterValue(name, predicate));
-            QueryPartsMap.Add(paramPart);
+            QueryParts.Add(paramPart);
 
-            return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -201,7 +200,7 @@ namespace PersistanceMap.QueryBuilder
             if (!name.StartsWith("@"))
                 name = string.Format("@{0}", name);
             
-            var paramName = string.Format("P{0}", QueryPartsMap.Parts.Count(p => p.OperationType == OperationType.OutParameterPrefix) + 1);
+            var paramName = string.Format("P{0}", QueryParts.Parts.Count(p => p.OperationType == OperationType.OutParameterPrefix) + 1);
 
             // declare @p1 datetime
             // set @p1='2012-01-01 00:00:00'
@@ -219,20 +218,20 @@ namespace PersistanceMap.QueryBuilder
 
                 return sb.ToString();
             });
-            QueryPartsMap.AddBefore(outDecl, OperationType.Parameter);
+            QueryParts.AddBefore(outDecl, OperationType.Parameter);
 
             // parameter=@p1 output
             var queryMap = new DelegateQueryPart(OperationType.Parameter, () => string.Format("{0}=@{1} OUTPUT", name, paramName));
-            QueryPartsMap.AddAfter(queryMap, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Parameter) ? OperationType.Parameter : OperationType.OutParameterPrefix);
+            QueryParts.AddAfter(queryMap, QueryParts.Parts.Any(p => p.OperationType == OperationType.Parameter) ? OperationType.Parameter : OperationType.OutParameterPrefix);
 
             // create value for selecting output parameters
             // select @p1 as p1
-            QueryPartsMap.AddAfter(new DelegateQueryPart(OperationType.OutParameterSufix, () => string.Format("@{0} AS {0}", paramName)), QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.OutParameterSufix) ? OperationType.OutParameterSufix : OperationType.Parameter);
+            QueryParts.AddAfter(new DelegateQueryPart(OperationType.OutParameterSufix, () => string.Format("@{0} AS {0}", paramName)), QueryParts.Parts.Any(p => p.OperationType == OperationType.OutParameterSufix) ? OperationType.OutParameterSufix : OperationType.Parameter);
 
             // pass the callback further on to be executed when the procedure was executed
-            QueryPartsMap.Add(new CallbackMap(paramName, cb => callback((T)cb), typeof(T)));
+            QueryParts.Add(new CallbackMap(paramName, cb => callback((T)cb), typeof(T)));
 
-            return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -242,7 +241,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A typesage IProcedureQueryProvider</returns>
         public IProcedureQueryExpression<T> For<T>()
         {
-            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -253,7 +252,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A typesafe IProcedureQueryProvider</returns>
         public IProcedureQueryExpression<T> For<T>(Expression<Func<T>> anonymous)
         {
-            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -276,9 +275,9 @@ namespace PersistanceMap.QueryBuilder
                 OperationType = OperationType.Include
             };
 
-            QueryPartsMap.Add(field);
+            QueryParts.Add(field);
 
-            return new ProcedureQueryProvider(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -287,7 +286,7 @@ namespace PersistanceMap.QueryBuilder
         public void Execute()
         {
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryPartsMap);
+            var query = expr.Compile(QueryParts);
 
             //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
             // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
@@ -303,7 +302,7 @@ namespace PersistanceMap.QueryBuilder
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
             // merge fields that were defined with Maps
-            foreach (var p in QueryPartsMap.Parts.Where(pr => pr.OperationType == OperationType.Include))
+            foreach (var p in QueryParts.Parts.Where(pr => pr.OperationType == OperationType.Include))
             {
                 var map = p as IFieldMap;
                 if (map == null)
@@ -318,7 +317,7 @@ namespace PersistanceMap.QueryBuilder
 
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryPartsMap);
+            var query = expr.Compile(QueryParts);
 
             IEnumerable<T> values = null;
 
@@ -344,8 +343,8 @@ namespace PersistanceMap.QueryBuilder
 
     public class ProcedureQueryProvider<T> : ProcedureQueryProviderBase, IProcedureQueryExpression<T>, IQueryExpression
     {
-        public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsMap queryPartsMap)
-            : base(context, procName, queryPartsMap)
+        public ProcedureQueryProvider(IDatabaseContext context, string procName, ProcedureQueryPartsContainer container)
+            : base(context, procName, container)
         {
         }
 
@@ -371,9 +370,9 @@ namespace PersistanceMap.QueryBuilder
                 OperationType = OperationType.Include
             };
 
-            QueryPartsMap.Add(field);
+            QueryParts.Add(field);
 
-            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryPartsMap);
+            return new ProcedureQueryProvider<T>(Context, ProcedureName, QueryParts);
         }
 
         /// <summary>
@@ -384,7 +383,7 @@ namespace PersistanceMap.QueryBuilder
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var map in QueryPartsMap.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
+            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
             {
                 var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
                 if (field == null)
@@ -400,7 +399,7 @@ namespace PersistanceMap.QueryBuilder
 
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryPartsMap);
+            var query = expr.Compile(QueryParts);
 
             IEnumerable<T> values = null;
 
@@ -417,7 +416,7 @@ namespace PersistanceMap.QueryBuilder
         {
             var mapfields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var map in QueryPartsMap.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
+            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.Include))
             {
                 var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
                 if (field == null)
@@ -442,7 +441,7 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryPartsMap);
+            var query = expr.Compile(QueryParts);
 
             IEnumerable<TOut> values = null;
 

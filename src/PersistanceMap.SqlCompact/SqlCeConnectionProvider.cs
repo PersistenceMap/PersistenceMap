@@ -37,7 +37,7 @@ namespace PersistanceMap
 
         private IQueryCompiler _queryCompiler;
         /// <summary>
-        /// The querycompiler that is needed to compiel a querypartsmap to a sql statement
+        /// The querycompiler that is needed to compiel a querypartscontainer to a sql statement
         /// </summary>
         public virtual IQueryCompiler QueryCompiler
         {

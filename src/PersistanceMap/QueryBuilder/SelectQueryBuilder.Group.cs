@@ -27,9 +27,9 @@ namespace PersistanceMap.QueryBuilder
         {
             var field = FieldHelper.TryExtractPropertyName(predicate);
             var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0}", field));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>

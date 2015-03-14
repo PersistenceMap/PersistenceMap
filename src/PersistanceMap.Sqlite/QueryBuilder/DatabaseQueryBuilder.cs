@@ -15,7 +15,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
         }
 
-        public DatabaseQueryBuilder(SqliteDatabaseContext context, IQueryPartsMap container)
+        public DatabaseQueryBuilder(SqliteDatabaseContext context, IQueryPartsContainer container)
             : base(context, container)
         {
         }
@@ -24,7 +24,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
         public PersistanceMap.Sqlite.ITableQueryExpression<T> Table<T>()
         {
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         #endregion
@@ -32,7 +32,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
     internal class TableQueryBuilder<T> : TableQueryBuilder<T, SqliteDatabaseContext>, PersistanceMap.Sqlite.ITableQueryExpression<T>
     {
-        public TableQueryBuilder(SqliteDatabaseContext context, IQueryPartsMap container)
+        public TableQueryBuilder(SqliteDatabaseContext context, IQueryPartsContainer container)
             : base(context, container)
         {
         }
@@ -44,7 +44,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     name,
                     type.ToSqlDbType(),
                     isNullable ? "" : " NOT NULL",
-                    QueryPartsMap.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
+                    QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
 
             return new DelegateQueryPart(OperationType.Column, expression, name);
         }
@@ -57,29 +57,29 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         public override void Create()
         {
             var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE IF NOT EXISTS {0} (", typeof(T).Name));
-            QueryPartsMap.AddBefore(createPart, OperationType.None);
+            QueryParts.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             foreach (var field in fields.Reverse())
             {
-                var existing = QueryPartsMap.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
+                var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
                 if (existing.Any())
                     continue;
 
                 var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
 
-                if (QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column))
+                if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
                 {
-                    QueryPartsMap.AddBefore(fieldPart, OperationType.Column);
+                    QueryParts.AddBefore(fieldPart, OperationType.Column);
                 }
                 else
-                    QueryPartsMap.AddAfter(fieldPart, OperationType.CreateTable);
+                    QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
             }
 
             // add closing bracked
-            QueryPartsMap.Add(new DelegateQueryPart(OperationType.None, () => ")"));
+            QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         public void RenameTo<TNew>()
         {
             var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         public override PersistanceMap.ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
             base.Ignore(field);
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
             base.Key(key, isAutoIncrement);
 
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
             base.Key(keyFields);
 
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
             base.ForeignKey<TRef>(field, reference);
 
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -163,21 +163,21 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 case FieldOperation.None:
                     //TODO: precision???
                     var part = CreateColumn(field.MemberName, field.MemberType, isNullable ?? field.IsNullable);
-                    QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+                    QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
                     var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 default:
                     throw new NotSupportedException("SQLite only supports ADD column");
             }
 
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 case FieldOperation.None:
                     //TODO: precision???
                     var part = CreateColumn(column, fieldType, isNullable ?? true);
-                    QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+                    QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
@@ -209,14 +209,14 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     }
 
                     expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 default:
                     throw new NotSupportedException("SQLite only supports ADD column");
             }
 
-            return new TableQueryBuilder<T>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T>(Context, QueryParts);
         }
 
         #endregion

@@ -3,9 +3,9 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    public class SelectQueryPartsMap : QueryPartsMap, IQueryPartsMap
+    public class SelectQueryPartsContainer : QueryPartsContainer, IQueryPartsContainer
     {
-        #region IQueryPartsMap Implementation
+        #region IQueryPartsContainer Implementation
 
         public override void Add(IQueryPart map)
         {

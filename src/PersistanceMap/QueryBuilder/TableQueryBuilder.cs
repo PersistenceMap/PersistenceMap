@@ -10,7 +10,7 @@ namespace PersistanceMap.QueryBuilder
 {
     public class TableQueryBuilder<T, TContext> : QueryBuilderBase<TContext>, ITableQueryExpression<T> where TContext : IDatabaseContext
     {
-        public TableQueryBuilder(TContext context, IQueryPartsMap container)
+        public TableQueryBuilder(TContext context, IQueryPartsContainer container)
             : base(context, container)
         {
         }
@@ -21,7 +21,7 @@ namespace PersistanceMap.QueryBuilder
                     name,
                     type.ToSqlDbType(),
                     isNullable ? "" : " NOT NULL",
-                    QueryPartsMap.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
+                    QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
 
             return new DelegateQueryPart(OperationType.Column, expression, name);
         }
@@ -34,28 +34,28 @@ namespace PersistanceMap.QueryBuilder
         public virtual void Create()
         {
             var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE {0} (", typeof(T).Name));
-            QueryPartsMap.AddBefore(createPart, OperationType.None);
+            QueryParts.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             foreach (var field in fields.Reverse())
             {
-                var existing = QueryPartsMap.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
+                var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
                 if (existing.Any())
                     continue;
 
                 var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
-                if (QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column))
+                if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
                 {
-                    QueryPartsMap.AddBefore(fieldPart, OperationType.Column);
+                    QueryParts.AddBefore(fieldPart, OperationType.Column);
                 }
                 else
-                    QueryPartsMap.AddAfter(fieldPart, OperationType.CreateTable);
+                    QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
             }
 
             // add closing bracked
-            QueryPartsMap.Add(new DelegateQueryPart(OperationType.None, () => ")"));
+            QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace PersistanceMap.QueryBuilder
         public virtual void Alter()
         {
             var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
-            QueryPartsMap.AddBefore(createPart, OperationType.None);
+            QueryParts.AddBefore(createPart, OperationType.None);
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
         }
 
         //public void RenameTo<TNew>()
@@ -80,9 +80,9 @@ namespace PersistanceMap.QueryBuilder
         public virtual void Drop()
         {
             var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryPartsMap));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -94,9 +94,9 @@ namespace PersistanceMap.QueryBuilder
         {
             var memberName = FieldHelper.TryExtractPropertyName(field);
             var part = new DelegateQueryPart(OperationType.IgnoreColumn, () => "", memberName);
-            QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+            QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         /// <summary>
@@ -117,12 +117,12 @@ namespace PersistanceMap.QueryBuilder
                     field.MemberType.ToSqlDbType(),
                     field.IsNullable ? "" : " NOT NULL",
                     isAutoIncrement ? " AUTOINCREMENT" : "",
-                    QueryPartsMap.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
+                    QueryParts.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
                     field.MemberName);
 
-            QueryPartsMap.AddBefore(fieldPart, OperationType.TableKeys);
+            QueryParts.AddBefore(fieldPart, OperationType.TableKeys);
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         /// <summary>
@@ -149,9 +149,9 @@ namespace PersistanceMap.QueryBuilder
             sb.Append(")");
 
             var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => sb.ToString());
-            QueryPartsMap.Add(fieldPart);
+            QueryParts.Add(fieldPart);
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace PersistanceMap.QueryBuilder
             var referenceName = FieldHelper.TryExtractPropertyName(reference);
 
             var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => string.Format("FOREIGN KEY({0}) REFERENCES {1}({2})", memberName, typeof(TRef).Name, referenceName), string.Format("{0}={1}", memberName, referenceName));
-            QueryPartsMap.Add(fieldPart);
+            QueryParts.Add(fieldPart);
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         /// <summary>
@@ -193,19 +193,19 @@ namespace PersistanceMap.QueryBuilder
                 case FieldOperation.None:
                     //TODO: precision???
                     var part = CreateColumn(field.MemberName, field.MemberType, isNullable ?? field.IsNullable);
-                    QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+                    QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
                     expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 case FieldOperation.Drop:
                     expression = string.Format("DROP COLUMN {0}", field.MemberName);
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 case FieldOperation.Alter:
@@ -216,7 +216,7 @@ namespace PersistanceMap.QueryBuilder
                     throw new NotSupportedException("SQL Server only supports ADD column");
             }
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace PersistanceMap.QueryBuilder
                 case FieldOperation.None:
                     //TODO: precision???
                     var part = CreateColumn(column, fieldType, isNullable ?? true);
-                    QueryPartsMap.AddAfter(part, QueryPartsMap.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
+                    QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
@@ -248,12 +248,12 @@ namespace PersistanceMap.QueryBuilder
                     }
 
                     expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 case FieldOperation.Drop:
                     expression = string.Format("DROP COLUMN {0}", column);
-                    QueryPartsMap.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
                     break;
 
                 case FieldOperation.Alter:
@@ -264,7 +264,7 @@ namespace PersistanceMap.QueryBuilder
                     throw new NotSupportedException("SQL Server only supports ADD column");
             }
 
-            return new TableQueryBuilder<T, TContext>(Context, QueryPartsMap);
+            return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
 
         #endregion

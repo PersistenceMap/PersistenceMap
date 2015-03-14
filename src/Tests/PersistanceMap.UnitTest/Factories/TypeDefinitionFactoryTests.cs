@@ -32,7 +32,7 @@ namespace PersistanceMap.UnitTest.Factories
         [Test]
         public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMacht()
         {
-            var parts = new QueryPartsMap();
+            var parts = new QueryPartsContainer();
             var item = new QueryPartDecorator();
             item.Add(new FieldQueryPart("ID", null, null, "Warrior")
             {

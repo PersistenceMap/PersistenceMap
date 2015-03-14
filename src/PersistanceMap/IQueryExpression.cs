@@ -11,6 +11,6 @@ namespace PersistanceMap
         /// <summary>
         /// The container containing all queryparts needed for the sql expression
         /// </summary>
-        IQueryPartsMap QueryPartsMap { get; }
+        IQueryPartsContainer QueryParts { get; }
     }
 }

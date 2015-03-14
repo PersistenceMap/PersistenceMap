@@ -10,10 +10,10 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
         }
 
-        public QueryBuilderBase(TContext context, IQueryPartsMap container)
+        public QueryBuilderBase(TContext context, IQueryPartsContainer container)
         {
             _context = context;
-            _queryPartsMap = container;
+            _queryParts = container;
         }
 
         private ILogger _logger;
@@ -46,14 +46,14 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap _queryPartsMap;
-        public IQueryPartsMap QueryPartsMap
+        IQueryPartsContainer _queryParts;
+        public IQueryPartsContainer QueryParts
         {
             get
             {
-                if (_queryPartsMap == null)
-                    _queryPartsMap = new QueryPartsMap();
-                return _queryPartsMap;
+                if (_queryParts == null)
+                    _queryParts = new QueryPartsContainer();
+                return _queryParts;
             }
         }
 

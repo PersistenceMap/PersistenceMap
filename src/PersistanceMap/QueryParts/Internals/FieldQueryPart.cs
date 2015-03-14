@@ -85,7 +85,7 @@ namespace PersistanceMap.QueryParts
         }
 
 
-        internal static void FiedlPartsFactory(SelectQueryPartsMap queryParts, FieldQueryPart[] fields)
+        internal static void FiedlPartsFactory(SelectQueryPartsContainer queryParts, FieldQueryPart[] fields)
         {
             //TODO: this method should be removed!
             foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))

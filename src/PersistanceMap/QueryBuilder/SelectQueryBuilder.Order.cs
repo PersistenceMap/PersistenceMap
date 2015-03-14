@@ -38,9 +38,9 @@ namespace PersistanceMap.QueryBuilder
         public IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate)
         {
             var part = new DelegateQueryPart(OperationType.ThenByDesc, () => string.Format(", {0} DESC", LambdaToSqlCompiler.Instance.Compile(predicate)));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -52,9 +52,9 @@ namespace PersistanceMap.QueryBuilder
         public IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
             var part = new DelegateQueryPart(OperationType.ThenByDesc, () => string.Format(", {0} DESC", LambdaToSqlCompiler.Instance.Compile(predicate)));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new SelectQueryBuilder<T>(Context, QueryPartsMap);
+            return new SelectQueryBuilder<T>(Context, QueryParts);
         }
 
         #endregion

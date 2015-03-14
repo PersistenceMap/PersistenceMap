@@ -8,13 +8,13 @@ namespace PersistanceMap
     public class QueryCompiler : IQueryCompiler
     {
         /// <summary>
-        /// Compile IQueryPartsMap to a QueryString
+        /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
-        /// <param name="queryParts"></param>
+        /// <param name="container"></param>
         /// <returns></returns>
-        public virtual CompiledQuery Compile(IQueryPartsMap queryParts)
+        public virtual CompiledQuery Compile(IQueryPartsContainer container)
         {
-            return queryParts.Compile();
+            return container.Compile();
         }
     }
 }

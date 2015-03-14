@@ -75,7 +75,7 @@
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="IDatabaseQueryExpression.cs" />
-    <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
+    <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\Internals\CallbackMap.cs" />
     <Compile Include="QueryParts\Internals\EntityDelegateQueryPart.cs" />
@@ -124,15 +124,15 @@
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
     <Compile Include="IProcedureQueryExpression.cs" />
-    <Compile Include="IQueryPartsMap.cs" />
-    <Compile Include="QueryParts\ProcedureQueryPartsMap.cs" />
+    <Compile Include="IQueryPartsContainer.cs" />
+    <Compile Include="QueryParts\ProcedureQueryPartsContainer.cs" />
     <Compile Include="IReaderContext.cs" />
     <Compile Include="QueryParts\IEntityMap.cs" />
     <Compile Include="ReaderContext.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="QueryCompiler.cs" />
-    <Compile Include="QueryParts\QueryPartsMap.cs" />
+    <Compile Include="QueryParts\QueryPartsContainer.cs" />
     <Compile Include="QueryBuilder\SelectQueryBuilder.AfterMap.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
@@ -147,7 +147,7 @@
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="QueryParts\IQueryPart.cs" />
     <Compile Include="QueryParts\Internals\FieldQueryPart.cs" />
-    <Compile Include="QueryParts\SelectQueryPartsMap.cs" />
+    <Compile Include="QueryParts\SelectQueryPartsContainer.cs" />
     <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryBuilder\SelectQueryBuilder.Join.cs">

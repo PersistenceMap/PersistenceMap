@@ -15,10 +15,10 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
         }
 
-        public UpdateQueryBuilder(IDatabaseContext context, IQueryPartsMap container)
+        public UpdateQueryBuilder(IDatabaseContext context, IQueryPartsContainer container)
         {
             _context = context;
-            _queryPartsMap = container;
+            _queryParts = container;
         }
 
         private ILogger _logger;
@@ -43,14 +43,14 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap _queryPartsMap;
-        public IQueryPartsMap QueryPartsMap
+        IQueryPartsContainer _queryParts;
+        public IQueryPartsContainer QueryParts
         {
             get
             {
-                if (_queryPartsMap == null)
-                    _queryPartsMap = new QueryPartsMap();
-                return _queryPartsMap;
+                if (_queryParts == null)
+                    _queryParts = new QueryPartsContainer();
+                return _queryParts;
             }
         }
 
@@ -63,13 +63,13 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var set = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
+            var set = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
             RemovePartByID(set, fieldName);
 
-            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
+            return new UpdateQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -90,10 +90,10 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var updatePart = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
-            QueryPartsMap.Add(updatePart);
+            QueryParts.Add(updatePart);
 
             var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
-            QueryPartsMap.Add(setPart);
+            QueryParts.Add(setPart);
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -113,9 +113,9 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
+            return new UpdateQueryBuilder<T>(Context, QueryParts);
         }
 
         /// <summary>
@@ -136,10 +136,10 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var entity = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
-            QueryPartsMap.Add(entity);
+            QueryParts.Add(entity);
             
             var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
-            QueryPartsMap.Add(setPart);
+            QueryParts.Add(setPart);
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -159,9 +159,9 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
-            QueryPartsMap.Add(part);
+            QueryParts.Add(part);
 
-            return new UpdateQueryBuilder<T>(Context, QueryPartsMap);
+            return new UpdateQueryBuilder<T>(Context, QueryParts);
         }
 
         private static void RemovePartByID(IQueryPartDecorator decorator, string id)

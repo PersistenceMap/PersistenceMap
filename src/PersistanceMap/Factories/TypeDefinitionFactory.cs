@@ -24,7 +24,7 @@ namespace PersistanceMap.Factories
         /// <typeparam name="T"></typeparam>
         /// <param name="queryParts"></param>
         /// <returns></returns>
-        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsMap queryParts)
+        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsContainer queryParts)
         {
             return ExtractFieldDefinitions(typeof(T), queryParts);
         }
@@ -99,7 +99,7 @@ namespace PersistanceMap.Factories
             }
         }
 
-        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type, IQueryPartsMap queryParts = null)
+        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type, IQueryPartsContainer queryParts = null)
         {
             //TODO: This lock causes minor performance issues! Find a better way to ensure thread safety!
             ////lock (_lockobject)
@@ -147,7 +147,7 @@ namespace PersistanceMap.Factories
                    propertyInfo.Name.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
-        private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsMap queryParts)
+        private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsContainer queryParts)
         {
             if (queryParts == null)
                 return fields;

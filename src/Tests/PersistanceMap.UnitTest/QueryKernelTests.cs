@@ -24,12 +24,8 @@ namespace PersistanceMap.UnitTest
             var dr = new Mock<IDataReader>();
             var reader = new ReaderContext(dr.Object);
 
-            //var compiler = new Mock<IQueryCompiler>();
-            //compiler.Setup(c => c.Compile(It.IsAny<IQueryPartsMap>())).Returns(new CompiledQuery());
-
             _provider = new Mock<IConnectionProvider>();
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
-            //_provider.Setup(p => p.QueryCompiler).Returns(compiler.Object);
 
             _loggerFactory = new Mock<ILoggerFactory>();
             _loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogger>().Object);

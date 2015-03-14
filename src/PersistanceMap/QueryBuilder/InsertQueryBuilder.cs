@@ -15,10 +15,10 @@ namespace PersistanceMap.QueryBuilder
             _context = context;
         }
 
-        public InsertQueryBuilder(IDatabaseContext context, IQueryPartsMap container)
+        public InsertQueryBuilder(IDatabaseContext context, IQueryPartsContainer container)
         {
             _context = context;
-            _queryPartsMap = container;
+            _queryParts = container;
         }
 
         private ILogger _logger;
@@ -43,14 +43,14 @@ namespace PersistanceMap.QueryBuilder
             }
         }
 
-        IQueryPartsMap _queryPartsMap;
-        public IQueryPartsMap QueryPartsMap
+        IQueryPartsContainer _queryParts;
+        public IQueryPartsContainer QueryParts
         {
             get
             {
-                if (_queryPartsMap == null)
-                    _queryPartsMap = new QueryPartsMap();
-                return _queryPartsMap;
+                if (_queryParts == null)
+                    _queryParts = new QueryPartsContainer();
+                return _queryParts;
             }
         }
 
@@ -63,15 +63,15 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var insert = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
-            var value = QueryPartsMap.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Values);
+            var insert = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
+            var value = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Values);
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
             RemovePartByID(insert, fieldName);
             RemovePartByID(value, fieldName);
 
-            return new InsertQueryBuilder<T>(Context, QueryPartsMap);
+            return new InsertQueryBuilder<T>(Context, QueryParts);
         }
         
         /// <summary>
@@ -99,10 +99,10 @@ namespace PersistanceMap.QueryBuilder
         private IInsertQueryExpression<T> InsertInternal(LambdaExpression anonym)
         {
             var insertPart = new DelegateQueryPart(OperationType.Insert, () => string.Format("INSERT INTO {0} ", typeof(T).Name));
-            QueryPartsMap.Add(insertPart);
+            QueryParts.Add(insertPart);
 
             var valuesPart = new DelegateQueryPart(OperationType.Values, () => " VALUES ");
-            QueryPartsMap.Add(valuesPart);
+            QueryParts.Add(valuesPart);
 
             var dataObject = anonym.Compile().DynamicInvoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
@@ -122,7 +122,7 @@ namespace PersistanceMap.QueryBuilder
                 valuesPart.Add(valuePart);
             }
 
-            return new InsertQueryBuilder<T>(Context, QueryPartsMap);
+            return new InsertQueryBuilder<T>(Context, QueryParts);
         }
 
         private static void RemovePartByID(IQueryPartDecorator decorator, string id)
