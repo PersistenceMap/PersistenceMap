@@ -30,7 +30,7 @@ namespace PersistanceMap.UnitTest.Factories
 
 
         [Test]
-        public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMacht()
+        public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatch()
         {
             var parts = new QueryPartsContainer();
             var item = new QueryPartDecorator();
@@ -51,6 +51,33 @@ namespace PersistanceMap.UnitTest.Factories
             Assert.IsTrue(fields.Any(f => f.FieldName == "WeaponID"));
             Assert.IsTrue(fields.Any(f => f.FieldName == "Race"));
             Assert.IsTrue(fields.Any(f => f.FieldName == "SpecialSkill"));
+
+            Assert.IsTrue(fields.First(f => f.FieldName == "ID").FieldType == typeof(DateTime));
+            Assert.IsTrue(fields.First(f => f.FieldName == "ID").MemberType == typeof(int));
+        }
+
+        [Test]
+        public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatchAndIgnoreFields()
+        {
+            var parts = new QueryPartsContainer();
+            var item = new QueryPartDecorator();
+            item.Add(new FieldQueryPart("ID", null, null, "Warrior")
+            {
+                FieldType = typeof(DateTime)
+            });
+
+            parts.Add(item);
+
+            // Act
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<Warrior>(parts, true);
+
+            Assert.IsTrue(fields.Count() == 1);
+
+            Assert.IsTrue(fields.Any(f => f.FieldName == "ID"));
+            Assert.IsFalse(fields.Any(f => f.FieldName == "Name"));
+            Assert.IsFalse(fields.Any(f => f.FieldName == "WeaponID"));
+            Assert.IsFalse(fields.Any(f => f.FieldName == "Race"));
+            Assert.IsFalse(fields.Any(f => f.FieldName == "SpecialSkill"));
 
             Assert.IsTrue(fields.First(f => f.FieldName == "ID").FieldType == typeof(DateTime));
             Assert.IsTrue(fields.First(f => f.FieldName == "ID").MemberType == typeof(int));

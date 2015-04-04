@@ -20,6 +20,6 @@ namespace PersistanceMap.QueryParts
         /// <summary>
         /// Gets or sets a value indicating if parts can be added to the decorator
         /// </summary>
-        bool IsSealded { get; set; }
+        bool IsSealed { get; set; }
     }
 }

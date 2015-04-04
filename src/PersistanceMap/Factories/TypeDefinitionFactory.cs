@@ -23,10 +23,11 @@ namespace PersistanceMap.Factories
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryParts"></param>
+        /// <param name="ignoreUnusedFields"></param>
         /// <returns></returns>
-        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsContainer queryParts)
+        public static IEnumerable<FieldDefinition> GetFieldDefinitions<T>(IQueryPartsContainer queryParts, bool ignoreUnusedFields = false)
         {
-            return ExtractFieldDefinitions(typeof(T), queryParts);
+            return ExtractFieldDefinitions(typeof(T), queryParts, ignoreUnusedFields);
         }
 
         /// <summary>
@@ -99,12 +100,8 @@ namespace PersistanceMap.Factories
             }
         }
 
-        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type, IQueryPartsContainer queryParts = null)
+        private static IEnumerable<FieldDefinition> ExtractFieldDefinitions(Type type, IQueryPartsContainer queryParts = null, bool ignoreUnusedFields = false)
         {
-            //TODO: This lock causes minor performance issues! Find a better way to ensure thread safety!
-            ////lock (_lockobject)
-            ////{
-
             IEnumerable<FieldDefinition> fields = new List<FieldDefinition>();
             if (!FieldDefinitionCache.TryGetValue(type, out fields))
             {
@@ -112,8 +109,7 @@ namespace PersistanceMap.Factories
                 FieldDefinitionCache.Add(type, fields);
             }
 
-            return MatchFieldInformation(fields, queryParts);
-            ////}
+            return MatchFieldInformation(fields, queryParts, ignoreUnusedFields);
         }
 
         private static FieldDefinition ToFieldDefinition(this PropertyInfo propertyInfo)
@@ -147,7 +143,7 @@ namespace PersistanceMap.Factories
                    propertyInfo.Name.ToLower().Equals(string.Format("{0}id", memberName.ToLower()));
         }
 
-        private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsContainer queryParts)
+        private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsContainer queryParts, bool ignoreUnusedFields)
         {
             if (queryParts == null)
                 return fields;
@@ -156,8 +152,9 @@ namespace PersistanceMap.Factories
             var definitions = fields.ToList();
 
             // match all properties that are need to be passed over to the fielddefinitions
-            var fieldParts = queryParts.Parts.OfType<IQueryPartDecorator>().SelectMany(p => p.Parts.OfType<FieldQueryPart>());
-            foreach (var part in fieldParts.Where(f => f.FieldType != null))
+            var fieldParts = queryParts.Parts.OfType<IQueryPartDecorator>().SelectMany(p => p.Parts.Where(m => m.OperationType != OperationType.IgnoreColumn));
+            //TODO: Check if there is a better wy instead of having to cast to the object to select the proper items
+            foreach (var part in fieldParts.OfType<FieldQueryPart>().Where(f => f.FieldType != null))
             {
                 var definition = definitions.FirstOrDefault(f => f.FieldName == part.ID);
                 if (definition != null)
@@ -166,9 +163,18 @@ namespace PersistanceMap.Factories
                 }
             }
 
+            if (ignoreUnusedFields)
+            {
+                // remove all fields that are not contained in the query/datareader
+                // if the desired object is a anonymous object, all fields have to be mapped because anonymous objects are created through the constructor
+                definitions.RemoveAll(t => !fieldParts.Any(p => p.ID == t.FieldName));
+            }
+
+
             // extract all fields with converter
             // copy all valueconverters to the fielddefinitions
-            foreach (var converter in fieldParts.Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }))
+            //TODO: Check if there is a better wy instead of having to cast to the object to select the proper items
+            foreach (var converter in fieldParts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }))
             {
                 var field = definitions.FirstOrDefault(f => f.FieldName == converter.ID);
                 if (field != null)

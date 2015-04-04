@@ -121,8 +121,8 @@ namespace PersistanceMap.QueryBuilder
             var parent = QueryParts.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
-                isSealed = parent.IsSealded;
-                parent.IsSealded = false;
+                isSealed = parent.IsSealed;
+                parent.IsSealed = false;
 
                 var duplicate = parent.Parts.FirstOrDefault(p => p.ID == (alias ?? source));
                 if (duplicate != null)
@@ -138,7 +138,7 @@ namespace PersistanceMap.QueryBuilder
 
             if (parent != null)
             {
-                parent.IsSealded = isSealed;
+                parent.IsSealed = isSealed;
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -213,11 +213,11 @@ namespace PersistanceMap.QueryBuilder
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
                 alias = alias ?? field;
-                var id = Guid.NewGuid().ToString();
+                var id = alias;
                 var part = new DelegateQueryPart(OperationType.Max, () => string.Format("MAX({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
 
                 parent.Add(part);
-                parent.IsSealded = true;
+                parent.IsSealed = true;
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -235,11 +235,11 @@ namespace PersistanceMap.QueryBuilder
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
                 alias = alias ?? field;
-                var id = Guid.NewGuid().ToString();
+                var id = alias;
                 var part = new DelegateQueryPart(OperationType.Min, () => string.Format("MIN({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
 
                 parent.Add(part);
-                parent.IsSealded = true;
+                parent.IsSealed = true;
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -257,11 +257,12 @@ namespace PersistanceMap.QueryBuilder
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
                 alias = alias ?? field;
-                var id = Guid.NewGuid().ToString();
+                //var id = Guid.NewGuid().ToString();
+                var id = alias;
                 var part = new DelegateQueryPart(OperationType.Count, () => string.Format("COUNT({0}) AS {1}{2} ", field, alias, parent.Parts.Last().ID != id ? "," : ""), id);
 
                 parent.Add(part);
-                parent.IsSealded = true;
+                parent.IsSealed = true;
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -473,7 +474,7 @@ namespace PersistanceMap.QueryBuilder
                 // seal part to disalow other parts to be added to selectmaps
                 var map = part as IQueryPartDecorator;
                 if (map != null)
-                    map.IsSealded = true;
+                    map.IsSealed = true;
             }
 
             return new SelectQueryBuilder<TNew>(Context, QueryParts);

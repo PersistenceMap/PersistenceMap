@@ -108,7 +108,7 @@ namespace PersistanceMap.QueryParts
                         continue;
                     }
 
-                    if (map.IsSealded)
+                    if (map.IsSealed)
                         continue;
 
                     // add the new field

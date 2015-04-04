@@ -216,7 +216,7 @@ namespace PersistanceMap
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext context, CompiledQuery compiledQuery)
         {
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>(compiledQuery.QueryParts).ToArray();
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>(compiledQuery.QueryParts, !typeof(T).IsAnonymousType()).ToArray();
 
             return Map<T>(context, fields);
         }

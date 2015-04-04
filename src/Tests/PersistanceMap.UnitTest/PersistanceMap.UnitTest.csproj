@@ -83,7 +83,9 @@
     <Compile Include="Factories\ConnectionStringBuilderTests.cs" />
     <Compile Include="Factories\FieldHelperTests.cs" />
     <Compile Include="Factories\TypeDefinitionFactoryTests.cs" />
+    <Compile Include="MockedContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryBuilder\TableQueryBuilderTests.cs" />
     <Compile Include="QueryCompilerTests.cs" />
     <Compile Include="QueryKernelTests.cs" />
     <Compile Include="ReaderContextTests.cs" />
