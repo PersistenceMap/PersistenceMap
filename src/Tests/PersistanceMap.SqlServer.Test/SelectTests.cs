@@ -1386,6 +1386,7 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void SelectWithIgnore()
         {
+
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
@@ -1404,6 +1405,49 @@ namespace PersistanceMap.Test.Integration
                 var orders = query.Select();
 
                 Assert.IsTrue(orders.Any());
+            }
+        }
+
+        [Test]
+        public void SelectWithIgnoreOnAnonymObjectTimer()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                var provider = new SqlContextProvider(ConnectionString);
+                using (var context = provider.Open())
+                {
+                    var query = context.From<Orders>()
+                        .Map(o => o.OrderDate, "Date")
+                        .Map(o => o.OrderDate, converter: date => date.Month >= 6 ? true : false)
+                        .For(() => new
+                        {
+                            Date = DateTime.MinValue,
+                            OrderDate = false,
+                            Name = "",
+                            Title = ""
+                        })
+                        .Ignore(m => m.Name)
+                        .Ignore(m => m.Title);
+
+                    var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate FROM Orders";
+                    var sql = query.CompileQuery().Flatten();
+
+                    // check the compiled sql
+                    Assert.AreEqual(sql, expected);
+
+                    var sw = new NUnit.Framework.Compatibility.Stopwatch();
+                    sw.Start();
+
+                    // execute the query
+                    var orders = query.Select();
+
+                    sw.Stop();
+                    System.Diagnostics.Trace.WriteLine(string.Format("Elapsed Time: {0}", sw.ElapsedMilliseconds));
+
+                    Assert.IsTrue(orders.Any());
+                    Assert.AreEqual(orders.First().Date.Month >= 6 ? true : false, orders.First().OrderDate);
+                    Assert.AreEqual(orders.Last().Date.Month >= 6 ? true : false, orders.Last().OrderDate);
+                }
             }
         }
     }

@@ -225,21 +225,21 @@ namespace PersistanceMap
         /// Maps the resultset to a key/value collection. The key represents the name of the field or property
         /// </summary>
         /// <param name="context">The readercontext containig the datareader with the result</param>
-        /// <param name="objectDefs">A collection of definitons of the objects that have to be read from the datareader</param>
+        /// <param name="objectDefinitions">A collection of definitons of the objects that have to be read from the datareader</param>
         /// <returns>A collection of dictionaries containing the data</returns>
-        public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, ObjectDefinition[] objectDefs)
+        public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, ObjectDefinition[] objectDefinitions)
         {
             context.EnsureArgumentNotNull("context");
 
             var rows = new List<Dictionary<string, object>>();
 
-            var indexCache = context.DataReader.CreateFieldIndexCache(objectDefs);
+            var indexCache = context.DataReader.CreateFieldIndexCache(objectDefinitions);
             if (!indexCache.Any())
                 return rows;
 
             while (context.DataReader.Read())
             {
-                var row = ReadData(context, objectDefs, indexCache);
+                var row = ReadData(context, objectDefinitions, indexCache);
 
                 rows.Add(row);
             }
@@ -251,16 +251,16 @@ namespace PersistanceMap
         /// Maps the result to a dictionary containing the key/value
         /// </summary>
         /// <param name="context">The readercontext containing the datareader with the result</param>
-        /// <param name="objectDefs">A collection of definitons of the objects that have to be read from the datareader</param>
+        /// <param name="objectDefinitions">A collection of definitons of the objects that have to be read from the datareader</param>
         /// <param name="indexCache">A collection of the keys with the indexes inside the datareader</param>
         /// <returns>A collection of key/value pairs containing the data</returns>
-        private Dictionary<string, object> ReadData(IReaderContext context, IEnumerable<ObjectDefinition> objectDefs, Dictionary<string, int> indexCache)
+        private Dictionary<string, object> ReadData(IReaderContext context, IEnumerable<ObjectDefinition> objectDefinitions, Dictionary<string, int> indexCache)
         {
             var row = new Dictionary<string, object>();
 
             try
             {
-                foreach (var def in objectDefs)
+                foreach (var def in objectDefinitions)
                 {
                     int index;
                     if (indexCache != null)
@@ -304,7 +304,7 @@ namespace PersistanceMap
         /// <returns>A object containing the data from the datareader</returns>
         private T ReadData<T>(IReaderContext context, FieldDefinition[] fieldDefinitions, Dictionary<string, int> indexCache)
         {
-            var objWithProperties = InstanceFactory.CreateInstance<T>();
+            var instance = InstanceFactory.CreateInstance<T>();
 
             try
             {
@@ -324,7 +324,7 @@ namespace PersistanceMap
                         index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
                     }
 
-                    SetValue(context, fieldDefinition, index, objWithProperties);
+                    SetValue(context, fieldDefinition, index, instance);
                 }
             }
             catch (Exception ex)
@@ -332,42 +332,44 @@ namespace PersistanceMap
                 Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
             }
 
-            return objWithProperties;
+            return instance;
         }
         
         /// <summary>
         /// Populates row fields during re-hydration of results.
         /// </summary>
         /// <param name="context">The readercontext containing the datareader</param>
-        /// <param name="fieldDef">The definition of the field to populate</param>
-        /// <param name="colIndex">The index of the value in the datareader</param>
+        /// <param name="fieldDefinition">The definition of the field to populate</param>
+        /// <param name="columnIndex">The index of the value in the datareader</param>
         /// <param name="instance">The object to populate</param>
-        private void SetValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
+        private void SetValue(IReaderContext context, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
-            if (HandledDbNullValue(context, fieldDef, colIndex, instance))
+            if (HandledDbNullValue(context, fieldDefinition, columnIndex, instance))
                 return;
 
-            var dbValue = context.DataReader.GetValue(colIndex);
+            var databaseValue = context.DataReader.GetValue(columnIndex);
 
             // try to convert the value to the value that the destination type has.
             // if the destination type is named same as the source (table) type it can be that the types don't match
-            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, fieldDef.MemberType);
+            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, fieldDefinition.MemberType);
 
             // try to convert to the source type inside the original table.
             // this type is not necessarily the same as the destination typ if a converter is used
-            if (convertedValue == null && fieldDef.FieldType != fieldDef.MemberType)
-                convertedValue = ConvertDatabaseValueToTypeValue(dbValue, fieldDef.FieldType);
+            if (convertedValue == null && fieldDefinition.FieldType != fieldDefinition.MemberType)
+            {
+                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, fieldDefinition.FieldType);
+            }
 
             // if still no match than just pass the db value and hope it works...
             if (convertedValue == null)
             {
-                Logger.Write(string.Format("Cannot convert value {0} from type {1} to type {2}", dbValue, dbValue.GetType(), fieldDef.MemberType), GetType().Name, LoggerCategory.Error, DateTime.Now);
-                convertedValue = dbValue;
+                Logger.Write(string.Format("## PersictanceMap - Cannot convert value {0} from type {1} to type {2}", databaseValue, databaseValue.GetType(), fieldDefinition.MemberType), GetType().Name, LoggerCategory.Error, DateTime.Now);
+                convertedValue = databaseValue;
             }
 
-            if (fieldDef.Converter != null)
+            if (fieldDefinition.Converter != null)
             {
-                convertedValue = fieldDef.Converter.Invoke(convertedValue);
+                convertedValue = fieldDefinition.Converter.Invoke(convertedValue);
             }
 
             if (convertedValue == null)
@@ -375,7 +377,7 @@ namespace PersistanceMap
 
             try
             {
-                fieldDef.SetValueFunction(instance, convertedValue);
+                fieldDefinition.SetValueFunction(instance, convertedValue);
             }
             catch (NullReferenceException ex)
             {
@@ -387,57 +389,47 @@ namespace PersistanceMap
         /// Reads and converts the value from the datareader
         /// </summary>
         /// <param name="context">The readercontext containing the datareader</param>
-        /// <param name="objectDef">The definition of the field to populate</param>
-        /// <param name="colIndex">The index of the value in the datareader</param>
+        /// <param name="objectDefinition">The definition of the field to populate</param>
+        /// <param name="columnIndex">The index of the value in the datareader</param>
         /// <returns>The value contained in the datareader</returns>
-        private object GetValue(IReaderContext context, ObjectDefinition objectDef, int colIndex)
+        private object GetValue(IReaderContext context, ObjectDefinition objectDefinition, int columnIndex)
         {
-            if (HandledDbNullValue(objectDef, colIndex))
+            if (columnIndex < 0)
                 return null;
 
-            if (colIndex < 0)
-                return null;
+            var dbValue = context.DataReader.GetValue(columnIndex);
 
-            var dbValue = context.DataReader.GetValue(colIndex);
-
-            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDef.ObjectType);
+            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDefinition.ObjectType);
             if (convertedValue == null)
                 convertedValue = dbValue;
 
-            if (objectDef.Converter != null)
+            if (objectDefinition.Converter != null)
             {
-                convertedValue = objectDef.Converter.Invoke(convertedValue);
+                convertedValue = objectDefinition.Converter.Invoke(convertedValue);
             }
 
             return convertedValue;
         }
 
-        private bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDef, int colIndex, object instance)
+        private bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
-            if (fieldDef == null || fieldDef.SetValueFunction == null || colIndex == NotFound)
+            if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NotFound)
                 return true;
 
-            if (context.DataReader.IsDBNull(colIndex))
+            if (context.DataReader.IsDBNull(columnIndex))
             {
-                if (fieldDef.IsNullable)
+                if (fieldDefinition.IsNullable)
                 {
-                    fieldDef.SetValueFunction(instance, null);
+                    fieldDefinition.SetValueFunction(instance, null);
                 }
                 else
                 {
-                    fieldDef.SetValueFunction(instance, fieldDef.MemberType.GetDefaultValue());
+                    fieldDefinition.SetValueFunction(instance, fieldDefinition.MemberType.GetDefaultValue());
                 }
 
                 return true;
             }
 
-            return false;
-        }
-
-        private bool HandledDbNullValue(ObjectDefinition objectDef, int colIndex)
-        {
-            //throw new NotImplementedException();
-            //TODO: Does this have to be implemented?
             return false;
         }
 

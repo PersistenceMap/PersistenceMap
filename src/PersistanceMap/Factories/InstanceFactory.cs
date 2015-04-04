@@ -83,7 +83,7 @@ namespace PersistanceMap.Factories
             if (emptyCtor != null)
             {
 #if SL5 
-                var dm = new DynamicMethod("MyCtor", type, Type.EmptyTypes);
+                var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes);
 #else
                 //var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, typeof(TypeExtensions).Module, true);
                 var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, type.Module, true);
@@ -97,7 +97,9 @@ namespace PersistanceMap.Factories
             }
 
             if (type == typeof(string))
+            {
                 return () => String.Empty;
+            }
 
             // Anonymous types don't have empty constructors
             return () => FormatterServices.GetUninitializedObject(type);

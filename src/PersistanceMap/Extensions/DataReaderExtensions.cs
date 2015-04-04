@@ -44,7 +44,7 @@ namespace PersistanceMap
             for (var i = 0; i < reader.FieldCount; i++)
             {
                 var name = reader.GetName(i);
-                if (objectDefs.Any(o => o.Name.ToLower() == name.ToLower()))
+                if (objectDefs.Any(o => o.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
                     cache[name] = i;
             }
 
@@ -53,16 +53,15 @@ namespace PersistanceMap
 
         public static int GetColumnIndex(this IDataReader dataReader, string fieldName)
         {
-            try
+            for (int i = 0; i < dataReader.FieldCount; i++)
             {
-                return dataReader.GetOrdinal(fieldName);
+                if (dataReader.GetName(i).Equals(fieldName, StringComparison.InvariantCultureIgnoreCase))
+                    return i;
             }
-            catch (IndexOutOfRangeException)
-            {
-                Logger.TraceLine(string.Format("## PersistanceMap - GetColumnIndex on IDataReader - Field {0} not found in reader", fieldName));
 
-                return NotFound;
-            }
+            Logger.TraceLine(string.Format("## PersistanceMap - There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldName));
+
+            return NotFound;
         }
     }
 }
