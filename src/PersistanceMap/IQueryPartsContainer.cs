@@ -2,6 +2,7 @@
 using PersistanceMap.QueryParts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PersistanceMap
 {
@@ -54,5 +55,7 @@ namespace PersistanceMap
         /// </summary>
         /// <returns></returns>
         CompiledQuery Compile();
+
+        bool IsSealed { get; }
     }
 }

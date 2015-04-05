@@ -138,5 +138,30 @@ namespace PersistanceMap.UnitTest.Factories
             Assert.IsTrue(fields.Any(f => f.FieldName == "Race"));
             Assert.IsTrue(fields.Any(f => f.FieldName == "SpecialSkill"));
         }
+
+        [Test]
+        public void GetFieldDefinitionsFromGenericTypeMatchedWithInvariantCaseMatch()
+        {
+            var parts = new QueryPartsContainer();
+            var item = new QueryPartDecorator();
+            item.Add(new FieldQueryPart("iD", null, null, "Warrior") { FieldType = typeof(int) });
+            item.Add(new FieldQueryPart("nAme", null, null, "Warrior") { FieldType = typeof(string) });
+            item.Add(new FieldQueryPart("weaponId", null, null, "Warrior") { FieldType = typeof(int) });
+            item.Add(new FieldQueryPart("raCe", null, null, "Warrior") { FieldType = typeof(string) });
+            item.Add(new FieldQueryPart("specialSkill", null, null, "Warrior") { FieldType = typeof(string) });
+
+            parts.Add(item);
+
+            // Act
+            var fields = TypeDefinitionFactory.GetFieldDefinitions<Warrior>(parts);
+
+            Assert.IsTrue(fields.Count() == 5);
+
+            Assert.IsTrue(fields.Any(f => f.FieldName == "iD"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "nAme"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "weaponId"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "raCe"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "specialSkill"));
+        }
     }
 }

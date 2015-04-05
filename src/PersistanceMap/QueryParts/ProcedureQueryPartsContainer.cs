@@ -103,6 +103,14 @@ namespace PersistanceMap.QueryParts
             _callbacks.Add(callback);
         }
 
+        public bool IsSealed
+        {
+            get
+            {
+                return Parts.OfType<IQueryPartDecorator>().Any(p => p.IsSealed);
+            }
+        }
+
         #endregion
     }
 }

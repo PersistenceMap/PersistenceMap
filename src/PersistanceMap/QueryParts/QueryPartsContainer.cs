@@ -99,6 +99,14 @@ namespace PersistanceMap.QueryParts
             };
         }
 
+        public bool IsSealed
+        {
+            get
+            {
+                return Parts.OfType<IQueryPartDecorator>().Any(p => p.IsSealed);
+            }
+        }
+
         #endregion
     }
 }

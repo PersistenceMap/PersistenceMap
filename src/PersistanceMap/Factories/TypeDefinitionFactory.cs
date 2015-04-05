@@ -156,7 +156,7 @@ namespace PersistanceMap.Factories
             //TODO: Check if there is a better wy instead of having to cast to the object to select the proper items
             foreach (var part in fieldParts.OfType<FieldQueryPart>().Where(f => f.FieldType != null))
             {
-                var definition = definitions.FirstOrDefault(f => f.FieldName == part.ID);
+                var definition = definitions.FirstOrDefault(f => f.FieldName.Equals(part.ID, StringComparison.InvariantCultureIgnoreCase));
                 if (definition != null)
                 {
                     definition.FieldType = part.FieldType;
@@ -167,7 +167,7 @@ namespace PersistanceMap.Factories
             {
                 // remove all fields that are not contained in the query/datareader
                 // if the desired object is a anonymous object, all fields have to be mapped because anonymous objects are created through the constructor
-                definitions.RemoveAll(t => !fieldParts.Any(p => p.ID == t.FieldName));
+                definitions.RemoveAll(t => !fieldParts.Any(p => p.ID.Equals(t.FieldName, StringComparison.InvariantCultureIgnoreCase)));
             }
 
 
@@ -176,7 +176,7 @@ namespace PersistanceMap.Factories
             //TODO: Check if there is a better wy instead of having to cast to the object to select the proper items
             foreach (var converter in fieldParts.OfType<FieldQueryPart>().Where(p => p.Converter != null).Select(p => new MapValueConverter { Converter = p.Converter, ID = p.ID }))
             {
-                var field = definitions.FirstOrDefault(f => f.FieldName == converter.ID);
+                var field = definitions.FirstOrDefault(f => f.FieldName.Equals(converter.ID, StringComparison.InvariantCultureIgnoreCase));
                 if (field != null)
                 {
                     field.Converter = converter.Converter.Compile();
