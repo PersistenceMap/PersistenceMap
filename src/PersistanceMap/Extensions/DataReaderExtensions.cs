@@ -51,15 +51,19 @@ namespace PersistanceMap
             return cache;
         }
 
-        public static int GetColumnIndex(this IDataReader dataReader, string fieldName)
+        /// <summary>
+        /// Gets the Index of a column inside a datareader. The search is case insensitive.
+        /// </summary>
+        /// <param name="dataReader">The datareader with the columns to check</param>
+        /// <param name="fieldName">The name of the column</param>
+        /// <returns>The index of the desired column</returns>
+        public static int GetIndex(this IDataReader dataReader, string fieldName)
         {
             for (int i = 0; i < dataReader.FieldCount; i++)
             {
                 if (dataReader.GetName(i).Equals(fieldName, StringComparison.InvariantCultureIgnoreCase))
                     return i;
             }
-
-            Logger.TraceLine(string.Format("## PersistanceMap - There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldName));
 
             return NotFound;
         }

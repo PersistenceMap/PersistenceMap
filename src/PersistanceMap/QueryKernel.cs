@@ -75,11 +75,13 @@ namespace PersistanceMap
                 sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
 
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
 
-                throw;
+                sb.AppendLine("For more information see the inner exception");
+
+                throw new System.Data.DataException(sb.ToString(), ex);
             }
         }
 
@@ -104,11 +106,13 @@ namespace PersistanceMap
                 sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
 
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
 
-                throw;
+                sb.AppendLine("For more information see the inner exception");
+
+                throw new System.Data.DataException(sb.ToString(), ex);
             }
         }
 
@@ -145,11 +149,13 @@ namespace PersistanceMap
                 sb.AppendLine(string.Format("Exception Message: {0}", ex.Message));
 
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
                 Trace.WriteLine(string.Format("#### PersistanceMap - An error occured while executing a query:\n {0}", ex.Message));
 
-                throw;
+                sb.AppendLine("For more information see the inner exception");
+
+                throw new System.Data.DataException(sb.ToString(), ex);
             }
         }
 
@@ -267,14 +273,16 @@ namespace PersistanceMap
                     {
                         if (!indexCache.TryGetValue(def.Name, out index))
                         {
-                            index = context.DataReader.GetColumnIndex(def.Name);
-
+                            // try to get the index using case insensitive search on the datareader
+                            index = context.DataReader.GetIndex(def.Name);
                             indexCache.Add(def.Name, index);
+
+                            Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
                         }
                     }
                     else
                     {
-                        index = context.DataReader.GetColumnIndex(def.Name);
+                        index = context.DataReader.GetIndex(def.Name);
                     }
 
                     // pass the value to the dictionary with the name of the property/field as key
@@ -283,12 +291,12 @@ namespace PersistanceMap
             }
             catch (FormatException fe)
             {
-                Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _connectionProvider.GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
                 throw;
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
             }
 
             return row;
@@ -315,13 +323,16 @@ namespace PersistanceMap
                     {
                         if (!indexCache.TryGetValue(fieldDefinition.MemberName, out index))
                         {
-                            index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
+                            // try to get the index using case insensitive search on the datareader
+                            index = context.DataReader.GetIndex(fieldDefinition.FieldName);
                             indexCache.Add(fieldDefinition.MemberName, index);
+
+                            Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldDefinition.MemberName), category: LoggerCategory.DataMap);
                         }
                     }
                     else
                     {
-                        index = context.DataReader.GetColumnIndex(fieldDefinition.FieldName);
+                        index = context.DataReader.GetIndex(fieldDefinition.FieldName);
                     }
 
                     SetValue(context, fieldDefinition, index, instance);
@@ -329,7 +340,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
             }
 
             return instance;
@@ -381,7 +392,7 @@ namespace PersistanceMap
             }
             catch (NullReferenceException ex)
             {
-                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.Exceptiondetail, DateTime.Now);
+                Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
             }
         }
 

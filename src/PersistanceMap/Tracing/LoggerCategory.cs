@@ -5,8 +5,10 @@ namespace PersistanceMap.Tracing
     {
         public const string Error = "Error";
 
-        public const string Exceptiondetail = "Exceptiondetail";
+        public const string ExceptionDetail = "ExceptionDetail";
 
         public const string Query = "Query";
+
+        public const string DataMap = "DataMap";
     }
 }

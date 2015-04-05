@@ -206,7 +206,7 @@ namespace PersistanceMap.Test.Integration
                 // CustomerID should be a string
                 var query = context.From<Orders>().Max(w => w.OrdersID).Map(w => w.CustomerID).GroupBy(w => w.CustomerID).For(() => new { OrdersID = 0, CustomerID = 0 });
 
-                Assert.Throws<FormatException>(() => query.Select());
+                Assert.Throws<System.Data.DataException>(() => query.Select());
             }
         }
 
@@ -419,7 +419,7 @@ namespace PersistanceMap.Test.Integration
                     // this has to fail!
                     .Map(i => i.OrdersID != 1);
 
-                Assert.Throws<SqlException>(() => query.Select<OrderWithDetailExtended>());
+                Assert.Throws<System.Data.DataException>(() => query.Select<OrderWithDetailExtended>());
             }
         }
 
@@ -1423,11 +1423,19 @@ namespace PersistanceMap.Test.Integration
                         {
                             Date = DateTime.MinValue,
                             OrderDate = false,
-                            Name = "",
-                            Title = ""
+                            Test1 = "",
+                            Test2 = "",
+                            Test3 = "",
+                            Test4 = "",
+                            Test5 = "",
+                            Test6 = ""
                         })
-                        .Ignore(m => m.Name)
-                        .Ignore(m => m.Title);
+                        .Ignore(m => m.Test1)
+                        .Ignore(m => m.Test2)
+                        .Ignore(m => m.Test3)
+                        .Ignore(m => m.Test4)
+                        .Ignore(m => m.Test5)
+                        .Ignore(m => m.Test6);
 
                     var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate FROM Orders";
                     var sql = query.CompileQuery().Flatten();
