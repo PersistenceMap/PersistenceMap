@@ -70,6 +70,7 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />
@@ -174,9 +175,7 @@
       <Link>Properties\PersistanceMap.snk</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

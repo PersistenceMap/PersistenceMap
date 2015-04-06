@@ -157,11 +157,16 @@ namespace PersistanceMap.UnitTest.Factories
 
             Assert.IsTrue(fields.Count() == 5);
 
-            Assert.IsTrue(fields.Any(f => f.FieldName == "iD"));
-            Assert.IsTrue(fields.Any(f => f.FieldName == "nAme"));
-            Assert.IsTrue(fields.Any(f => f.FieldName == "weaponId"));
-            Assert.IsTrue(fields.Any(f => f.FieldName == "raCe"));
-            Assert.IsTrue(fields.Any(f => f.FieldName == "specialSkill"));
+            //Assert.IsTrue(fields.Any(f => f.FieldName == "iD"));
+            //Assert.IsTrue(fields.Any(f => f.FieldName == "nAme"));
+            //Assert.IsTrue(fields.Any(f => f.FieldName == "weaponId"));
+            //Assert.IsTrue(fields.Any(f => f.FieldName == "raCe"));
+            //Assert.IsTrue(fields.Any(f => f.FieldName == "specialSkill"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "ID"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "Name"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "WeaponID"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "Race"));
+            Assert.IsTrue(fields.Any(f => f.FieldName == "SpecialSkill"));
         }
     }
 }

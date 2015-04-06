@@ -67,6 +67,10 @@ namespace PersistanceMap
                     return Map<T>(reader, compiledQuery);
                 }
             }
+            catch (InvalidConverterException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 var sb = new StringBuilder();
@@ -97,6 +101,10 @@ namespace PersistanceMap
             try
             {
                 _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString);
+            }
+            catch (InvalidConverterException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -140,6 +148,10 @@ namespace PersistanceMap
                             break;
                     }
                 }
+            }
+            catch (InvalidConverterException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -277,7 +289,10 @@ namespace PersistanceMap
                             index = context.DataReader.GetIndex(def.Name);
                             indexCache.Add(def.Name, index);
 
-                            Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
+                            if (index < 0)
+                            {
+                                Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
+                            }
                         }
                     }
                     else
@@ -293,6 +308,11 @@ namespace PersistanceMap
             {
                 Logger.Write(string.Format("A Value coud not be converted to the expected format:\n{0}", fe.Message), _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
                 throw;
+            }
+            catch (InvalidConverterException invalidCast)
+            {
+                Logger.Write(invalidCast.Message, GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+                throw invalidCast;
             }
             catch (Exception ex)
             {
@@ -327,7 +347,10 @@ namespace PersistanceMap
                             index = context.DataReader.GetIndex(fieldDefinition.FieldName);
                             indexCache.Add(fieldDefinition.MemberName, index);
 
-                            Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldDefinition.MemberName), category: LoggerCategory.DataMap);
+                            if (index < 0)
+                            {
+                                Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldDefinition.MemberName), category: LoggerCategory.DataMap);
+                            }
                         }
                     }
                     else
@@ -337,6 +360,11 @@ namespace PersistanceMap
 
                     SetValue(context, fieldDefinition, index, instance);
                 }
+            }
+            catch (InvalidConverterException invalidCast)
+            {
+                Logger.Write(invalidCast.Message, GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+                throw invalidCast;
             }
             catch (Exception ex)
             {
@@ -380,7 +408,17 @@ namespace PersistanceMap
 
             if (fieldDefinition.Converter != null)
             {
-                convertedValue = fieldDefinition.Converter.Invoke(convertedValue);
+                try
+                {
+                    convertedValue = fieldDefinition.Converter.Invoke(convertedValue);
+                }
+                catch (InvalidCastException invalidCast)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(string.Format("There was an error when trying to convert a value using the converter {0}.", fieldDefinition.Converter.Method));
+                    sb.AppendLine(string.Format("The value {0} could not be cast to the desired type {1} for the property {2} on object {3}", convertedValue, fieldDefinition.MemberType, fieldDefinition.MemberName, fieldDefinition.EntityType));
+                    throw new InvalidConverterException(sb.ToString(), invalidCast);
+                }
             }
 
             if (convertedValue == null)
@@ -416,7 +454,17 @@ namespace PersistanceMap
 
             if (objectDefinition.Converter != null)
             {
-                convertedValue = objectDefinition.Converter.Invoke(convertedValue);
+                try
+                {
+                    convertedValue = objectDefinition.Converter.Invoke(convertedValue);
+                }
+                catch (InvalidCastException invalidCast)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(string.Format("There was an error when trying to convert a value using the converter {0}.", objectDefinition.Converter.Method));
+                    sb.AppendLine(string.Format("The value {0} could not be cast to the desired type {1} for the property {2}", convertedValue, objectDefinition.ObjectType, objectDefinition.Name));
+                    throw new InvalidConverterException(sb.ToString(), invalidCast);
+                }
             }
 
             return convertedValue;

@@ -1458,5 +1458,40 @@ namespace PersistanceMap.Test.Integration
                 }
             }
         }
+
+        [Test]
+        public void SelectWithFalseConverterInvalidCast()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                Assert.Throws<InvalidConverterException>(() => context.From<Orders>()
+                    .Map(o => o.OrderDate, "Date")
+                    .Map(o => o.OrderDate, converter: date => date.Month >= 6 ? true : false)
+                    .For<OrdersExtended>()
+                    .Map<Orders>(d => d.EmployeeID, d => d.EmployeeID, d => ((bool)d) == false)
+                    .Select());
+            }
+        }
+
+        [Test]
+        public void SelectAnonymousObjectWithFalseConverterInvalidCast()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                Assert.Throws<InvalidConverterException>(() => context.From<Orders>()
+                    .Map(o => o.OrderDate, "Date")
+                    .Map(o => o.OrderDate, converter: date => date.Month >= 6 ? true : false)
+                    .For(() => new
+                    {
+                        Date = DateTime.MinValue,
+                        OrderDate = false,
+                        InvalidCast = ""
+                    })
+                    .Map<Orders>(d => d.EmployeeID, d => d.InvalidCast, d => ((bool)d) == false)
+                    .Select());
+            }
+        }
     }
 }
