@@ -29,7 +29,7 @@ namespace PersistanceMap
             }
             catch (Exception ex)
             {
-                Logger.TraceLine(ex.Message);
+                LogDelegate.TraceLine(ex.Message);
                 throw;
             }
         }

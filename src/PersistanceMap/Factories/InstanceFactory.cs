@@ -109,7 +109,9 @@ namespace PersistanceMap.Factories
         {
             EmptyConstructorDelegate emptyConstructorFunction;
             if (constructorMethods.TryGetValue(type, out emptyConstructorFunction))
+            {
                 return emptyConstructorFunction;
+            }
 
             emptyConstructorFunction = GetConstructorMethodToCache(type);
 

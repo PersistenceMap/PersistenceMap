@@ -89,7 +89,7 @@
     <Compile Include="QueryBuilder\Commands\DelegateQueryCommand.cs" />
     <Compile Include="Tracing\ILogger.cs" />
     <Compile Include="Tracing\ILoggerFactory.cs" />
-    <Compile Include="Tracing\Logger.cs" />
+    <Compile Include="Tracing\LogDelegate.cs" />
     <Compile Include="Tracing\LoggerFactory.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="IDeleteQueryExpression.cs" />

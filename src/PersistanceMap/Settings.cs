@@ -12,6 +12,7 @@ namespace PersistanceMap
     {
         public Settings()
         {
+            // initialize the loggerfactory
             _loggerFactory = new Lazy<ILoggerFactory>(() => 
             {
                 // copy all loggers from the Configuration
@@ -23,6 +24,10 @@ namespace PersistanceMap
 
         
         static ConfigurationSettings _configurationSettings;
+
+        /// <summary>
+        /// Gets the singleton instace of the configuration settings
+        /// </summary>
         private ConfigurationSettings ConfigSettings        
         {
             get
@@ -34,6 +39,10 @@ namespace PersistanceMap
         }
 
         readonly Lazy<ILoggerFactory> _loggerFactory;
+
+        /// <summary>
+        /// Gets the loggerfactory that containes all loggers that are defined in the configuraiton additionaly to the loggers added per instance of the settings
+        /// </summary>
         public ILoggerFactory LoggerFactory
         {
             get
@@ -42,6 +51,10 @@ namespace PersistanceMap
             }
         }
 
+        /// <summary>
+        /// Adds a logger to the factory to the already defined loggers from the configuration
+        /// </summary>
+        /// <param name="logger">The logger to add to the loggerfactory</param>
         public void AddLogger(ILogger logger)
         {
             LoggerFactory.AddLogger(logger.GetType().Name, logger);
@@ -69,6 +82,8 @@ namespace PersistanceMap
                             if (instance != null)
                             {
                                 loggers.Add(instance);
+
+                                Trace.WriteLine(string.Format("## PersistanceMap - Added Logger: {0} defined by the configuration", instance.GetType()));
                             }
                             else
                             {

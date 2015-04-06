@@ -22,13 +22,13 @@ namespace PersistanceMap.Tracing
             {
                 _logProviders.Add(name, logger);
 
-                Trace.WriteLine(string.Format("#### PersistanceMap - Added Logger: {0}", name));
+                //Trace.WriteLine(string.Format("## PersistanceMap - Added Logger: {0}", name));
             }
         }
 
         public ILogger CreateLogger()
         {
-            return new Logger(this);
+            return new LogDelegate(this);
         }
     }
 }

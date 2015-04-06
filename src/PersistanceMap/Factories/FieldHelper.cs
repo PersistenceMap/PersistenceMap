@@ -43,7 +43,7 @@ namespace PersistanceMap.Factories
 
                 if (memberExpression == null)
                 {
-                    Logger.TraceLine("## PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
+                    LogDelegate.TraceLine("## PersistanceMap - Property is not a MemberAccessExpression: {0}", propertyExpression.ToString());
 
                     try
                     {
@@ -51,7 +51,7 @@ namespace PersistanceMap.Factories
                     }
                     catch (Exception e)
                     {
-                        Logger.TraceLine(e.Message);
+                        LogDelegate.TraceLine(e.Message);
                         return propertyExpression.ToString();
                     }
                 }
@@ -60,13 +60,13 @@ namespace PersistanceMap.Factories
             var propertyInfo = memberExpression.Member as PropertyInfo;
             if (propertyInfo == null)
             {
-                Logger.TraceLine(string.Format("## PersistanceMap - Property {0} is not a PropertyInfo", memberExpression.Member));
+                LogDelegate.TraceLine(string.Format("## PersistanceMap - Property {0} is not a PropertyInfo", memberExpression.Member));
                 return memberExpression.Member.ToString();
             }
 
             if (propertyInfo.GetGetMethod(true).IsStatic)
             {
-                Logger.TraceLine(string.Format("## PersistanceMap - Property {0} is static", memberExpression.Member.Name));
+                LogDelegate.TraceLine(string.Format("## PersistanceMap - Property {0} is static", memberExpression.Member.Name));
                 return memberExpression.Member.Name;
             }
 
@@ -117,7 +117,7 @@ namespace PersistanceMap.Factories
                     }
                     catch (Exception e)
                     {
-                        Logger.TraceLine(e.Message);
+                        LogDelegate.TraceLine(e.Message);
                         return propertyExpression.Body.Type;
                     }
                 }

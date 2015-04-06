@@ -5,7 +5,7 @@ using System.Text;
 namespace PersistanceMap.Tracing
 {
     /// <summary>
-    /// ILogger class that places all logs to Trace output
+    /// ILogger class that formats and places all logs to Trace output
     /// </summary>
     public class TraceLogger : ILogger
     {
