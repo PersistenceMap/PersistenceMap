@@ -56,7 +56,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// </summary>
         public override void Create()
         {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE IF NOT EXISTS {0} (", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
             QueryParts.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -170,7 +170,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
                     var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
                 default:
@@ -209,7 +209,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     }
 
                     expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
                 default:

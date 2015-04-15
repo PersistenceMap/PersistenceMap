@@ -26,8 +26,8 @@ namespace PersistanceMap.QueryParts
             // compile the delegate
             sb.Append(string.Format("{0}", Delegate.Invoke() ?? ""));
 
-            // compile all parts from the Parts collection
-            sb.Append(string.Format("{0}", base.Compile() ?? ""));
+            //// compile all parts from the Parts collection
+            //sb.Append(string.Format("{0}", base.Compile() ?? ""));
 
             return sb.ToString().RemoveLineBreak();
         }

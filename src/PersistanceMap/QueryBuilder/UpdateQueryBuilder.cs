@@ -63,7 +63,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var set = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Set) as IQueryPartDecorator;
+            var set = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Update) as IQueryPartDecorator;
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
@@ -89,11 +89,8 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateEqualityExpression(dataPredicate);
             }
 
-            var updatePart = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
+            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
             QueryParts.Add(updatePart);
-
-            var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
-            QueryParts.Add(setPart);
 
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -106,13 +103,13 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
-                var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field.MemberName == last.MemberName ? " " : ", ");
+                var formatted = string.Format("{0} = {1}", field.FieldName, value ?? "NULL");
 
-                var keyValuePart = new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName);
-                setPart.Add(keyValuePart);
+                var keyValuePart = new DelegateQueryPart(OperationType.UpdateValue, () => formatted, field.MemberName);
+                updatePart.Add(keyValuePart);
             }
 
-            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());
             QueryParts.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryParts);
@@ -135,12 +132,9 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateEqualityExpression<T>(anonym);
             }
 
-            var entity = new DelegateQueryPart(OperationType.Update, () => string.Format("UPDATE {0} ", typeof(T).Name));
+            var entity = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
             QueryParts.Add(entity);
             
-            var setPart = new DelegateQueryPart(OperationType.Set, () => "SET ");
-            QueryParts.Add(setPart);
-
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
             var dataObject = anonym.Compile().Invoke();
@@ -152,13 +146,13 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
-                var formatted = string.Format("{0} = {1}{2}", field.FieldName, value ?? "NULL", field == last ? " " : ", ");
+                var formatted = string.Format("{0} = {1}", field.FieldName, value ?? "NULL");
 
-                var keyValuePart = new DelegateQueryPart(OperationType.None, () => formatted, field.MemberName);
-                setPart.Add(keyValuePart);
+                var keyValuePart = new DelegateQueryPart(OperationType.UpdateValue, () => formatted, field.MemberName);
+                entity.Add(keyValuePart);
             }
 
-            var part = new DelegateQueryPart(OperationType.Where, () => string.Format("WHERE {0} ", LambdaToSqlCompiler.Compile(whereexpr)));
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());
             QueryParts.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryParts);

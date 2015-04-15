@@ -136,7 +136,7 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithAliasMapping()
         {
-            var expected = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -154,7 +154,7 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithExtendedMapping()
         {
-            var expected = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+            var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
             var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
@@ -475,7 +475,7 @@ namespace PersistanceMap.Test.Expression
                     .Map<Warrior>(wrir => wrir.Name, a => a.WarriorName)
                     .Map<Weapon>(wpn => wpn.Name, a => a.WeaponName)
                     .Select();
-                expected = "SELECT Warrior.Name as WarriorName, Weapon.Name as WeaponName FROM Warrior JOIN Weapon ON (Weapon.ID = Warrior.WeaponID)";
+                expected = "SELECT Warrior.Name AS WarriorName, Weapon.Name AS WeaponName FROM Warrior JOIN Weapon ON (Weapon.ID = Warrior.WeaponID)";
                 Assert.AreEqual(sql, expected);
             }
         }
@@ -612,7 +612,7 @@ namespace PersistanceMap.Test.Expression
                     .Ignore(w => w.SpecialSkill)
                     .Select();
 
-                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as TestFieldName, Race FROM WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID AS TestFieldName, Race FROM WarriorWithName");
             }
         }
 
@@ -631,7 +631,7 @@ namespace PersistanceMap.Test.Expression
                     .Map(w => w.Race)
                     .Select();
 
-                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID AS ID, WarriorWithName.WeaponID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
 
                 // map one property to a custom field
                 context.From<WarriorWithName>()
@@ -640,7 +640,7 @@ namespace PersistanceMap.Test.Expression
                     .Map(w => w.Race)
                     .Select();
 
-                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
+                Assert.AreEqual(sql, "SELECT WarriorWithName.WeaponID AS ID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
             }
         }
 
@@ -690,7 +690,7 @@ namespace PersistanceMap.Test.Expression
                         .Ignore(aph => aph.Layout)
                         .Select();
 
-                Assert.AreEqual(sql, "SELECT ArbeitsPlan.PlanID, ArbeitsPlan.Status, ArbeitsPlan.PlanID as ID, ArbeitsPlan.ATID as ArbeitsTageId, Schemas.SchemaID, JahrId, Von, Bis FROM ArbeitsPlan JOIN Schemas ON (Schemas.SchemaID = ArbeitsPlan.SchemaID) WHERE (Schemas.Status = 1)");
+                Assert.AreEqual(sql, "SELECT ArbeitsPlan.PlanID, ArbeitsPlan.Status, ArbeitsPlan.PlanID AS ID, ArbeitsPlan.ATID AS ArbeitsTageId, Schemas.SchemaID, JahrId, Von, Bis FROM ArbeitsPlan JOIN Schemas ON (Schemas.SchemaID = ArbeitsPlan.SchemaID) WHERE (Schemas.Status = 1)");
             }
         }
 

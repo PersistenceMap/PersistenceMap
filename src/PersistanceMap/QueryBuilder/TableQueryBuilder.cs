@@ -33,7 +33,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Create()
         {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE {0} (", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
             QueryParts.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
@@ -63,7 +63,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Alter()
         {
-            var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.AlterTable, () => typeof(T).Name);
             QueryParts.AddBefore(createPart, OperationType.None);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
@@ -79,7 +79,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Drop()
         {
-            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
+            var part = new DelegateQueryPart(OperationType.Drop, () => typeof(T).Name);
             QueryParts.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
@@ -200,12 +200,11 @@ namespace PersistanceMap.QueryBuilder
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
                     expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
                 case FieldOperation.Drop:
-                    expression = string.Format("DROP COLUMN {0}", field.MemberName);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropField, () => field.MemberName));
                     break;
 
                 case FieldOperation.Alter:
@@ -248,12 +247,11 @@ namespace PersistanceMap.QueryBuilder
                     }
 
                     expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
                 case FieldOperation.Drop:
-                    expression = string.Format("DROP COLUMN {0}", column);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropField, () => column));
                     break;
 
                 case FieldOperation.Alter:

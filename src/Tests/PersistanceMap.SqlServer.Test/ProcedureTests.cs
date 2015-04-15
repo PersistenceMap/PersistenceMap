@@ -202,7 +202,7 @@ namespace PersistanceMap.Test.Integration
                 declare @p2 varchar(max)
                 set @p2='tmp'
                 exec SalesByYear @Date='2012-01-01 00:00:00',@param1=@p1 output,@param2=@p2 output
-                select @p1 as p1, @p2 as p2  
+                select @p1 AS p1, @p2 as p2  
                 */
 
                 int returnvalue1 = 1;

@@ -75,30 +75,6 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        //public abstract CompiledQuery Compile();
-
-        public virtual CompiledQuery Compile()
-        {
-            var sb = new StringBuilder(100);
-
-            // loop all parts and compile
-            foreach (var part in Parts)
-            {
-                switch (part.OperationType)
-                {
-                    default:
-                        sb.Append(part.Compile());
-                        break;
-                }
-            }
-
-            return new CompiledQuery
-            {
-                QueryString = sb.ToString(),
-                QueryParts = this
-            };
-        }
-
         public bool IsSealed
         {
             get

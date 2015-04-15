@@ -36,9 +36,10 @@ namespace PersistanceMap.Test.Integration
                 var query = context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
 
                 var sql = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var expected = query.CompileQuery();
 
                 // check the compiled sql
-                Assert.AreEqual(query.CompileQuery().Flatten(), sql);
+                Assert.AreEqual(expected.Flatten(), sql);
 
                 // execute the query
                 var orders = query.Select();
@@ -881,7 +882,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -906,7 +907,7 @@ namespace PersistanceMap.Test.Integration
                     .Join<OrderDetails>((detail, order) => detail.OrdersID == order.OrdersID)
                     .Map(i => i.OrdersID);
 
-                var sql = "SELECT Orders.Freight as SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+                var sql = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
                 // check the compiled sql
                 Assert.AreEqual(query.CompileQuery<OrderWithDetailExtended>().Flatten(), sql);
@@ -933,7 +934,7 @@ namespace PersistanceMap.Test.Integration
         //            .Map(w => w.Race)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.WeaponID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS ID, WarriorWithName.WeaponID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
 
         //        // map one property to a custom field
         //        context.From<WarriorWithName>()
@@ -942,7 +943,7 @@ namespace PersistanceMap.Test.Integration
         //            .Map(w => w.Race)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as ID, WarriorWithName.Race as Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS ID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
         //    }
         //}
 
@@ -980,7 +981,7 @@ namespace PersistanceMap.Test.Integration
         //            .Ignore(w => w.SpecialSkill)
         //            .Select();
 
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID as TestFieldName, Race FROM WarriorWithName");
+        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS TestFieldName, Race FROM WarriorWithName");
         //    }
         //}
 
@@ -1055,11 +1056,11 @@ namespace PersistanceMap.Test.Integration
                     .Where<Orders, OrderDetails>((o, od) => o.OrdersID == od.OrdersID)
                     .And<OrderDetails>((od) => od.Quantity > 10);
 
-                // execute the query
-                var orderdetails = query.Select();
-
                 var sql = query.CompileQuery<OrderDetails>().Flatten();
                 var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID) WHERE (Orders.OrdersID = OrderDetails.OrdersID) AND (OrderDetails.Quantity > 10)";
+
+                // execute the query
+                var orderdetails = query.Select();
 
                 // check the compiled sql
                 Assert.AreEqual(sql, expected);
@@ -1271,7 +1272,7 @@ namespace PersistanceMap.Test.Integration
                         OrderDate = DateTime.MinValue
                     });
 
-                var expected = "SELECT Orders.OrderDate as StringDate, Orders.OrderDate as IsDateInAutum, Orders.OrderDate FROM Orders";
+                var expected = "SELECT Orders.OrderDate AS StringDate, Orders.OrderDate AS IsDateInAutum, Orders.OrderDate FROM Orders";
                 var sql = query.CompileQuery().Flatten();
 
                 // check the compiled sql
@@ -1304,7 +1305,7 @@ namespace PersistanceMap.Test.Integration
                         OrderDate = ""
                     });
 
-                var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate as OrderDate FROM Orders";
+                var expected = "SELECT Orders.OrderDate AS Date, Orders.OrderDate AS OrderDate FROM Orders";
                 var sql = query.CompileQuery().Flatten();
 
                 // check the compiled sql
@@ -1334,7 +1335,7 @@ namespace PersistanceMap.Test.Integration
                         OrderDate = false
                     });
 
-                var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate FROM Orders";
+                var expected = "SELECT Orders.OrderDate AS Date, Orders.OrderDate FROM Orders";
                 var sql = query.CompileQuery().Flatten();
 
                 // check the compiled sql
@@ -1368,7 +1369,7 @@ namespace PersistanceMap.Test.Integration
                     .Ignore(m => m.Name)
                     .Ignore(m => m.Title);
 
-                var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate FROM Orders";
+                var expected = "SELECT Orders.OrderDate AS Date, Orders.OrderDate FROM Orders";
                 var sql = query.CompileQuery().Flatten();
 
                 // check the compiled sql
@@ -1437,7 +1438,7 @@ namespace PersistanceMap.Test.Integration
                         .Ignore(m => m.Test5)
                         .Ignore(m => m.Test6);
 
-                    var expected = "SELECT Orders.OrderDate as Date, Orders.OrderDate FROM Orders";
+                    var expected = "SELECT Orders.OrderDate AS Date, Orders.OrderDate FROM Orders";
                     var sql = query.CompileQuery().Flatten();
 
                     // check the compiled sql

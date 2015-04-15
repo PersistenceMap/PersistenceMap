@@ -13,6 +13,13 @@ namespace PersistanceMap.QueryParts
             ID = id;
         }
 
+        public QueryPartDecorator(OperationType operation, string id = null)
+        {
+            Parts = new List<IQueryPart>();
+            OperationType = operation;
+            ID = id;
+        }
+
         public QueryPartDecorator(IQueryPart[] parts, string id = null)
         {
             // ensure parameter is not null

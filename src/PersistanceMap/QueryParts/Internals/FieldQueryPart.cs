@@ -7,7 +7,7 @@ namespace PersistanceMap.QueryParts
 {
     public class FieldQueryPart : IFieldMap, IEntityMap, IQueryPart
     {
-        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null)
+        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null, OperationType operation = OperationType.Field)
         {
             EntityAlias = entityalias;
             Field = field;
@@ -15,6 +15,7 @@ namespace PersistanceMap.QueryParts
             Entity = entity;
             ID = id ?? fieldalias ?? field;
             Converter = converter;
+            OperationType = operation;
         }
 
         public string ID { get; set; }
@@ -134,6 +135,7 @@ namespace PersistanceMap.QueryParts
         public IgnoreFieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null) :
             base(field, fieldalias, entityalias, entity, id)
         {
+            OperationType = OperationType.IgnoreColumn;
         }
 
         public override string Compile()

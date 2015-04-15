@@ -49,13 +49,7 @@ namespace PersistanceMap
         /// The list of queryparts in the container
         /// </summary>
         IEnumerable<IQueryPart> Parts { get; }
-
-        /// <summary>
-        /// Compile the queryparts to a sql statement
-        /// </summary>
-        /// <returns></returns>
-        CompiledQuery Compile();
-
+        
         bool IsSealed { get; }
     }
 }

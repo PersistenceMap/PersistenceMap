@@ -38,10 +38,13 @@ namespace PersistanceMap
 
         Update = 11,
 
-        Set = 12,
+        //Set = 12,
 
         Insert = 13,
 
+        InsertMember = 43,
+        InsertValue = 44,
+        UpdateValue = 45,
         //Into = 14,
 
         /// <summary>
@@ -67,15 +70,18 @@ namespace PersistanceMap
         /// </summary>
         Include = 21,
 
+        Field = 22,
+
         /// <summary>
         /// defines the operation that maps the expression needed for a join operation
         /// </summary>
-        On = 22,
+        On = 23,
 
         And = 24,
 
         Or = 25,
 
+        GroupBy = 30,
 
         OrderBy = 26,
 
@@ -96,7 +102,8 @@ namespace PersistanceMap
         Column = 38,
         IgnoreColumn = 39,
         TableKeys = 40,
-        AlterField = 41,
+        AddField = 41,
+        DropField = 42,
 
 
 
