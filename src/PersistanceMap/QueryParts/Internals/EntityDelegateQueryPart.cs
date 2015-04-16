@@ -42,10 +42,10 @@ namespace PersistanceMap.QueryParts
 
     public class EntityMap : QueryPartDecorator, IEntityMap, IQueryPart
     {
-        public EntityMap(OperationType operation, string entity = null, string entityAlias = null)
-            : this(operation, entity, entityAlias, operation.ToString())
-        {
-        }
+        //public EntityMap(OperationType operation, string entity = null, string entityAlias = null)
+        //    : this(operation, entity, entityAlias, operation.ToString())
+        //{
+        //}
 
         public EntityMap(OperationType operation, string entity = null, string entityAlias = null, string id = null)
         {

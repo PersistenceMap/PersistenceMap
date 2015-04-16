@@ -25,14 +25,26 @@ namespace PersistanceMap.Sql
             }
         }
 
-        public static object Compile(IExpressionMap part)
+        public static string Compile(IExpressionMap part)
         {
-            return Instance.Compile(part);
+            var item = Instance.Compile(part);
+            if (item == null)
+            {
+                return string.Empty;
+            }
+
+            return item.ToString();
         }
 
-        public static object Compile(Expression exp)
+        public static string Compile(Expression exp)
         {
-            return Instance.Compile(exp);
+            var item = Instance.Compile(exp);
+            if (item == null)
+            {
+                return string.Empty;
+            }
+
+            return item.ToString();
         }
     }
 

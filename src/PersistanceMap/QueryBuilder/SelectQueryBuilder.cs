@@ -101,7 +101,7 @@ namespace PersistanceMap.QueryBuilder
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.Or, () => LambdaToSqlCompiler.Compile(partMap).ToString());
+            var part = new DelegateQueryPart(OperationType.Or, () => LambdaToSqlCompiler.Compile(partMap));
             QueryParts.Add(part);
             
             // add aliases to mapcollections
@@ -117,7 +117,7 @@ namespace PersistanceMap.QueryBuilder
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.And, () => LambdaToSqlCompiler.Compile(partMap).ToString());
+            var part = new DelegateQueryPart(OperationType.And, () => LambdaToSqlCompiler.Compile(partMap));
 
             QueryParts.Add(part);
 
@@ -135,7 +135,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> ThenBy(Expression<Func<T, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format("{0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
             QueryParts.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -143,7 +143,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format("{0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
             QueryParts.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryParts);

@@ -102,18 +102,20 @@ namespace PersistanceMap.QueryParts
 
         public virtual string Compile()
         {
-            var sb = new StringBuilder();
+            //var sb = new StringBuilder();
 
-            foreach (var part in Parts)
-            {
-                var value = part.Compile();
-                if (string.IsNullOrEmpty(value))
-                    continue;
+            //foreach (var part in Parts)
+            //{
+            //    var value = part.Compile();
+            //    if (string.IsNullOrEmpty(value))
+            //        continue;
 
-                sb.Append(value);
-            }
+            //    sb.Append(value);
+            //}
 
-            return sb.ToString().RemoveLineBreak();
+            //return sb.ToString().RemoveLineBreak();
+
+            return string.Empty;
         }
 
         #endregion

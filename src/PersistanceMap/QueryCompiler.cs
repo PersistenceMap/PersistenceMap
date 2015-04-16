@@ -56,12 +56,15 @@ namespace PersistanceMap
                     CompileField(part, writer, parent);
                     break;
                 case OperationType.Count:
+                    WriteBlank(writer);
                     CompileFieldFunction("COUNT", part, writer, parent);
                     break;
                 case OperationType.Max:
+                    WriteBlank(writer);
                     CompileFieldFunction("MAX", part, writer, parent);
                     break;
                 case OperationType.Min:
+                    WriteBlank(writer);
                     CompileFieldFunction("MIN", part, writer, parent);
                     break;
 
@@ -79,11 +82,17 @@ namespace PersistanceMap
 
 
                 case OperationType.On:
+                    WriteBlank(writer);
                     CompileCommand(part, writer);
                     break;
                 case OperationType.And:
                 case OperationType.Or:
+                    writer.WriteLine();
+                    WriteBlank(writer);
+                    CompileCommand(part, writer);
+                    break;
                 case OperationType.Where:
+                    WriteBlank(writer);
                     writer.WriteLine();
                     CompileCommand(part, writer);
                     break;
@@ -91,24 +100,35 @@ namespace PersistanceMap
                 case OperationType.GroupBy:
                     WriteBlank(writer);
                     WriteLine(writer);
+                    //TODO: add table name?
                     CompileCommand("GROUP BY", part, writer);
+                    break;
+                case OperationType.ThenBy:
+                    //TODO: add table name?
+                    CompileFormat(", {0}", part, writer);
                     break;
 
                 case OperationType.OrderBy:
                     WriteBlank(writer);
                     WriteLine(writer);
+                    //TODO: add table name?
                     CompileFormat("ORDER BY {0} ASC", part, writer);
                     break;
 
                 case OperationType.OrderByDesc:
                     WriteBlank(writer);
                     WriteLine(writer);
+                    //TODO: add table name?
                     CompileFormat("ORDER BY {0} DESC", part, writer);
                     break;
 
-                case OperationType.ThenBy:
+                case OperationType.ThenByAsc:
+                    //TODO: add table name?
+                    CompileFormat(", {0} ASC", part, writer);
+                    break;
                 case OperationType.ThenByDesc:
-                    CompileCommand(",", part, writer);
+                    //TODO: add table name?
+                    CompileFormat(", {0} DESC", part, writer);
                     break;
 
                     // Database
@@ -207,12 +227,12 @@ namespace PersistanceMap
 
         #region Query
 
-        private void WriteBlank(TextWriter writer)
+        protected void WriteBlank(TextWriter writer)
         {
             writer.Write(" ");
         }
 
-        private void WriteLine(TextWriter writer)
+        protected void WriteLine(TextWriter writer)
         {
             writer.WriteLine();
         }
@@ -222,6 +242,7 @@ namespace PersistanceMap
             var entityMap = part as IEntityMap;
             if (entityMap == null)
             {
+                writer.Write("JOIN {0}", part.Compile());
                 return;
             }
 
@@ -233,13 +254,12 @@ namespace PersistanceMap
             var entityMap = part as IEntityMap;
             if (entityMap == null)
             {
+                writer.Write("FROM {0}", part.Compile());
                 return;
             }
+
             writer.Write("FROM {0}{1}", entityMap.Entity, string.IsNullOrEmpty(entityMap.EntityAlias) ? string.Empty : string.Format(" {0}", entityMap.EntityAlias));
-            //writer.Write("FROM {0} ", part.Compile());
         }
-
-
 
         private void CompileField(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
         {
@@ -280,59 +300,15 @@ namespace PersistanceMap
             }
 
             //TODO: EntityAlias is allways null, It has to be able to be set when creating a Count expression
-            writer.Write(" {0}({1}) AS {2}", function, field.Field, field.FieldAlias ?? field.Field);
+            writer.Write("{0}({1}) AS {2}", function, field.Field, field.FieldAlias ?? field.Field);
 
             if (parent.Parts.Last() != part)
                 writer.Write(",");
         }
 
-        //private void CompileFieldMax(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
-        //{
-        //    var field = part as IFieldMap;
-        //    if (field == null)
-        //    {
-        //        // try to compile the expression
-        //        writer.Write(part.Compile());
-        //        return;
-        //    }
-
-        //    //TODO: EntityAlias is allways null, It has to be able to be set when creating a Count expression
-        //    writer.Write(" MAX({0}) AS {1}", field.Field, field.FieldAlias ?? field.Field);
-
-        //    if (parent.Parts.Last() != part)
-        //        writer.Write(",");
-        //}
-
-        //private void CompileFieldMin(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
-        //{
-        //    var field = part as IFieldMap;
-        //    if (field == null)
-        //    {
-        //        // try to compile the expression
-        //        writer.Write(part.Compile());
-        //        return;
-        //    }
-
-        //    //TODO: EntityAlias is allways null, It has to be able to be set when creating a Count expression
-        //    writer.Write(" MIN({0}) AS {1}", field.Field, field.FieldAlias ?? field.Field);
-
-        //    if (parent.Parts.Last() != part)
-        //        writer.Write(",");
-        //}
-
-        //private void CompileOn(IQueryPart part, TextWriter writer)
-        //{
-        //    writer.Write("ON {0} ", part.Compile());
-        //}
-
-        //private void CompileAnd(IQueryPart part, TextWriter writer)
-        //{
-        //    writer.Write("AND {0} ", part.Compile());
-        //}
-
         private void CompileCommand(IQueryPart part, TextWriter writer)
         {
-            writer.Write(" {0} {1}", part.OperationType.ToString().ToUpper(), part.Compile());
+            writer.Write("{0} {1}", part.OperationType.ToString().ToUpper(), part.Compile());
         }
 
         private void CompileCommand(string command, IQueryPart part, TextWriter writer)

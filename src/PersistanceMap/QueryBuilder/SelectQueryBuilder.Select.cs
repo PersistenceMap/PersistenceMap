@@ -52,7 +52,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>A IJoinQueryProvider{TJoin}</returns>
         public IJoinQueryExpression<TJoin> Join<TJoin>(Expression<Func<TJoin, T, bool>> predicate, string alias = null, string source = null)
         {
-            return Join<TJoin,T>(predicate, alias, source);
+            return Join<TJoin, T>(predicate, alias, source);
         }
 
         /// <summary>
@@ -329,6 +329,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
+            //TODO: add table name?
             var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
             QueryParts.Add(part);
 
@@ -381,6 +382,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate)
         {
+            //TODO: add table name?
             var field = FieldHelper.TryExtractPropertyName(predicate);
             var part = new DelegateQueryPart(OperationType.GroupBy, () => field);
             QueryParts.Add(part);
