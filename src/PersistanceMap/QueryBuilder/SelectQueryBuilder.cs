@@ -72,7 +72,7 @@ namespace PersistanceMap.QueryBuilder
             QueryParts.Add(selectPart);
 
             // add the from operation
-            var entityPart = new EntityMap(OperationType.From, typeof(T2).Name, null);
+            var entityPart = new EntityPart(OperationType.From, typeof(T2).Name, null);
             QueryParts.Add(entityPart);
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);
@@ -88,7 +88,7 @@ namespace PersistanceMap.QueryBuilder
 
             // add the from operation with a alias
             var entity = typeof(T).Name;
-            var entityPart = new EntityMap(OperationType.From, entity, alias);
+            var entityPart = new EntityPart(OperationType.From, entity, alias);
             QueryParts.Add(entityPart);
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);

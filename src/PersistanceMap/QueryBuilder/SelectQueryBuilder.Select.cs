@@ -23,7 +23,7 @@ namespace PersistanceMap.QueryBuilder
                 var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
                 // remove all previous mappings of the ignored field
-                var subparts = map.Parts.OfType<IFieldMap>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
+                var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
                 foreach (var subpart in subparts.ToList())
                 {
                     map.Remove(subpart);
@@ -69,7 +69,7 @@ namespace PersistanceMap.QueryBuilder
             // create the join expression
             var entity = typeof(TJoin).Name;
 
-            var entityPart = new EntityMap(OperationType.Join, entity, alias);
+            var entityPart = new EntityPart(OperationType.Join, entity, alias);
             QueryParts.Add(entityPart);
 
             // create the expressionmap for the lambdacompilert to add the alias if needed
@@ -111,7 +111,7 @@ namespace PersistanceMap.QueryBuilder
         protected SelectQueryBuilder<T> Map(string source, string alias, string entity, string entityalias, Expression<Func<object, object>> converter, Type fieldType)
         {
             // if there is a alias on the last item it has to be used with the map
-            var last = QueryParts.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityMap>().LastOrDefault();
+            var last = QueryParts.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityPart>().LastOrDefault();
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
                 entity = last.EntityAlias;
 
@@ -283,7 +283,7 @@ namespace PersistanceMap.QueryBuilder
                 l.OperationType == OperationType.Join ||
                 l.OperationType == OperationType.FullJoin ||
                 l.OperationType == OperationType.LeftJoin ||
-                l.OperationType == OperationType.RightJoin) as IEntityMap;
+                l.OperationType == OperationType.RightJoin) as IEntityPart;
 
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && last.Entity == typeof(T).Name)
                 expressionPart.AliasMap.Add(typeof(T), last.EntityAlias);

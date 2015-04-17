@@ -336,7 +336,7 @@ namespace PersistanceMap.QueryBuilder
             // merge fields that were defined with Maps
             foreach (var p in QueryParts.Parts.Where(pr => pr.OperationType == OperationType.IncludeMember))
             {
-                var map = p as IFieldMap;
+                var map = p as IFieldPart;
                 if (map == null)
                     continue;
 

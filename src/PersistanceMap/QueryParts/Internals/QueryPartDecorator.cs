@@ -20,61 +20,24 @@ namespace PersistanceMap.QueryParts
             ID = id;
         }
 
-        public QueryPartDecorator(IQueryPart[] parts, string id = null)
-        {
-            // ensure parameter is not null
-            parts.EnsureArgumentNotNull("parts");
-
-            Parts = parts.ToList();
-            ID = id;
-        }
-
         #region IQueryPartDecorator Implementation
-
-        public void Insert(int index, IQueryPart part)
-        {
-            if (IsSealed)
-                return;
-
-            Parts.Insert(index, part);
-        }
 
         public virtual void Add(IQueryPart part)
         {
             if (IsSealed)
+            {
                 return;
+            }
 
             Parts.Add(part);
-        }
-
-        public virtual void AddToLast(IQueryPart part, OperationType operation)
-        {
-            if (IsSealed)
-                return;
-
-            var last = Parts.Last(p => p.OperationType == operation && p is IQueryPartDecorator) as IQueryPartDecorator;
-            if (last == null)
-                return;
-
-            last.Add(part);
-        }
-
-        public virtual void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
-        {
-            if (IsSealed)
-                return;
-
-            var last = Parts.Last(predicate) as IQueryPartDecorator;
-            if (last == null)
-                return;
-
-            last.Add(part);
         }
 
         public void Remove(IQueryPart part)
         {
             if (Parts.Contains(part))
+            {
                 Parts.Remove(part);
+            }
         }
 
         IEnumerable<IQueryPart> IQueryPartDecorator.Parts
@@ -102,19 +65,6 @@ namespace PersistanceMap.QueryParts
 
         public virtual string Compile()
         {
-            //var sb = new StringBuilder();
-
-            //foreach (var part in Parts)
-            //{
-            //    var value = part.Compile();
-            //    if (string.IsNullOrEmpty(value))
-            //        continue;
-
-            //    sb.Append(value);
-            //}
-
-            //return sb.ToString().RemoveLineBreak();
-
             return string.Empty;
         }
 

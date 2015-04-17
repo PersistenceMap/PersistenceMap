@@ -79,8 +79,9 @@
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\Internals\CallbackMap.cs" />
-    <Compile Include="QueryParts\Internals\EntityDelegateQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\ExpressionAliasMap.cs" />
+    <Compile Include="QueryParts\Internals\EntityPart.cs" />
+    <Compile Include="QueryParts\Internals\ExpressionAliasPart.cs" />
+    <Compile Include="QueryParts\Internals\QueryPart.cs" />
     <Compile Include="QueryParts\MapValueConverter.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
     <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
-    <Compile Include="QueryParts\IFieldMap.cs" />
+    <Compile Include="QueryParts\IFieldPart.cs" />
     <Compile Include="QueryParts\IQueryPartDecorator.cs" />
     <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
@@ -119,8 +120,7 @@
     <Compile Include="IQueryCompiler.cs" />
     <Compile Include="Factories\InstanceFactory.cs" />
     <Compile Include="ObjectDefinition.cs" />
-    <Compile Include="QueryParts\ICallbackQueryPart.cs" />
-    <Compile Include="QueryParts\IExpressionMap.cs" />
+    <Compile Include="QueryParts\IExpressionPart.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="IQueryPartsContainer.cs" />
     <Compile Include="QueryParts\ProcedureQueryPartsContainer.cs" />
     <Compile Include="IReaderContext.cs" />
-    <Compile Include="QueryParts\IEntityMap.cs" />
+    <Compile Include="QueryParts\IEntityPart.cs" />
     <Compile Include="ReaderContext.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />

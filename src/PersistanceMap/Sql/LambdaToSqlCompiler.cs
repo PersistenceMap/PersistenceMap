@@ -25,7 +25,7 @@ namespace PersistanceMap.Sql
             }
         }
 
-        public static string Compile(IExpressionMap part)
+        public static string Compile(IExpressionPart part)
         {
             var item = Instance.Compile(part);
             if (item == null)
@@ -67,7 +67,7 @@ namespace PersistanceMap.Sql
 
         #region Compilers
 
-        internal virtual object Compile(IExpressionMap part)
+        internal virtual object Compile(IExpressionPart part)
         {
             _aliasMap = part.AliasMap;
 

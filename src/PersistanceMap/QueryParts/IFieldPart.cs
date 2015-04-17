@@ -5,7 +5,7 @@ namespace PersistanceMap.QueryParts
     /// <summary>
     /// Marks a class to contain properties describing fields
     /// </summary>
-    public interface IFieldMap
+    public interface IFieldPart
     {
         /// <summary>
         /// Gets the name of the field

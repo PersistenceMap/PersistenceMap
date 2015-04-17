@@ -244,7 +244,7 @@ namespace PersistanceMap
 
         private void CompileJoin(IQueryPart part, TextWriter writer)
         {
-            var entityMap = part as IEntityMap;
+            var entityMap = part as IEntityPart;
             if (entityMap == null)
             {
                 writer.Write("JOIN {0}", part.Compile());
@@ -256,7 +256,7 @@ namespace PersistanceMap
 
         private void CompileFrom(IQueryPart part, TextWriter writer)
         {
-            var entityMap = part as IEntityMap;
+            var entityMap = part as IEntityPart;
             if (entityMap == null)
             {
                 writer.Write("FROM {0}", part.Compile());
@@ -268,7 +268,7 @@ namespace PersistanceMap
 
         private void CompileField(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
         {
-            var field = part as IFieldMap;
+            var field = part as IFieldPart;
             if (field == null)
             {
                 // try to compile the expression
@@ -300,7 +300,7 @@ namespace PersistanceMap
 
         private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
         {
-            var field = part as IFieldMap;
+            var field = part as IFieldPart;
             if (field == null)
             {
                 // try to compile the expression

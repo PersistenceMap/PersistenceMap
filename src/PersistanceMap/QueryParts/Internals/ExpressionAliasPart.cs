@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace PersistanceMap.QueryParts
 {
-    internal class ExpressionAliasMap : IExpressionMap
+    public class ExpressionAliasMap : IExpressionPart
     {
         public ExpressionAliasMap(LambdaExpression expression)
         {

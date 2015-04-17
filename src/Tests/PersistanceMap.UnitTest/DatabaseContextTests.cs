@@ -149,7 +149,7 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Select));
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.From).OfType<IEntityMap>().Any(p => p.EntityAlias == "alias"));
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.From).OfType<IEntityPart>().Any(p => p.EntityAlias == "alias"));
         }
 
         [Test]

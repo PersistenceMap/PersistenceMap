@@ -205,7 +205,7 @@ namespace PersistanceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFromTest()
         {
-            var part = new EntityMap(OperationType.From, entity: "Table");
+            var part = new EntityPart(OperationType.From, entity: "Table");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
@@ -218,7 +218,7 @@ namespace PersistanceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFromWithAliasTest()
         {
-            var part = new EntityMap(OperationType.From, entity: "Table", entityAlias: "Alias");
+            var part = new EntityPart(OperationType.From, entity: "Table", entityAlias: "Alias");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
@@ -244,7 +244,7 @@ namespace PersistanceMap.UnitTest
         [Test]
         public void QueryCompilerCompileJoinTest()
         {
-            var part = new EntityMap(OperationType.Join, entity: "Table");
+            var part = new EntityPart(OperationType.Join, entity: "Table");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
@@ -257,7 +257,7 @@ namespace PersistanceMap.UnitTest
         [Test]
         public void QueryCompilerCompileJoinithAliasTest()
         {
-            var part = new EntityMap(OperationType.Join, entity: "Table", entityAlias: "Alias");
+            var part = new EntityPart(OperationType.Join, entity: "Table", entityAlias: "Alias");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 

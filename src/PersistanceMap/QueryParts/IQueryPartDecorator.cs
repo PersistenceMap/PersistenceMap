@@ -5,13 +5,13 @@ namespace PersistanceMap.QueryParts
 {
     public interface IQueryPartDecorator : IQueryPart
     {
-        void Insert(int index, IQueryPart part);
+        //void Insert(int index, IQueryPart part);
 
         void Add(IQueryPart part);
 
-        void AddToLast(IQueryPart part, OperationType operation);
+        //void AddToLast(IQueryPart part, OperationType operation);
 
-        void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
+        //void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
 
         void Remove(IQueryPart part);
 
