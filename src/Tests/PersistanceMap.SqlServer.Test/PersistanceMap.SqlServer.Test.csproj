@@ -36,22 +36,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.core">
-      <HintPath>..\..\..\packages\NUnitTestAdapter.1.2\lib\nunit.core.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\..\packages\NUnitTestAdapter.1.2\lib\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.interfaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\packages\NUnit.3.0.0-alpha-2\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.3.0.0-beta-1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nunit.util">
-      <HintPath>..\..\..\packages\NUnitTestAdapter.1.2\lib\nunit.util.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnitTestAdapter.2.0.0\lib\nunit.util.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\..\..\packages\NUnitTestAdapter.1.2\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
