@@ -27,7 +27,7 @@ namespace PersistanceMap
             {
                 foreach (var part in container.Parts)
                 {
-                    CompilePart(part, writer);
+                    CompilePart(part, writer, container);
                 }
 
                 var query = writer.ToString();
@@ -40,7 +40,7 @@ namespace PersistanceMap
             }
         }
 
-        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent = null)
+        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IQueryPartDecorator parent = null)
         {
             switch (part.OperationType)
             {
@@ -49,6 +49,8 @@ namespace PersistanceMap
                     break;
 
                 case OperationType.IgnoreColumn:
+                case OperationType.IncludeMember:
+                    // do nothing
                     break;
 
                 case OperationType.Select:
@@ -140,12 +142,12 @@ namespace PersistanceMap
 
                 case OperationType.Insert:
                     CompileFormat("INSERT INTO {0} (", part, writer);
-                    CompileChildParts(part, writer);
+                    CompileChildParts(part, writer, container);
                     CompileString(")", writer);
                     break;
                 case OperationType.Values:
                     CompileString(" VALUES (", writer);
-                    CompileChildParts(part, writer);
+                    CompileChildParts(part, writer, container);
                     CompileString(")", writer);
                     break;
                 case OperationType.InsertMember:
@@ -166,6 +168,9 @@ namespace PersistanceMap
 
 
                 // Database
+                case OperationType.CreateDatabase:
+                    CompileCreateDatabase(part, writer);
+                    break;
                 case OperationType.CreateTable:
                     CreateTable(part, writer);
                     break;
@@ -183,19 +188,36 @@ namespace PersistanceMap
                 case OperationType.TableKeys:
                 case OperationType.RenameTable:
                     //TODO: NOT NICE!!!
-                    writer.Write(part.Compile());
+                    CompilePartSimple(part, writer);
                     break;
 
-                case OperationType.CreateDatabase:
-                    CompileCreateDatabase(part, writer);
-                    break;
+                
 
                 default:
                     throw new NotImplementedException();
                     break;
             }
 
-            CompileChildParts(part, writer);
+            CompileChildParts(part, writer, container);
+        }
+
+        protected void CompileChildParts(IQueryPart part, TextWriter writer, IQueryPartsContainer container)
+        {
+            if (_compiledParts.AsParallel().Contains(part))
+            {
+                return;
+            }
+
+            _compiledParts.Add(part);
+
+            var decorator = part as IQueryPartDecorator;
+            if (decorator != null)
+            {
+                foreach (var p in decorator.Parts)
+                {
+                    CompilePart(p, writer, container, decorator);
+                }
+            }
         }
 
         private void CompileCollectionValuePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
@@ -205,25 +227,6 @@ namespace PersistanceMap
             if (parent.Parts.Last() != part)
             {
                 writer.Write(", ");
-            }
-        }
-
-        private void CompileChildParts(IQueryPart part, TextWriter writer)
-        {
-            if (_compiledParts.AsParallel().Contains(part))
-            {
-                return;
-            }
-
-            _compiledParts.Add(part);
-
-            var container = part as IQueryPartDecorator;
-            if (container != null)
-            {
-                foreach (var p in container.Parts)
-                {
-                    CompilePart(p, writer, container);
-                }
             }
         }
 
@@ -285,10 +288,14 @@ namespace PersistanceMap
             writer.Write(field.Field);
 
             if (!string.IsNullOrEmpty(field.FieldAlias))
+            {
                 writer.Write(" AS {0}", field.FieldAlias);
+            }
 
-            if (parent.Parts.Last() != part)
+            if (parent != null && parent.Parts.Last() != part)
+            {
                 writer.Write(",");
+            }
         }
 
         private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
@@ -318,7 +325,7 @@ namespace PersistanceMap
             writer.Write("{0} {1}", command, part.Compile());
         }
 
-        private void CompileFormat(string format, IQueryPart part, TextWriter writer)
+        protected void CompileFormat(string format, IQueryPart part, TextWriter writer)
         {
             writer.Write(format, part.Compile());
         }
@@ -326,6 +333,11 @@ namespace PersistanceMap
         private void CompileString(string command, TextWriter writer)
         {
             writer.Write(command);
+        }
+
+        protected void CompilePartSimple(IQueryPart part, TextWriter writer)
+        {
+            writer.Write(part.Compile());
         }
 
         #endregion

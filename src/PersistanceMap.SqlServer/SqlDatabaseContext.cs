@@ -32,7 +32,8 @@ namespace PersistanceMap
         /// <returns>A IProcedureQueryExpression containing the information needed to execute a stored procedure</returns>
         public IProcedureQueryExpression Procedure(string procName)
         {
-            return new ProcedureQueryProvider(this, procName);
+            return new ProcedureQueryProvider(this)
+                .Procedure(procName);
         }
 
         #endregion

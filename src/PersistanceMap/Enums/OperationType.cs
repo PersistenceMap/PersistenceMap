@@ -112,21 +112,37 @@ namespace PersistanceMap
         ///// </summary>
         //Value = 60,
 
+
+        Procedure = 60, /* */
+
         /// <summary>
         /// defines the operation to be a parameter
         /// </summary>
-        Parameter = 61,
+        Parameter = 61, /* */
+
+        OutputParameter = 64,
 
         /// <summary>
-        /// defines the operation as the prefix of a out parameter (declare @outparam)
+        /// Defines the element to be a container containing all elements needed for a output definition
         /// </summary>
-        OutParameterPrefix = 62,
+        OutParameterDefinition = 66,
 
         /// <summary>
-        /// defines the operation as a sufix of a out parameter (select @outparam)
+        /// defines the operation as the definition of a out parameter (declare @outparam)
         /// </summary>
-        OutParameterSufix = 63,
+        OutParameterDeclare = 62, /* */
 
+        OutParameterSet = 65,
+
+        /// <summary>
+        /// defines the operation as a select parameter definition of a out parameter (select @outparam as outparam)
+        /// </summary>
+        OutParameterSelect = 63, /* */
+
+        /// <summary>
+        /// Defines a Part to be a Member definition that is only used for mappings. These parts are ignored when compiling the sql
+        /// </summary>
+        IncludeMember = 47
         //AfterMap = 200
     }
 }
