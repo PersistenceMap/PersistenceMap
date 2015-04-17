@@ -42,7 +42,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         {
             Func<string> expression = () => string.Format("{0} {1}{2}{3}",
                     name,
-                    type.ToSqlDbType(),
+                    type.ToSqlDbType(SqlTypeExtensions.SqliteMappings),
                     isNullable ? "" : " NOT NULL",
                     QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
 
@@ -169,7 +169,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 case FieldOperation.Add:
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
-                    var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
+                    var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), nullable);
                     QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
@@ -208,7 +208,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                         throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
                     }
 
-                    expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
+                    expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
                     QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 

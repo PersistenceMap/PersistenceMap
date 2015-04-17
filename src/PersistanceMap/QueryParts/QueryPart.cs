@@ -34,7 +34,7 @@ namespace PersistanceMap.QueryParts
 
         public override string ToString()
         {
-            return string.Format("{0} - Operation: [{1}]", GetType().Name, OperationType);
+            return string.Format("{0} - Operation: [{1}] Id: [{2}]", GetType().Name, OperationType, ID ?? "");
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PersistanceMap.QueryBuilder
         {
             Func<string> expression = () => string.Format("{0} {1}{2}{3}",
                     name,
-                    type.ToSqlDbType(),
+                    type.ToSqlDbType(SqlTypeExtensions.SqlMappings),
                     isNullable ? "" : " NOT NULL",
                     QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
 
@@ -114,7 +114,7 @@ namespace PersistanceMap.QueryBuilder
             var fieldPart = new DelegateQueryPart(OperationType.Column,
                 () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}",
                     field.MemberName,
-                    field.MemberType.ToSqlDbType(),
+                    field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings),
                     field.IsNullable ? "" : " NOT NULL",
                     isAutoIncrement ? " AUTOINCREMENT" : "",
                     QueryParts.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
@@ -199,7 +199,7 @@ namespace PersistanceMap.QueryBuilder
                 case FieldOperation.Add:
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
-                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
+                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings), nullable);
                     QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 
@@ -246,7 +246,7 @@ namespace PersistanceMap.QueryBuilder
                         throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
                     }
 
-                    expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
+                    expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqlMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
                     QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
                     break;
 

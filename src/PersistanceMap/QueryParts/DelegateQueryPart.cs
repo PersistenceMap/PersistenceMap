@@ -5,16 +5,11 @@ namespace PersistanceMap.QueryParts
 {
     public class DelegateQueryPart : ItemsQueryPart, IItemsQueryPart, IQueryPart
     {
-        public DelegateQueryPart(OperationType operation, Func<string> callback)
-            : this(operation, callback, operation.ToString())
-        {
-        }
-
         public DelegateQueryPart(OperationType operation, Func<string> callback, string id = null)
         {
             OperationType = operation;
             Delegate = callback;
-            ID = id;
+            ID = id ?? operation.ToString();
         }
         
         #region IQueryPart Implementation

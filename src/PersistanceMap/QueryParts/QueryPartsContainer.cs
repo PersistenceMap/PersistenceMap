@@ -65,7 +65,7 @@ namespace PersistanceMap.QueryParts
         }
 
         private IList<IQueryPart> _parts;
-        internal IList<IQueryPart> Parts
+        public IList<IQueryPart> Parts
         {
             get
             {

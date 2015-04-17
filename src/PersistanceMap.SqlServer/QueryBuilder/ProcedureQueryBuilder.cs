@@ -215,10 +215,14 @@ namespace PersistanceMap.QueryBuilder
 
             var paramName = string.Format("P{0}", QueryParts.Parts.Count(p => p.OperationType == OperationType.OutParameterDefinition) + 1);
 
-            // declare @p1 datetime
-            // set @p1='2012-01-01 00:00:00'
+            // container for the output parameter definition
             var outDecl = new ItemsQueryPart(OperationType.OutParameterDefinition);
-            outDecl.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => string.Format("{0} {1}", paramName, typeof(T).ToSqlDbType())));
+            QueryParts.AddBefore(outDecl, OperationType.Procedure);
+
+            // declare @p1 datetime
+            outDecl.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => string.Format("{0} {1}", paramName, typeof(T).ToSqlDbType(SqlTypeExtensions.SqlMappings))));
+
+            // set @p1='2012-01-01 00:00:00'
             outDecl.Add(new DelegateQueryPart(OperationType.OutParameterSet, () =>
             {
                 // get the return value of the expression
@@ -229,8 +233,6 @@ namespace PersistanceMap.QueryBuilder
 
                 return string.Format("{0}={1}", paramName, quotatedvalue ?? value.ToString());
             }));
-
-            QueryParts.AddBefore(outDecl, OperationType.Procedure);
 
             // parameter=@p1 output
             var queryMap = new DelegateQueryPart(OperationType.OutputParameter, () => string.Format("{0}=@{1}", name, paramName));
