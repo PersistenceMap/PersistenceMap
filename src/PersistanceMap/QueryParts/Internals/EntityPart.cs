@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    public class EntityPart : QueryPartDecorator, IEntityPart, IQueryPart
+    public class EntityPart : ItemsQueryPart, IEntityPart, IQueryPart
     {
         public EntityPart(OperationType operation, string entity = null, string entityAlias = null, string id = null)
         {

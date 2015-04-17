@@ -49,7 +49,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileParameterTest()
         {
-            var part = new QueryPartDecorator(OperationType.None);
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param=value"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -63,7 +63,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileMultipleParameterTest()
         {
-            var part = new QueryPartDecorator(OperationType.None);
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param1=value1"));
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param2=value2"));
             var parts = new QueryPartsContainer();
@@ -78,7 +78,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileParameterOutputTest()
         {
-            var part = new QueryPartDecorator(OperationType.None);
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -92,7 +92,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileMultipleParameterOutputTest()
         {
-            var part = new QueryPartDecorator(OperationType.None);
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param2=value2"));
             var parts = new QueryPartsContainer();
@@ -107,7 +107,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileOutputParameterDefinitionTest()
         {
-            var part = new QueryPartDecorator();
+            var part = new ItemsQueryPart();
             part.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => "Param int"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSet, () => "Param=1"));
             var parts = new QueryPartsContainer();
@@ -161,7 +161,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileSelectWithOutputParameterSelectTest()
         {
-            var part = new QueryPartDecorator(OperationType.Select);
+            var part = new ItemsQueryPart(OperationType.Select);
             part.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param1"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param2"));
             var parts = new QueryPartsContainer();

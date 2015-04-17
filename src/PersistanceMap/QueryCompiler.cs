@@ -40,7 +40,7 @@ namespace PersistanceMap
             }
         }
 
-        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IQueryPartDecorator parent = null)
+        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
         {
             switch (part.OperationType)
             {
@@ -210,7 +210,7 @@ namespace PersistanceMap
 
             _compiledParts.Add(part);
 
-            var decorator = part as IQueryPartDecorator;
+            var decorator = part as IItemsQueryPart;
             if (decorator != null)
             {
                 foreach (var p in decorator.Parts)
@@ -220,7 +220,7 @@ namespace PersistanceMap
             }
         }
 
-        private void CompileCollectionValuePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileCollectionValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             writer.Write(part.Compile());
 
@@ -266,7 +266,7 @@ namespace PersistanceMap
             writer.Write("FROM {0}{1}", entityMap.Entity, string.IsNullOrEmpty(entityMap.EntityAlias) ? string.Empty : string.Format(" {0}", entityMap.EntityAlias));
         }
 
-        private void CompileField(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileField(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             var field = part as IFieldPart;
             if (field == null)
@@ -298,7 +298,7 @@ namespace PersistanceMap
             }
         }
 
-        private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             var field = part as IFieldPart;
             if (field == null)

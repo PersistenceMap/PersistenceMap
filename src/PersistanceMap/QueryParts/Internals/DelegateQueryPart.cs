@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    public class DelegateQueryPart : QueryPartDecorator, IQueryPartDecorator, IQueryPart
+    public class DelegateQueryPart : ItemsQueryPart, IItemsQueryPart, IQueryPart
     {
         public DelegateQueryPart(OperationType operation, Func<string> callback)
             : this(operation, callback, operation.ToString())
@@ -41,9 +41,9 @@ namespace PersistanceMap.QueryParts
         public override string ToString()
         {
             if (Delegate != null)
-                return string.Format("{0} - Delegate: [{1}] Operation: [{2}]", GetType().Name, Delegate.ToString(), OperationType.ToString());
+                return string.Format("{0} - Operation: [{1}] Delegate: [{2}]", GetType().Name, OperationType.ToString(), Delegate.ToString());
 
-            return string.Format("{0} - Delegate: [No delegate defined] Operation: [{1}]", GetType().Name, OperationType.ToString());
+            return string.Format("{0} - Operation: [{1}] Delegate: [No delegate defined]", GetType().Name, OperationType.ToString());
         }
     }
 }

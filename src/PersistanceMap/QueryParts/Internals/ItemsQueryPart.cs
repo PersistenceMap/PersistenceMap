@@ -5,19 +5,17 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    public class QueryPartDecorator : IQueryPartDecorator, IQueryPart
+    public class ItemsQueryPart : QueryPart, IItemsQueryPart, IQueryPart
     {
-        public QueryPartDecorator(string id = null)
+        public ItemsQueryPart(string id = null)
+            : this(OperationType.None, id)
         {
-            Parts = new List<IQueryPart>();
-            ID = id;
         }
 
-        public QueryPartDecorator(OperationType operation, string id = null)
+        public ItemsQueryPart(OperationType operation, string id = null)
+            : base(operation, id)
         {
             Parts = new List<IQueryPart>();
-            OperationType = operation;
-            ID = id;
         }
 
         #region IQueryPartDecorator Implementation
@@ -40,7 +38,7 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        IEnumerable<IQueryPart> IQueryPartDecorator.Parts
+        IEnumerable<IQueryPart> IItemsQueryPart.Parts
         {
             get
             {
@@ -59,15 +57,16 @@ namespace PersistanceMap.QueryParts
 
         #region IQueryPart Implementation
 
-        public string ID { get; set; }
-
-        public OperationType OperationType { get; set; }
-
-        public virtual string Compile()
+        public override string Compile()
         {
             return string.Empty;
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return string.Format("{0} - Operation: [{1}]", GetType().Name, OperationType);
+        }
     }
 }

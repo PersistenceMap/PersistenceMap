@@ -31,5 +31,10 @@ namespace PersistanceMap.QueryParts
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return string.Format("{0} - Operation: [{1}]", GetType().Name, OperationType);
+        }
     }
 }

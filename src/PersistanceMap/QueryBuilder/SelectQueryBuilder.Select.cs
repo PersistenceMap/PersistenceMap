@@ -16,7 +16,7 @@ namespace PersistanceMap.QueryBuilder
         {
             foreach (var part in QueryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
-                var map = part as IQueryPartDecorator;
+                var map = part as IItemsQueryPart;
                 if (map == null)
                     continue;
 
@@ -117,7 +117,7 @@ namespace PersistanceMap.QueryBuilder
 
             // make sure the select part is not sealed so the custom map can be added
             bool isSealed = false;
-            var parent = QueryParts.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 isSealed = parent.IsSealed;
@@ -207,7 +207,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
@@ -229,7 +229,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
@@ -251,7 +251,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Count(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = FieldHelper.TryExtractPropertyName(predicate);
@@ -473,7 +473,7 @@ namespace PersistanceMap.QueryBuilder
             foreach (var part in QueryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 // seal part to disalow other parts to be added to selectmaps
-                var map = part as IQueryPartDecorator;
+                var map = part as IItemsQueryPart;
                 if (map != null)
                     map.IsSealed = true;
             }

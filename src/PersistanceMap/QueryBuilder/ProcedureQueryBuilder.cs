@@ -182,7 +182,7 @@ namespace PersistanceMap.QueryBuilder
 
             var paramPart = new DelegateQueryPart(OperationType.Parameter, () => CreateParameterValue(name, predicate));
 
-            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IQueryPartDecorator;
+            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IItemsQueryPart;
             if (proc != null)
             {
                 proc.Add(paramPart);
@@ -217,7 +217,7 @@ namespace PersistanceMap.QueryBuilder
 
             // declare @p1 datetime
             // set @p1='2012-01-01 00:00:00'
-            var outDecl = new QueryPartDecorator(OperationType.OutParameterDefinition);
+            var outDecl = new ItemsQueryPart(OperationType.OutParameterDefinition);
             outDecl.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => string.Format("{0} {1}", paramName, typeof(T).ToSqlDbType())));
             outDecl.Add(new DelegateQueryPart(OperationType.OutParameterSet, () =>
             {
@@ -234,7 +234,7 @@ namespace PersistanceMap.QueryBuilder
 
             // parameter=@p1 output
             var queryMap = new DelegateQueryPart(OperationType.OutputParameter, () => string.Format("{0}=@{1}", name, paramName));
-            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IQueryPartDecorator;
+            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IItemsQueryPart;
             if (proc != null)
             {
                 proc.Add(queryMap);
@@ -244,13 +244,13 @@ namespace PersistanceMap.QueryBuilder
             if (select == null)
             {
                 // add a select befor adding the output
-                select = new QueryPartDecorator(OperationType.Select);
+                select = new ItemsQueryPart(OperationType.Select);
                 QueryParts.Add(select);
             }
 
             // create value for selecting output parameters
             // select @p1 as p1
-            var decorator = select as IQueryPartDecorator;
+            var decorator = select as IItemsQueryPart;
             if (decorator != null)
             {
                 decorator.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName));

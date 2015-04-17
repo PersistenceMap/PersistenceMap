@@ -109,9 +109,9 @@
     </Compile>
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
+    <Compile Include="QueryParts\Internals\ItemsQueryPart.cs" />
     <Compile Include="QueryParts\IFieldPart.cs" />
-    <Compile Include="QueryParts\IQueryPartDecorator.cs" />
+    <Compile Include="QueryParts\IItemsQueryPart.cs" />
     <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />

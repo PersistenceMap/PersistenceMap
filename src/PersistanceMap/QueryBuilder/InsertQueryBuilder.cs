@@ -63,8 +63,8 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var insert = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
-            var value = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Values);
+            var insert = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
+            var value = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Values);
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
@@ -101,7 +101,7 @@ namespace PersistanceMap.QueryBuilder
             var insertPart = new DelegateQueryPart(OperationType.Insert, () => typeof(T).Name);
             QueryParts.Add(insertPart);
 
-            var valuesPart = new QueryPartDecorator(OperationType.Values);
+            var valuesPart = new ItemsQueryPart(OperationType.Values);
             QueryParts.Add(valuesPart);
 
             var dataObject = anonym.Compile().DynamicInvoke();
@@ -125,7 +125,7 @@ namespace PersistanceMap.QueryBuilder
             return new InsertQueryBuilder<T>(Context, QueryParts);
         }
 
-        private static void RemovePartByID(IQueryPartDecorator decorator, string id)
+        private static void RemovePartByID(IItemsQueryPart decorator, string id)
         {
             if (decorator != null)
             {

@@ -33,7 +33,7 @@ namespace PersistanceMap.UnitTest.Factories
         public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatch()
         {
             var parts = new QueryPartsContainer();
-            var item = new QueryPartDecorator();
+            var item = new ItemsQueryPart();
             item.Add(new FieldQueryPart("ID", null, null, "Warrior")
             {
                 FieldType = typeof(DateTime)
@@ -60,7 +60,7 @@ namespace PersistanceMap.UnitTest.Factories
         public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatchAndIgnoreFields()
         {
             var parts = new QueryPartsContainer();
-            var item = new QueryPartDecorator();
+            var item = new ItemsQueryPart();
             item.Add(new FieldQueryPart("ID", null, null, "Warrior")
             {
                 FieldType = typeof(DateTime)
@@ -143,7 +143,7 @@ namespace PersistanceMap.UnitTest.Factories
         public void GetFieldDefinitionsFromGenericTypeMatchedWithInvariantCaseMatch()
         {
             var parts = new QueryPartsContainer();
-            var item = new QueryPartDecorator();
+            var item = new ItemsQueryPart();
             item.Add(new FieldQueryPart("iD", null, null, "Warrior") { FieldType = typeof(int) });
             item.Add(new FieldQueryPart("nAme", null, null, "Warrior") { FieldType = typeof(string) });
             item.Add(new FieldQueryPart("weaponId", null, null, "Warrior") { FieldType = typeof(int) });

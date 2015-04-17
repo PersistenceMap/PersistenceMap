@@ -11,7 +11,7 @@ namespace PersistanceMap.SqlServer
 {
     public class QueryCompiler : PersistanceMap.QueryCompiler
     {
-        protected override void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IQueryPartDecorator parent = null)
+        protected override void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
         {
             switch (part.OperationType)
             {
@@ -87,7 +87,7 @@ namespace PersistanceMap.SqlServer
             writer.WriteLine("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''{0}'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''{0}_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database);
         }
 
-        private void CompileParameter(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileParameter(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             writer.Write(part.Compile());
 
@@ -97,7 +97,7 @@ namespace PersistanceMap.SqlServer
             }
         }
 
-        private void CompileOutputParameter(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileOutputParameter(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             writer.Write("{0} OUTPUT", part.Compile());
 
@@ -107,7 +107,7 @@ namespace PersistanceMap.SqlServer
             }
         }
 
-        private void CompileOutputParameterSelect(IQueryPart part, TextWriter writer, IQueryPartDecorator parent)
+        private void CompileOutputParameterSelect(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             if (parent != null && parent.Parts.FirstOrDefault(p => p.OperationType == OperationType.OutParameterSelect) == part)
             {

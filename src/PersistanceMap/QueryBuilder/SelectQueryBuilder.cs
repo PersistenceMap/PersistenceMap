@@ -67,7 +67,7 @@ namespace PersistanceMap.QueryBuilder
         internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
-            var selectPart = new QueryPartDecorator(OperationType.Select);
+            var selectPart = new ItemsQueryPart(OperationType.Select);
 
             QueryParts.Add(selectPart);
 
@@ -83,7 +83,7 @@ namespace PersistanceMap.QueryBuilder
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            var selectPart = new QueryPartDecorator(OperationType.Select);
+            var selectPart = new ItemsQueryPart(OperationType.Select);
             QueryParts.Add(selectPart);
 
             // add the from operation with a alias

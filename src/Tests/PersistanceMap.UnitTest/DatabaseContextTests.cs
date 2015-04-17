@@ -362,7 +362,7 @@ namespace PersistanceMap.UnitTest
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Insert));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Values));
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<QueryPartDecorator>().First().Parts.Count == 5);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<ItemsQueryPart>().First().Parts.Count == 5);
             Assert.IsTrue(context.QueryStore.Any());
 
             context.Commit();
@@ -382,7 +382,7 @@ namespace PersistanceMap.UnitTest
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Values));
             
             // only insert the properties that are provided
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<QueryPartDecorator>().First().Parts.Count == 2);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<ItemsQueryPart>().First().Parts.Count == 2);
             
             Assert.IsTrue(context.QueryStore.Any());
 
