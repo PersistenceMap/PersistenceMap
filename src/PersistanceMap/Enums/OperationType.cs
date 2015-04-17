@@ -74,7 +74,6 @@ namespace PersistanceMap
         CreateDatabase = 33,
         CreateTable = 34,
         Drop = 35,
-        // rename table
         RenameTable = 36,
         AlterTable = 37,
         Column = 38,

@@ -11,6 +11,18 @@ namespace PersistanceMap.SqlServer
 {
     public class QueryCompiler : PersistanceMap.QueryCompiler
     {
+        protected override void CompilePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent = null)
+        {
+            switch (part.OperationType)
+            {
+
+
+                default:
+                    base.CompilePart(part, writer, parent);
+                    break;
+            }
+        }
+
         protected override void CreateTable(IQueryPart part, TextWriter writer)
         {
             writer.Write(string.Format("CREATE TABLE {0} (", part.Compile()));

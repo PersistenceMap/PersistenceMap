@@ -40,10 +40,14 @@ namespace PersistanceMap
             }
         }
 
-        private void CompilePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent = null)
+        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartDecorator parent = null)
         {
             switch (part.OperationType)
             {
+                case OperationType.None:
+                    writer.Write(part.Compile());
+                    break;
+
                 case OperationType.IgnoreColumn:
                     break;
 
@@ -131,30 +135,7 @@ namespace PersistanceMap
                     CompileFormat(", {0} DESC", part, writer);
                     break;
 
-                    // Database
-                case OperationType.CreateTable:
-                    CreateTable(part, writer);
-                    break;
-                case OperationType.AlterTable:
-                    CompileFormat("ALTER TABLE {0} ", part, writer);
-                    break;
-                case OperationType.Drop:
-                    CompileFormat("DROP TABLE {0}", part, writer);
-                    break;
-                case OperationType.DropField:
-                    CompileFormat("DROP COLUMN {0}", part, writer);
-                    break;
-                case OperationType.AddField:
-                case OperationType.Column:
-                case OperationType.TableKeys:
-                case OperationType.RenameTable:
-                    //TODO: NOT NICE!!!
-                    writer.Write(part.Compile());
-                    break;
-
-                case OperationType.CreateDatabase:
-                    CompileCreateDatabase(part, writer);
-                    break;
+                    
 
 
                 case OperationType.Insert:
@@ -184,8 +165,29 @@ namespace PersistanceMap
                     break;
 
 
-                case OperationType.None:
+                // Database
+                case OperationType.CreateTable:
+                    CreateTable(part, writer);
+                    break;
+                case OperationType.AlterTable:
+                    CompileFormat("ALTER TABLE {0} ", part, writer);
+                    break;
+                case OperationType.Drop:
+                    CompileFormat("DROP TABLE {0}", part, writer);
+                    break;
+                case OperationType.DropField:
+                    CompileFormat("DROP COLUMN {0}", part, writer);
+                    break;
+                case OperationType.AddField:
+                case OperationType.Column:
+                case OperationType.TableKeys:
+                case OperationType.RenameTable:
+                    //TODO: NOT NICE!!!
                     writer.Write(part.Compile());
+                    break;
+
+                case OperationType.CreateDatabase:
+                    CompileCreateDatabase(part, writer);
                     break;
 
                 default:
