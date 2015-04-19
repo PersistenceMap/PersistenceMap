@@ -73,14 +73,14 @@ namespace PersistanceMap
         // Database
         CreateDatabase = 33,
         CreateTable = 34,
-        Drop = 35,
+        DropTable = 35, /* */
         RenameTable = 36,
-        AlterTable = 37,
+        AlterTable = 37, /* */
         Column = 38,
         IgnoreColumn = 39, /* */
         TableKeys = 40,
         AddField = 41,
-        DropField = 42,
+        DropField = 42, /* */
 
 
 
@@ -88,31 +88,22 @@ namespace PersistanceMap
         /// <summary>
         /// Defines the operation to be the beginning of a delete operation 
         /// </summary>
-        Delete = 10,
+        Delete = 10, /* */
 
-        Update = 11,
+        Update = 11, /* */
 
-        //Set = 12,
+        Insert = 13, /* */
 
-        Insert = 13,
-
-        InsertMember = 43,
-        InsertValue = 44,
-        UpdateValue = 45,
-        //Into = 14,
+        InsertMember = 43, /* */
+        InsertValue = 44, /* */
+        UpdateValue = 45, /* */
 
         /// <summary>
         /// defines a values element for a insert
         /// </summary>
-        Values = 15,
+        Values = 15, /* */
 
-
-        ///// <summary>
-        ///// defines the value of a storeprocedure parameter
-        ///// </summary>
-        //Value = 60,
-
-
+        // StoredProcedures
         Procedure = 60, /* */
 
         /// <summary>
@@ -120,19 +111,19 @@ namespace PersistanceMap
         /// </summary>
         Parameter = 61, /* */
 
-        OutputParameter = 64,
+        OutputParameter = 64, /* */
 
         /// <summary>
         /// Defines the element to be a container containing all elements needed for a output definition
         /// </summary>
-        OutParameterDefinition = 66,
+        OutParameterDefinition = 66, /* */
 
         /// <summary>
         /// defines the operation as the definition of a out parameter (declare @outparam)
         /// </summary>
         OutParameterDeclare = 62, /* */
 
-        OutParameterSet = 65,
+        OutParameterSet = 65, /* */
 
         /// <summary>
         /// defines the operation as a select parameter definition of a out parameter (select @outparam as outparam)

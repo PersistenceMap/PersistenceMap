@@ -79,7 +79,7 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Drop()
         {
-            var part = new DelegateQueryPart(OperationType.Drop, () => typeof(T).Name);
+            var part = new DelegateQueryPart(OperationType.DropTable, () => typeof(T).Name);
             QueryParts.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));

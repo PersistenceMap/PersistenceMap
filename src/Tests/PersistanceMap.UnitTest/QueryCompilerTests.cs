@@ -23,6 +23,8 @@ namespace PersistanceMap.UnitTest
             //parts.Verify(p => p.Compile(), Times.Once);
         }
 
+        #region Selection Tests
+
         [Test]
         public void QueryCompilerCompileSelectTest()
         {
@@ -409,5 +411,206 @@ namespace PersistanceMap.UnitTest
 
             Assert.AreEqual(query.QueryString, ", Field DESC");
         }
+
+        #endregion
+
+        #region Data Tests
+
+        [Test]
+        public void QueryCompilerCompileInsertTest()
+        {
+            var part = new DelegateQueryPart(OperationType.Insert, () => "TableName");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "INSERT INTO TableName ()");
+        }
+
+        [Test]
+        public void QueryCompilerCompileInsertWithInsertMemberTest()
+        {
+            var part = new DelegateQueryPart(OperationType.Insert, () => "TableName");
+            part.Add(new DelegateQueryPart(OperationType.InsertMember, () => "Field1"));
+            part.Add(new DelegateQueryPart(OperationType.InsertMember, () => "Field2"));
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "INSERT INTO TableName (Field1, Field2)");
+        }
+
+        [Test]
+        public void QueryCompilerCompileInsertMemberTest()
+        {
+            var part = new DelegateQueryPart(OperationType.InsertMember, () => "Field1");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "Field1");
+        }
+
+        [Test]
+        public void QueryCompilerCompileValuesTest()
+        {
+            var part = new QueryPart(OperationType.Values);
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, " VALUES ()");
+        }
+
+        [Test]
+        public void QueryCompilerCompileValuesWithInsertValuesTest()
+        {
+            var part = new ItemsQueryPart(OperationType.Values);
+            part.Add(new DelegateQueryPart(OperationType.InsertValue, () => "Field1"));
+            part.Add(new DelegateQueryPart(OperationType.InsertValue, () => "Field2"));
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, " VALUES (Field1, Field2)");
+        }
+
+
+        [Test]
+        public void QueryCompilerCompileInsertValueTest()
+        {
+            var part = new DelegateQueryPart(OperationType.InsertValue, () => "Field1");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "Field1");
+        }
+
+        [Test]
+        public void QueryCompilerCompileUpdateTest()
+        {
+            var part = new DelegateQueryPart(OperationType.Update, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "UPDATE Table SET ");
+        }
+
+        [Test]
+        public void QueryCompilerCompileUpdateWithUpdateValueTest()
+        {
+            var part = new DelegateQueryPart(OperationType.Update, () => "Table");
+            part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1"));
+            part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field2=Value2"));
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "UPDATE Table SET Field1=Value1, Field2=Value2");
+        }
+
+        [Test]
+        public void QueryCompilerCompileUpdateValueTest()
+        {
+            var part = new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "Field1=Value1");
+        }
+
+        [Test]
+        public void QueryCompilerCompileUpdateValueWithValueCollectionTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.UpdateValue);
+            part.AddValue(KeyValuePart.Member, "Member");
+            part.AddValue(KeyValuePart.Value, "Value");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "Member = Value");
+        }
+
+        [Test]
+        public void QueryCompilerCompileDeleteTest()
+        {
+            var part = new DelegateQueryPart(OperationType.Delete, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "DELETE FROM Table");
+        }
+
+        #endregion
+
+        #region Database Tests
+
+        [Test]
+        public void QueryCompilerCompileAlterTableTest()
+        {
+            var part = new DelegateQueryPart(OperationType.AlterTable, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ALTER TABLE Table ");
+        }
+
+        [Test]
+        public void QueryCompilerCompileDropTest()
+        {
+            var part = new DelegateQueryPart(OperationType.DropTable, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "DROP TABLE Table");
+        }
+
+        [Test]
+        public void QueryCompilerCompileDropFieldTest()
+        {
+            var part = new DelegateQueryPart(OperationType.DropField, () => "ColumnName");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "DROP COLUMN ColumnName");
+        }
+
+        #endregion
     }
 }

@@ -103,9 +103,10 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
-                var formatted = string.Format("{0} = {1}", field.FieldName, value ?? "NULL");
 
-                var keyValuePart = new DelegateQueryPart(OperationType.UpdateValue, () => formatted, field.MemberName);
+                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
+                keyValuePart.AddValue(KeyValuePart.Member, field.FieldName);
+                keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
                 updatePart.Add(keyValuePart);
             }
 
@@ -132,8 +133,8 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateEqualityExpression<T>(anonym);
             }
 
-            var entity = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
-            QueryParts.Add(entity);
+            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
+            QueryParts.Add(updatePart);
             
             var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
 
@@ -146,10 +147,10 @@ namespace PersistanceMap.QueryBuilder
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
-                var formatted = string.Format("{0} = {1}", field.FieldName, value ?? "NULL");
-
-                var keyValuePart = new DelegateQueryPart(OperationType.UpdateValue, () => formatted, field.MemberName);
-                entity.Add(keyValuePart);
+                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
+                keyValuePart.AddValue(KeyValuePart.Member, field.FieldName);
+                keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
+                updatePart.Add(keyValuePart);
             }
 
             var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());

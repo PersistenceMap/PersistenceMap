@@ -159,7 +159,7 @@ namespace PersistanceMap
                     CompileFormat("UPDATE {0} SET ", part, writer);
                     break;
                 case OperationType.UpdateValue:
-                    CompileCollectionValuePart(part, writer, parent);
+                    CompileUpdateValuePart(part, writer, parent);
                     break;
 
                 case OperationType.Delete:
@@ -177,7 +177,7 @@ namespace PersistanceMap
                 case OperationType.AlterTable:
                     CompileFormat("ALTER TABLE {0} ", part, writer);
                     break;
-                case OperationType.Drop:
+                case OperationType.DropTable:
                     CompileFormat("DROP TABLE {0}", part, writer);
                     break;
                 case OperationType.DropField:
@@ -199,6 +199,23 @@ namespace PersistanceMap
             }
 
             CompileChildParts(part, writer, container);
+        }
+
+        private void CompileUpdateValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                AppendComma(part, writer, parent);
+                return;
+            }
+
+            var key = collection.GetValue(KeyValuePart.Member);
+            var value = collection.GetValue(KeyValuePart.Value);
+
+            writer.Write("{0} = {1}", key, value);
+            AppendComma(part, writer, parent);
         }
 
         protected void CompileChildParts(IQueryPart part, TextWriter writer, IQueryPartsContainer container)
@@ -224,7 +241,12 @@ namespace PersistanceMap
         {
             writer.Write(part.Compile());
 
-            if (parent.Parts.Last() != part)
+            AppendComma(part, writer, parent);
+        }
+
+        protected void AppendComma(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        {
+            if (parent != null && parent.Parts.Last() != part)
             {
                 writer.Write(", ");
             }

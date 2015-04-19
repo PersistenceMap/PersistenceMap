@@ -70,6 +70,7 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
     <Compile Include="CustomConfiguration.cs" />
@@ -81,8 +82,10 @@
     <Compile Include="QueryParts\CallbackMap.cs" />
     <Compile Include="QueryParts\EntityPart.cs" />
     <Compile Include="QueryParts\ExpressionAliasPart.cs" />
+    <Compile Include="QueryParts\IValueCollectionQueryPart.cs" />
     <Compile Include="QueryParts\QueryPart.cs" />
     <Compile Include="QueryParts\MapValueConverter.cs" />
+    <Compile Include="QueryParts\ValueCollectionQueryPart.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
     <Compile Include="Enums\FieldOperation.cs" />
