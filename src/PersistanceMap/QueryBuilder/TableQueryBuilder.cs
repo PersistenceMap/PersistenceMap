@@ -202,7 +202,7 @@ namespace PersistanceMap.QueryBuilder
                     //expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings), nullable);
                     //QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
 
-                    var addPart = new ValueCollectionQueryPart(OperationType.AddField);
+                    var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
                     addPart.AddValue(KeyValuePart.Member, field.MemberName);
                     addPart.AddValue(KeyValuePart.MemberType, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
                     addPart.AddValue(KeyValuePart.Nullable, isNullable != null ? (isNullable.Value ? null : "NOT NULL") : field.IsNullable ? null : "NOT NULL");
@@ -256,7 +256,7 @@ namespace PersistanceMap.QueryBuilder
                     //expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqlMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
                     //QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
 
-                    var addPart = new ValueCollectionQueryPart(OperationType.AddField);
+                    var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
                     addPart.AddValue(KeyValuePart.Member, column);
                     addPart.AddValue(KeyValuePart.MemberType, fieldType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
                     addPart.AddValue(KeyValuePart.Nullable, isNullable != null && !isNullable.Value ? "NOT NULL" : null);

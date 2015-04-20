@@ -167,25 +167,7 @@ namespace PersistanceMap
                     break;
 
 
-                // Database
-                case OperationType.CreateDatabase:
-                    CompileCreateDatabase(part, writer);
-                    break;
-                case OperationType.CreateTable:
-                    CreateTable(part, writer);
-                    break;
-                case OperationType.AlterTable:
-                    CompileFormat("ALTER TABLE {0} ", part, writer);
-                    break;
-                case OperationType.DropTable:
-                    CompileFormat("DROP TABLE {0}", part, writer);
-                    break;
-                case OperationType.DropField:
-                    CompileFormat("DROP COLUMN {0}", part, writer);
-                    break;
-                case OperationType.AddField:
-                    CompileAddFieldPart(part, writer, parent);
-                    break;
+                // Database                
                 case OperationType.Column:
                 case OperationType.TableKeys:
                 case OperationType.RenameTable:
@@ -201,22 +183,6 @@ namespace PersistanceMap
             }
 
             CompileChildParts(part, writer, container);
-        }
-
-        protected void CompileAddFieldPart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
-        {
-            var collection = part as IValueCollectionQueryPart;
-            if (collection == null)
-            {
-                writer.Write(part.Compile());
-                return;
-            }
-
-            var column = collection.GetValue(KeyValuePart.Member);
-            var type = collection.GetValue(KeyValuePart.MemberType);
-            var nullable = collection.GetValue(KeyValuePart.Nullable);
-
-            writer.Write("ADD {0} {1}{2}", column, type, string.IsNullOrEmpty(nullable) || nullable.ToLower() == "true" ? "" : " NOT NULL");
         }
 
         private void CompileUpdateValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
@@ -377,20 +343,6 @@ namespace PersistanceMap
         protected void CompilePartSimple(IQueryPart part, TextWriter writer)
         {
             writer.Write(part.Compile());
-        }
-
-        #endregion
-
-        #region Database
-
-        protected virtual void CreateTable(IQueryPart part, TextWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void CompileCreateDatabase(IQueryPart part, TextWriter writer)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

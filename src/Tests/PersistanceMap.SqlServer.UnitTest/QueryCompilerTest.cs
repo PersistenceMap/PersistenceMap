@@ -172,5 +172,115 @@ namespace PersistanceMap.SqlServer.UnitTest
 
             Assert.AreEqual(query.QueryString, "SELECT @Param1 AS Param1, @Param2 AS Param2");
         }
+
+        #region Database Tests
+
+        [Test]
+        public void SqlQueryCompilerCompileAlterTableTest()
+        {
+            var part = new DelegateQueryPart(OperationType.AlterTable, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ALTER TABLE Table ");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileDropTest()
+        {
+            var part = new DelegateQueryPart(OperationType.DropTable, () => "Table");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "DROP TABLE Table");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileDropFieldTest()
+        {
+            var part = new DelegateQueryPart(OperationType.DropField, () => "ColumnName");
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "DROP COLUMN ColumnName");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileAddColumnTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddColumn);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, null);
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileAddColumnMissingNUllableTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddColumn);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileAddColumnNullableTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddColumn);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, true.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileAddColumnNotNullTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddColumn);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, false.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int NOT NULL");
+        }
+
+        #endregion
     }
 }

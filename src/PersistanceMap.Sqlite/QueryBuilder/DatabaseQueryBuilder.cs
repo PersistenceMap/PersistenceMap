@@ -170,7 +170,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
                     var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
                     break;
 
                 default:
@@ -209,7 +209,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                     }
 
                     expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
                     break;
 
                 default:
