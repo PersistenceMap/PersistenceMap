@@ -184,6 +184,8 @@ namespace PersistanceMap
                     CompileFormat("DROP COLUMN {0}", part, writer);
                     break;
                 case OperationType.AddField:
+                    CompileAddFieldPart(part, writer, parent);
+                    break;
                 case OperationType.Column:
                 case OperationType.TableKeys:
                 case OperationType.RenameTable:
@@ -201,13 +203,28 @@ namespace PersistanceMap
             CompileChildParts(part, writer, container);
         }
 
+        protected void CompileAddFieldPart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                return;
+            }
+
+            var column = collection.GetValue(KeyValuePart.Member);
+            var type = collection.GetValue(KeyValuePart.MemberType);
+            var nullable = collection.GetValue(KeyValuePart.Nullable);
+
+            writer.Write("ADD {0} {1}{2}", column, type, string.IsNullOrEmpty(nullable) || nullable.ToLower() == "true" ? "" : " NOT NULL");
+        }
+
         private void CompileUpdateValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             var collection = part as IValueCollectionQueryPart;
             if (collection == null)
             {
                 writer.Write(part.Compile());
-                AppendComma(part, writer, parent);
                 return;
             }
 

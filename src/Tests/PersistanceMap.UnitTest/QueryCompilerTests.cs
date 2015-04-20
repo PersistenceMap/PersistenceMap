@@ -516,7 +516,7 @@ namespace PersistanceMap.UnitTest
         public void QueryCompilerCompileUpdateWithUpdateValueTest()
         {
             var part = new DelegateQueryPart(OperationType.Update, () => "Table");
-            part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1"));
+            part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1, "));
             part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field2=Value2"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -609,6 +609,73 @@ namespace PersistanceMap.UnitTest
             var query = compiler.Compile(parts);
 
             Assert.AreEqual(query.QueryString, "DROP COLUMN ColumnName");
+        }
+
+        [Test]
+        public void QueryCompilerCompileAddColumnTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddField);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, null);
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void QueryCompilerCompileAddColumnMissingNUllableTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddField);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void QueryCompilerCompileAddColumnNullableTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddField);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, true.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int");
+        }
+
+        [Test]
+        public void QueryCompilerCompileAddColumnNotNullTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.AddField);
+            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, false.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ADD ColumnName int NOT NULL");
         }
 
         #endregion

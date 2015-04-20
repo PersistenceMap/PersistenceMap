@@ -79,7 +79,7 @@ namespace PersistanceMap
         Column = 38,
         IgnoreColumn = 39, /* */
         TableKeys = 40,
-        AddField = 41,
+        AddField = 41, /* */
         DropField = 42, /* */
 
 
