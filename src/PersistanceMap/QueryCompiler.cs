@@ -170,7 +170,6 @@ namespace PersistanceMap
                 // Database                
                 case OperationType.Column:
                 case OperationType.TableKeys:
-                case OperationType.RenameTable:
                     //TODO: NOT NICE!!!
                     CompilePartSimple(part, writer);
                     break;
@@ -194,7 +193,7 @@ namespace PersistanceMap
                 return;
             }
 
-            var key = collection.GetValue(KeyValuePart.Member);
+            var key = collection.GetValue(KeyValuePart.MemberName);
             var value = collection.GetValue(KeyValuePart.Value);
 
             writer.Write("{0} = {1}", key, value);

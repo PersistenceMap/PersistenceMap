@@ -36,9 +36,9 @@ namespace PersistanceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileDropFieldTest()
+        public void SqliteQueryCompilerCompileDropColumnTest()
         {
-            var part = new DelegateQueryPart(OperationType.DropField, () => "ColumnName");
+            var part = new DelegateQueryPart(OperationType.DropColumn, () => "ColumnName");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
@@ -52,7 +52,7 @@ namespace PersistanceMap.Sqlite.UnitTest
         public void SqliteQueryCompilerCompileAddColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, null);
 
@@ -69,7 +69,7 @@ namespace PersistanceMap.Sqlite.UnitTest
         public void SqliteQueryCompilerCompileAddColumnMissingNUllableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
 
             var parts = new QueryPartsContainer();
@@ -85,7 +85,7 @@ namespace PersistanceMap.Sqlite.UnitTest
         public void SqliteQueryCompilerCompileAddColumnNullableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, true.ToString());
 
@@ -102,7 +102,7 @@ namespace PersistanceMap.Sqlite.UnitTest
         public void SqliteQueryCompilerCompileAddColumnNotNullTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, false.ToString());
 
@@ -113,6 +113,22 @@ namespace PersistanceMap.Sqlite.UnitTest
             var query = compiler.Compile(parts);
 
             Assert.AreEqual(query.QueryString, "ADD COLUMN ColumnName int NOT NULL");
+        }
+
+        [Test]
+        public void SqliteQueryCompilerCompileRenameTableTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.RenameTable);
+            part.AddValue(KeyValuePart.Key, "OriginalTable");
+            part.AddValue(KeyValuePart.Value, "NewTable");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ALTER TABLE OriginalTable RENAME TO NewTable");
         }
 
         #endregion

@@ -3,7 +3,8 @@ namespace PersistanceMap
 {
     public enum KeyValuePart
     {
-        Member,
+        Key,
+        MemberName,
         Value,
         MemberType,
         Nullable

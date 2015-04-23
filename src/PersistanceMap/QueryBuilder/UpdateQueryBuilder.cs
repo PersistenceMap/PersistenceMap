@@ -105,7 +105,7 @@ namespace PersistanceMap.QueryBuilder
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
 
                 var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
-                keyValuePart.AddValue(KeyValuePart.Member, field.FieldName);
+                keyValuePart.AddValue(KeyValuePart.MemberName, field.FieldName);
                 keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
                 updatePart.Add(keyValuePart);
             }
@@ -148,7 +148,7 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
-                keyValuePart.AddValue(KeyValuePart.Member, field.FieldName);
+                keyValuePart.AddValue(KeyValuePart.MemberName, field.FieldName);
                 keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
                 updatePart.Add(keyValuePart);
             }

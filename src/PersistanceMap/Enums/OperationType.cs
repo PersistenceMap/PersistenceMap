@@ -74,13 +74,13 @@ namespace PersistanceMap
         CreateDatabase = 33,
         CreateTable = 34,
         DropTable = 35, /* */
-        RenameTable = 36,
+        RenameTable = 36, /* */
         AlterTable = 37, /* */
         Column = 38,
         IgnoreColumn = 39, /* */
         TableKeys = 40,
         AddColumn = 41, /* */
-        DropField = 42, /* */
+        DropColumn = 42, /* */
 
 
 

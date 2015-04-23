@@ -88,7 +88,10 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// <typeparam name="TNew">The type of the new table</typeparam>
         public void RenameTo<TNew>()
         {
-            var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
+            //var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
+            var part = new ValueCollectionQueryPart(OperationType.RenameTable);
+            part.AddValue(KeyValuePart.Key, typeof(T).Name);
+            part.AddValue(KeyValuePart.Value, typeof(TNew).Name);
             QueryParts.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));

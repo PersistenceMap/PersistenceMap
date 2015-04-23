@@ -28,7 +28,7 @@ namespace PersistanceMap.SqlServer
                 case OperationType.DropTable:
                     CompileFormat("DROP TABLE {0}", part, writer);
                     break;
-                case OperationType.DropField:
+                case OperationType.DropColumn:
                     CompileFormat("DROP COLUMN {0}", part, writer);
                     break;
                 case OperationType.AddColumn:
@@ -108,7 +108,7 @@ namespace PersistanceMap.SqlServer
                 return;
             }
 
-            var column = collection.GetValue(KeyValuePart.Member);
+            var column = collection.GetValue(KeyValuePart.MemberName);
             var type = collection.GetValue(KeyValuePart.MemberType);
             var nullable = collection.GetValue(KeyValuePart.Nullable);
 

@@ -22,11 +22,14 @@ namespace PersistanceMap.Sqlite
                 case OperationType.DropTable:
                     CompileFormat("DROP TABLE {0}", part, writer);
                     break;
-                case OperationType.DropField:
+                case OperationType.DropColumn:
                     CompileFormat("DROP COLUMN {0}", part, writer);
                     break;
                 case OperationType.AddColumn:
                     CompileAddFieldPart(part, writer);
+                    break;
+                case OperationType.RenameTable:
+                    RenameTable(part, writer);
                     break;
 
                 default:
@@ -35,9 +38,24 @@ namespace PersistanceMap.Sqlite
             }
         }
 
+        private void RenameTable(IQueryPart part, TextWriter writer)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                return;
+            }
+
+            var original = collection.GetValue(KeyValuePart.Key);
+            var value = collection.GetValue(KeyValuePart.Value);
+
+            writer.Write("ALTER TABLE {0} RENAME TO {1}", original, value);
+        }
+
         private void CreateTable(IQueryPart part, TextWriter writer)
         {
-            writer.Write(string.Format("CREATE TABLE IF NOT EXISTS {0} (", part.Compile()));
+            writer.Write("CREATE TABLE IF NOT EXISTS {0} (", part.Compile());
         }
 
         private void CompileAddFieldPart(IQueryPart part, TextWriter writer)
@@ -49,7 +67,7 @@ namespace PersistanceMap.Sqlite
                 return;
             }
 
-            var column = collection.GetValue(KeyValuePart.Member);
+            var column = collection.GetValue(KeyValuePart.MemberName);
             var type = collection.GetValue(KeyValuePart.MemberType);
             var nullable = collection.GetValue(KeyValuePart.Nullable);
 

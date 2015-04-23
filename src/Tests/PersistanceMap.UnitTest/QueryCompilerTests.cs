@@ -544,7 +544,7 @@ namespace PersistanceMap.UnitTest
         public void QueryCompilerCompileUpdateValueWithValueCollectionTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.UpdateValue);
-            part.AddValue(KeyValuePart.Member, "Member");
+            part.AddValue(KeyValuePart.MemberName, "Member");
             part.AddValue(KeyValuePart.Value, "Value");
             var parts = new QueryPartsContainer();
             parts.Add(part);

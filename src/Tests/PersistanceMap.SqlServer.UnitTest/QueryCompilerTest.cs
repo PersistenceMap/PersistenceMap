@@ -204,7 +204,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileDropFieldTest()
         {
-            var part = new DelegateQueryPart(OperationType.DropField, () => "ColumnName");
+            var part = new DelegateQueryPart(OperationType.DropColumn, () => "ColumnName");
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
@@ -218,7 +218,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         public void SqlQueryCompilerCompileAddColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, null);
 
@@ -235,7 +235,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         public void SqlQueryCompilerCompileAddColumnMissingNUllableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
 
             var parts = new QueryPartsContainer();
@@ -251,7 +251,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         public void SqlQueryCompilerCompileAddColumnNullableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, true.ToString());
 
@@ -268,7 +268,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         public void SqlQueryCompilerCompileAddColumnNotNullTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
-            part.AddValue(KeyValuePart.Member, "ColumnName");
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
             part.AddValue(KeyValuePart.MemberType, "int");
             part.AddValue(KeyValuePart.Nullable, false.ToString());
 

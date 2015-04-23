@@ -203,7 +203,7 @@ namespace PersistanceMap.QueryBuilder
                     //QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
 
                     var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
-                    addPart.AddValue(KeyValuePart.Member, field.MemberName);
+                    addPart.AddValue(KeyValuePart.MemberName, field.MemberName);
                     addPart.AddValue(KeyValuePart.MemberType, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
                     addPart.AddValue(KeyValuePart.Nullable, isNullable != null ? (isNullable.Value ? null : "NOT NULL") : field.IsNullable ? null : "NOT NULL");
 
@@ -211,7 +211,7 @@ namespace PersistanceMap.QueryBuilder
                     break;
 
                 case FieldOperation.Drop:
-                    QueryParts.Add(new DelegateQueryPart(OperationType.DropField, () => field.MemberName));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropColumn, () => field.MemberName));
                     break;
 
                 case FieldOperation.Alter:
@@ -257,7 +257,7 @@ namespace PersistanceMap.QueryBuilder
                     //QueryParts.Add(new DelegateQueryPart(OperationType.AddField, () => expression));
 
                     var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
-                    addPart.AddValue(KeyValuePart.Member, column);
+                    addPart.AddValue(KeyValuePart.MemberName, column);
                     addPart.AddValue(KeyValuePart.MemberType, fieldType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
                     addPart.AddValue(KeyValuePart.Nullable, isNullable != null && !isNullable.Value ? "NOT NULL" : null);
 
@@ -266,7 +266,7 @@ namespace PersistanceMap.QueryBuilder
                     break;
 
                 case FieldOperation.Drop:
-                    QueryParts.Add(new DelegateQueryPart(OperationType.DropField, () => column));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropColumn, () => column));
                     break;
 
                 case FieldOperation.Alter:
