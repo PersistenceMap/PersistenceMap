@@ -45,6 +45,8 @@ namespace PersistanceMap
         /// <param name="predicate"></param>
         void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
 
+        void Remove(IQueryPart part);
+
         /// <summary>
         /// The list of queryparts in the container
         /// </summary>

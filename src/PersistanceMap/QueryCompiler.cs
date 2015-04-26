@@ -167,12 +167,8 @@ namespace PersistanceMap
                     break;
 
 
-                // Database                
-                case OperationType.Column:
-                case OperationType.TableKeys:
-                    //TODO: NOT NICE!!!
-                    CompilePartSimple(part, writer);
-                    break;
+                // Database      
+                
 
                 
 
@@ -334,7 +330,7 @@ namespace PersistanceMap
             writer.Write(format, part.Compile());
         }
 
-        private void CompileString(string command, TextWriter writer)
+        protected void CompileString(string command, TextWriter writer)
         {
             writer.Write(command);
         }

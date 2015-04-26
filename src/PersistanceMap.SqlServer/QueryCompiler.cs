@@ -21,6 +21,20 @@ namespace PersistanceMap.SqlServer
                     break;
                 case OperationType.CreateTable:
                     CreateTable(part, writer);
+                    CompileChildParts(part, writer, container);
+                    CompileString(")", writer);
+                    break;
+                case OperationType.Column:
+                    CompileColumn(part, writer);
+                    AppendComma(part, writer, parent);
+                    break;
+                case OperationType.PrimaryColumn:
+                    CompilePrimaryColumn(part, writer);
+                    AppendComma(part, writer, parent);
+                    break;
+                case OperationType.ForeignKey:
+                    CompileForeignKey(part, writer);
+                    AppendComma(part, writer, parent);
                     break;
                 case OperationType.AlterTable:
                     CompileFormat("ALTER TABLE {0} ", part, writer);
@@ -83,11 +97,6 @@ namespace PersistanceMap.SqlServer
             //CompileChildParts(part, writer);
         }
 
-        private void CreateTable(IQueryPart part, TextWriter writer)
-        {
-            writer.Write("CREATE TABLE {0} (", part.Compile());
-        }
-
         private void CompileCreateDatabase(IQueryPart part, TextWriter writer)
         {
             var database = part.Compile();
@@ -97,6 +106,65 @@ namespace PersistanceMap.SqlServer
             writer.WriteLine("FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1");
             //sb.AppendLine(string.Format("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database));
             writer.WriteLine("EXECUTE (N'CREATE DATABASE {0} ON PRIMARY (NAME = N''{0}'', FILENAME = N''' + @device_directory + N'{0}.mdf'') LOG ON (NAME = N''{0}_log'',  FILENAME = N''' + @device_directory + N'{0}.ldf'')')", database);
+        }
+
+        private void CreateTable(IQueryPart part, TextWriter writer)
+        {
+            writer.Write("CREATE TABLE {0} (", part.Compile());
+        }
+
+        private void CompileColumn(IQueryPart part, TextWriter writer)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                return;
+            }
+
+            var column = collection.GetValue(KeyValuePart.MemberName);
+            var type = collection.GetValue(KeyValuePart.MemberType);
+            var nullable = collection.GetValue(KeyValuePart.Nullable);
+
+            writer.Write("{0} {1}{2}", column, type, string.IsNullOrEmpty(nullable) || nullable.ToLower() == "true" ? "" : " NOT NULL");
+        }
+
+        private void CompilePrimaryColumn(IQueryPart part, TextWriter writer)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                return;
+            }
+
+            var column = collection.GetValue(KeyValuePart.MemberName);
+            var type = collection.GetValue(KeyValuePart.MemberType);
+            var nullable = collection.GetValue(KeyValuePart.Nullable);
+            var autoIncremtent = collection.GetValue(KeyValuePart.AutoIncrement);
+
+            writer.Write("{0} {1} PRIMARY KEY{2}{3}",
+                    column,
+                    type,
+                    string.IsNullOrEmpty(nullable) || nullable.ToLower() == "true" ? "" : " NOT NULL",
+                    !string.IsNullOrEmpty(autoIncremtent) && autoIncremtent.ToLower() == "true" ? " AUTOINCREMENT" : "");
+        }
+
+        private void CompileForeignKey(IQueryPart part, TextWriter writer)
+        {
+            var collection = part as IValueCollectionQueryPart;
+            if (collection == null)
+            {
+                writer.Write(part.Compile());
+                return;
+            }
+
+            var column = collection.GetValue(KeyValuePart.MemberName);
+            var reference = collection.GetValue(KeyValuePart.ReferenceTable);
+            var referenceMember = collection.GetValue(KeyValuePart.ReferenceMember);
+            //var nullable = collection.GetValue(KeyValuePart.Nullable);
+
+            writer.Write("FOREIGN KEY({0}) REFERENCES {1}({2})", column, reference, referenceMember);
         }
 
         private void CompileAddFieldPart(IQueryPart part, TextWriter writer)

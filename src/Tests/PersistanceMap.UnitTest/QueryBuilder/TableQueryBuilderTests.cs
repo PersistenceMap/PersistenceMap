@@ -24,9 +24,12 @@ namespace PersistanceMap.UnitTest.QueryBuilder
             // Act
             builder.Create();
 
-            Assert.IsTrue(container.Parts.Any(p=>p.OperationType == OperationType.CreateTable));
-            Assert.IsTrue(container.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
-            Assert.IsTrue(container.Parts.Last().Compile() == ")");
+            Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
+
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+
+            Assert.IsNotNull(part);
+            Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
         }
 
         [Test]
@@ -42,8 +45,11 @@ namespace PersistanceMap.UnitTest.QueryBuilder
             builder.Create();
 
             Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
-            Assert.IsTrue(container.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
-            Assert.IsTrue(container.Parts.Last().Compile() == ")");
+
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+
+            Assert.IsNotNull(part);
+            Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
         }
 
         [Test]
@@ -60,8 +66,11 @@ namespace PersistanceMap.UnitTest.QueryBuilder
             builder.Create();
 
             Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
-            Assert.IsTrue(container.Parts.Count(p => p.OperationType == OperationType.Column) == 6);
-            Assert.IsTrue(container.Parts.Last().Compile() == ")");
+
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+
+            Assert.IsNotNull(part);
+            Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 6);
         }
     }
 }

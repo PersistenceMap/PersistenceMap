@@ -38,49 +38,48 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         }
 
 
-        private IQueryPart CreateColumn(string name, Type type, bool isNullable)
+        protected override IQueryPart CreateColumn(string name, Type type, bool isNullable)
         {
-            Func<string> expression = () => string.Format("{0} {1}{2}{3}",
-                    name,
-                    type.ToSqlDbType(SqlTypeExtensions.SqliteMappings),
-                    isNullable ? "" : " NOT NULL",
-                    QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
+            var part = new ValueCollectionQueryPart(OperationType.Column, name);
+            part.AddValue(KeyValuePart.MemberName, name);
+            part.AddValue(KeyValuePart.MemberType, type.ToSqlDbType(SqlTypeExtensions.SqliteMappings));
+            part.AddValue(KeyValuePart.Nullable, isNullable.ToString());
 
-            return new DelegateQueryPart(OperationType.Column, expression, name);
+            return part;
         }
 
         #region ITableQueryExpression Implementation
 
-        /// <summary>
-        /// Create a create table expression
-        /// </summary>
-        public override void Create()
-        {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
-            QueryParts.AddBefore(createPart, OperationType.None);
+        ///// <summary>
+        ///// Create a create table expression
+        ///// </summary>
+        //public override void Create()
+        //{
+        //    var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
+        //    QueryParts.AddBefore(createPart, OperationType.None);
 
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
-            foreach (var field in fields.Reverse())
-            {
-                var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
-                if (existing.Any())
-                    continue;
+        //    var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+        //    foreach (var field in fields.Reverse())
+        //    {
+        //        var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
+        //        if (existing.Any())
+        //            continue;
 
-                var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
+        //        var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
 
-                if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
-                {
-                    QueryParts.AddBefore(fieldPart, OperationType.Column);
-                }
-                else
-                    QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
-            }
+        //        if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
+        //        {
+        //            QueryParts.AddBefore(fieldPart, OperationType.Column);
+        //        }
+        //        else
+        //            QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
+        //    }
 
-            // add closing bracked
-            QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
+        //    // add closing bracked
+        //    QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
-        }
+        //    Context.AddQuery(new MapQueryCommand(QueryParts));
+        //}
 
         /// <summary>
         /// Creates a expression to rename a table

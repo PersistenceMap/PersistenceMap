@@ -30,7 +30,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts);
 
-            Assert.AreEqual(query.QueryString, "CREATE TABLE TableName (");
+            Assert.AreEqual(query.QueryString, "CREATE TABLE TableName ()");
         }
 
         [Test]
@@ -279,6 +279,124 @@ namespace PersistanceMap.SqlServer.UnitTest
             var query = compiler.Compile(parts);
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int NOT NULL");
+        }
+
+
+
+
+
+
+
+        [Test]
+        public void SqlQueryCompilerCompileColumnTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.Column);
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, "not null");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileColumnWithoutNullableFieldTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.Column);
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ColumnName int");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileColumnWithNullableTrueTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.Column);
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, true.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ColumnName int");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileColumnWithNullableFalseTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.Column);
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
+            part.AddValue(KeyValuePart.MemberType, "int");
+            part.AddValue(KeyValuePart.Nullable, false.ToString());
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileColumnMultipleTest()
+        {
+            var part = new ItemsQueryPart(OperationType.None);
+
+            var part1 = new ValueCollectionQueryPart(OperationType.Column);
+            part1.AddValue(KeyValuePart.MemberName, "ColumnName1");
+            part1.AddValue(KeyValuePart.MemberType, "int");
+            part1.AddValue(KeyValuePart.Nullable, false.ToString());
+
+            part.Add(part1);
+
+            var part2 = new ValueCollectionQueryPart(OperationType.Column);
+            part2.AddValue(KeyValuePart.MemberName, "ColumnName2");
+            part2.AddValue(KeyValuePart.MemberType, "VARCHAR(20)");
+            part2.AddValue(KeyValuePart.Nullable, true.ToString());
+
+            part.Add(part2);
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "ColumnName1 int NOT NULL, ColumnName2 VARCHAR(20)");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompileForeignKeyTest()
+        {
+            var part = new ValueCollectionQueryPart(OperationType.ForeignKey);
+            part.AddValue(KeyValuePart.MemberName, "ColumnName");
+            part.AddValue(KeyValuePart.ReferenceTable, "RefTable");
+            part.AddValue(KeyValuePart.ReferenceMember, "RefColumn");
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "FOREIGN KEY(ColumnName) REFERENCES RefTable(RefColumn)");
         }
 
         #endregion

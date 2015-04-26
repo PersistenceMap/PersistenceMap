@@ -77,8 +77,9 @@ namespace PersistanceMap
         RenameTable = 36, /* */
         AlterTable = 37, /* */
         Column = 38,
+        PrimaryColumn =  47,
         IgnoreColumn = 39, /* */
-        TableKeys = 40,
+        ForeignKey = 40,
         AddColumn = 41, /* */
         DropColumn = 42, /* */
 
@@ -133,7 +134,7 @@ namespace PersistanceMap
         /// <summary>
         /// Defines a Part to be a Member definition that is only used for mappings. These parts are ignored when compiling the sql
         /// </summary>
-        IncludeMember = 47
+        IncludeMember = 48
         //AfterMap = 200
     }
 }

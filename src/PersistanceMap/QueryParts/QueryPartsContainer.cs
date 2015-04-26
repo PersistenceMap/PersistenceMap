@@ -56,6 +56,14 @@ namespace PersistanceMap.QueryParts
             last.Add(part);
         }
 
+        public void Remove(IQueryPart part)
+        {
+            if (Parts.Contains(part))
+            {
+                Parts.Remove(part);
+            }
+        }
+
         IEnumerable<IQueryPart> IQueryPartsContainer.Parts
         {
             get

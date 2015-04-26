@@ -7,6 +7,9 @@ namespace PersistanceMap
         MemberName,
         Value,
         MemberType,
-        Nullable
+        Nullable,
+        AutoIncrement,
+        ReferenceTable,
+        ReferenceMember
     }
 }
