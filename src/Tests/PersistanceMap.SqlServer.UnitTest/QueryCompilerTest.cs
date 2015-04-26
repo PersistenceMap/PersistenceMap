@@ -399,6 +399,37 @@ namespace PersistanceMap.SqlServer.UnitTest
             Assert.AreEqual(query.QueryString, "FOREIGN KEY(ColumnName) REFERENCES RefTable(RefColumn)");
         }
 
+        [Test]
+        public void SqlQueryCompilerCompilePrimaryKeyTest()
+        {
+            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1)");
+        }
+
+        [Test]
+        public void SqlQueryCompilerCompilePrimaryKeyWithMultipleColumnsTest()
+        {
+            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
+            part.Add(new DelegateQueryPart(OperationType.Column, () => "Column2"));
+
+            var parts = new QueryPartsContainer();
+            parts.Add(part);
+
+            var compiler = new QueryCompiler();
+            var query = compiler.Compile(parts);
+
+            Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1, Column2)");
+        }
+
         #endregion
     }
 }

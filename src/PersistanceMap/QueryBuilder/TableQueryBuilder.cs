@@ -70,7 +70,7 @@ namespace PersistanceMap.QueryBuilder
                 createPart.Add(fieldPart);
             }
 
-            keys = QueryParts.Parts.Where(p => p.OperationType == OperationType.ForeignKey).ToList();
+            keys = QueryParts.Parts.Where(p => p.OperationType == OperationType.PrimaryKey || p.OperationType == OperationType.ForeignKey).ToList();
             foreach (var key in keys)
             {
                 QueryParts.Remove(key);
@@ -146,24 +146,16 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+            var part = new ItemsQueryPart(OperationType.PrimaryKey);
 
-            var last = keyFields.Last();
-
-            var sb = new StringBuilder();
-            sb.Append("PRIMARY KEY (");
             foreach (var key in keyFields)
             {
                 var memberName = FieldHelper.TryExtractPropertyName(key);
-                var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-                sb.Append(string.Format("{0}{1}", field.MemberName, key == last ? "" : ", "));
+                part.Add(new DelegateQueryPart(OperationType.Column, () => memberName, memberName));
             }
 
-            sb.Append(")");
-
-            var fieldPart = new DelegateQueryPart(OperationType.ForeignKey, () => sb.ToString());
-            QueryParts.Add(fieldPart);
+            QueryParts.Add(part);
 
             return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }

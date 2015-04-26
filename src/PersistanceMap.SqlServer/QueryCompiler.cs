@@ -32,6 +32,11 @@ namespace PersistanceMap.SqlServer
                     CompilePrimaryColumn(part, writer);
                     AppendComma(part, writer, parent);
                     break;
+                case OperationType.PrimaryKey:
+                    CompileString("PRIMARY KEY (", writer);
+                    CompileChildParts(part, writer, container);
+                    CompileString(")", writer);
+                    break;
                 case OperationType.ForeignKey:
                     CompileForeignKey(part, writer);
                     AppendComma(part, writer, parent);
