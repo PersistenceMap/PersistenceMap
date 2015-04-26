@@ -85,8 +85,6 @@ namespace PersistanceMap
                     CompileJoin(part, writer);
                     break;
 
-
-
                 case OperationType.On:
                     WriteBlank(writer);
                     CompileCommand(part, writer);
@@ -102,7 +100,6 @@ namespace PersistanceMap
                     writer.WriteLine();
                     CompileCommand(part, writer);
                     break;
-
                 case OperationType.GroupBy:
                     WriteBlank(writer);
                     WriteLine(writer);
@@ -113,21 +110,18 @@ namespace PersistanceMap
                     //TODO: add table name?
                     CompileFormat(", {0}", part, writer);
                     break;
-
                 case OperationType.OrderBy:
                     WriteBlank(writer);
                     WriteLine(writer);
                     //TODO: add table name?
                     CompileFormat("ORDER BY {0} ASC", part, writer);
                     break;
-
                 case OperationType.OrderByDesc:
                     WriteBlank(writer);
                     WriteLine(writer);
                     //TODO: add table name?
                     CompileFormat("ORDER BY {0} DESC", part, writer);
                     break;
-
                 case OperationType.ThenByAsc:
                     //TODO: add table name?
                     CompileFormat(", {0} ASC", part, writer);
@@ -136,9 +130,6 @@ namespace PersistanceMap
                     //TODO: add table name?
                     CompileFormat(", {0} DESC", part, writer);
                     break;
-
-                    
-
 
                 case OperationType.Insert:
                     CompileFormat("INSERT INTO {0} (", part, writer);
@@ -165,12 +156,6 @@ namespace PersistanceMap
                 case OperationType.Delete:
                     CompileFormat("DELETE FROM {0}", part, writer);
                     break;
-
-
-                // Database      
-                
-
-                
 
                 default:
                     throw new NotImplementedException();
