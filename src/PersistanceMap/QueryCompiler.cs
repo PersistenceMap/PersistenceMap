@@ -17,8 +17,8 @@ namespace PersistanceMap
         /// <summary>
         /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
-        /// <param name="container"></param>
-        /// <returns></returns>
+        /// <param name="container">The container containing all queryparts to compile to sql</param>
+        /// <returns>The Compiled query</returns>
         public virtual CompiledQuery Compile(IQueryPartsContainer container)
         {
             _compiledParts = new HashSet<IQueryPart>();
@@ -87,18 +87,22 @@ namespace PersistanceMap
 
                 case OperationType.On:
                     WriteBlank(writer);
-                    CompileCommand(part, writer);
+                    CompileCommand("ON", part, writer);
                     break;
                 case OperationType.And:
+                    writer.WriteLine();
+                    WriteBlank(writer);
+                    CompileCommand("AND", part, writer);
+                    break;
                 case OperationType.Or:
                     writer.WriteLine();
                     WriteBlank(writer);
-                    CompileCommand(part, writer);
+                    CompileCommand("OR", part, writer);
                     break;
                 case OperationType.Where:
                     WriteBlank(writer);
                     writer.WriteLine();
-                    CompileCommand(part, writer);
+                    CompileCommand("WHERE", part, writer);
                     break;
                 case OperationType.GroupBy:
                     WriteBlank(writer);
@@ -143,14 +147,15 @@ namespace PersistanceMap
                     break;
                 case OperationType.InsertMember:
                 case OperationType.InsertValue:
-                    CompileCollectionValuePart(part, writer, parent);
+                    CompileValue(part, writer);
+                    AppendComma(part, writer, parent);
                     break;
 
                 case OperationType.Update:
                     CompileFormat("UPDATE {0} SET ", part, writer);
                     break;
                 case OperationType.UpdateValue:
-                    CompileUpdateValuePart(part, writer, parent);
+                    CompileMemberEqualsValuePart(part, writer, parent);
                     break;
 
                 case OperationType.Delete:
@@ -165,7 +170,7 @@ namespace PersistanceMap
             CompileChildParts(part, writer, container);
         }
 
-        private void CompileUpdateValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileMemberEqualsValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
         {
             var collection = part as IValueCollectionQueryPart;
             if (collection == null)
@@ -181,40 +186,6 @@ namespace PersistanceMap
             AppendComma(part, writer, parent);
         }
 
-        protected void CompileChildParts(IQueryPart part, TextWriter writer, IQueryPartsContainer container)
-        {
-            if (_compiledParts.AsParallel().Contains(part))
-            {
-                return;
-            }
-
-            _compiledParts.Add(part);
-
-            var decorator = part as IItemsQueryPart;
-            if (decorator != null)
-            {
-                foreach (var p in decorator.Parts)
-                {
-                    CompilePart(p, writer, container, decorator);
-                }
-            }
-        }
-
-        private void CompileCollectionValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
-        {
-            writer.Write(part.Compile());
-
-            AppendComma(part, writer, parent);
-        }
-
-        protected void AppendComma(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
-        {
-            if (parent != null && parent.Parts.Last() != part)
-            {
-                writer.Write(", ");
-            }
-        }
-
         #region Query
 
         protected void WriteBlank(TextWriter writer)
@@ -225,6 +196,11 @@ namespace PersistanceMap
         protected void WriteLine(TextWriter writer)
         {
             writer.WriteLine();
+        }
+
+        protected void CompileValue(IQueryPart part, TextWriter writer)
+        {
+            writer.Write(part.Compile());
         }
 
         private void CompileJoin(IQueryPart part, TextWriter writer)
@@ -297,12 +273,9 @@ namespace PersistanceMap
             writer.Write("{0}({1}) AS {2}", function, field.Field, field.FieldAlias ?? field.Field);
 
             if (parent.Parts.Last() != part)
+            {
                 writer.Write(",");
-        }
-
-        private void CompileCommand(IQueryPart part, TextWriter writer)
-        {
-            writer.Write("{0} {1}", part.OperationType.ToString().ToUpper(), part.Compile());
+            }
         }
 
         private void CompileCommand(string command, IQueryPart part, TextWriter writer)
@@ -320,9 +293,31 @@ namespace PersistanceMap
             writer.Write(command);
         }
 
-        protected void CompilePartSimple(IQueryPart part, TextWriter writer)
+        protected void CompileChildParts(IQueryPart part, TextWriter writer, IQueryPartsContainer container)
         {
-            writer.Write(part.Compile());
+            if (_compiledParts.AsParallel().Contains(part))
+            {
+                return;
+            }
+
+            _compiledParts.Add(part);
+
+            var decorator = part as IItemsQueryPart;
+            if (decorator != null)
+            {
+                foreach (var p in decorator.Parts)
+                {
+                    CompilePart(p, writer, container, decorator);
+                }
+            }
+        }
+
+        protected void AppendComma(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        {
+            if (parent != null && parent.Parts.Last() != part)
+            {
+                writer.Write(", ");
+            }
         }
 
         #endregion
