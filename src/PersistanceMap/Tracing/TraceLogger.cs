@@ -31,7 +31,20 @@ namespace PersistanceMap.Tracing
                     break;
             }
 
-            Trace.WriteLine(sb.ToString());
+            switch (category)
+            {
+                case LoggerCategory.Error:
+                    Trace.TraceError(sb.ToString());
+                    break;
+
+                case LoggerCategory.Query:
+                    Trace.TraceInformation(sb.ToString());
+                    break;
+
+                default:
+                    Trace.WriteLine(sb.ToString());
+                    break;
+            }
         }
 
         static void AppendCategory(StringBuilder sb, string category)
