@@ -5,9 +5,10 @@ using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
-    public class FieldQueryPart : IFieldMap, IEntityMap, IQueryPart
+    public class FieldQueryPart : QueryPart, IFieldPart, IEntityPart, IQueryPart
     {
-        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null)
+        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null, OperationType operation = OperationType.Field)
+            : base(operation, id)
         {
             EntityAlias = entityalias;
             Field = field;
@@ -15,9 +16,10 @@ namespace PersistanceMap.QueryParts
             Entity = entity;
             ID = id ?? fieldalias ?? field;
             Converter = converter;
+            OperationType = operation;
         }
 
-        public string ID { get; set; }
+        //public string ID { get; set; }
 
         public string Sufix { get; set; }
 
@@ -57,9 +59,9 @@ namespace PersistanceMap.QueryParts
 
         #region IQueryPart Implementation
 
-        public OperationType OperationType { get; set; }
+        //public OperationType OperationType { get; set; }
 
-        public virtual string Compile()
+        public override string Compile()
         {
             var sb = new StringBuilder();
 
@@ -69,7 +71,7 @@ namespace PersistanceMap.QueryParts
             sb.Append(Field);
             
             if (!string.IsNullOrEmpty(FieldAlias))
-                sb.Append(string.Format(" as {0}", FieldAlias));
+                sb.Append(string.Format(" AS {0}", FieldAlias));
 
             if (string.IsNullOrEmpty(Sufix) == false)
                 sb.Append(Sufix);
@@ -81,14 +83,14 @@ namespace PersistanceMap.QueryParts
 
         public override string ToString()
         {
-            return string.Format("{0} - Entity: {1} Field: {2} [{2}.{3}]", GetType().Name, Entity, EntityAlias ?? Entity, Field);
+            return string.Format("{0} - Operation [{1}] Entity: [{2}] Field: [{3}] [{3}.{4}]", GetType().Name, OperationType, Entity, EntityAlias ?? Entity, Field);
         }
 
 
         internal static void FiedlPartsFactory(SelectQueryPartsContainer queryParts, FieldQueryPart[] fields)
         {
             //TODO: this method should be removed!
-            foreach (var map in queryParts.Parts.OfType<IQueryPartDecorator>().Where(p => p.OperationType == OperationType.Select))
+            foreach (var map in queryParts.Parts.OfType<IItemsQueryPart>().Where(p => p.OperationType == OperationType.Select))
             {
                 // add all mapped fields to a collection to ensure that they are used in the query
                 var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();
@@ -134,6 +136,7 @@ namespace PersistanceMap.QueryParts
         public IgnoreFieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null) :
             base(field, fieldalias, entityalias, entity, id)
         {
+            OperationType = OperationType.IgnoreColumn;
         }
 
         public override string Compile()

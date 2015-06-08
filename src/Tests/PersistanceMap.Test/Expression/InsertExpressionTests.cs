@@ -8,7 +8,7 @@ namespace PersistanceMap.Test.Expression
     public class InsertExpressionTests
     {
         [Test]
-        public void InsertTests()
+        public void InsertTest()
         {
             var sql = "";
             var provider = new CallbackContextProvider(s => sql = s.Flatten());
@@ -18,12 +18,30 @@ namespace PersistanceMap.Test.Expression
                 context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" });
                 context.Commit();
                 Assert.AreEqual(sql, "INSERT INTO Warrior (ID, Name, WeaponID, Race, SpecialSkill) VALUES (1, NULL, 0, 'Dwarf', NULL)");
+            }
+        }
 
+        [Test]
+        public void InsertWithAnonymObjectTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
                 // insert all fields defined in the anonym object
                 context.Insert<Warrior>(() => new { ID = 1, Race = "Dwarf" });
                 context.Commit();
                 Assert.AreEqual(sql, "INSERT INTO Warrior (ID, Race) VALUES (1, 'Dwarf')");
+            }
+        }
 
+        [Test]
+        public void InsertWithIgnoreTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
                 // insert all except ignored elements used in the reference expression
                 context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" }).Ignore(w => w.ID).Ignore(w => w.WeaponID);
                 context.Commit();
@@ -31,52 +49,32 @@ namespace PersistanceMap.Test.Expression
             }
         }
 
-        //[Test, TestCaseSource(typeof(InsertzTestCases), "TestCases")]
-        //public void InsertTest(string sql, string expected)
-        //{
-        //    Assert.AreEqual(sql.Flatten(), expected);
-        //}
+        [Test]
+        public void InsertWithIgnoreFirstPropertyTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // insert all except ignored elements used in the reference expression
+                context.Insert(() => new Warrior { ID = 1, Race = "Dwarf", WeaponID = 1 }).Ignore(w => w.ID);
+                context.Commit();
+                Assert.AreEqual(sql, "INSERT INTO Warrior (Name, WeaponID, Race, SpecialSkill) VALUES (NULL, 1, 'Dwarf', NULL)");
+            }
+        }
 
-
-
-        //private class InsertzTestCases
-        //{
-        //    public IEnumerable TestCases
-        //    {
-        //        get
-        //        {
-        //            var provider = new CallbackContextProvider();
-        //            var connection = new DatabaseConnection(provider);
-        //            using (var context = connection.Open())
-        //            {
-        //                var sql = "";
-        //                provider.Callback += s => sql = s.Flatten();
-
-        //                // insert all elements used in the reference expression
-        //                context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" });
-        //                context.Commit();
-        //                yield return new TestCaseData(sql, "INSERT INTO Warrior (ID, WeaponID, Race, SpecialSkill) VALUES (1, 0, 'Dwarf', NULL)")
-        //                    .SetDescription("insert all elements used in the reference expression")
-        //                    .SetName("Insert with all properties of a object");
-
-        //                // insert all fields defined in the anonym object
-        //                context.Insert<Warrior>(() => new { ID = 1, Race = "Dwarf" });
-        //                context.Commit();
-        //                yield return new TestCaseData(sql, "INSERT INTO Warrior (ID, Race) VALUES (1, 'Dwarf')")
-        //                    .SetDescription("insert all fields defined in the anonym object")
-        //                    .SetName("Insert all properties of a anonym object");
-
-        //                // insert all except ignored elements used in the reference expression
-        //                context.Insert(() => new Warrior { ID = 1, Race = "Dwarf" })
-        //                    .Ignore(w => w.ID)
-        //                    .Ignore(w => w.WeaponID);
-        //                context.Commit();
-        //                yield return new TestCaseData(sql, "INSERT INTO Warrior (Race, SpecialSkill) VALUES ('Dwarf', NULL)")
-        //                    .SetDescription("insert all except ignored elements used in the reference expression")
-        //                    .SetName("Insert all properties of a object except ignored elements");
-        //            }
-        //        }
-        //    }
-        //}
+        [Test]
+        public void InsertWithIgnoreLastPropertyTest()
+        {
+            var sql = "";
+            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            using (var context = provider.Open())
+            {
+                // insert all except ignored elements used in the reference expression
+                context.Insert(() => new Warrior { ID = 1, Race = "Dwarf", WeaponID = 1 }).Ignore(w => w.SpecialSkill);
+                context.Commit();
+                Assert.AreEqual(sql, "INSERT INTO Warrior (ID, Name, WeaponID, Race) VALUES (1, NULL, 1, 'Dwarf')");
+            }
+        }
     }
 }

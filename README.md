@@ -100,11 +100,11 @@ UPDATE Warrior SET WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrio
 ```
 Update with the fields defined in a anonymous object. Only the fields defined in the anonymous object get updated.
 ```csharp
-context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
+context.Update(() => new { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
 ```
 Compiles to:
 ```sql
-UPDATE Warrior SET WeaponID = 2, Race = 'Elf', SpecialSkill = NULL where (Warrior.ID = 1)
+UPDATE Warrior SET WeaponID = 2, Race = 'Elf' where (Warrior.ID = 1)
 ```
 ### Delete
 Delete statement with keys defined in a expression.

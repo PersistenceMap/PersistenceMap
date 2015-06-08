@@ -38,49 +38,48 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         }
 
 
-        private IQueryPart CreateColumn(string name, Type type, bool isNullable)
+        protected override IQueryPart CreateColumn(string name, Type type, bool isNullable)
         {
-            Func<string> expression = () => string.Format("{0} {1}{2}{3}",
-                    name,
-                    type.ToSqlDbType(),
-                    isNullable ? "" : " NOT NULL",
-                    QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
+            var part = new ValueCollectionQueryPart(OperationType.Column, name);
+            part.AddValue(KeyValuePart.MemberName, name);
+            part.AddValue(KeyValuePart.MemberType, type.ToSqlDbType(SqlTypeExtensions.SqliteMappings));
+            part.AddValue(KeyValuePart.Nullable, isNullable.ToString());
 
-            return new DelegateQueryPart(OperationType.Column, expression, name);
+            return part;
         }
 
         #region ITableQueryExpression Implementation
 
-        /// <summary>
-        /// Create a create table expression
-        /// </summary>
-        public override void Create()
-        {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE IF NOT EXISTS {0} (", typeof(T).Name));
-            QueryParts.AddBefore(createPart, OperationType.None);
+        ///// <summary>
+        ///// Create a create table expression
+        ///// </summary>
+        //public override void Create()
+        //{
+        //    var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
+        //    QueryParts.AddBefore(createPart, OperationType.None);
 
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
-            foreach (var field in fields.Reverse())
-            {
-                var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
-                if (existing.Any())
-                    continue;
+        //    var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+        //    foreach (var field in fields.Reverse())
+        //    {
+        //        var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
+        //        if (existing.Any())
+        //            continue;
 
-                var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
+        //        var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
 
-                if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
-                {
-                    QueryParts.AddBefore(fieldPart, OperationType.Column);
-                }
-                else
-                    QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
-            }
+        //        if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
+        //        {
+        //            QueryParts.AddBefore(fieldPart, OperationType.Column);
+        //        }
+        //        else
+        //            QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
+        //    }
 
-            // add closing bracked
-            QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
+        //    // add closing bracked
+        //    QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
-        }
+        //    Context.AddQuery(new MapQueryCommand(QueryParts));
+        //}
 
         /// <summary>
         /// Creates a expression to rename a table
@@ -88,7 +87,10 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// <typeparam name="TNew">The type of the new table</typeparam>
         public void RenameTo<TNew>()
         {
-            var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
+            //var part = new DelegateQueryPart(OperationType.RenameTable, () => string.Format("ALTER TABLE {0} RENAME TO {1}", typeof(T).Name, typeof(TNew).Name));
+            var part = new ValueCollectionQueryPart(OperationType.RenameTable);
+            part.AddValue(KeyValuePart.Key, typeof(T).Name);
+            part.AddValue(KeyValuePart.Value, typeof(TNew).Name);
             QueryParts.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
@@ -169,8 +171,8 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                 case FieldOperation.Add:
                     //TODO: precision???
                     var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
-                    var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), nullable);
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
                     break;
 
                 default:
@@ -208,8 +210,8 @@ namespace PersistanceMap.Sqlite.QueryBuilder
                         throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
                     }
 
-                    expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
                     break;
 
                 default:

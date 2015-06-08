@@ -4,58 +4,79 @@ using System.Data;
 
 namespace PersistanceMap
 {
-    internal static class TypeExtensionsForSql
+    public static class SqlTypeExtensions
     {
-        private static readonly Dictionary<Type, string> _mappings;
+        public static readonly TypeMappingCollection SqlMappings;
+        public static readonly TypeMappingCollection SqliteMappings;
 
-        static TypeExtensionsForSql()
+        static SqlTypeExtensions()
         {
-            _mappings = new Dictionary<Type, string>();
-
-            _mappings.Add(typeof(Int16), "smallint");
-            _mappings.Add(typeof(Int32), "int");
-            _mappings.Add(typeof(Int64), "bigint");
-
-            _mappings.Add(typeof(Byte[]), "binary");
+            SqlMappings = new TypeMappingCollection();
+            SqlMappings.Add(typeof(Int16), "smallint");
+            SqlMappings.Add(typeof(Int32), "int");
+            SqlMappings.Add(typeof(Int64), "bigint");
+            SqlMappings.Add(typeof(Byte[]), "binary");
             //Mappings.Add(typeof(Byte[]), "image");
             //Mappings.Add(typeof(Byte[]), "rowversion");
             //Mappings.Add(typeof(Byte[]), "timestamp");
-
-            _mappings.Add(typeof(Byte), "tinyint");
-
-            _mappings.Add(typeof(Boolean), "bit");
-            _mappings.Add(typeof(DateTime), "date");
+            SqlMappings.Add(typeof(Byte), "tinyint");
+            SqlMappings.Add(typeof(Boolean), "bit");
+            SqlMappings.Add(typeof(DateTime), "date");
             //Mappings.Add(typeof(DateTime), "datetime");
             //Mappings.Add(typeof(DateTime), "datetime2");
             //Mappings.Add(typeof(DateTime), "smalldatetime");
-
-            _mappings.Add(typeof(TimeSpan), "time");
-
-            _mappings.Add(typeof(DateTimeOffset), "datetimeoffset");
-
-            _mappings.Add(typeof(Decimal), "decimal");
+            SqlMappings.Add(typeof(TimeSpan), "time");
+            SqlMappings.Add(typeof(DateTimeOffset), "datetimeoffset");
+            SqlMappings.Add(typeof(Decimal), "decimal");
             //Mappings.Add(typeof(Decimal), "money");
             //Mappings.Add(typeof(Decimal), "numeric");
             //Mappings.Add(typeof(Decimal), "smallmoney");
-
-            _mappings.Add(typeof(Double), "float");
-
-            _mappings.Add(typeof(String), "varchar(max)");
+            SqlMappings.Add(typeof(Double), "float");
+            SqlMappings.Add(typeof(String), "varchar(max)");
             //Mappings.Add(typeof(String), "nchar");
             //Mappings.Add(typeof(String), "ntext");
             //Mappings.Add(typeof(String), "nvarchar");
             //Mappings.Add(typeof(String), "char");
             //Mappings.Add(typeof(String), "text");
+            SqlMappings.Add(typeof(Single), "real");
+            SqlMappings.Add(typeof(Guid), "uniqueidentifier");
 
-            _mappings.Add(typeof(Single), "real");
 
-            _mappings.Add(typeof(Guid), "uniqueidentifier");
+            SqliteMappings = new TypeMappingCollection();
+            SqliteMappings.Add(typeof(Int16), "smallint");
+            SqliteMappings.Add(typeof(Int32), "int");
+            SqliteMappings.Add(typeof(Int64), "bigint");
+            SqliteMappings.Add(typeof(Byte[]), "binary");
+            //Mappings.Add(typeof(Byte[]), "image");
+            //Mappings.Add(typeof(Byte[]), "rowversion");
+            //Mappings.Add(typeof(Byte[]), "timestamp");
+            SqliteMappings.Add(typeof(Byte), "tinyint");
+            SqliteMappings.Add(typeof(Boolean), "bit");
+            SqliteMappings.Add(typeof(DateTime), "date");
+            //Mappings.Add(typeof(DateTime), "datetime");
+            //Mappings.Add(typeof(DateTime), "datetime2");
+            //Mappings.Add(typeof(DateTime), "smalldatetime");
+            SqliteMappings.Add(typeof(TimeSpan), "time");
+            SqliteMappings.Add(typeof(DateTimeOffset), "datetimeoffset");
+            SqliteMappings.Add(typeof(Decimal), "decimal");
+            //Mappings.Add(typeof(Decimal), "money");
+            //Mappings.Add(typeof(Decimal), "numeric");
+            //Mappings.Add(typeof(Decimal), "smallmoney");
+            SqliteMappings.Add(typeof(Double), "float");
+            SqliteMappings.Add(typeof(String), "varchar(1000)");
+            //Mappings.Add(typeof(String), "nchar");
+            //Mappings.Add(typeof(String), "ntext");
+            //Mappings.Add(typeof(String), "nvarchar");
+            //Mappings.Add(typeof(String), "char");
+            //Mappings.Add(typeof(String), "text");
+            SqliteMappings.Add(typeof(Single), "real");
+            SqliteMappings.Add(typeof(Guid), "uniqueidentifier");
         }
 
-        public static string ToSqlDbType(this Type clrType)
+        public static string ToSqlDbType(this Type clrType, TypeMappingCollection mappingCollection)
         {
             string datatype = null;
-            if (_mappings.TryGetValue(clrType, out datatype))
+            if (mappingCollection.TryGetValue(clrType, out datatype))
                 return datatype;
 
             throw new TypeLoadException(string.Format("Can not load CLR Type from {0}", clrType));
@@ -129,6 +150,35 @@ namespace PersistanceMap
 
                 default:
                     throw new ArgumentOutOfRangeException("sqlType");
+            }
+        }
+
+        public class TypeMappingCollection
+        {
+            private readonly Dictionary<Type, string> _sqlMappings;
+
+            public TypeMappingCollection()
+            {
+                _sqlMappings = new Dictionary<Type, string>();
+            }
+
+            public void Add(Type clrType, string sqlType)
+            {
+                _sqlMappings.Add(clrType, sqlType);
+            }
+
+            public bool TryGetValue(Type clrType, out string sqlType)
+            {
+                sqlType = null;
+
+                string tmp;
+                if (_sqlMappings.TryGetValue(clrType, out tmp))
+                {
+                    sqlType = tmp;
+                    return true;
+                }
+
+                return false;
             }
         }
     }

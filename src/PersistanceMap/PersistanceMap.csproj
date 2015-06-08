@@ -70,6 +70,7 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
     <Compile Include="CustomConfiguration.cs" />
@@ -78,10 +79,13 @@
     <Compile Include="IDatabaseQueryExpression.cs" />
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
-    <Compile Include="QueryParts\Internals\CallbackMap.cs" />
-    <Compile Include="QueryParts\Internals\EntityDelegateQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\ExpressionAliasMap.cs" />
+    <Compile Include="QueryParts\CallbackMap.cs" />
+    <Compile Include="QueryParts\EntityPart.cs" />
+    <Compile Include="QueryParts\ExpressionAliasPart.cs" />
+    <Compile Include="QueryParts\IValueCollectionQueryPart.cs" />
+    <Compile Include="QueryParts\QueryPart.cs" />
     <Compile Include="QueryParts\MapValueConverter.cs" />
+    <Compile Include="QueryParts\ValueCollectionQueryPart.cs" />
     <Compile Include="Tracing\LoggerCategory.cs" />
     <Compile Include="Tracing\TraceLogger.cs" />
     <Compile Include="Enums\FieldOperation.cs" />
@@ -107,11 +111,10 @@
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
-    <Compile Include="QueryParts\Internals\DelegateQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\QueryPartDecorator.cs" />
-    <Compile Include="QueryParts\IFieldMap.cs" />
-    <Compile Include="QueryParts\IQueryPartDecorator.cs" />
-    <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
+    <Compile Include="QueryParts\DelegateQueryPart.cs" />
+    <Compile Include="QueryParts\ItemsQueryPart.cs" />
+    <Compile Include="QueryParts\IFieldPart.cs" />
+    <Compile Include="QueryParts\IItemsQueryPart.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />
@@ -119,16 +122,13 @@
     <Compile Include="IQueryCompiler.cs" />
     <Compile Include="Factories\InstanceFactory.cs" />
     <Compile Include="ObjectDefinition.cs" />
-    <Compile Include="QueryParts\ICallbackQueryPart.cs" />
-    <Compile Include="QueryParts\IExpressionMap.cs" />
+    <Compile Include="QueryParts\IExpressionPart.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
-    <Compile Include="IProcedureQueryExpression.cs" />
     <Compile Include="IQueryPartsContainer.cs" />
-    <Compile Include="QueryParts\ProcedureQueryPartsContainer.cs" />
     <Compile Include="IReaderContext.cs" />
-    <Compile Include="QueryParts\IEntityMap.cs" />
+    <Compile Include="QueryParts\IEntityPart.cs" />
     <Compile Include="ReaderContext.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="IDatabaseContext.cs" />
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="QueryParts\IQueryPart.cs" />
-    <Compile Include="QueryParts\Internals\FieldQueryPart.cs" />
+    <Compile Include="QueryParts\FieldQueryPart.cs" />
     <Compile Include="QueryParts\SelectQueryPartsContainer.cs" />
     <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

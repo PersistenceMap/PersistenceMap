@@ -39,13 +39,16 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Internal\TypeExtensions.cs" />
+    <Compile Include="IProcedureQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilder.cs" />
+    <Compile Include="QueryBuilder\ProcedureQueryBuilder.cs" />
+    <Compile Include="QueryParts\ProcedureQueryPartsContainer.cs" />
     <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="SqlContextProvider.cs" />
     <Compile Include="SqlContextReader.cs" />
     <Compile Include="SqlDatabaseContext.cs" />
+    <Compile Include="QueryCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PersistanceMap\PersistanceMap.csproj">

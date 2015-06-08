@@ -43,7 +43,7 @@ namespace PersistanceMap
             get
             {
                 if (_queryCompiler == null)
-                    _queryCompiler = new QueryCompiler();
+                    _queryCompiler = new SqlServer.QueryCompiler();
 
                 return _queryCompiler;
             }

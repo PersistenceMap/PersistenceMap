@@ -71,8 +71,8 @@ namespace PersistanceMap.Sqlite.Test
                     .Map(ap => ap.Name)
                     .Where<Warrior>(wrir => wrir.Name == "Harry")
                     .Select();
-                Assert.IsTrue(parts.Count() == 3);
 
+                Assert.IsTrue(parts.Count() == 3);
             }
         }
     }

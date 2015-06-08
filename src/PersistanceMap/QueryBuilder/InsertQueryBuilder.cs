@@ -63,8 +63,8 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IInsertQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var insert = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
-            var value = QueryParts.Parts.OfType<IQueryPartDecorator>().FirstOrDefault(p => p.OperationType == OperationType.Values);
+            var insert = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
+            var value = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Values);
 
             var fieldName = FieldHelper.TryExtractPropertyName(predicate);
 
@@ -98,10 +98,10 @@ namespace PersistanceMap.QueryBuilder
 
         private IInsertQueryExpression<T> InsertInternal(LambdaExpression anonym)
         {
-            var insertPart = new DelegateQueryPart(OperationType.Insert, () => string.Format("INSERT INTO {0} ", typeof(T).Name));
+            var insertPart = new DelegateQueryPart(OperationType.Insert, () => typeof(T).Name);
             QueryParts.Add(insertPart);
 
-            var valuesPart = new DelegateQueryPart(OperationType.Values, () => " VALUES ");
+            var valuesPart = new ItemsQueryPart(OperationType.Values);
             QueryParts.Add(valuesPart);
 
             var dataObject = anonym.Compile().DynamicInvoke();
@@ -115,17 +115,17 @@ namespace PersistanceMap.QueryBuilder
                 var value = field.GetValueFunction(dataObject);
                 var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
 
-                var fieldPart = new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", field.MemberName, field == last ? ")" : ", "), field.MemberName);
+                var fieldPart = new DelegateQueryPart(OperationType.InsertMember, () => field.MemberName, field.MemberName);
                 insertPart.Add(fieldPart);
 
-                var valuePart = new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}{2}", field == first ? "(" : "", quotated, field == last ? ")" : ", "), field.MemberName);
+                var valuePart = new DelegateQueryPart(OperationType.InsertValue, () => quotated, field.MemberName);
                 valuesPart.Add(valuePart);
             }
 
             return new InsertQueryBuilder<T>(Context, QueryParts);
         }
 
-        private static void RemovePartByID(IQueryPartDecorator decorator, string id)
+        private static void RemovePartByID(IItemsQueryPart decorator, string id)
         {
             if (decorator != null)
             {
@@ -133,32 +133,6 @@ namespace PersistanceMap.QueryBuilder
                 var subpart = decorator.Parts.FirstOrDefault(f => f.ID == id);
                 if (subpart != null)
                     decorator.Remove(subpart);
-
-                // make sure the first statement is correct.
-                var first = decorator.Parts.FirstOrDefault();
-                if (first != null)
-                {
-                    var value = first.Compile();
-                    if (!value.StartsWith("("))
-                    {
-                        decorator.Remove(first);
-                        decorator.Insert(0, new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}", "(", value), first.ID));
-                    }
-                }
-
-                // make sure the last statement is correct
-                var last = decorator.Parts.LastOrDefault();
-                if (last != null)
-                {
-                    var value = last.Compile();
-                    if (!value.TrimEnd().EndsWith(")"))
-                    {
-                        value = value.Replace(",", "").Replace(" ", "");
-
-                        decorator.Remove(last);
-                        decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0}{1}", value, ")"), last.ID));
-                    }
-                }
             }
         }
     }

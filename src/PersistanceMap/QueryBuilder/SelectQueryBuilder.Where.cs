@@ -19,7 +19,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> And<TAnd>(Expression<Func<TAnd, bool>> operation, string alias = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.And, () => LambdaToSqlCompiler.Compile(partMap).ToString());
             QueryParts.Add(part);
 
             // add aliases to mapcollections
@@ -37,7 +37,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> And<TSource, TAnd>(Expression<Func<TSource, TAnd, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.And, () => LambdaToSqlCompiler.Compile(partMap).ToString());
             QueryParts.Add(part);
 
             // add aliases to mapcollections
@@ -62,7 +62,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> Or<TOr>(Expression<Func<TOr, bool>> operation, string alias = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.Or, () => LambdaToSqlCompiler.Compile(partMap).ToString());
             QueryParts.Add(part);
 
             // add aliases to mapcollections
@@ -80,7 +80,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> Or<TSource, TOr>(Expression<Func<TSource, TOr, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.Or, () => LambdaToSqlCompiler.Compile(partMap).ToString());
             QueryParts.Add(part);
 
             // add aliases to mapcollections

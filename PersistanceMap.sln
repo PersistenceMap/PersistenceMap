@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Test.Shared"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.UnitTest", "src\Tests\PersistanceMap.UnitTest\PersistanceMap.UnitTest.csproj", "{6BE89835-4637-48E5-8D97-DA84FB85DCE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.SqlServer.UnitTest", "src\Tests\PersistanceMap.SqlServer.UnitTest\PersistanceMap.SqlServer.UnitTest.csproj", "{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Sqlite.UnitTest", "src\Tests\PersistanceMap.Sqlite.UnitTest\PersistanceMap.Sqlite.UnitTest.csproj", "{0E01BF8E-C869-4856-97B9-87DA30E0D845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,6 +116,18 @@ Global
 		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BE89835-4637-48E5-8D97-DA84FB85DCE0}.Release|x86.ActiveCfg = Release|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,5 +139,7 @@ Global
 		{E99038FE-D0C9-47FA-A60F-F550976CBBAE} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{6BE89835-4637-48E5-8D97-DA84FB85DCE0} = {554CB4F9-23E8-45E3-A418-695F1D979249}
+		{45F2A9DE-A31B-457F-AE3F-A803B6DDD6E5} = {554CB4F9-23E8-45E3-A418-695F1D979249}
+		{0E01BF8E-C869-4856-97B9-87DA30E0D845} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 	EndGlobalSection
 EndGlobal

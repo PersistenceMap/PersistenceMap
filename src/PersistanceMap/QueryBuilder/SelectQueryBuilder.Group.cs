@@ -26,7 +26,7 @@ namespace PersistanceMap.QueryBuilder
         IGroupQueryExpression<T> IGroupQueryExpression<T>.ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
             var field = FieldHelper.TryExtractPropertyName(predicate);
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0}", field));
+            var part = new DelegateQueryPart(OperationType.ThenBy, () => field);
             QueryParts.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryParts);

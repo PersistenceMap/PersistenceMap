@@ -149,7 +149,7 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Select));
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.From).OfType<IEntityMap>().Any(p => p.EntityAlias == "alias"));
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.From).OfType<IEntityPart>().Any(p => p.EntityAlias == "alias"));
         }
 
         [Test]
@@ -265,11 +265,11 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
+            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update all properties except id
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Set).OfType<DelegateQueryPart>().First().Parts.Count == 4);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count == 4);
 
             Assert.IsTrue(context.QueryStore.Any());
 
@@ -287,11 +287,11 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
+            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update all properties except id
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Set).OfType<DelegateQueryPart>().First().Parts.Count == 4);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count == 4);
 
             Assert.IsTrue(context.QueryStore.Any());
 
@@ -318,11 +318,11 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
+            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update only name property
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Set).OfType<DelegateQueryPart>().First().Parts.Count == 1);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count == 1);
 
             Assert.IsTrue(context.QueryStore.Any());
 
@@ -340,10 +340,10 @@ namespace PersistanceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
+            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Set).OfType<DelegateQueryPart>().First().Parts.Count == 1);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count == 1);
 
             Assert.IsTrue(context.QueryStore.Any());
 
@@ -362,7 +362,7 @@ namespace PersistanceMap.UnitTest
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Insert));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Values));
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<DelegateQueryPart>().First().Parts.Count == 5);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<ItemsQueryPart>().First().Parts.Count == 5);
             Assert.IsTrue(context.QueryStore.Any());
 
             context.Commit();
@@ -382,7 +382,7 @@ namespace PersistanceMap.UnitTest
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Values));
             
             // only insert the properties that are provided
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<DelegateQueryPart>().First().Parts.Count == 2);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Values).OfType<ItemsQueryPart>().First().Parts.Count == 2);
             
             Assert.IsTrue(context.QueryStore.Any());
 

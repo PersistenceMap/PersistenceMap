@@ -15,15 +15,14 @@ namespace PersistanceMap.QueryBuilder
         {
         }
 
-        private IQueryPart CreateColumn(string name, Type type, bool isNullable)
+        protected virtual IQueryPart CreateColumn(string name, Type type, bool isNullable)
         {
-            Func<string> expression = () => string.Format("{0} {1}{2}{3}",
-                    name,
-                    type.ToSqlDbType(),
-                    isNullable ? "" : " NOT NULL",
-                    QueryParts.Parts.Last(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).ID == name ? "" : ", ");
+            var part = new ValueCollectionQueryPart(OperationType.Column, name);
+            part.AddValue(KeyValuePart.MemberName, name);
+            part.AddValue(KeyValuePart.MemberType, type.ToSqlDbType(SqlTypeExtensions.SqlMappings));
+            part.AddValue(KeyValuePart.Nullable, isNullable.ToString());
 
-            return new DelegateQueryPart(OperationType.Column, expression, name);
+            return part;
         }
 
         #region ITableQueryExpression Implementation
@@ -33,27 +32,50 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Create()
         {
-            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => string.Format("CREATE TABLE {0} (", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.CreateTable, () => typeof(T).Name);
             QueryParts.AddBefore(createPart, OperationType.None);
 
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
-            foreach (var field in fields.Reverse())
+
+            var keys = QueryParts.Parts.Where(p => p.OperationType == OperationType.PrimaryColumn).ToList();
+            foreach (var key in keys)
             {
-                var existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
+                QueryParts.Remove(key);
+                createPart.Add(key);
+            }
+
+            keys = QueryParts.Parts.Where(p => p.OperationType == OperationType.Column).ToList();
+            foreach (var key in keys)
+            {
+                QueryParts.Remove(key);
+                createPart.Add(key);
+            }
+
+            foreach (var field in fields)
+            {
+                // check for ignored columns children in the createtable part
+                var existing = createPart.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn || p.OperationType == OperationType.PrimaryColumn) && p.ID == field.MemberName);
+                if (existing.Any())
+                {
+                    continue;
+                }
+
+                // check for ignored columns children in the root collection
+                existing = QueryParts.Parts.Where(p => (p.OperationType == OperationType.Column || p.OperationType == OperationType.IgnoreColumn) && p.ID == field.MemberName);
                 if (existing.Any())
                     continue;
 
                 var fieldPart = CreateColumn(field.MemberName, field.MemberType, field.IsNullable);
-                if (QueryParts.Parts.Any(p => p.OperationType == OperationType.Column))
-                {
-                    QueryParts.AddBefore(fieldPart, OperationType.Column);
-                }
-                else
-                    QueryParts.AddAfter(fieldPart, OperationType.CreateTable);
+
+                createPart.Add(fieldPart);
             }
 
-            // add closing bracked
-            QueryParts.Add(new DelegateQueryPart(OperationType.None, () => ")"));
+            keys = QueryParts.Parts.Where(p => p.OperationType == OperationType.PrimaryKey || p.OperationType == OperationType.ForeignKey).ToList();
+            foreach (var key in keys)
+            {
+                QueryParts.Remove(key);
+                createPart.Add(key);
+            }
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
         }
@@ -63,23 +85,18 @@ namespace PersistanceMap.QueryBuilder
         /// </summary>
         public virtual void Alter()
         {
-            var createPart = new DelegateQueryPart(OperationType.AlterTable, () => string.Format("ALTER TABLE {0} ", typeof(T).Name));
+            var createPart = new DelegateQueryPart(OperationType.AlterTable, () => typeof(T).Name);
             QueryParts.AddBefore(createPart, OperationType.None);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
         }
-
-        //public void RenameTo<TNew>()
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         /// <summary>
         /// Drops the table
         /// </summary>
         public virtual void Drop()
         {
-            var part = new DelegateQueryPart(OperationType.Drop, () => string.Format("DROP TABLE {0}", typeof(T).Name));
+            var part = new DelegateQueryPart(OperationType.DropTable, () => typeof(T).Name);
             QueryParts.Add(part);
 
             Context.AddQuery(new MapQueryCommand(QueryParts));
@@ -111,16 +128,13 @@ namespace PersistanceMap.QueryBuilder
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-            var fieldPart = new DelegateQueryPart(OperationType.Column,
-                () => string.Format("{0} {1} PRIMARY KEY{2}{3}{4}",
-                    field.MemberName,
-                    field.MemberType.ToSqlDbType(),
-                    field.IsNullable ? "" : " NOT NULL",
-                    isAutoIncrement ? " AUTOINCREMENT" : "",
-                    QueryParts.Parts.Where(p => p.OperationType == OperationType.Column || p.OperationType == OperationType.TableKeys).Last().ID == field.MemberName ? "" : ", "),
-                    field.MemberName);
+            var part = new ValueCollectionQueryPart(OperationType.PrimaryColumn, field.MemberName);
+            part.AddValue(KeyValuePart.MemberName, field.MemberName);
+            part.AddValue(KeyValuePart.MemberType, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqliteMappings));
+            part.AddValue(KeyValuePart.Nullable, field.IsNullable.ToString());
+            part.AddValue(KeyValuePart.AutoIncrement, isAutoIncrement.ToString());
 
-            QueryParts.AddBefore(fieldPart, OperationType.TableKeys);
+            QueryParts.AddBefore(part, OperationType.ForeignKey);
 
             return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
@@ -132,24 +146,16 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
-            var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+            var part = new ItemsQueryPart(OperationType.PrimaryKey);
 
-            var last = keyFields.Last();
-
-            var sb = new StringBuilder();
-            sb.Append("PRIMARY KEY (");
             foreach (var key in keyFields)
             {
                 var memberName = FieldHelper.TryExtractPropertyName(key);
-                var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-                sb.Append(string.Format("{0}{1}", field.MemberName, key == last ? "" : ", "));
+                part.Add(new DelegateQueryPart(OperationType.Column, () => memberName, memberName));
             }
 
-            sb.Append(")");
-
-            var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => sb.ToString());
-            QueryParts.Add(fieldPart);
+            QueryParts.Add(part);
 
             return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
@@ -166,8 +172,11 @@ namespace PersistanceMap.QueryBuilder
             var memberName = FieldHelper.TryExtractPropertyName(field);
             var referenceName = FieldHelper.TryExtractPropertyName(reference);
 
-            var fieldPart = new DelegateQueryPart(OperationType.TableKeys, () => string.Format("FOREIGN KEY({0}) REFERENCES {1}({2})", memberName, typeof(TRef).Name, referenceName), string.Format("{0}={1}", memberName, referenceName));
-            QueryParts.Add(fieldPart);
+            var part = new ValueCollectionQueryPart(OperationType.ForeignKey, memberName);
+            part.AddValue(KeyValuePart.MemberName, memberName);
+            part.AddValue(KeyValuePart.ReferenceTable, typeof(TRef).Name);
+            part.AddValue(KeyValuePart.ReferenceMember, referenceName);
+            QueryParts.Add(part);
 
             return new TableQueryBuilder<T, TContext>(Context, QueryParts);
         }
@@ -186,8 +195,6 @@ namespace PersistanceMap.QueryBuilder
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
-            string expression = "";
-
             switch (operation)
             {
                 case FieldOperation.None:
@@ -198,14 +205,16 @@ namespace PersistanceMap.QueryBuilder
 
                 case FieldOperation.Add:
                     //TODO: precision???
-                    var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
-                    expression = string.Format("ADD {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
+                    addPart.AddValue(KeyValuePart.MemberName, field.MemberName);
+                    addPart.AddValue(KeyValuePart.MemberType, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
+                    addPart.AddValue(KeyValuePart.Nullable, isNullable != null ? (isNullable.Value ? null : "NOT NULL") : field.IsNullable ? null : "NOT NULL");
+
+                    QueryParts.Add(addPart);
                     break;
 
                 case FieldOperation.Drop:
-                    expression = string.Format("DROP COLUMN {0}", field.MemberName);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropColumn, () => field.MemberName));
                     break;
 
                 case FieldOperation.Alter:
@@ -230,8 +239,6 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Column(string column, FieldOperation operation, Type fieldType = null, string precision = null, bool? isNullable = null)
         {
-            string expression = "";
-
             switch (operation)
             {
                 case FieldOperation.None:
@@ -247,13 +254,17 @@ namespace PersistanceMap.QueryBuilder
                         throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
                     }
 
-                    expression = string.Format("ADD {0} {1}{2}", column, fieldType.ToSqlDbType(), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    var addPart = new ValueCollectionQueryPart(OperationType.AddColumn);
+                    addPart.AddValue(KeyValuePart.MemberName, column);
+                    addPart.AddValue(KeyValuePart.MemberType, fieldType.ToSqlDbType(SqlTypeExtensions.SqlMappings));
+                    addPart.AddValue(KeyValuePart.Nullable, isNullable != null && !isNullable.Value ? "NOT NULL" : null);
+
+                    QueryParts.Add(addPart);
+
                     break;
 
                 case FieldOperation.Drop:
-                    expression = string.Format("DROP COLUMN {0}", column);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AlterField, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.DropColumn, () => column));
                     break;
 
                 case FieldOperation.Alter:

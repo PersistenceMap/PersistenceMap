@@ -30,7 +30,7 @@ namespace PersistanceMap
         /// <summary>
         /// Gets the Loggerfactory for logging
         /// </summary>
-        internal ILoggerFactory LoggerFactory
+        public ILoggerFactory LoggerFactory
         {
             get
             {
@@ -39,7 +39,7 @@ namespace PersistanceMap
         }
 
         ILogger _logger;
-        internal ILogger Logger
+        public ILogger Logger
         {
             get
             {

@@ -7,7 +7,7 @@ namespace PersistanceMap.QueryParts
     /// <summary>
     /// Defines a Interface that is used to add alias mappings to a expression. This gets used when compiling the expression to a sql string
     /// </summary>
-    public interface IExpressionMap
+    public interface IExpressionPart
     {
         /// <summary>
         /// The expression that contains alias mappings

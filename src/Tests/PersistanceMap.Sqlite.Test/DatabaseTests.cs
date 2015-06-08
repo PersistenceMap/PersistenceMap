@@ -126,6 +126,7 @@ namespace PersistanceMap.Sqlite.Test
             {
                 // table with a foreign key
                 context.Database.Table<Warrior>()
+                    .Column(wrir => wrir.ID)
                     .Column(wrir => wrir.Race, isNullable: false)
                     .Create();
 
@@ -135,7 +136,7 @@ namespace PersistanceMap.Sqlite.Test
 
                 context.Commit();
 
-                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE IF NOT EXISTS Warrior (ID int NOT NULL, Name varchar(1000), WeaponID int NOT NULL, SpecialSkill varchar(1000), Race varchar(1000) NOT NULL)");
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE IF NOT EXISTS Warrior (ID int NOT NULL, Race varchar(1000) NOT NULL, Name varchar(1000), WeaponID int NOT NULL, SpecialSkill varchar(1000))");
             }
         }
 

@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryParts
 
         public void AddToLast(IQueryPart part, OperationType operation)
         {
-            var last = Parts.OfType<IQueryPartDecorator>().LastOrDefault(p => p.OperationType == operation);
+            var last = Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == operation);
             if (last == null)
                 return;
 
@@ -49,11 +49,19 @@ namespace PersistanceMap.QueryParts
 
         public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
         {
-            var last = Parts.OfType<IQueryPartDecorator>().LastOrDefault(predicate) as IQueryPartDecorator;
+            var last = Parts.OfType<IItemsQueryPart>().LastOrDefault(predicate) as IItemsQueryPart;
             if (last == null)
                 return;
 
             last.Add(part);
+        }
+
+        public void Remove(IQueryPart part)
+        {
+            if (Parts.Contains(part))
+            {
+                Parts.Remove(part);
+            }
         }
 
         IEnumerable<IQueryPart> IQueryPartsContainer.Parts
@@ -65,7 +73,7 @@ namespace PersistanceMap.QueryParts
         }
 
         private IList<IQueryPart> _parts;
-        internal IList<IQueryPart> Parts
+        public IList<IQueryPart> Parts
         {
             get
             {
@@ -75,35 +83,11 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        //public abstract CompiledQuery Compile();
-
-        public virtual CompiledQuery Compile()
-        {
-            var sb = new StringBuilder(100);
-
-            // loop all parts and compile
-            foreach (var part in Parts)
-            {
-                switch (part.OperationType)
-                {
-                    default:
-                        sb.Append(part.Compile());
-                        break;
-                }
-            }
-
-            return new CompiledQuery
-            {
-                QueryString = sb.ToString(),
-                QueryParts = this
-            };
-        }
-
         public bool IsSealed
         {
             get
             {
-                return Parts.OfType<IQueryPartDecorator>().Any(p => p.IsSealed);
+                return Parts.OfType<IItemsQueryPart>().Any(p => p.IsSealed);
             }
         }
 

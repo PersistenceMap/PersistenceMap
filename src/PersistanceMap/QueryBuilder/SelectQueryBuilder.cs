@@ -67,13 +67,13 @@ namespace PersistanceMap.QueryBuilder
         internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
-            var selectPart = new DelegateQueryPart(OperationType.Select, () => "SELECT ");
+            var selectPart = new ItemsQueryPart(OperationType.Select);
+
             QueryParts.Add(selectPart);
 
             // add the from operation
-            var entityPart = new DelegateQueryPart(OperationType.From, () => string.Format("FROM {0} ", typeof(T2).Name));
+            var entityPart = new EntityPart(OperationType.From, typeof(T2).Name, null);
             QueryParts.Add(entityPart);
-
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);
         }
@@ -83,12 +83,12 @@ namespace PersistanceMap.QueryBuilder
             alias.EnsureArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            var selectPart = new DelegateQueryPart(OperationType.Select, () => "SELECT ");
+            var selectPart = new ItemsQueryPart(OperationType.Select);
             QueryParts.Add(selectPart);
 
             // add the from operation with a alias
             var entity = typeof(T).Name;
-            var entityPart = new EntityDelegateQueryPart(OperationType.From, () => string.Format("FROM {0}{1} ", entity, string.IsNullOrEmpty(alias) ? string.Empty : string.Format(" {0}", alias)), entity, alias);
+            var entityPart = new EntityPart(OperationType.From, entity, alias);
             QueryParts.Add(entityPart);
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);
@@ -101,7 +101,7 @@ namespace PersistanceMap.QueryBuilder
         private SelectQueryBuilder<T> Or<TOr>(Expression<Func<T, TOr, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.Or, () => string.Format("OR {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.Or, () => LambdaToSqlCompiler.Compile(partMap));
             QueryParts.Add(part);
             
             // add aliases to mapcollections
@@ -117,7 +117,8 @@ namespace PersistanceMap.QueryBuilder
         private SelectQueryBuilder<T> And<TAnd>(Expression<Func<T, TAnd, bool>> operation, string alias = null, string source = null)
         {
             var partMap = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.And, () => string.Format("AND {0} ", LambdaToSqlCompiler.Compile(partMap)));
+            var part = new DelegateQueryPart(OperationType.And, () => LambdaToSqlCompiler.Compile(partMap));
+
             QueryParts.Add(part);
 
             // add aliases to mapcollections
@@ -134,7 +135,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> ThenBy(Expression<Func<T, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
             QueryParts.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -142,7 +143,7 @@ namespace PersistanceMap.QueryBuilder
 
         private SelectQueryBuilder<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => string.Format(", {0} ASC", LambdaToSqlCompiler.Instance.Compile(predicate)));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
             QueryParts.Add(part);
 
             return new SelectQueryBuilder<T>(Context, QueryParts);

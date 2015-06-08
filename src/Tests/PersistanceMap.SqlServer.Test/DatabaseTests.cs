@@ -352,12 +352,13 @@ namespace PersistanceMap.SqlServer.Test
             {
                 // table with a foreign key
                 context.Database.Table<Warrior>()
+                    .Column(wrir => wrir.ID, isNullable: false)
                     .Column(wrir => wrir.Race, isNullable: false)
                     .Create();
 
                 context.Commit();
 
-                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE Warrior (ID int NOT NULL, Name varchar(max), WeaponID int NOT NULL, SpecialSkill varchar(max), Race varchar(max) NOT NULL)");
+                Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE Warrior (ID int NOT NULL, Race varchar(max) NOT NULL, Name varchar(max), WeaponID int NOT NULL, SpecialSkill varchar(max))");
             }
         }
     }
