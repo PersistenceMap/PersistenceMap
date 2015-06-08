@@ -567,6 +567,21 @@ namespace PersistanceMap
                     return TimeSpan.FromTicks((long)value);
                 }
             }
+            else
+            {
+                if (value.GetType() == typeof(int))
+                {
+                    // member is an enum
+                    if (Enum.IsDefined(memberType, (int)value))
+                    {
+                        return Enum.ToObject(memberType, (int)value);
+                    }
+                }
+                else if (value.GetType() == typeof(string))
+                {
+                    return Enum.Parse(memberType, (string)value);
+                }
+            }
 
             if (memberType == typeof(bool))
             {
