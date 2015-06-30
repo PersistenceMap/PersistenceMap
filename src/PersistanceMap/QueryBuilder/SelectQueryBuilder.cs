@@ -80,7 +80,7 @@ namespace PersistanceMap.QueryBuilder
 
         internal ISelectQueryExpression<T2> From<T2>(string alias)
         {
-            alias.EnsureArgumentNotNullOrEmpty("alias");
+            alias.ArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
             var selectPart = new ItemsQueryPart(OperationType.Select);

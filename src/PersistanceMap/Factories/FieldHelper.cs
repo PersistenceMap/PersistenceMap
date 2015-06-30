@@ -20,7 +20,7 @@ namespace PersistanceMap.Factories
         /// <returns></returns>
         public static string TryExtractPropertyName(LambdaExpression propertyExpression)
         {
-            propertyExpression.EnsureArgumentNotNull("propertyExpression");
+            propertyExpression.ArgumentNotNull("propertyExpression");
 
             var memberExpression = propertyExpression.Body as MemberExpression;
             if (memberExpression == null)
@@ -86,7 +86,7 @@ namespace PersistanceMap.Factories
         /// <returns></returns>
         public static Type TryExtractPropertyType(LambdaExpression propertyExpression)
         {
-            propertyExpression.EnsureArgumentNotNull("propertyExpression");
+            propertyExpression.ArgumentNotNull("propertyExpression");
 
             var memberExpression = propertyExpression.Body as MemberExpression;
             if (memberExpression == null)

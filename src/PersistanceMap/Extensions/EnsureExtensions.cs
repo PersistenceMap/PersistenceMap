@@ -2,15 +2,15 @@
 
 namespace PersistanceMap
 {
-    public static class EnsureExtensions
+    public static class Ensure
     {
-        public static void EnsureArgumentNotNull(this object argument, string name)
+        public static void ArgumentNotNull(this object argument, string name)
         {
             if (argument == null)
                 throw new ArgumentNullException(name, "Cannot be null");
         }
 
-        public static void EnsureArgumentNotNullOrEmpty(this string argument, string name)
+        public static void ArgumentNotNullOrEmpty(this string argument, string name)
         {
             if (String.IsNullOrEmpty(argument))
                 throw new ArgumentException("Cannot be null or empty", name);

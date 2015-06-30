@@ -15,7 +15,7 @@ namespace PersistanceMap.QueryBuilder
     {
         public ProcedureQueryProviderBase(IDatabaseContext context, ProcedureQueryPartsContainer container)
         {
-            context.EnsureArgumentNotNull("context");
+            context.ArgumentNotNull("context");
 
             _context = context;
 

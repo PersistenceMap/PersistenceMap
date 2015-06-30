@@ -6,7 +6,7 @@ namespace PersistanceMap
     {
         public SqlContextProvider(string connectionstring)
         {
-            connectionstring.EnsureArgumentNotNullOrEmpty(connectionstring);
+            connectionstring.ArgumentNotNullOrEmpty(connectionstring);
 
             ConnectionProvider = new SqlConnectionProvider(connectionstring);
             Settings = new Settings();

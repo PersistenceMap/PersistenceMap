@@ -180,8 +180,8 @@ namespace PersistanceMap
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IReaderContext context, FieldDefinition[] fields)
         {
-            context.EnsureArgumentNotNull("context");
-            fields.EnsureArgumentNotNull("fields");
+            context.ArgumentNotNull("context");
+            fields.ArgumentNotNull("fields");
 
             var rows = new List<T>();
 
@@ -247,7 +247,7 @@ namespace PersistanceMap
         /// <returns>A collection of dictionaries containing the data</returns>
         public IEnumerable<Dictionary<string, object>> Map(IReaderContext context, ObjectDefinition[] objectDefinitions)
         {
-            context.EnsureArgumentNotNull("context");
+            context.ArgumentNotNull("context");
 
             var rows = new List<Dictionary<string, object>>();
 
