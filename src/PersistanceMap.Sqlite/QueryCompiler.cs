@@ -6,56 +6,41 @@ namespace PersistanceMap.Sqlite
 {
     public class QueryCompiler : PersistanceMap.QueryCompiler
     {
-        protected override void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
+        protected override void InitializeCompilers()
         {
-            switch (part.OperationType)
+            AddCompiler(OperationType.CreateDatabase, (part, writer, container, parent) => { throw new ArgumentException("Sqlite Database is created automaticaly"); });
+            AddCompiler(OperationType.CreateTable, (part, writer, container, parent) =>
             {
-                case OperationType.CreateDatabase:
-                    throw new ArgumentException("Sqlite Database is created automaticaly");
-                    break;
-                case OperationType.CreateTable:
-                    CreateTable(part, writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.Column:
-                    CompileColumn(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-                case OperationType.PrimaryColumn:
-                    CompilePrimaryColumn(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-                case OperationType.PrimaryKey:
-                    CompileString("PRIMARY KEY (", writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.ForeignKey:
-                    CompileForeignKey(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-
-                case OperationType.AlterTable:
-                    CompileFormat("ALTER TABLE {0} ", part, writer);
-                    break;
-                case OperationType.DropTable:
-                    CompileFormat("DROP TABLE {0}", part, writer);
-                    break;
-                case OperationType.DropColumn:
-                    CompileFormat("DROP COLUMN {0}", part, writer);
-                    break;
-                case OperationType.AddColumn:
-                    CompileAddColumnPart(part, writer);
-                    break;
-                case OperationType.RenameTable:
-                    RenameTable(part, writer);
-                    break;
-
-                default:
-                    base.CompilePart(part, writer, container, parent);
-                    break;
-            }
+                CreateTable(part, writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.Column, (part, writer, container, parent) =>
+            {
+                CompileColumn(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.PrimaryColumn, (part, writer, container, parent) =>
+            {
+                CompilePrimaryColumn(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.PrimaryKey, (part, writer, container, parent) =>
+            {
+                CompileString("PRIMARY KEY (", writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.ForeignKey, (part, writer, container, parent) =>
+            {
+                CompileForeignKey(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.AlterTable, (part, writer, container, parent) => CompileFormat("ALTER TABLE {0} ", part, writer));
+            AddCompiler(OperationType.DropTable, (part, writer, container, parent) => CompileFormat("DROP TABLE {0}", part, writer));
+            AddCompiler(OperationType.DropColumn, (part, writer, container, parent) => CompileFormat("DROP COLUMN {0}", part, writer));
+            AddCompiler(OperationType.AddColumn, (part, writer, container, parent) => CompileAddColumnPart(part, writer));
+            AddCompiler(OperationType.RenameTable, (part, writer, container, parent) => RenameTable(part, writer));
         }
 
         private void RenameTable(IQueryPart part, TextWriter writer)

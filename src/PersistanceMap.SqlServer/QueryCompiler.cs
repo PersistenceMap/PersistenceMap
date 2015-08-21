@@ -1,105 +1,74 @@
-﻿using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryParts;
-using System;
-using System.Collections.Generic;
+﻿using PersistanceMap.QueryParts;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.SqlServer
 {
     public class QueryCompiler : PersistanceMap.QueryCompiler
     {
-        protected override void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
+        protected override void InitializeCompilers()
         {
-            switch (part.OperationType)
+            // Database
+            AddCompiler(OperationType.CreateDatabase, (part, writer, container, parent) => CompileCreateDatabase(part, writer));
+            AddCompiler(OperationType.CreateTable, (part, writer, container, parent) =>
             {
-                // Database
-                case OperationType.CreateDatabase:
-                    CompileCreateDatabase(part, writer);
-                    break;
-                case OperationType.CreateTable:
-                    CreateTable(part, writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.Column:
-                    CompileColumn(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-                case OperationType.PrimaryColumn:
-                    CompilePrimaryColumn(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-                case OperationType.PrimaryKey:
-                    CompileString("PRIMARY KEY (", writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.ForeignKey:
-                    CompileForeignKey(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-                case OperationType.AlterTable:
-                    CompileFormat("ALTER TABLE {0} ", part, writer);
-                    break;
-                case OperationType.DropTable:
-                    CompileFormat("DROP TABLE {0}", part, writer);
-                    break;
-                case OperationType.DropColumn:
-                    CompileFormat("DROP COLUMN {0}", part, writer);
-                    break;
-                case OperationType.AddColumn:
-                    CompileAddFieldPart(part, writer);
-                    break;
+                CreateTable(part, writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.Column, (part, writer, container, parent) =>
+            {
+                CompileColumn(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.PrimaryColumn, (part, writer, container, parent) =>
+            {
+                CompilePrimaryColumn(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.PrimaryKey, (part, writer, container, parent) =>
+            {
+                CompileString("PRIMARY KEY (", writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.ForeignKey, (part, writer, container, parent) =>
+            {
+                CompileForeignKey(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.AlterTable, (part, writer, container, parent) => CompileFormat("ALTER TABLE {0} ", part, writer));
+            AddCompiler(OperationType.DropTable, (part, writer, container, parent) => CompileFormat("DROP TABLE {0}", part, writer));
+            AddCompiler(OperationType.DropColumn, (part, writer, container, parent) => CompileFormat("DROP COLUMN {0}", part, writer));
+            AddCompiler(OperationType.AddColumn, (part, writer, container, parent) => CompileAddFieldPart(part, writer));
 
-                // StoredProcedure
-                case OperationType.Procedure:
-                    CompileFormat("EXEC {0} ", part, writer);
-                    CompileChildParts(part, writer, container);
+            // StoredProcedure
+            AddCompiler(OperationType.Procedure, (part, writer, container, parent) =>
+            {
+                CompileFormat("EXEC {0} ", part, writer);
+                CompileChildParts(part, writer, container);
 
-                    if (container == null || container.Parts.Last() != part)
-                    {
-                        WriteLine(writer);
-                    }
-
-                    break;
-                case OperationType.Parameter:
-                    CompileParameter(part, writer, parent);
-                    break;
-                case OperationType.OutputParameter:
-                    CompileOutputParameter(part, writer, parent);
-                    break;
-
-                case OperationType.OutParameterDeclare:
-                    CompileFormat("DECLARE @{0}", part, writer);
+                if (container == null || container.Parts.Last() != part)
+                {
                     WriteLine(writer);
-                    break;
-                case OperationType.OutParameterSet:
-                    CompileFormat("SET @{0}", part, writer);
-                    WriteLine(writer);
-                    break;
-                case OperationType.OutParameterSelect:
-                    CompileOutputParameterSelect(part, writer, parent);
-                    break;
+                }
 
-                case OperationType.OutParameterDefinition:
-                    CompileChildParts(part, writer, container);
-                    break;
-
-                case OperationType.IncludeMember:
-                    // do nothing
-                    break;
-
-
-                default:
-                    base.CompilePart(part, writer, container, parent);
-                    return;
-                    break;
-            }
-
-            //CompileChildParts(part, writer);
+            });
+            AddCompiler(OperationType.Parameter, (part, writer, container, parent) => CompileParameter(part, writer, parent));
+            AddCompiler(OperationType.OutputParameter, (part, writer, container, parent) => CompileOutputParameter(part, writer, parent));
+            AddCompiler(OperationType.OutParameterDeclare, (part, writer, container, parent) =>
+            {
+                CompileFormat("DECLARE @{0}", part, writer);
+                WriteLine(writer);
+            });
+            AddCompiler(OperationType.OutParameterSet, (part, writer, container, parent) =>
+            {
+                CompileFormat("SET @{0}", part, writer);
+                WriteLine(writer);
+            });
+            AddCompiler(OperationType.OutParameterSelect, (part, writer, container, parent) => CompileOutputParameterSelect(part, writer, parent));
+            AddCompiler(OperationType.OutParameterDefinition, (part, writer, container, parent) => CompileChildParts(part, writer, container));
+            AddCompiler(OperationType.IncludeMember, (part, writer, container, parent) => { /* do nothing */});
         }
 
         private void CompileCreateDatabase(IQueryPart part, TextWriter writer)

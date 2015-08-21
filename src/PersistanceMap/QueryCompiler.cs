@@ -12,7 +12,144 @@ namespace PersistanceMap
     /// </summary>
     public class QueryCompiler : IQueryCompiler
     {
+        readonly Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart>> _compilers = new Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart>>();
         private HashSet<IQueryPart> _compiledParts;
+
+        public QueryCompiler()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            AddCompiler(OperationType.None, (part, writer, container, parent) => { writer.Write(part.Compile()); });
+            AddCompiler(OperationType.IgnoreColumn, (part, writer, container, parent) => {/* do nothing */});
+            AddCompiler(OperationType.IncludeMember, (part, writer, container, parent) => {/* do nothing */});
+            AddCompiler(OperationType.Select, (part, writer, container, parent) => CompileString("SELECT", writer));
+            AddCompiler(OperationType.Include, (part, writer, container, parent) => CompileField(part, writer, parent));
+            AddCompiler(OperationType.Field, (part, writer, container, parent) => CompileField(part, writer, parent));
+            AddCompiler(OperationType.Count, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                CompileFieldFunction("COUNT", part, writer, parent);
+            });
+            AddCompiler(OperationType.Max, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                CompileFieldFunction("MAX", part, writer, parent);
+            });
+            AddCompiler(OperationType.Min, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                CompileFieldFunction("MIN", part, writer, parent);
+            });
+            AddCompiler(OperationType.From, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                WriteLine(writer);
+                CompileFrom(part, writer);
+            });
+            AddCompiler(OperationType.Join, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                WriteLine(writer);
+                CompileJoin(part, writer);
+            });
+            AddCompiler(OperationType.On, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                CompileCommand("ON", part, writer);
+            });
+            AddCompiler(OperationType.And, (part, writer, container, parent) =>
+            {
+                writer.WriteLine();
+                WriteBlank(writer);
+                CompileCommand("AND", part, writer);
+            });
+            AddCompiler(OperationType.Or, (part, writer, container, parent) =>
+            {
+                writer.WriteLine();
+                WriteBlank(writer);
+                CompileCommand("OR", part, writer);
+            });
+            AddCompiler(OperationType.Where, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                writer.WriteLine();
+                CompileCommand("WHERE", part, writer);
+            });
+            AddCompiler(OperationType.GroupBy, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                WriteLine(writer);
+                //TODO: add table name?
+                CompileCommand("GROUP BY", part, writer);
+            });
+            AddCompiler(OperationType.ThenBy, (part, writer, container, parent) =>
+            {
+                //TODO: add table name?
+                CompileFormat(", {0}", part, writer);
+            });
+            AddCompiler(OperationType.OrderBy, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                WriteLine(writer);
+                //TODO: add table name?
+                CompileFormat("ORDER BY {0} ASC", part, writer);
+            });
+            AddCompiler(OperationType.OrderByDesc, (part, writer, container, parent) =>
+            {
+                WriteBlank(writer);
+                WriteLine(writer);
+                //TODO: add table name?
+                CompileFormat("ORDER BY {0} DESC", part, writer);
+            });
+            AddCompiler(OperationType.ThenByAsc, (part, writer, container, parent) =>
+            {
+                //TODO: add table name?
+                CompileFormat(", {0} ASC", part, writer);
+            });
+            AddCompiler(OperationType.ThenByDesc, (part, writer, container, parent) =>
+            {
+                //TODO: add table name?
+                CompileFormat(", {0} DESC", part, writer);
+            });
+
+            AddCompiler(OperationType.Insert, (part, writer, container, parent) =>
+            {
+                CompileFormat("INSERT INTO {0} (", part, writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.Values, (part, writer, container, parent) =>
+            {
+                CompileString(" VALUES (", writer);
+                CompileChildParts(part, writer, container);
+                CompileString(")", writer);
+            });
+            AddCompiler(OperationType.InsertMember, (part, writer, container, parent) =>
+            {
+                CompileValue(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.InsertValue, (part, writer, container, parent) =>
+            {
+                CompileValue(part, writer);
+                AppendComma(part, writer, parent);
+            });
+            AddCompiler(OperationType.Update, (part, writer, container, parent) => CompileFormat("UPDATE {0} SET ", part, writer));
+            AddCompiler(OperationType.UpdateValue, (part, writer, container, parent) => CompileMemberEqualsValuePart(part, writer, parent));
+            AddCompiler(OperationType.Delete, (part, writer, container, parent) => CompileFormat("DELETE FROM {0}", part, writer));
+
+            InitializeCompilers();
+        }
+
+        /// <summary>
+        /// Initialize the Compilers needed to compile the operation
+        /// </summary>
+        protected virtual void InitializeCompilers()
+        {
+        }
 
         /// <summary>
         /// Compile IQueryPartsContainer to a QueryString
@@ -42,132 +179,15 @@ namespace PersistanceMap
 
         protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
         {
-            switch (part.OperationType)
-            {
-                case OperationType.None:
-                    writer.Write(part.Compile());
-                    break;
-
-                case OperationType.IgnoreColumn:
-                case OperationType.IncludeMember:
-                    // do nothing
-                    break;
-
-                case OperationType.Select:
-                    CompileString("SELECT", writer);
-                    break;
-
-                case OperationType.Include:
-                case OperationType.Field:
-                    CompileField(part, writer, parent);
-                    break;
-                case OperationType.Count:
-                    WriteBlank(writer);
-                    CompileFieldFunction("COUNT", part, writer, parent);
-                    break;
-                case OperationType.Max:
-                    WriteBlank(writer);
-                    CompileFieldFunction("MAX", part, writer, parent);
-                    break;
-                case OperationType.Min:
-                    WriteBlank(writer);
-                    CompileFieldFunction("MIN", part, writer, parent);
-                    break;
-
-                case OperationType.From:
-                    WriteBlank(writer);
-                    WriteLine(writer);
-                    CompileFrom(part, writer);
-                    break;
-                case OperationType.Join:
-                    WriteBlank(writer);
-                    WriteLine(writer);
-                    CompileJoin(part, writer);
-                    break;
-
-                case OperationType.On:
-                    WriteBlank(writer);
-                    CompileCommand("ON", part, writer);
-                    break;
-                case OperationType.And:
-                    writer.WriteLine();
-                    WriteBlank(writer);
-                    CompileCommand("AND", part, writer);
-                    break;
-                case OperationType.Or:
-                    writer.WriteLine();
-                    WriteBlank(writer);
-                    CompileCommand("OR", part, writer);
-                    break;
-                case OperationType.Where:
-                    WriteBlank(writer);
-                    writer.WriteLine();
-                    CompileCommand("WHERE", part, writer);
-                    break;
-                case OperationType.GroupBy:
-                    WriteBlank(writer);
-                    WriteLine(writer);
-                    //TODO: add table name?
-                    CompileCommand("GROUP BY", part, writer);
-                    break;
-                case OperationType.ThenBy:
-                    //TODO: add table name?
-                    CompileFormat(", {0}", part, writer);
-                    break;
-                case OperationType.OrderBy:
-                    WriteBlank(writer);
-                    WriteLine(writer);
-                    //TODO: add table name?
-                    CompileFormat("ORDER BY {0} ASC", part, writer);
-                    break;
-                case OperationType.OrderByDesc:
-                    WriteBlank(writer);
-                    WriteLine(writer);
-                    //TODO: add table name?
-                    CompileFormat("ORDER BY {0} DESC", part, writer);
-                    break;
-                case OperationType.ThenByAsc:
-                    //TODO: add table name?
-                    CompileFormat(", {0} ASC", part, writer);
-                    break;
-                case OperationType.ThenByDesc:
-                    //TODO: add table name?
-                    CompileFormat(", {0} DESC", part, writer);
-                    break;
-
-                case OperationType.Insert:
-                    CompileFormat("INSERT INTO {0} (", part, writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.Values:
-                    CompileString(" VALUES (", writer);
-                    CompileChildParts(part, writer, container);
-                    CompileString(")", writer);
-                    break;
-                case OperationType.InsertMember:
-                case OperationType.InsertValue:
-                    CompileValue(part, writer);
-                    AppendComma(part, writer, parent);
-                    break;
-
-                case OperationType.Update:
-                    CompileFormat("UPDATE {0} SET ", part, writer);
-                    break;
-                case OperationType.UpdateValue:
-                    CompileMemberEqualsValuePart(part, writer, parent);
-                    break;
-
-                case OperationType.Delete:
-                    CompileFormat("DELETE FROM {0}", part, writer);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-                    break;
-            }
+            var compiler = _compilers[part.OperationType];
+            compiler(part, writer, container, parent);
 
             CompileChildParts(part, writer, container);
+        }
+
+        protected void AddCompiler(OperationType operation, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart> compiler)
+        {
+            _compilers[operation] = compiler;
         }
 
         private void CompileMemberEqualsValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
