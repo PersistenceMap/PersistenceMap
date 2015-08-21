@@ -416,6 +416,30 @@ namespace PersistanceMap.QueryBuilder
             return new ProcedureQueryProvider<T>(Context, QueryParts);
         }
 
+        public IProcedureQueryExpression<T> Ignore(Expression<Func<T, object>> member)
+        {
+            var fieldName = FieldHelper.TryExtractPropertyName(member);
+
+            //foreach (var part in QueryParts.Parts)
+            //{
+            //    var map = part as IItemsQueryPart;
+            //    if (map == null)
+            //        continue;
+
+            //    // remove all previous mappings of the ignored field
+            //    var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
+            //    foreach (var subpart in subparts.ToList())
+            //    {
+            //        map.Remove(subpart);
+            //    }
+            //}
+
+            // add a field marked as ignored
+            QueryParts.Add(new FieldQueryPart(fieldName, fieldName, operation: OperationType.IgnoreColumn));
+
+            return new ProcedureQueryProvider<T>(Context, QueryParts);
+        }
+
         /// <summary>
         /// Execute the Procedure
         /// </summary>
@@ -438,6 +462,15 @@ namespace PersistanceMap.QueryBuilder
                 }
             }
 
+            // remove ignore fields
+            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IgnoreColumn))
+            {
+                var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
+                if (field == null)
+                    continue;
+
+                fields.Remove(field);
+            }
 
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts);

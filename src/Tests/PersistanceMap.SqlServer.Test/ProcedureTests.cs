@@ -518,5 +518,30 @@ namespace PersistanceMap.Test.Integration
                 Assert.IsTrue(proc.First().Year > 0);
             }
         }
+
+        [Test]
+        public void ProcedureWithResultWithIgnores()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
+            {
+                // proc with resultset with parameter names and @ before name
+                var proc = context.Procedure("SalesByYear")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .For<SalesByYear>()
+                    .Ignore(s => s.OrdersID)
+                    .Ignore(s => s.Subtotal)
+                    .Ignore(s => s.ShippedDate)
+                    .Ignore(s => s.Year)
+                    .Execute();
+
+                Assert.IsTrue(proc.Any());
+                Assert.IsFalse(proc.Any(s => s.ShippedDate > DateTime.MinValue));
+                Assert.IsFalse(proc.Any(s => s.OrdersID > 0));
+                Assert.IsFalse(proc.Any(s => s.Subtotal > 0.0));
+                Assert.IsFalse(proc.Any(s => s.Year > 0));
+            }
+        }
     }
 }

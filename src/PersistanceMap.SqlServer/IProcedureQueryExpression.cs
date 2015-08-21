@@ -93,6 +93,13 @@ namespace PersistanceMap
         IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null);
 
         /// <summary>
+        /// Ignore a Property from the mapped types
+        /// </summary>
+        /// <param name="member">The Property to ignore</param>
+        /// <returns>IProcedureQueryProvider</returns>
+        IProcedureQueryExpression<T> Ignore(Expression<Func<T, object>> member);
+
+        /// <summary>
         /// Execute the Procedure
         /// </summary>
         /// <returns></returns>
