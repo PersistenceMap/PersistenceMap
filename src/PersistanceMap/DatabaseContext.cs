@@ -14,12 +14,14 @@ namespace PersistanceMap
     public class DatabaseContext : IDatabaseContext
     {
         readonly IList<IQueryCommand> _queryStore;
+        readonly InterceptorCollection _interceptors;
 
-        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
+        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
         {
             ConnectionProvider = provider;
             _queryStore = new List<IQueryCommand>();
             LoggerFactory = loggerFactory;
+            _interceptors = interceptors;
         }
 
         #region IDatabaseContext Implementation
@@ -76,7 +78,7 @@ namespace PersistanceMap
             get
             {
                 if (_kernel == null)
-                    _kernel = new QueryKernel(ConnectionProvider, LoggerFactory);
+                    _kernel = new QueryKernel(ConnectionProvider, LoggerFactory, _interceptors);
 
                 return _kernel;
             }

@@ -6,8 +6,8 @@ namespace PersistanceMap
 {
     public class SqlDatabaseContext : DatabaseContext, IDatabaseContext
     {
-        public SqlDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
-            : base(provider, loggerFactory)
+        public SqlDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
+            : base(provider, loggerFactory, interceptors)
         {
         }
 

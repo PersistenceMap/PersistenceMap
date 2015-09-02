@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PersistanceMap
 {
     public class SqlContextProvider : IContextProvider
     {
+        readonly InterceptorCollection _interceptors = new InterceptorCollection();
+
         public SqlContextProvider(string connectionstring)
         {
             connectionstring.ArgumentNotNullOrEmpty(connectionstring);
@@ -28,7 +31,15 @@ namespace PersistanceMap
         /// <returns></returns>
         public virtual SqlDatabaseContext Open()
         {
-            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
+            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory, _interceptors);
+        }
+
+        public IInterceptor<T> Interceptor<T>()
+        {
+            var interceptor = new Interceptor<T>();
+            _interceptors.Add(typeof(T), interceptor);
+
+            return interceptor;
         }
 
         #region IDisposeable Implementation

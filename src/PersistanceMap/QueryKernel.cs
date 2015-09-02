@@ -18,11 +18,13 @@ namespace PersistanceMap
     {
         protected const int NotFound = -1;
         readonly IConnectionProvider _connectionProvider;
+        readonly InterceptorCollection _interceptors;
 
-        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
+        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
         {
             _connectionProvider = provider;
             _loggerFactory = loggerFactory;
+            _interceptors = interceptors;
         }
 
         readonly ILoggerFactory _loggerFactory;
@@ -57,6 +59,18 @@ namespace PersistanceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
+            var interceptor = _interceptors.GetInterceptor<T>();
+            if (interceptor != null)
+            {
+                interceptor.BeforeExecute(compiledQuery);
+
+                var items = interceptor.Execute<T>(compiledQuery);
+                if (items != null)
+                {
+                    return items;
+                }
+            }
+
             //TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 

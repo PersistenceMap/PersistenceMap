@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextMockSample\Sample.cs" />
     <Compile Include="ContextSample\Sample.cs" />
     <Compile Include="Data\DatabaseManager.cs" />
     <Compile Include="Program.cs" />
