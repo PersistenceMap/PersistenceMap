@@ -5,74 +5,24 @@ namespace PersistanceMap
     /// <summary>
     /// Sql Context provider for SQL Server Compact
     /// </summary>
-    public class SqlCeContextProvider : IContextProvider
+    public class SqlCeContextProvider : ContextProvider, IContextProvider
     {
         public SqlCeContextProvider(string connectionstring)
+            : base(new SqlCeConnectionProvider(connectionstring))
         {
             if (string.IsNullOrEmpty(connectionstring))
-                throw new ArgumentNullException("connectionstring");
-
-            ConnectionProvider = new SqlCeConnectionProvider(connectionstring);
-            Settings = new Settings();
-        }
-
-        /// <summary>
-        /// The settings for the context
-        /// </summary>
-        public Settings Settings { get; private set; }
-
-        /// <summary>
-        /// The connection to a SqlCe database
-        /// </summary>
-        public IConnectionProvider ConnectionProvider { get; private set; }
-
-        /// <summary>
-        /// Creates a context for connecting to a SqlCe database
-        /// </summary>
-        /// <returns></returns>
-        public virtual SqlCeDatabaseContext Open()
-        {
-            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
-        }
-
-        #region IDisposeable Implementation
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is disposed.
-        /// </summary>
-        internal bool IsDisposed { get; private set; }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
-        /// Releases resources held by the object.
-        /// </summary>
-        public virtual void Dispose(bool disposing)
-        {
-            lock (this)
             {
-                if (disposing && !IsDisposed)
-                {
-                    IsDisposed = true;
-                    GC.SuppressFinalize(this);
-                }
+                throw new ArgumentNullException("connectionstring");
             }
         }
 
         /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
+        /// Creates a context for connecting to a SqlCe database
         /// </summary>
-        ~SqlCeContextProvider()
+        /// <returns>DatabaseContext for database operations</returns>
+        public virtual SqlCeDatabaseContext Open()
         {
-            Dispose(false);
+            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
         }
-
-        #endregion
     }
 }

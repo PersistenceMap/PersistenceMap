@@ -9,65 +9,17 @@ namespace PersistanceMap.Test
     /// <summary>
     /// Represents a IContextProvider that only compares the generated sql string to a expected sql string withou executing to a database
     /// </summary>
-    public class CallbackContextProvider : IContextProvider
+    public class CallbackContextProvider : ContextProvider, IContextProvider
     {
-        public CallbackContextProvider()
-        {
-        }
-
         public CallbackContextProvider(Action<string> callback)
+            : base(new CallbackConnectionProvider((s) => callback(s)))
         {
-            ConnectionProvider = new CallbackConnectionProvider((s) => callback(s));
         }
-
-        public IConnectionProvider ConnectionProvider { get; private set; }
 
         public virtual DatabaseContext Open()
         {
             return new DatabaseContext(ConnectionProvider, new LoggerFactory());
         }
-
-        #region IDisposeable Implementation
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is disposed.
-        /// </summary>
-        internal bool IsDisposed { get; private set; }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary>
-        /// Releases resources held by the object.
-        /// </summary>
-        public virtual void Dispose(bool disposing)
-        {
-            lock (this)
-            {
-                if (disposing && !IsDisposed)
-                {
-                    ConnectionProvider.Dispose();
-
-                    IsDisposed = true;
-                    GC.SuppressFinalize(this);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~CallbackContextProvider()
-        {
-            Dispose(false);
-        }
-
-        #endregion
         
         public class CallbackReaderContext : IReaderContext
         {

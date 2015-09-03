@@ -8,5 +8,10 @@ namespace PersistanceMap
             : base(provider, loggerFactory)
         {
         }
+
+        public SqlCeDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
+            : base(provider, loggerFactory, interceptors)
+        {
+        }
     }
 }

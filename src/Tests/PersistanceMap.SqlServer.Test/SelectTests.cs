@@ -659,8 +659,8 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void SelectJoinsWithOnWithMaps()
         {
-            var dbConnection = new SqlContextProvider(ConnectionString);
-            using (var context = dbConnection.Open())
+            var contextProvider = new SqlContextProvider(ConnectionString);
+            using (var context = contextProvider.Open())
             {
                 // multiple joins using On<T> with include
                 var orders = context
