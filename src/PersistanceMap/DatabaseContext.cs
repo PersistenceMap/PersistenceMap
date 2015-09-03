@@ -13,8 +13,13 @@ namespace PersistanceMap
     /// </summary>
     public class DatabaseContext : IDatabaseContext
     {
-        readonly IList<IQueryCommand> _queryStore;
-        readonly InterceptorCollection _interceptors;
+        private readonly IList<IQueryCommand> _queryStore;
+        private readonly InterceptorCollection _interceptors;
+
+        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
+            : this(provider, loggerFactory, new InterceptorCollection())
+        {
+        }
 
         public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
         {

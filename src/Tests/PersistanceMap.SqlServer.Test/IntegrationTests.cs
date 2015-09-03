@@ -14,9 +14,16 @@ namespace PersistanceMap.Test.Expression
         public void MockContextTest()
         {
             string beforeExecute = null;
+            var ordersList = new List<Orders>
+            {
+                new Orders
+                {
+                    OrdersID = 21
+                }
+            };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Orders>().BeforeExecute(cq => beforeExecute = cq.QueryString).Execute(cq => new List<Orders>());
+            provider.Interceptor<Orders>().BeforeExecute(cq => beforeExecute = cq.QueryString).Execute(cq => ordersList);
 
             //provider.
             using (var context = provider.Open())
@@ -24,7 +31,8 @@ namespace PersistanceMap.Test.Expression
                 //context.Kernel.
                 var orders = context.Select<Orders>();
 
-                Assert.AreEqual("SELEXT * FROM Orders", beforeExecute);
+                Assert.AreEqual("SELECT OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry \r\nFROM Orders", beforeExecute);
+                Assert.AreSame(orders.First(), ordersList.First());
             }
         }
 
@@ -34,7 +42,5 @@ namespace PersistanceMap.Test.Expression
         {
             Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
         }
-
-        
     }
 }

@@ -16,9 +16,14 @@ namespace PersistanceMap
     /// </summary>
     public class QueryKernel
     {
-        protected const int NotFound = -1;
-        readonly IConnectionProvider _connectionProvider;
-        readonly InterceptorCollection _interceptors;
+        private const int NOT_FOUND = -1;
+        private readonly IConnectionProvider _connectionProvider;
+        private readonly InterceptorCollection _interceptors;
+
+        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
+            : this(provider, loggerFactory, new InterceptorCollection())
+        {
+        }
 
         public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
         {
@@ -64,7 +69,7 @@ namespace PersistanceMap
             {
                 interceptor.BeforeExecute(compiledQuery);
 
-                var items = interceptor.Execute<T>(compiledQuery);
+                var items = interceptor.Execute(compiledQuery);
                 if (items != null)
                 {
                     return items;
@@ -486,7 +491,7 @@ namespace PersistanceMap
 
         private bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
-            if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NotFound)
+            if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NOT_FOUND)
                 return true;
 
             if (context.DataReader.IsDBNull(columnIndex))
