@@ -1,19 +1,19 @@
 ﻿using PersistanceMap.Samples.Data;
+using PersistanceMap.Test;
 using PersistanceMap.Test.TableTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
-namespace PersistanceMap.Samples.ContextMockSample
+namespace PersistanceMap.Samples.Interception
 {
     class Sample
     {
         public void Work()
         {
             var provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
-            //provider.Interceptor<Warrior>().BeforeExecute(q => sql = q.QueryString.Flatten());
+
+            // add interceptor that traces the query string before it is executed
+            provider.Interceptor<WarriorWithArmour>().BeforeExecute(q => Trace.WriteLine(q.QueryString.Flatten()));
+
             using (var context = provider.Open())
             {
                 var item = context.From<Warrior>()

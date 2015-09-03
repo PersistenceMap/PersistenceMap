@@ -56,14 +56,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PersistanceMap, Version=0.4.0.0, Culture=neutral, PublicKeyToken=086b003f83e44453, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\PersistanceMap.Sqlite.0.4.0\lib\net45\PersistanceMap.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PersistanceMap.Sqlite, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\PersistanceMap.Sqlite.0.4.0\lib\net45\PersistanceMap.Sqlite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -78,7 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextMockSample\Sample.cs" />
+    <Compile Include="Interception\Sample.cs" />
     <Compile Include="ContextSample\Sample.cs" />
     <Compile Include="Data\DatabaseManager.cs" />
     <Compile Include="Program.cs" />
@@ -88,6 +80,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\PersistanceMap.Sqlite\PersistanceMap.Sqlite.csproj">
+      <Project>{1a648c38-3ad8-4c05-90b8-4c40d1f7cfa2}</Project>
+      <Name>PersistanceMap.Sqlite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PersistanceMap\PersistanceMap.csproj">
+      <Project>{4160375c-5e51-484f-b07b-85a5eb9169f8}</Project>
+      <Name>PersistanceMap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PersistanceMap.Test.Shared\PersistanceMap.Test.Shared.csproj">
       <Project>{2d5d803e-de51-471b-b650-8e3b6272d89f}</Project>
       <Name>PersistanceMap.Test.Shared</Name>
