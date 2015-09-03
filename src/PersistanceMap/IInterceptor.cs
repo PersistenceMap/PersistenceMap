@@ -13,7 +13,7 @@ namespace PersistanceMap
     {
         IInterceptor<T> BeforeExecute(Action<CompiledQuery> query);
 
-        IInterceptor<T> Execute(Expression<Func<CompiledQuery, IEnumerable<T>>> query);
+        IInterceptor<T> Execute(Func<CompiledQuery, IEnumerable<T>> query);
 
         void BeforeExecute(CompiledQuery query);
 

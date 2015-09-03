@@ -13,7 +13,7 @@ namespace PersistanceMap.Samples.ContextMockSample
         public void Work()
         {
             var provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
-            //provider.
+            //provider.Interceptor<Warrior>().BeforeExecute(q => sql = q.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 var item = context.From<Warrior>()

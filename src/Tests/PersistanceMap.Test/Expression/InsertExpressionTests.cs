@@ -11,7 +11,7 @@ namespace PersistanceMap.Test.Expression
         public void InsertTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // insert all elements used in the reference expression
@@ -25,7 +25,7 @@ namespace PersistanceMap.Test.Expression
         public void InsertWithAnonymObjectTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // insert all fields defined in the anonym object
@@ -39,7 +39,7 @@ namespace PersistanceMap.Test.Expression
         public void InsertWithIgnoreTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // insert all except ignored elements used in the reference expression
@@ -53,7 +53,7 @@ namespace PersistanceMap.Test.Expression
         public void InsertWithIgnoreFirstPropertyTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // insert all except ignored elements used in the reference expression
@@ -67,7 +67,7 @@ namespace PersistanceMap.Test.Expression
         public void InsertWithIgnoreLastPropertyTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // insert all except ignored elements used in the reference expression
