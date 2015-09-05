@@ -64,8 +64,9 @@ namespace PersistanceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            var interceptor = _interceptors.GetInterceptor<T>();
-            if (interceptor != null)
+            //compiledQuery.QueryParts.FirstOrDefault(p=>p.OperationType == OperationType.From;
+            var interceptors = _interceptors.GetInterceptors<T>();
+            foreach(var interceptor in interceptors)
             {
                 interceptor.BeforeExecute(compiledQuery);
 

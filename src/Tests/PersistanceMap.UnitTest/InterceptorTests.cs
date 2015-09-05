@@ -1,9 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.UnitTest
 {
@@ -30,7 +25,7 @@ namespace PersistanceMap.UnitTest
             collection.Add(orig);
             var second = collection.Add(new Interceptor<Order>());
 
-            Assert.AreSame(orig, second);
+            Assert.AreNotSame(orig, second);
         }
 
 

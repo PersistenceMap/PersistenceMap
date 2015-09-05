@@ -27,6 +27,17 @@ namespace PersistanceMap.Samples.Interception
                 .Map<Armour>(a => a.Name, wa => wa.ArmourName)
                 .Select();
             }
+
+            provider.Interceptor<Warrior>().BeforeExecute(q => Trace.WriteLine(q.QueryString.Flatten()));
+            using (var context = provider.Open())
+            {
+                var tmp = context.From<Warrior>().Select(w => new
+                {
+                    w.ID,
+                    w.Name,
+                    w.Race
+                });
+            }
         }
     }
 }

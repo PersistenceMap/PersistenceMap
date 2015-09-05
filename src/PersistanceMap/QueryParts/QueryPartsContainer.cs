@@ -1,8 +1,6 @@
-﻿using PersistanceMap.QueryBuilder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
@@ -89,6 +87,20 @@ namespace PersistanceMap.QueryParts
             {
                 return Parts.OfType<IItemsQueryPart>().Any(p => p.IsSealed);
             }
+        }
+
+        #endregion
+
+        #region IEnumerable<IQueryPart> Implementation
+
+        public IEnumerator<IQueryPart> GetEnumerator()
+        {
+            return Parts.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion

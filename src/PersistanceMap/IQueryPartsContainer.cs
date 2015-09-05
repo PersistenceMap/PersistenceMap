@@ -9,7 +9,7 @@ namespace PersistanceMap
     /// <summary>
     /// A container for all queryparts needed for a sql statement
     /// </summary>
-    public interface IQueryPartsContainer
+    public interface IQueryPartsContainer : IEnumerable<IQueryPart>
     {
         /// <summary>
         /// Add a querypart

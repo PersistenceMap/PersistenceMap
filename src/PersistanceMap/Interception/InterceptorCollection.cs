@@ -10,15 +10,16 @@ namespace PersistanceMap
 
         public IInterceptor<T> Add<T>(IInterceptor<T> interceptor)
         {
-            var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            if (item != null)
-            {
-                var existing = item.Interceptor as IInterceptor<T>;
-                if (existing != null)
-                {
-                    return existing;
-                }
-            }
+            // TODO: Check if this is correct or if it should be able to add multiple interceptors for same type
+            //var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
+            //if (item != null)
+            //{
+            //    var existing = item.Interceptor as IInterceptor<T>;
+            //    if (existing != null)
+            //    {
+            //        return existing;
+            //    }
+            //}
 
             _interceptors.Add(new InterceptorItem(typeof(T), interceptor));
 
@@ -31,10 +32,19 @@ namespace PersistanceMap
             return item != null ? item.Interceptor as IInterceptor<T> : null;
         }
 
+        public IEnumerable<IInterceptor<T>> GetInterceptors<T>()
+        {
+            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptor<T>);
+        }
+
+        /// <summary>
+        /// Removes all interceptors associated to a given type
+        /// </summary>
+        /// <typeparam name="T">The key type</typeparam>
         public void Remove<T>()
         {
-            var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            if (item != null)
+            var items = _interceptors.Where(i => i.Key == typeof(T));
+            foreach (var item in items)
             {
                 _interceptors.Remove(item);
             }
