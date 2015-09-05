@@ -12,10 +12,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>@ WickedFlame 2014</copyright>
     <description>
-      PersistanceMap is a small, extremely lightweight and intuitive ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The Queries are executed against a RDBMS using ADO.NET. The resulting data is automaticaly mapped into Dataobjects/POCO's.
-      The synthax is simple and easy to use and resemles the SQL or LINQ synthax.
-      PersistanceMap is extremely lightweight and leaves no traces in the client code.
-      The current versions only support MSSql Servers.
+PersistanceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
+The simple, straight forward, intuitive and easy to use API helps to quickly setup a connction to a Database.
+PersistanceMap is extremely lightweight and leaves no traces in the client code.
     </description>
     <summary>A etremely lightweight and intuitive ORM framework for .NET</summary>
     <tags>O/RM Persistancy Database Data SqlServer</tags>
