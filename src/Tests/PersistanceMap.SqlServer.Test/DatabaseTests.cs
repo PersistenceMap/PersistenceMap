@@ -3,6 +3,7 @@ using PersistanceMap.Test;
 using PersistanceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,7 @@ namespace PersistanceMap.SqlServer.Test
                     }
                 }
                 catch (SqlException) { }
+                catch (DataException) { }
             }
         }
 
@@ -76,6 +78,10 @@ namespace PersistanceMap.SqlServer.Test
                     }
                 }
                 catch (SqlException e) 
+                {
+                    System.Diagnostics.Trace.WriteLine(e);
+                }
+                catch (DataException e)
                 {
                     System.Diagnostics.Trace.WriteLine(e);
                 }
