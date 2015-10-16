@@ -1,20 +1,31 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using NUnit.Framework;
+using PersistanceMap.Test.LocalDb;
 using PersistanceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace PersistanceMap.Test.Expression
 {
-    [TestFixture]
-    public class DeleteExpressionTests : TestBase
+    //[TestFixture]
+    [TestClass]
+    public class IntegrationTests : TestBase
     {
-        [Test]
-        [Description("A failing delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        public void DeleteEntityWithExpressionKeyThatFails()
+        //[Test]
+        [TestMethod]
+        public void LocalDbTest()
         {
-            Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
+            using (var manager = new LocalDbManager("Northwind"))
+            {
+                var file = new FileInfo(@"AppData\Nothwind.SqlServer.sql");
+
+                //var file = new FileInfo(@" C:\Source\Repos\Educase 2.0 Prototype\Prototypes\Basenet.Education.People\northwind.sql");
+                string script = file.OpenText().ReadToEnd();
+                manager.ExecuteString(script);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace PersistanceMap
             CatalogPatterns = new List<string>
             {
                 "Initial Catalog",
-                "initial iatalog",
+                "initial catalog",
                 "Database",
                 "database",
                 "Data Source",
