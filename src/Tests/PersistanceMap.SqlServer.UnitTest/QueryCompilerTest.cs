@@ -17,7 +17,9 @@ namespace PersistanceMap.SqlServer.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts);
 
-            Assert.IsTrue(query.QueryString.Contains("CREATE DATABASE DbName ON PRIMARY (NAME = N''DbName'', FILENAME = N''' + @device_directory + N'DbName.mdf'') LOG ON (NAME = N''DbName_log'',  FILENAME = N''' + @device_directory + N'DbName.ldf'')"));
+            Assert.IsTrue(query.QueryString.Contains("CREATE DATABASE DbName"));
+            Assert.IsTrue(query.QueryString.Contains("ON PRIMARY (NAME = N''DbName'', FILENAME = N''' + @device_directory + N'DbName.mdf'')"));
+            Assert.IsTrue(query.QueryString.Contains("LOG ON (NAME = N''DbName_log'',  FILENAME = N''' + @device_directory + N'DbName_log.ldf'')"));
         }
 
         [Test]

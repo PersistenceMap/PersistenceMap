@@ -6,25 +6,6 @@
 SET NOCOUNT ON
 GO
 
---USE master
---GO
---if exists (select * from sysdatabases where name='Northwind')
---		drop database Northwind
---go
-
---DECLARE @device_directory NVARCHAR(520)
---SELECT @device_directory = SUBSTRING(filename, 1, CHARINDEX(N'master.mdf', LOWER(filename)) - 1)
---FROM master.dbo.sysaltfiles WHERE dbid = 1 AND fileid = 1
-
---EXECUTE (N'CREATE DATABASE Northwind
---  ON PRIMARY (NAME = N''Northwind'', FILENAME = N''' + @device_directory + N'northwnd.mdf'')
---  LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'northwnd.ldf'')')
---go
-
---exec sp_dboption 'Northwind','trunc. log on chkpt.','true'
---exec sp_dboption 'Northwind','select into/bulkcopy','true'
---GO
-
 set quoted_identifier on
 GO
 

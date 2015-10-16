@@ -12,6 +12,11 @@ namespace PersistanceMap.Test.LocalDb
 {
     public class LocalDbManager : IDisposable
     {
+        //static readonly string _masterDB = @"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True";
+        static readonly string _masterDB = @"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True";
+        //static readonly string _customDB = @"Data Source=(LocalDB)\v11.0;AttachDBFileName={0};Initial Catalog={1};Integrated Security=True;";
+        static readonly string _customDB = @"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName={0};Initial Catalog={1};Integrated Security=True;";
+
         static LocalDbManager()
         {
             DatabaseDirectory = "Data";
@@ -57,11 +62,18 @@ namespace PersistanceMap.Test.LocalDb
 
         public void ExecuteString(string script)
         {
-            var sqlConnection = (SqlConnection)OpenConnection();
+            try
+            {
+                var sqlConnection = (SqlConnection)OpenConnection();
 
-            var server = new Server(new ServerConnection(sqlConnection));
-            server.ConnectionContext.ExecuteNonQuery(script);
-            sqlConnection.Close();
+                var server = new Server(new ServerConnection(sqlConnection));
+                server.ConnectionContext.ExecuteNonQuery(script);
+                sqlConnection.Close();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e.Message);
+            }
         }
 
         private void CreateDatabase()
@@ -78,7 +90,7 @@ namespace PersistanceMap.Test.LocalDb
             }
 
             // If the database does not already exist, create it.
-            var connectionString = string.Format(@"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True");
+            var connectionString = _masterDB;
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -106,7 +118,7 @@ namespace PersistanceMap.Test.LocalDb
             }
 
             // Open newly created, or old database.
-            ConnectionString = string.Format(@"Data Source=(LocalDB)\v11.0;AttachDBFileName={1};Initial Catalog={0};Integrated Security=True;", DatabaseName, DatabaseMdfPath);
+            ConnectionString = string.Format(_customDB, DatabaseMdfPath, DatabaseName);
         }
 
         private void DetachDatabase()
@@ -114,7 +126,7 @@ namespace PersistanceMap.Test.LocalDb
             try
             {
                 // detatch the database
-                var connectionString = string.Format(@"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True");
+                var connectionString = _masterDB;
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -133,7 +145,7 @@ namespace PersistanceMap.Test.LocalDb
                 {
                     // sometimes SqlServer caches the database
                     // try to delete it if it is cached
-                    var connectionString = string.Format(@"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True");
+                    var connectionString = _masterDB;
                     using (var connection = new SqlConnection(connectionString))
                     {
                         connection.Open();

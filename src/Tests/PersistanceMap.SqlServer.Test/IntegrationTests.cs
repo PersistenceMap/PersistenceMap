@@ -17,9 +17,9 @@ namespace PersistanceMap.SqlServer.Test
         {
             _localDbManager = new LocalDbManager("Northwind");
 
-            var file = new FileInfo(@"AppData\Nothwind.SqlServer.sql");
-            string script = file.OpenText().ReadToEnd();
-            _localDbManager.ExecuteString(script);
+            //var file = new FileInfo(@"AppData\Nothwind.SqlServer.sql");
+            //string script = file.OpenText().ReadToEnd();
+            //_localDbManager.ExecuteString(script);
         }
 
         [AssemblyCleanup]
@@ -34,6 +34,10 @@ namespace PersistanceMap.SqlServer.Test
             var provider = new SqlContextProvider(_localDbManager.ConnectionString);
             using (var context = provider.Open())
             {
+                var file = new FileInfo(@"AppData\Nothwind.SqlServer.sql");
+                string script = file.OpenText().ReadToEnd();
+                context.Execute(script);
+
                 var query = context.From<Orders>().Map(o => o.OrdersID).Join<OrderDetails>((d, o) => d.OrdersID == o.OrdersID);
 
                 var sql = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
