@@ -75,7 +75,6 @@
   <ItemGroup>
     <Compile Include="ConverterTests.cs" />
     <Compile Include="DatabaseTests.cs" />
-    <Compile Include="IntegrationTests.cs" />
     <Compile Include="DeleteExpressionTests.cs" />
     <Compile Include="ExecuteTests.cs" />
     <Compile Include="ProcedureTests.cs" />
