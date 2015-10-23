@@ -7,7 +7,7 @@ using PersistanceMap.Test.TableTypes;
 
 namespace PersistanceMap.SqlServer.Test
 {
-    [TestClass]
+    //[TestClass]
     public class IntegrationTests : TestBase
     {
         private static LocalDbManager _localDbManager;

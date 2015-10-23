@@ -12,7 +12,7 @@ namespace PersistanceMap
 
         public static void ArgumentNotNullOrEmpty(this string argument, string name)
         {
-            if (String.IsNullOrEmpty(argument))
+            if (string.IsNullOrEmpty(argument))
                 throw new ArgumentException("Cannot be null or empty", name);
         }
     }

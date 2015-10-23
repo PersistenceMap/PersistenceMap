@@ -67,7 +67,6 @@
     <Compile Include="SqliteConnectionProvider.cs" />
     <Compile Include="SqliteContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqliteContextReader.cs" />
     <Compile Include="SqliteDatabaseContext.cs" />
   </ItemGroup>
   <ItemGroup>

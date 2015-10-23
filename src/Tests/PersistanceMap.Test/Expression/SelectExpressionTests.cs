@@ -645,6 +645,7 @@ namespace PersistanceMap.Test.Expression
         }
 
         [Test]
+        //[Ignore]
         public void SelectWithConstraintInBaseClass()
         {
             var sql = "";

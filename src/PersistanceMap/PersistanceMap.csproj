@@ -70,6 +70,8 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ConnectionProvider.cs" />
+    <Compile Include="ContextProvider.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />

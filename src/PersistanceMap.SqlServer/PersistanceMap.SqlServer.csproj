@@ -46,7 +46,6 @@
     <Compile Include="QueryParts\ProcedureQueryPartsContainer.cs" />
     <Compile Include="SqlConnectionProvider.cs" />
     <Compile Include="SqlContextProvider.cs" />
-    <Compile Include="SqlContextReader.cs" />
     <Compile Include="SqlDatabaseContext.cs" />
     <Compile Include="QueryCompiler.cs" />
   </ItemGroup>
