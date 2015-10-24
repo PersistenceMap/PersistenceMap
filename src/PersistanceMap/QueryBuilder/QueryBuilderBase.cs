@@ -47,7 +47,7 @@ namespace PersistanceMap.QueryBuilder
         }
 
         IQueryPartsContainer _queryParts;
-        public IQueryPartsContainer QueryParts
+        public virtual IQueryPartsContainer QueryParts
         {
             get
             {
