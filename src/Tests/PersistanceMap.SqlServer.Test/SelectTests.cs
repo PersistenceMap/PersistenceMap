@@ -13,10 +13,12 @@ namespace PersistanceMap.Test.Integration
         [Test]
         public void SimpleSelectTest()
         {
-            var dbConnection = new SqlContextProvider(ConnectionString);
-            using (var context = dbConnection.Open())
+            var provider = new SqlContextProvider(ConnectionString);
+            using (var context = provider.Open())
             {
                 var orders = context.Select<Orders>();
+
+                
                 /* *Expected Query*
                 select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
                 FROM Orders

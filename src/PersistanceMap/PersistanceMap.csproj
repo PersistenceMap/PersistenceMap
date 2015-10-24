@@ -101,7 +101,7 @@
     <Compile Include="IDeleteQueryExpression.cs" />
     <Compile Include="IInsertQueryExpression.cs" />
     <Compile Include="Factories\ExpressionFactory.cs" />
-    <Compile Include="Factories\FieldHelper.cs" />
+    <Compile Include="Extensions\LambdaExtensions.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="Configuration\PersistanceMapSection.cs" />
     <Compile Include="QueryBuilder\Commands\MapQueryCommand.cs" />

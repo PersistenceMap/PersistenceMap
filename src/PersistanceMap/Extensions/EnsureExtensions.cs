@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace PersistanceMap
+namespace PersistanceMap.Ensure
 {
-    public static class Ensure
+    public static class EnsureExtensions
     {
         public static void ArgumentNotNull(this object argument, string name)
         {

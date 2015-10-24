@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Factories;
+﻿using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using System;
 using System.Linq.Expressions;
@@ -25,7 +26,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         IGroupQueryExpression<T> IGroupQueryExpression<T>.ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            var field = FieldHelper.TryExtractPropertyName(predicate);
+            var field = predicate.TryExtractPropertyName();
             var part = new DelegateQueryPart(OperationType.ThenBy, () => field);
             QueryParts.Add(part);
 

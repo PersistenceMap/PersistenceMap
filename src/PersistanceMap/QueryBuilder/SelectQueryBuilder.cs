@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using PersistanceMap.Tracing;
+using PersistanceMap.Ensure;
 
 namespace PersistanceMap.QueryBuilder
 {

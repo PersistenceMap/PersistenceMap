@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Factories;
+﻿using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using System;
 using System.Linq;
@@ -30,10 +31,10 @@ namespace PersistanceMap.QueryBuilder
         {
             string aliasField = null;
             if(alias != null)
-                aliasField = FieldHelper.TryExtractPropertyName(alias);
+                aliasField = alias.TryExtractPropertyName();
 
-            var sourceField = FieldHelper.TryExtractPropertyName(source);
-            var sourceType = FieldHelper.TryExtractPropertyType(source);
+            var sourceField = source.TryExtractPropertyName();
+            var sourceType = source.TryExtractPropertyType();
             var entity = typeof(TSource).Name;
 
             return Map(sourceField, aliasField, entity, null, converter, sourceType);

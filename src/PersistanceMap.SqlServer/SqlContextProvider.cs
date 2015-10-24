@@ -1,4 +1,6 @@
-﻿namespace PersistanceMap
+﻿using PersistanceMap.Ensure;
+
+namespace PersistanceMap
 {
     public class SqlContextProvider : ContextProvider, IContextProvider
     {

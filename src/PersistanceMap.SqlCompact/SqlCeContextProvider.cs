@@ -1,4 +1,6 @@
-﻿namespace PersistanceMap
+﻿using PersistanceMap.Ensure;
+
+namespace PersistanceMap
 {
     /// <summary>
     /// Sql Context provider for SQL Server Compact

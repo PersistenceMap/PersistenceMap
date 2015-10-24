@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Factories;
+﻿using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
 using System;
@@ -109,7 +110,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Ignore(Expression<Func<T, object>> field)
         {
-            var memberName = FieldHelper.TryExtractPropertyName(field);
+            var memberName = field.TryExtractPropertyName();
             var part = new DelegateQueryPart(OperationType.IgnoreColumn, () => "", memberName);
             QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
 
@@ -124,7 +125,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Key(Expression<Func<T, object>> key, bool isAutoIncrement = false)
         {
-            var memberName = FieldHelper.TryExtractPropertyName(key);
+            var memberName = key.TryExtractPropertyName();
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 
@@ -150,7 +151,7 @@ namespace PersistanceMap.QueryBuilder
 
             foreach (var key in keyFields)
             {
-                var memberName = FieldHelper.TryExtractPropertyName(key);
+                var memberName = key.TryExtractPropertyName();
 
                 part.Add(new DelegateQueryPart(OperationType.Column, () => memberName, memberName));
             }
@@ -169,8 +170,8 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> ForeignKey<TRef>(Expression<Func<T, object>> field, Expression<Func<TRef, object>> reference)
         {
-            var memberName = FieldHelper.TryExtractPropertyName(field);
-            var referenceName = FieldHelper.TryExtractPropertyName(reference);
+            var memberName = field.TryExtractPropertyName();
+            var referenceName = reference.TryExtractPropertyName();
 
             var part = new ValueCollectionQueryPart(OperationType.ForeignKey, memberName);
             part.AddValue(KeyValuePart.MemberName, memberName);
@@ -191,7 +192,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation = FieldOperation.None, string precision = null, bool? isNullable = null)
         {
-            var memberName = FieldHelper.TryExtractPropertyName(column);
+            var memberName = column.TryExtractPropertyName();
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 

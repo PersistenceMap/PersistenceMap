@@ -1,4 +1,5 @@
-﻿using PersistanceMap.Factories;
+﻿using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using System;
@@ -20,7 +21,7 @@ namespace PersistanceMap.QueryBuilder
                 if (map == null)
                     continue;
 
-                var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+                var fieldName = LambdaExtensions.TryExtractPropertyName(predicate);
 
                 // remove all previous mappings of the ignored field
                 var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
@@ -152,7 +153,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Map<TProp>(Expression<Func<T, TProp>> source, string alias = null, Expression<Func<TProp, object>> converter = null)
         {
-            var sourceField = FieldHelper.TryExtractPropertyName(source);
+            var sourceField = source.TryExtractPropertyName();
             var entity = typeof(T).Name;
 
             return Map(sourceField, alias, entity, null, ConvertExpression(converter), typeof(TProp));
@@ -182,9 +183,9 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Map<TSource, TAlias>(Expression<Func<TSource, object>> source, Expression<Func<TAlias, object>> alias, Expression<Func<object, object>> converter = null)
         {
-            var aliasField = FieldHelper.TryExtractPropertyName(alias);
-            var sourceField = FieldHelper.TryExtractPropertyName(source);
-            var sourceType = FieldHelper.TryExtractPropertyType(source);
+            var aliasField = alias.TryExtractPropertyName();
+            var sourceField = source.TryExtractPropertyName();
+            var sourceType = source.TryExtractPropertyType();
             var entity = typeof(TSource).Name;
 
             return Map(sourceField, aliasField, entity, null, converter, sourceType);
@@ -210,7 +211,7 @@ namespace PersistanceMap.QueryBuilder
             var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
-                var field = FieldHelper.TryExtractPropertyName(predicate);
+                var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
                 var id = alias;
                 var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Max);
@@ -232,7 +233,7 @@ namespace PersistanceMap.QueryBuilder
             var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
-                var field = FieldHelper.TryExtractPropertyName(predicate);
+                var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
                 var id = alias;
                 var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Min);
@@ -254,7 +255,7 @@ namespace PersistanceMap.QueryBuilder
             var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
-                var field = FieldHelper.TryExtractPropertyName(predicate);
+                var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
                 //var id = Guid.NewGuid().ToString();
                 var id = alias;
@@ -383,7 +384,7 @@ namespace PersistanceMap.QueryBuilder
         public IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate)
         {
             //TODO: add table name?
-            var field = FieldHelper.TryExtractPropertyName(predicate);
+            var field = predicate.TryExtractPropertyName();
             var part = new DelegateQueryPart(OperationType.GroupBy, () => field);
             QueryParts.Add(part);
 

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using PersistanceMap.Tracing;
+using PersistanceMap.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -66,7 +67,7 @@ namespace PersistanceMap.QueryBuilder
             var insert = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Insert);
             var value = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Values);
 
-            var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+            var fieldName = predicate.TryExtractPropertyName();
 
             RemovePartByID(insert, fieldName);
             RemovePartByID(value, fieldName);
