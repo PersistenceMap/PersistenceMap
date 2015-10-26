@@ -46,6 +46,11 @@ namespace PersistanceMap
             return _interceptors.Add(new Interceptor<T>());
         }
 
+        public IInterceptor<T> Interceptor<T>(Func<T> anonymObject)
+        {
+            return _interceptors.Add(new Interceptor<T>());
+        }
+
         #region IDisposeable Implementation
 
         /// <summary>

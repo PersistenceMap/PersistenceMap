@@ -24,18 +24,20 @@ namespace PersistanceMap.Test
             return new DatabaseContext(ConnectionProvider, new LoggerFactory(), Interceptors);
         }
 
-        public class MockedConnectionProvider : IConnectionProvider
+        public class MockedConnectionProvider : ConnectionProvider, IConnectionProvider
         {
             private readonly Action<string> _onExecute;
             private bool _callbackCalled = false;
 
             public MockedConnectionProvider()
+                : base(null, null)
             {
                 CheckCallbackCall = true;
                 QueryCompiler = new QueryCompiler();
             }
 
             public MockedConnectionProvider(Action<string> onExecute)
+                : base(null, null)
             {
                 CheckCallbackCall = true;
                 QueryCompiler = new QueryCompiler();
@@ -44,19 +46,15 @@ namespace PersistanceMap.Test
             }
 
             public bool CheckCallbackCall { get; set; }
-
-            public string Database { get; set; }
-
-            public virtual IQueryCompiler QueryCompiler { get; private set; }
-
-            public IReaderContext Execute(string query)
+            
+            public override IReaderContext Execute(string query)
             {
                 ExecuteNonQuery(query);
 
                 return new MockedReaderContext();
             }
 
-            public void ExecuteNonQuery(string query)
+            public override void ExecuteNonQuery(string query)
             {
                 if (_onExecute != null)
                 {

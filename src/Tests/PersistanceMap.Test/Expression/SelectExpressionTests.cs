@@ -178,8 +178,14 @@ namespace PersistanceMap.Test.Expression
         public void SelectAnonymObjectTypeDefiniton()
         {
             var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+            var type = new
+            {
+                ProductID = 0,
+                Quantity = 0.0
+            };
 
-            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider();
+            provider.Interceptor(() => type).BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), expected));
             using (var context = provider.Open())
             {
                 context.From<Orders>()

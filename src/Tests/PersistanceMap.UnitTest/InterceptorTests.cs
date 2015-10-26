@@ -6,7 +6,7 @@ namespace PersistanceMap.UnitTest
     public class InterceptorTests
     {
         [Test]
-        public void AddInterceptorTest()
+        public void Interceptor_AddInterceptorTest()
         {
             var collection = new InterceptorCollection();
             var orig = new Interceptor<Order>();
@@ -18,7 +18,7 @@ namespace PersistanceMap.UnitTest
         }
 
         [Test]
-        public void AddInterceptorTwiceTest()
+        public void Interceptor_AddInterceptorTwiceTest()
         {
             var collection = new InterceptorCollection();
             var orig = new Interceptor<Order>();
@@ -27,8 +27,6 @@ namespace PersistanceMap.UnitTest
 
             Assert.AreNotSame(orig, second);
         }
-
-
 
         private class Order
         {
