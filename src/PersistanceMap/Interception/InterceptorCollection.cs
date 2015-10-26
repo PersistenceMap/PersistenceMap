@@ -26,15 +26,15 @@ namespace PersistanceMap
             return interceptor;
         }
 
-        public IInterceptor<T> GetInterceptor<T>()
+        public IInterceptionExecution<T> GetInterceptor<T>()
         {
             var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            return item != null ? item.Interceptor as IInterceptor<T> : null;
+            return item != null ? item.Interceptor as IInterceptionExecution<T> : null;
         }
 
-        public IEnumerable<IInterceptor<T>> GetInterceptors<T>()
+        public IEnumerable<IInterceptionExecution<T>> GetInterceptors<T>()
         {
-            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptor<T>);
+            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptionExecution<T>);
         }
 
         /// <summary>

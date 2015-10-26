@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PersistanceMap
 {
-    public class Interceptor<T> : IInterceptor<T>
+    public class Interceptor<T> : IInterceptor<T>, IInterceptionExecution<T>
     {
         private Action<CompiledQuery> _beforeExecute;
         private Func<CompiledQuery, IEnumerable<T>> _execute;
@@ -23,7 +23,7 @@ namespace PersistanceMap
             return this;
         }
 
-        public void BeforeExecute(CompiledQuery query)
+        public void OnBeforeExecute(CompiledQuery query)
         {
             if (_beforeExecute == null)
                 return;
@@ -31,7 +31,7 @@ namespace PersistanceMap
             _beforeExecute.Invoke(query);
         }
 
-        public IEnumerable<T> Execute(CompiledQuery query)
+        public IEnumerable<T> OnExecute(CompiledQuery query)
         {
             if (_execute == null)
                 return null;

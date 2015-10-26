@@ -4,7 +4,7 @@ namespace PersistanceMap
 {
     internal class InterceptorItem
     {
-        public InterceptorItem(Type key, IInterceptorBase interceptor)
+        public InterceptorItem(Type key, IInterceptor interceptor)
         {
             Key = key;
             Interceptor = interceptor;
@@ -12,6 +12,6 @@ namespace PersistanceMap
 
         public Type Key { get; private set; }
 
-        public IInterceptorBase Interceptor { get; private set; }
+        public IInterceptor Interceptor { get; private set; }
     }
 }

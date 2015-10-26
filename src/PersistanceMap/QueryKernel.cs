@@ -69,9 +69,9 @@ namespace PersistanceMap
             var interceptors = _interceptors.GetInterceptors<T>();
             foreach(var interceptor in interceptors)
             {
-                interceptor.BeforeExecute(compiledQuery);
+                interceptor.OnBeforeExecute(compiledQuery);
 
-                var items = interceptor.Execute(compiledQuery);
+                var items = interceptor.OnExecute(compiledQuery);
                 if (items != null)
                 {
                     return items;
