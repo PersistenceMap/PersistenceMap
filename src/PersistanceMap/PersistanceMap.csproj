@@ -70,7 +70,9 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ConnectionProvider.cs" />
     <Compile Include="ContextProvider.cs" />
+    <Compile Include="DatabaseContext.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
@@ -104,7 +106,7 @@
     <Compile Include="IDeleteQueryExpression.cs" />
     <Compile Include="IInsertQueryExpression.cs" />
     <Compile Include="Factories\ExpressionFactory.cs" />
-    <Compile Include="Factories\FieldHelper.cs" />
+    <Compile Include="Extensions\LambdaExtensions.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="Configuration\PersistanceMapSection.cs" />
     <Compile Include="QueryBuilder\Commands\MapQueryCommand.cs" />
@@ -112,7 +114,7 @@
     <Compile Include="IQueryCommand.cs" />
     <Compile Include="QueryBuilder\DeleteQueryBuilder.cs" />
     <Compile Include="QueryBuilder\InsertQueryBuilder.cs" />
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Group.cs">
+    <Compile Include="QueryBuilder\GroupQueryBuilder.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
@@ -139,7 +141,7 @@
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="QueryCompiler.cs" />
     <Compile Include="QueryParts\QueryPartsContainer.cs" />
-    <Compile Include="QueryBuilder\SelectQueryBuilder.AfterMap.cs">
+    <Compile Include="QueryBuilder\AfterMapQueryBuilder.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
     <Compile Include="QueryBuilder\SelectQueryBuilder.cs" />
@@ -150,22 +152,21 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="IDatabaseContext.cs" />
-    <Compile Include="DatabaseContext.cs" />
     <Compile Include="QueryParts\IQueryPart.cs" />
     <Compile Include="QueryParts\FieldQueryPart.cs" />
     <Compile Include="QueryParts\SelectQueryPartsContainer.cs" />
     <Compile Include="ISelectQueryExpression.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Join.cs">
+    <Compile Include="QueryBuilder\JoinQueryBuilder.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Order.cs">
+    <Compile Include="QueryBuilder\OrderQueryBuilder.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Select.cs">
+    <Compile Include="QueryBuilder\SelectQueryBuilderBase.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="QueryBuilder\SelectQueryBuilder.Where.cs">
+    <Compile Include="QueryBuilder\WhereQueryBuilder.cs">
       <DependentUpon>SelectQueryBuilder.cs</DependentUpon>
     </Compile>
     <Compile Include="FieldDefinition.cs" />
@@ -180,7 +181,9 @@
       <Link>Properties\PersistanceMap.snk</Link>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Base\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

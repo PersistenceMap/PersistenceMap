@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace PersistanceMap
+namespace PersistanceMap.Ensure
 {
-    public static class Ensure
+    public static class EnsureExtensions
     {
         public static void ArgumentNotNull(this object argument, string name)
         {
@@ -12,7 +12,7 @@ namespace PersistanceMap
 
         public static void ArgumentNotNullOrEmpty(this string argument, string name)
         {
-            if (String.IsNullOrEmpty(argument))
+            if (string.IsNullOrEmpty(argument))
                 throw new ArgumentException("Cannot be null or empty", name);
         }
     }

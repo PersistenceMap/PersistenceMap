@@ -2,23 +2,26 @@
 
 namespace PersistanceMap
 {
-    public class ContextProvider : IContextProvider
+    /// <summary>
+    /// Base class for the Contextprovider
+    /// Implementations have to be specific for the desired SQL Provider
+    /// </summary>
+    public abstract class ContextProvider : IContextProvider
     {
         private readonly InterceptorCollection _interceptors = new InterceptorCollection();
 
         public ContextProvider(IConnectionProvider connectionProvider)
         {
             ConnectionProvider = connectionProvider;
-            Settings = new Settings();
         }
 
         /// <summary>
         /// The settings for the context
         /// </summary>
-        public Settings Settings { get; private set; }
+        public Settings Settings { get; protected set; }
 
         /// <summary>
-        /// The connection to a Sql Server database
+        /// The connection to a SqlCe database
         /// </summary>
         public IConnectionProvider ConnectionProvider { get; protected set; }
 

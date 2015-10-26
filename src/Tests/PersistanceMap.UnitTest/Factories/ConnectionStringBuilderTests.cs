@@ -23,15 +23,15 @@ namespace PersistanceMap.UnitTest.Factories
             database = builder.GetDatabase(connectionString);
             Assert.AreEqual(database, "WarriorDB");
 
-            connectionString = "data source=.;initial iatalog =WarriorDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog =WarriorDB;persist security info=False;user id=sa";
             database = builder.GetDatabase(connectionString);
             Assert.AreEqual(database, "WarriorDB");
 
-            connectionString = "data source=.;initial iatalog=WarriorDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog=WarriorDB;persist security info=False;user id=sa";
             database = builder.GetDatabase(connectionString);
             Assert.AreEqual(database, "WarriorDB");
 
-            connectionString = "data source=.;initial iatalog= WarriorDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog= WarriorDB;persist security info=False;user id=sa";
             database = builder.GetDatabase(connectionString);
             Assert.AreEqual(database, "WarriorDB");
         }
@@ -109,17 +109,17 @@ namespace PersistanceMap.UnitTest.Factories
             connectionString = builder.SetDatabase("WarriorDB", connectionString);
             Assert.AreEqual(connectionString, "data source=.;Initial Catalog=WarriorDB;persist security info=False;user id=sa");
 
-            connectionString = "data source=.;initial iatalog =TempDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog=TempDB;persist security info=False;user id=sa";
             connectionString = builder.SetDatabase("WarriorDB", connectionString);
-            Assert.AreEqual(connectionString, "data source=.;initial iatalog=WarriorDB;persist security info=False;user id=sa");
+            Assert.AreEqual(connectionString, "data source=.;initial catalog=WarriorDB;persist security info=False;user id=sa");
 
-            connectionString = "data source=.;initial iatalog=TempDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog=TempDB;persist security info=False;user id=sa";
             connectionString = builder.SetDatabase("WarriorDB", connectionString);
-            Assert.AreEqual(connectionString, "data source=.;initial iatalog=WarriorDB;persist security info=False;user id=sa");
+            Assert.AreEqual(connectionString, "data source=.;initial catalog=WarriorDB;persist security info=False;user id=sa");
 
-            connectionString = "data source=.;initial iatalog= TempDB;persist security info=False;user id=sa";
+            connectionString = "data source=.;initial catalog= TempDB;persist security info=False;user id=sa";
             connectionString = builder.SetDatabase("WarriorDB", connectionString);
-            Assert.AreEqual(connectionString, "data source=.;initial iatalog=WarriorDB;persist security info=False;user id=sa");
+            Assert.AreEqual(connectionString, "data source=.;initial catalog=WarriorDB;persist security info=False;user id=sa");
         }
 
         [Test]

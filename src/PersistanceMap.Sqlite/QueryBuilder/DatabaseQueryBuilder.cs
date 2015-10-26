@@ -2,6 +2,7 @@
 using PersistanceMap.QueryBuilder;
 using PersistanceMap.QueryBuilder.Commands;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Expressions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -156,7 +157,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// <returns></returns>
         public override PersistanceMap.ITableQueryExpression<T> Column(Expression<Func<T, object>> column, FieldOperation operation = FieldOperation.None, string precision = null, bool? isNullable = null)
         {
-            var memberName = FieldHelper.TryExtractPropertyName(column);
+            var memberName = column.TryExtractPropertyName();
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>();
             var field = fields.FirstOrDefault(f => f.MemberName == memberName);
 

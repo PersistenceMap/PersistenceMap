@@ -1,15 +1,15 @@
-﻿using System;
+﻿using PersistanceMap.Ensure;
 
 namespace PersistanceMap
 {
     public class SqliteContextProvider : ContextProvider, IContextProvider
     {
-        public SqliteContextProvider(string connectionstring):base(new SqliteConnectionProvider(connectionstring))
+        public SqliteContextProvider(string connectionstring)
+            : base(new SqliteConnectionProvider(connectionstring))
         {
-            if (string.IsNullOrEmpty(connectionstring))
-            {
-                throw new ArgumentNullException("connectionstring");
-            }
+            connectionstring.ArgumentNotNullOrEmpty("connectionstring");
+
+            Settings = new Settings();
         }
 
         /// <summary>

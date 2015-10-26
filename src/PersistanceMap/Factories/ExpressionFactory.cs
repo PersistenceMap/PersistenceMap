@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistanceMap.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -85,7 +86,7 @@ namespace PersistanceMap.Factories
 
             // x => (x.Property == value)
             // Create an expression tree that represents the expression 'x.Property == value'.
-            var left = Expression.Property(pe, FieldHelper.TryExtractPropertyName(key));
+            var left = Expression.Property(pe, key.TryExtractPropertyName());
             var right = Expression.Constant(value);
             var e1 = Expression.Equal(left, right);
 

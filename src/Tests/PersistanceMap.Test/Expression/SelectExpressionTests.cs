@@ -650,6 +650,7 @@ namespace PersistanceMap.Test.Expression
         }
 
         [Test]
+        [NUnit.Framework.Ignore("Not jet implemented")]
         public void SelectWithConstraintInBaseClass()
         {
             var sql = "";

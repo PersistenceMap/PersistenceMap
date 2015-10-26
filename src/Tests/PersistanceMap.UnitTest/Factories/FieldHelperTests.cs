@@ -1,12 +1,8 @@
 ﻿using System.Linq.Expressions;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PersistanceMap.UnitTest.TableTypes;
-using PersistanceMap.Factories;
+using PersistanceMap.Expressions;
 
 namespace PersistanceMap.UnitTest.Factories
 {
@@ -19,7 +15,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, object>> unaryObject = w => w.ID;
             
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(unaryObject);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(unaryObject);
 
             Assert.AreEqual(propertyName, "ID");
         }
@@ -30,7 +26,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, int>> memberInt = w => w.ID;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(memberInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(memberInt);
 
             Assert.AreEqual(propertyName, "ID");
         }
@@ -41,7 +37,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => w.ID == 1;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "ID");
         }
@@ -52,7 +48,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == w.ID;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "ID");
         }
@@ -63,7 +59,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == 1;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "w => True");
             }
@@ -74,7 +70,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => true;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "w => True");
         }
@@ -85,7 +81,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => 5;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "5");
         }
@@ -96,7 +92,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<WithStaticProperty, int>> binaryInt = w => WithStaticProperty.ID;
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "ID");
         }
@@ -107,7 +103,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => MethodWithReturnValue();
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "5");
         }
@@ -118,7 +114,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => MethodWithReturnValueAndParameter(5);
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "5");
         }
@@ -130,7 +126,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => MethodWithReturnValueAndParameter(id);
 
             // Act
-            var propertyName = FieldHelper.TryExtractPropertyName(binaryInt);
+            var propertyName = LambdaExtensions.TryExtractPropertyName(binaryInt);
 
             Assert.AreEqual(propertyName, "5");
         }
@@ -144,7 +140,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, object>> unaryObject = w => w.ID;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(unaryObject);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(unaryObject);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -155,7 +151,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, int>> memberInt = w => w.ID;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(memberInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(memberInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -166,7 +162,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => w.ID == 1;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -177,7 +173,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == w.ID;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -188,7 +184,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == 1;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(bool));
         }
@@ -199,7 +195,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<Warrior, bool>> binaryInt = w => true;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(bool));
         }
@@ -210,7 +206,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => 5;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -221,7 +217,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<WithStaticProperty, int>> binaryInt = w => WithStaticProperty.ID;
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -232,7 +228,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => MethodWithReturnValue();
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }
@@ -243,7 +239,7 @@ namespace PersistanceMap.UnitTest.Factories
             Expression<Func<int>> binaryInt = () => MethodWithReturnValueAndParameter(5);
 
             // Act
-            var propertyType = FieldHelper.TryExtractPropertyType(binaryInt);
+            var propertyType = LambdaExtensions.TryExtractPropertyType(binaryInt);
 
             Assert.AreEqual(propertyType, typeof(int));
         }

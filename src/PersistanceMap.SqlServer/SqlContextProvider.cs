@@ -1,4 +1,4 @@
-﻿using System;
+﻿using PersistanceMap.Ensure;
 
 namespace PersistanceMap
 {
@@ -7,7 +7,9 @@ namespace PersistanceMap
         public SqlContextProvider(string connectionstring)
             : base(new SqlConnectionProvider(connectionstring))
         {
-            connectionstring.ArgumentNotNullOrEmpty(connectionstring);
+            connectionstring.ArgumentNotNullOrEmpty("connectionstring");
+
+            Settings = new Settings();
         }
 
         /// <summary>

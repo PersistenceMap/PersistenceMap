@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using PersistanceMap.Tracing;
+using PersistanceMap.Expressions;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -65,7 +66,7 @@ namespace PersistanceMap.QueryBuilder
         {
             var set = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Update) as IItemsQueryPart;
 
-            var fieldName = FieldHelper.TryExtractPropertyName(predicate);
+            var fieldName = predicate.TryExtractPropertyName();
 
             RemovePartByID(set, fieldName);
 
@@ -92,7 +93,7 @@ namespace PersistanceMap.QueryBuilder
             var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
             QueryParts.Add(updatePart);
 
-            var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
+            var keyName = whereexpr.TryExtractPropertyName();
 
             var dataObject = dataPredicate.Compile().Invoke();
 
@@ -136,7 +137,7 @@ namespace PersistanceMap.QueryBuilder
             var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
             QueryParts.Add(updatePart);
             
-            var keyName = FieldHelper.TryExtractPropertyName(whereexpr);
+            var keyName = whereexpr.TryExtractPropertyName();
 
             var dataObject = anonym.Compile().Invoke();
 

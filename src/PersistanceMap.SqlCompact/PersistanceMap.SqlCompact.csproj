@@ -64,7 +64,6 @@
     <Compile Include="SqlCeConnectionProvider.cs" />
     <Compile Include="SqlCeContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlCeContextReader.cs" />
     <Compile Include="SqlCeDatabaseContext.cs" />
   </ItemGroup>
   <ItemGroup>

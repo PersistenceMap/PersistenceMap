@@ -4,13 +4,23 @@ using System.Data;
 namespace PersistanceMap
 {
     /// <summary>
-    /// Base class providing common implementation for IReaderContext
+    /// Class providing common implementation for IReaderContext
     /// </summary>
     public class ReaderContext : IReaderContext
     {
+        readonly IDbConnection _connection;
+        readonly IDbCommand _command;
+
         public ReaderContext(IDataReader reader)
+            : this(reader, null, null)
+        {
+        }
+
+        public ReaderContext(IDataReader reader, IDbConnection connection, IDbCommand command)
         {
             DataReader = reader;
+            _connection = connection;
+            _command = command;
         }
 
         /// <summary>
@@ -23,6 +33,20 @@ namespace PersistanceMap
         /// </summary>
         public virtual void Close()
         {
+            if (DataReader != null)
+            {
+                DataReader.Close();
+            }
+
+            if (_connection != null)
+            {
+                _connection.Close();
+            }
+
+            if (_command != null)
+            {
+                _command.Dispose();
+            }
         }
 
         #region IDisposeable Implementation

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using PersistanceMap.Ensure;
 
 namespace PersistanceMap
 {
@@ -10,10 +10,9 @@ namespace PersistanceMap
         public SqlCeContextProvider(string connectionstring)
             : base(new SqlCeConnectionProvider(connectionstring))
         {
-            if (string.IsNullOrEmpty(connectionstring))
-            {
-                throw new ArgumentNullException("connectionstring");
-            }
+            connectionstring.ArgumentNotNullOrEmpty("connectionstring");
+
+            Settings = new Settings();
         }
 
         /// <summary>

@@ -1,13 +1,13 @@
-﻿using PersistanceMap.Factories;
+﻿using PersistanceMap.Ensure;
+using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Sql;
 using PersistanceMap.Tracing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -300,7 +300,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryExpression Map<T, TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null)
         {
-            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var aliasField = alias.TryExtractPropertyName();
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
@@ -402,7 +402,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns>IProcedureQueryProvider</returns>
         public IProcedureQueryExpression<T> Map<TOut>(string source, Expression<Func<T, TOut>> alias, Expression<Func<object, object>> converter = null)
         {
-            var aliasField = FieldHelper.TryExtractPropertyName(alias);
+            var aliasField = alias.TryExtractPropertyName();
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
@@ -418,22 +418,8 @@ namespace PersistanceMap.QueryBuilder
 
         public IProcedureQueryExpression<T> Ignore(Expression<Func<T, object>> member)
         {
-            var fieldName = FieldHelper.TryExtractPropertyName(member);
-
-            //foreach (var part in QueryParts.Parts)
-            //{
-            //    var map = part as IItemsQueryPart;
-            //    if (map == null)
-            //        continue;
-
-            //    // remove all previous mappings of the ignored field
-            //    var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
-            //    foreach (var subpart in subparts.ToList())
-            //    {
-            //        map.Remove(subpart);
-            //    }
-            //}
-
+            var fieldName = member.TryExtractPropertyName();
+            
             // add a field marked as ignored
             QueryParts.Add(new FieldQueryPart(fieldName, fieldName, operation: OperationType.IgnoreColumn));
 

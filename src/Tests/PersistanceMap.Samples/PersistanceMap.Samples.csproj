@@ -84,6 +84,10 @@
       <Project>{1a648c38-3ad8-4c05-90b8-4c40d1f7cfa2}</Project>
       <Name>PersistanceMap.Sqlite</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\PersistanceMap.SqlServer\PersistanceMap.SqlServer.csproj">
+      <Project>{1f243279-fc68-4237-9d18-f5850429c568}</Project>
+      <Name>PersistanceMap.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PersistanceMap\PersistanceMap.csproj">
       <Project>{4160375c-5e51-484f-b07b-85a5eb9169f8}</Project>
       <Name>PersistanceMap</Name>
