@@ -1,6 +1,4 @@
-﻿using PersistanceMap.QueryBuilder;
-using System.Text;
-
+﻿
 namespace PersistanceMap.QueryParts
 {
     public class SelectQueryPartsContainer : QueryPartsContainer, IQueryPartsContainer

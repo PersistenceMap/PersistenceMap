@@ -304,7 +304,7 @@ namespace PersistanceMap.QueryBuilder
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, converter)
+            var field = new FieldQueryPart(source, aliasField, null, entity, null, aliasField ?? source, converter)
             {
                 OperationType = OperationType.IncludeMember
             };
@@ -406,7 +406,7 @@ namespace PersistanceMap.QueryBuilder
 
             // create a new expression that returns the field with a alias
             var entity = typeof(T).Name;
-            var field = new FieldQueryPart(source, aliasField, null /*EntityAlias*/, entity/*, expression*/, aliasField ?? source, converter)
+            var field = new FieldQueryPart(source, aliasField, null, entity, null, aliasField ?? source, converter)
             {
                 OperationType = OperationType.IncludeMember
             };
@@ -421,7 +421,7 @@ namespace PersistanceMap.QueryBuilder
             var fieldName = member.TryExtractPropertyName();
             
             // add a field marked as ignored
-            QueryParts.Add(new FieldQueryPart(fieldName, fieldName, operation: OperationType.IgnoreColumn));
+            QueryParts.Add(new FieldQueryPart(fieldName, fieldName, operation: OperationType.IgnoreColumn, entityType: typeof(T)));
 
             return new ProcedureQueryProvider<T>(Context, QueryParts);
         }
@@ -436,11 +436,12 @@ namespace PersistanceMap.QueryBuilder
 
             foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
             {
-                var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
+                var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
                 if (field == null)
+                {
                     continue;
+                }
 
-                //field.MemberName = map.FieldAlias;
                 field.FieldName = map.Field;
                 if (map.Converter != null)
                 {
@@ -451,9 +452,11 @@ namespace PersistanceMap.QueryBuilder
             // remove ignore fields
             foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IgnoreColumn))
             {
-                var field = fields.FirstOrDefault(f => f.FieldName == /*map.Field*/map.FieldAlias);
+                var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
                 if (field == null)
+                {
                     continue;
+                }
 
                 fields.Remove(field);
             }
@@ -480,7 +483,9 @@ namespace PersistanceMap.QueryBuilder
             {
                 var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
                 if (field == null)
+                {
                     continue;
+                }
 
                 field.MemberName = map.FieldAlias;
                 if (map.Converter != null)
@@ -494,7 +499,9 @@ namespace PersistanceMap.QueryBuilder
             {
                 var tmp = mapfields.FirstOrDefault(f => f.FieldName == field.FieldName);
                 if (tmp == null)
+                {
                     continue;
+                }
 
                 field.MemberName = tmp.MemberName;
                 fields.Add(field);

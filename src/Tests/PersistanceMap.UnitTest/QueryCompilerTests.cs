@@ -29,7 +29,7 @@ namespace PersistanceMap.UnitTest
         public void QueryCompilerCompileSelectTest()
         {
             var parts = new QueryPartsContainer();
-            parts.Add(new QueryPart(OperationType.Select));
+            parts.Add(new QueryPart(OperationType.Select, null));
 
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts);
@@ -460,7 +460,7 @@ namespace PersistanceMap.UnitTest
         [Test]
         public void QueryCompilerCompileValuesTest()
         {
-            var part = new QueryPart(OperationType.Values);
+            var part = new QueryPart(OperationType.Values, null);
             var parts = new QueryPartsContainer();
             parts.Add(part);
 

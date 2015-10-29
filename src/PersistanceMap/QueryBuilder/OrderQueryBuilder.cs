@@ -26,7 +26,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenBy(Expression<Func<T, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T>(Context, QueryParts);
@@ -40,7 +40,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate));
+            var part = new DelegateQueryPart(OperationType.ThenByAsc, () => LambdaToSqlCompiler.Compile(predicate), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T>(Context, QueryParts);
@@ -53,7 +53,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc(Expression<Func<T, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => LambdaToSqlCompiler.Compile(predicate));
+            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => LambdaToSqlCompiler.Compile(predicate), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T>(Context, QueryParts);
@@ -67,7 +67,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T> ThenByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => LambdaToSqlCompiler.Compile(predicate));
+            var part = new DelegateQueryPart(OperationType.ThenByDesc, () => LambdaToSqlCompiler.Compile(predicate), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T>(Context, QueryParts);

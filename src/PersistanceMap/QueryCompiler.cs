@@ -155,10 +155,13 @@ namespace PersistanceMap
         /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
         /// <param name="container">The container containing all queryparts to compile to sql</param>
+        /// <param name="interceptorColelction">The collection of interceptors</param>
         /// <returns>The Compiled query</returns>
-        public virtual CompiledQuery Compile(IQueryPartsContainer container)
+        public virtual CompiledQuery Compile(IQueryPartsContainer container/*, InterceptorCollection interceptorColelction*/)
         {
             _compiledParts = new HashSet<IQueryPart>();
+
+            //var interceptos = interceptorColelction.GetInterceptors(container.AggregatePart.
 
             using (var writer = new StringWriter())
             {

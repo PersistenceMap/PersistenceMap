@@ -1,8 +1,6 @@
-﻿using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryParts;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {
@@ -51,7 +49,9 @@ namespace PersistanceMap
         /// The list of queryparts in the container
         /// </summary>
         IEnumerable<IQueryPart> Parts { get; }
-        
+
+        IQueryPart AggregatePart { get; }
+
         bool IsSealed { get; }
     }
 }

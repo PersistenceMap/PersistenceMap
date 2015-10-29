@@ -8,6 +8,16 @@ namespace PersistanceMap
     {
         private Action<CompiledQuery> _beforeExecute;
         private Func<CompiledQuery, IEnumerable<T>> _execute;
+        private Action<IQueryPartsContainer> _beforeCompile;
+
+        public IInterceptor<T> BeforeCompile(Action<IQueryPartsContainer> container)
+        {
+            System.Diagnostics.Debug.Assert(false);
+
+            _beforeCompile = container;
+
+            return this;
+        }
 
         public IInterceptor<T> BeforeExecute(Action<CompiledQuery> query)
         {

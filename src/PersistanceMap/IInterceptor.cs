@@ -10,6 +10,8 @@ namespace PersistanceMap
 
     public interface IInterceptor<T> : IInterceptor
     {
+        IInterceptor<T> BeforeCompile(Action<IQueryPartsContainer> container);
+
         IInterceptor<T> BeforeExecute(Action<CompiledQuery> query);
 
         IInterceptor<T> Execute(Func<CompiledQuery, IEnumerable<T>> query);

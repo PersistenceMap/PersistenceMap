@@ -59,6 +59,33 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
+        public void InterceptorBeforeCompileTest()
+        {
+            string beforeExecute = null;
+            var ordersList = new List<Order>
+            {
+                new Order
+                {
+                    OrdersID = 21
+                }
+            };
+
+            var provider = new SqlContextProvider("Not a valid connectionstring");
+            provider.Interceptor<Order>().BeforeCompile(cq =>
+            {
+                var part = cq.Parts.FirstOrDefault(p => p.OperationType == OperationType.Select && p.ID == "");
+                Assert.Fail();
+            });
+
+            using (var context = provider.Open())
+            {
+                var orders = context.Select<Order>();
+
+                Assert.Fail();
+            }
+        }
+
+        [Test]
         public void InterceptorWithExecuteTest()
         {
             string beforeExecute = null;

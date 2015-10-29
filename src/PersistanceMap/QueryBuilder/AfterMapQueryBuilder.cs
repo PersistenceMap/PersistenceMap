@@ -42,7 +42,7 @@ namespace PersistanceMap.QueryBuilder
                 }
 
                 // add a field marked as ignored
-                map.Add(new IgnoreFieldQueryPart(fieldName, string.Empty));
+                map.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
             }
 
             return new AfterMapQueryBuilder<T>(Context, QueryParts);
@@ -89,7 +89,7 @@ namespace PersistanceMap.QueryBuilder
                     parent.Remove(duplicate);
             }
 
-            var part = new FieldQueryPart(source, alias, entityalias, entity, alias ?? source, converter)
+            var part = new FieldQueryPart(source, alias, entityalias, entity, typeof(T), alias ?? source, converter)
             {
                 FieldType = fieldType,
                 OperationType = OperationType.Include
@@ -124,9 +124,9 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            //TODO: add table name?
+            // TODO: add table name?
             var field = predicate.TryExtractPropertyName();
-            var part = new DelegateQueryPart(OperationType.GroupBy, () => field);
+            var part = new DelegateQueryPart(OperationType.GroupBy, () => field, typeof(T));
             QueryParts.Add(part);
 
             return new GroupQueryBuilder<T>(Context, QueryParts);
@@ -154,8 +154,8 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            //TODO: add table name?
-            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
+            // TODO: add table name?
+            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString(), typeof(T2));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T2>(Context, QueryParts);

@@ -13,6 +13,9 @@ namespace PersistanceMap.QueryBuilder.Commands
         public void Execute(IDatabaseContext context)
         {
             var expr = context.ConnectionProvider.QueryCompiler;
+
+            //context
+
             var query = expr.Compile(QueryParts);
             context.Kernel.Execute(query);
         }

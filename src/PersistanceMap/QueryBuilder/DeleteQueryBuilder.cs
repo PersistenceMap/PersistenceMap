@@ -61,7 +61,7 @@ namespace PersistanceMap.QueryBuilder
         
         public IDeleteQueryExpression Delete<T>()
         {
-            var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name);
+            var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name, typeof(T));
             QueryParts.Add(entityPart);
 
             return new DeleteQueryBuilder(Context, QueryParts);
@@ -74,10 +74,10 @@ namespace PersistanceMap.QueryBuilder
         /// <param name="where">The expression defining the where statement</param>
         public IDeleteQueryExpression Delete<T>(Expression<Func<T, bool>> where)
         {
-            var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name);
+            var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name, typeof(T));
             QueryParts.Add(entityPart);
 
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(where).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(where), typeof(T));
             QueryParts.Add(part);
 
             return new DeleteQueryBuilder(Context, QueryParts);
@@ -101,10 +101,10 @@ namespace PersistanceMap.QueryBuilder
                     whereexpr = ExpressionFactory.CreateEqualityExpression(dataObject);
                 }
 
-                var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name);
+                var entityPart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name, typeof(T));
                 QueryParts.Add(entityPart);
 
-                var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());
+                var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr), typeof(T));
                 QueryParts.Add(part);
 
                 return new DeleteQueryBuilder(Context, QueryParts);
@@ -130,7 +130,7 @@ namespace PersistanceMap.QueryBuilder
             var anonymFields = TypeDefinitionFactory.GetFieldDefinitions(obj);
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
 
-            var deletePart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name);
+            var deletePart = new DelegateQueryPart(OperationType.Delete, () => typeof(T).Name, typeof(T));
             QueryParts.Add(deletePart);
 
             // create expressions of all properties and theyr values
@@ -139,8 +139,10 @@ namespace PersistanceMap.QueryBuilder
             var first = expressions.FirstOrDefault();
             foreach (var expr in expressions)
             {
+                var tmpExpr = expr;
+
                 // add all expressions to the queryexpression
-                var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => LambdaToSqlCompiler.Compile(expr).ToString());
+                var part = new DelegateQueryPart(first == expr ? OperationType.Where : OperationType.And, () => LambdaToSqlCompiler.Compile(tmpExpr), typeof(T));
                 QueryParts.Add(part);
             }
 

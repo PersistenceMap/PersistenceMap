@@ -1,11 +1,11 @@
-﻿using PersistanceMap.Factories;
-using PersistanceMap.QueryParts;
-using PersistanceMap.Sql;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using PersistanceMap.Tracing;
 using PersistanceMap.Expressions;
+using PersistanceMap.Factories;
+using PersistanceMap.QueryParts;
+using PersistanceMap.Sql;
+using PersistanceMap.Tracing;
 
 namespace PersistanceMap.QueryBuilder
 {
@@ -28,7 +28,10 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_logger == null)
+                {
                     _logger = Context.Kernel.LoggerFactory.CreateLogger();
+                }
+
                 return _logger;
             }
         }
@@ -90,7 +93,7 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateEqualityExpression(dataPredicate);
             }
 
-            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
+            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name, typeof(T));
             QueryParts.Add(updatePart);
 
             var keyName = whereexpr.TryExtractPropertyName();
@@ -105,13 +108,13 @@ namespace PersistanceMap.QueryBuilder
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
 
-                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
+                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, typeof(T), field.MemberName);
                 keyValuePart.AddValue(KeyValuePart.MemberName, field.FieldName);
                 keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
                 updatePart.Add(keyValuePart);
             }
 
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString(), typeof(T));
             QueryParts.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryParts);
@@ -134,27 +137,23 @@ namespace PersistanceMap.QueryBuilder
                 whereexpr = ExpressionFactory.CreateEqualityExpression<T>(anonym);
             }
 
-            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name);
+            var updatePart = new DelegateQueryPart(OperationType.Update, () => typeof(T).Name, typeof(T));
             QueryParts.Add(updatePart);
             
             var keyName = whereexpr.TryExtractPropertyName();
-
             var dataObject = anonym.Compile().Invoke();
-
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-
-            var last = tableFields.LastOrDefault(f => f.MemberName != keyName);
 
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
-                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, field.MemberName);
+                var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, typeof(T), field.MemberName);
                 keyValuePart.AddValue(KeyValuePart.MemberName, field.FieldName);
                 keyValuePart.AddValue(KeyValuePart.Value, value ?? "NULL");
                 updatePart.Add(keyValuePart);
             }
 
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(whereexpr).ToString(), typeof(T));
             QueryParts.Add(part);
 
             return new UpdateQueryBuilder<T>(Context, QueryParts);
@@ -167,7 +166,9 @@ namespace PersistanceMap.QueryBuilder
                 // remove the ignored element
                 var subpart = decorator.Parts.FirstOrDefault(f => f.ID == id);
                 if (subpart != null)
+                {
                     decorator.Remove(subpart);
+                }
 
                 // make sure the last statement is correct
                 var last = decorator.Parts.LastOrDefault();
@@ -176,10 +177,10 @@ namespace PersistanceMap.QueryBuilder
                     var value = last.Compile();
                     if (value.TrimEnd().EndsWith(","))
                     {
-                        value = value.Replace(",", "").TrimEnd();
+                        value = value.Replace(",", string.Empty).TrimEnd();
 
                         decorator.Remove(last);
-                        decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0} ", value), last.ID));
+                        decorator.Add(new DelegateQueryPart(OperationType.None, () => string.Format("{0} ", value), typeof(T), last.ID));
                     }
                 }
             }

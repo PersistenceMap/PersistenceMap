@@ -109,7 +109,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileOutputParameterDefinitionTest()
         {
-            var part = new ItemsQueryPart();
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => "Param int"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSet, () => "Param=1"));
             var parts = new QueryPartsContainer();

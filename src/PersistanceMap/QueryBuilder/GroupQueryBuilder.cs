@@ -37,7 +37,7 @@ namespace PersistanceMap.QueryBuilder
         public IGroupQueryExpression<T> ThenBy<T2>(Expression<Func<T2, object>> predicate)
         {
             var field = predicate.TryExtractPropertyName();
-            var part = new DelegateQueryPart(OperationType.ThenBy, () => field);
+            var part = new DelegateQueryPart(OperationType.ThenBy, () => field, typeof(T));
             QueryParts.Add(part);
 
             return new GroupQueryBuilder<T>(Context, QueryParts);
@@ -63,8 +63,8 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            //TODO: add table name?
-            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
+            // TODO: add table name?
+            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString(), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T2>(Context, QueryParts);
@@ -88,7 +88,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.OrderByDesc, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
+            var part = new DelegateQueryPart(OperationType.OrderByDesc, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString(), typeof(T));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T2>(Context, QueryParts);

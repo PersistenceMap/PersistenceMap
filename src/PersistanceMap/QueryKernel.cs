@@ -46,13 +46,16 @@ namespace PersistanceMap
             }
         }
 
-        ILogger _logger;
+        private ILogger _logger;
         public ILogger Logger
         {
             get
             {
                 if (_logger == null)
+                {
                     _logger = LoggerFactory.CreateLogger();
+                }
+
                 return _logger;
             }
         }
@@ -65,9 +68,8 @@ namespace PersistanceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            //compiledQuery.QueryParts.FirstOrDefault(p=>p.OperationType == OperationType.From;
             var interceptors = _interceptors.GetInterceptors<T>();
-            foreach(var interceptor in interceptors)
+            foreach (var interceptor in interceptors)
             {
                 interceptor.OnBeforeExecute(compiledQuery);
 
@@ -78,7 +80,7 @@ namespace PersistanceMap
                 }
             }
 
-            //TODO: Add more information to log like time and duration
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -116,7 +118,7 @@ namespace PersistanceMap
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public void Execute(CompiledQuery compiledQuery)
         {
-            //TODO: Add more information to log like time and duration
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -152,7 +154,7 @@ namespace PersistanceMap
         /// <param name="expressions"></param>
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
-            //TODO: Add more information to log like time and duration
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -166,7 +168,9 @@ namespace PersistanceMap
 
                         // read next resultset
                         if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
+                        {
                             break;
+                        }
                     }
                 }
             }

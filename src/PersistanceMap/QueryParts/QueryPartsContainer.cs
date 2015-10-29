@@ -21,7 +21,9 @@ namespace PersistanceMap.QueryParts
             var first = Parts.FirstOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first);
             if (index < 0)
+            {
                 index = 0;
+            }
 
             Parts.Insert(index, part);
         }
@@ -30,8 +32,6 @@ namespace PersistanceMap.QueryParts
         {
             var first = Parts.LastOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first) + 1;
-            //if (index > Parts.Count)
-            //    index = 0;
 
             Parts.Insert(index, part);
         }
@@ -87,6 +87,11 @@ namespace PersistanceMap.QueryParts
             {
                 return Parts.OfType<IItemsQueryPart>().Any(p => p.IsSealed);
             }
+        }
+
+        public IQueryPart AggregatePart
+        {
+            get { throw new NotImplementedException(); }
         }
 
         #endregion

@@ -25,12 +25,12 @@ namespace PersistanceMap.QueryBuilder
         internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
-            var selectPart = new ItemsQueryPart(OperationType.Select);
+            var selectPart = new ItemsQueryPart(OperationType.Select, typeof(T2));
 
             QueryParts.Add(selectPart);
 
             // add the from operation
-            var entityPart = new EntityPart(OperationType.From, typeof(T2).Name, null);
+            var entityPart = new EntityPart(OperationType.From, typeof(T2).Name, entityType: typeof(T2));
             QueryParts.Add(entityPart);
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);
@@ -41,12 +41,12 @@ namespace PersistanceMap.QueryBuilder
             alias.ArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            var selectPart = new ItemsQueryPart(OperationType.Select);
+            var selectPart = new ItemsQueryPart(OperationType.Select, typeof(T2));
             QueryParts.Add(selectPart);
 
             // add the from operation with a alias
             var entity = typeof(T).Name;
-            var entityPart = new EntityPart(OperationType.From, entity, alias);
+            var entityPart = new EntityPart(OperationType.From, entity, alias, typeof(T2));
             QueryParts.Add(entityPart);
 
             return new SelectQueryBuilder<T2>(Context, QueryParts);
@@ -85,7 +85,7 @@ namespace PersistanceMap.QueryBuilder
             // create the join expression
             var entity = typeof(TJoin).Name;
 
-            var entityPart = new EntityPart(OperationType.Join, entity, alias);
+            var entityPart = new EntityPart(OperationType.Join, entity, alias, typeof(TJoin));
             QueryParts.Add(entityPart);
 
             // create the expressionmap for the lambdacompilert to add the alias if needed
@@ -93,13 +93,17 @@ namespace PersistanceMap.QueryBuilder
 
             // add aliases to the maps
             if (!string.IsNullOrEmpty(source))
+            {
                 partMap.AliasMap.Add(typeof(TOrig), source);
+            }
 
             if (!string.IsNullOrEmpty(alias))
+            {
                 partMap.AliasMap.Add(typeof(TJoin), alias);
+            }
 
             // add the on keyword
-            entityPart.Add(new DelegateQueryPart(OperationType.On, () => LambdaToSqlCompiler.Compile(partMap).ToString()));
+            entityPart.Add(new DelegateQueryPart(OperationType.On, () => LambdaToSqlCompiler.Compile(partMap), typeof(TJoin)));
 
             return new JoinQueryBuilder<TJoin>(Context, QueryParts);
         }
@@ -117,7 +121,9 @@ namespace PersistanceMap.QueryBuilder
         static Expression<Func<object, object>> ConvertExpression<TProp>(Expression<Func<TProp, object>> expression)
         {
             if (expression == null)
+            {
                 return null;
+            }
 
             var p = Expression.Parameter(typeof(object));
 
@@ -144,7 +150,7 @@ namespace PersistanceMap.QueryBuilder
                     parent.Remove(duplicate);
             }
 
-            var part = new FieldQueryPart(source, alias, entityalias, entity, alias ?? source, converter)
+            var part = new FieldQueryPart(source, alias, entityalias, entity, typeof(T), alias ?? source, converter)
             {
                 FieldType = fieldType,
                 OperationType = OperationType.Include
@@ -217,7 +223,9 @@ namespace PersistanceMap.QueryBuilder
             {
                 var map = part as IItemsQueryPart;
                 if (map == null)
+                {
                     continue;
+                }
 
                 var fieldName = LambdaExtensions.TryExtractPropertyName(predicate);
 
@@ -229,7 +237,7 @@ namespace PersistanceMap.QueryBuilder
                 }
 
                 // add a field marked as ignored
-                map.Add(new IgnoreFieldQueryPart(fieldName, ""));
+                map.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -248,7 +256,7 @@ namespace PersistanceMap.QueryBuilder
                 var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
                 var id = alias;
-                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Max);
+                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Max, entityType: typeof(T));
 
                 parent.Add(part);
                 parent.IsSealed = true;
@@ -270,7 +278,7 @@ namespace PersistanceMap.QueryBuilder
                 var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
                 var id = alias;
-                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Min);
+                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Min, entityType: typeof(T));
 
                 parent.Add(part);
                 parent.IsSealed = true;
@@ -293,7 +301,7 @@ namespace PersistanceMap.QueryBuilder
                 alias = alias ?? field;
                 //var id = Guid.NewGuid().ToString();
                 var id = alias;
-                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Count);
+                var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Count, entityType: typeof(T));
 
                 parent.Add(part);
                 parent.IsSealed = true;
@@ -309,7 +317,7 @@ namespace PersistanceMap.QueryBuilder
         public IWhereQueryExpression<T> Where(Expression<Func<T, bool>> operation)
         {
             var expressionPart = new ExpressionAliasMap(operation);
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(expressionPart).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(expressionPart), typeof(T));
             QueryParts.Add(part);
 
             // check if the last part that was added containes a alias
@@ -330,7 +338,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryExpression<T> Where<T2>(Expression<Func<T2, bool>> operation)
         {
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(operation).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(operation), typeof(T));
             QueryParts.Add(part);
 
             return new WhereQueryBuilder<T>(Context, QueryParts);
@@ -338,7 +346,7 @@ namespace PersistanceMap.QueryBuilder
 
         public IWhereQueryExpression<T> Where<T2, T3>(Expression<Func<T2, T3, bool>> operation)
         {
-            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(operation).ToString());
+            var part = new DelegateQueryPart(OperationType.Where, () => LambdaToSqlCompiler.Compile(operation), typeof(T));
             QueryParts.Add(part);
 
             return new WhereQueryBuilder<T>(Context, QueryParts);
@@ -367,7 +375,7 @@ namespace PersistanceMap.QueryBuilder
         public IOrderQueryExpression<T2> OrderBy<T2>(Expression<Func<T2, object>> predicate)
         {
             //TODO: add table name?
-            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
+            var part = new DelegateQueryPart(OperationType.OrderBy, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString(), typeof(T2));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T2>(Context, QueryParts);
@@ -391,7 +399,7 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IOrderQueryExpression<T2> OrderByDesc<T2>(Expression<Func<T2, object>> predicate)
         {
-            var part = new DelegateQueryPart(OperationType.OrderByDesc, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString());
+            var part = new DelegateQueryPart(OperationType.OrderByDesc, () => LambdaToSqlCompiler.Instance.Compile(predicate).ToString(), typeof(T2));
             QueryParts.Add(part);
 
             return new OrderQueryBuilder<T2>(Context, QueryParts);
@@ -419,9 +427,9 @@ namespace PersistanceMap.QueryBuilder
         /// <returns></returns>
         public IGroupQueryExpression<T> GroupBy<T2>(Expression<Func<T2, object>> predicate)
         {
-            //TODO: add table name?
+            // TODO: add table name?
             var field = predicate.TryExtractPropertyName();
-            var part = new DelegateQueryPart(OperationType.GroupBy, () => field);
+            var part = new DelegateQueryPart(OperationType.GroupBy, () => field, typeof(T));
             QueryParts.Add(part);
 
             return new GroupQueryBuilder<T>(Context, QueryParts);
