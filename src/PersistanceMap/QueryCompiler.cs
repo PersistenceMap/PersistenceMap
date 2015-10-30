@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using PersistanceMap.QueryBuilder;
 using PersistanceMap.QueryParts;
+using PersistanceMap.Interception;
 
 namespace PersistanceMap
 {
@@ -155,19 +156,16 @@ namespace PersistanceMap
         /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
         /// <param name="container">The container containing all queryparts to compile to sql</param>
-        /// <param name="interceptorColelction">The collection of interceptors</param>
+        /// <param name="interceptors">The collection of interceptors</param>
         /// <returns>The Compiled query</returns>
-        public virtual CompiledQuery Compile(IQueryPartsContainer container, InterceptorCollection interceptorColelction)
+        public virtual CompiledQuery Compile(IQueryPartsContainer container, InterceptorCollection interceptors)
         {
             _compiledParts = new HashSet<IQueryPart>();
 
             if (container.AggregatePart != null)
             {
-                var interceptors = interceptorColelction.GetInterceptors(container.AggregatePart.EntityType);
-                foreach (var interceptor in interceptors)
-                {
-                    interceptor.ExecuteBeforeCompile(container);
-                }
+                var interception = new InterceptionHandler(interceptors, container.AggregatePart.EntityType);
+                interception.ExecuteBeforeCompile(container);
             }
 
             using (var writer = new StringWriter())

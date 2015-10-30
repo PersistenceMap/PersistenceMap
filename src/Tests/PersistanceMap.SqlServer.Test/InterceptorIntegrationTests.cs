@@ -1,9 +1,6 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NUnit.Framework;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Test;
 using PersistanceMap.Test.TableTypes;
@@ -28,7 +25,9 @@ namespace PersistanceMap.SqlServer.Test
             var where = new DelegateQueryPart(OperationType.Where, () => "ID = 2");
 
             var provider = BuildContext();
-            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            provider.Interceptor<Warrior>()
+                .BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where))
+                .BeforeExecute(q => query = q.QueryString);
 
             using (var context = provider.Open())
             {
@@ -78,12 +77,7 @@ namespace PersistanceMap.SqlServer.Test
                 Assert.AreEqual(query.Flatten(), "DELETE FROM Warrior WHERE ID = 2");
             }
         }
-
-
-
-
-
-
+        
         private SqlContextProvider BuildContext()
         {
             var provider = new SqlContextProvider("connectionstring");

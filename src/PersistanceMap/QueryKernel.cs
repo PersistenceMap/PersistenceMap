@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Ensure;
+using PersistanceMap.Interception;
 
 namespace PersistanceMap
 {
@@ -68,21 +69,14 @@ namespace PersistanceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            var interceptors = _interceptors.GetInterceptors<T>();
-            foreach (var interceptor in interceptors)
+            var interception = new InterceptionHandler<T>(_interceptors);
+            interception.BeforeExecute(compiledQuery);
+            var items = interception.Execute(compiledQuery);
+            if (items != null)
             {
-                interceptor.ExecuteBeforeExecute(compiledQuery);
+                return items;
             }
-
-            foreach (var interceptor in interceptors)
-            {
-                var items = interceptor.Execute<T>(compiledQuery);
-                if (items != null)
-                {
-                    return items;
-                }
-            }
-
+            
             // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
@@ -124,18 +118,11 @@ namespace PersistanceMap
             var parts = compiledQuery.QueryParts;
             if (parts != null && parts.AggregatePart != null)
             {
-                var interceptors = _interceptors.GetInterceptors(compiledQuery.QueryParts.AggregatePart.EntityType);
-                foreach (var interceptor in interceptors)
+                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType);
+                interception.BeforeExecute(compiledQuery);
+                if(interception.Execute(compiledQuery))
                 {
-                    interceptor.ExecuteBeforeExecute(compiledQuery);
-                }
-
-                foreach (var interceptor in interceptors)
-                {
-                    if (interceptor.Execute(compiledQuery))
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
 
