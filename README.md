@@ -1,24 +1,24 @@
 ![wickedflame persistancemap](assets/wickedflame persistancemap - black.png)
 
-PersistanceMap
+PersistenceMap
 ==============
 
-PersistanceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
+PersistenceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
 The simple, straight forward, intuitive and easy to use API helps to quickly setup a connction to a Database.
-PersistanceMap is extremely lightweight and leaves no traces in the client code.
+PersistenceMap is extremely lightweight and leaves no traces in the client code.
 
-PersistanceMap currently supports MSSql and SQLite RDMBS Servers.
+PersistenceMap currently supports MSSql and SQLite RDMBS Servers.
 
 ## Installation
 ------------------------------
-PersistanceMap can be installed from [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) through the package manager console.  
+PersistenceMap can be installed from [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) through the package manager console.  
 MSSql Server:  
 ```
-PM > Install-Package PersistanceMap
+PM > Install-Package PersistenceMap
 ```
 SQLite: 
 ``` 
-PM > Install-Package PersistanceMap.Sqlite
+PM > Install-Package PersistenceMap.Sqlite
 ```
 # Examples
 ------------------------------
@@ -124,7 +124,7 @@ Compiles to:
 DELETE from Employee where (Employee.EmployeeID = 1) and (Employee.LastName = 'Lastname') and (Employee.FirstName = 'Firstname')
 ```
 ## Code first
-PersistanceMap supports a code first approach. Databases, tables and fields can be created, altered or deleted at runtime.
+PersistenceMap supports a code first approach. Databases, tables and fields can be created, altered or deleted at runtime.
 ### Create Database
 The following commands create a Database and two tables. The name of the Database is defined in the Connectionstring. The structure of the tables are defined with the object types.
 ```csharp
@@ -190,4 +190,4 @@ var proc = context.Procedure("SetSale")
 ```
 
 
-PersistanceMap is developed by [wickedflame](http://wicked-flame.blogspot.ch/) under the [Ms-PL License](License.txt).
+PersistenceMap is developed by [wickedflame](http://wickedflame.github.com/) under the [Ms-PL License](License.txt).
