@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>PersistanceMap</id>
-    <version>0.4.2-RC02</version>
+    <version>0.4.3-RC01</version>
     <title>PersistanceMap</title>
     <authors>Christian Walpen</authors>
     <owners>Christian Walpen</owners>
