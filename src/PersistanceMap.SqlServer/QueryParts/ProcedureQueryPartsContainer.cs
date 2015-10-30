@@ -13,7 +13,10 @@ namespace PersistanceMap.QueryParts
             get
             {
                 if (_callbacks == null)
+                {
                     _callbacks = new List<CallbackMap>();
+                }
+
                 return _callbacks;
             }
         }
@@ -21,7 +24,9 @@ namespace PersistanceMap.QueryParts
         internal void Add(CallbackMap callback)
         {
             if (_callbacks == null)
-                    _callbacks = new List<CallbackMap>();
+            {
+                _callbacks = new List<CallbackMap>();
+            }
 
             _callbacks.Add(callback);
         }

@@ -11,7 +11,7 @@ namespace PersistanceMap.Test.Expression
         public void UpdateTests()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 });
@@ -61,7 +61,7 @@ namespace PersistanceMap.Test.Expression
         public void UpdateTestWithKeyExpression()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
@@ -73,10 +73,10 @@ namespace PersistanceMap.Test.Expression
         public void UpdateTestWithKeyExpression_Fail()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
-                ((CallbackContextProvider.CallbackConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
+                ((MockedContextProvider.MockedConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
 
                 Assert.Throws<ArgumentException>(() => context.Update(() => new Warrior {ID = 1, Race = "Elf", WeaponID = 2}, e => e.ID == 1));
                 context.Commit();

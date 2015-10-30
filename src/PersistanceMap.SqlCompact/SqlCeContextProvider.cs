@@ -8,20 +8,20 @@ namespace PersistanceMap
     public class SqlCeContextProvider : ContextProvider, IContextProvider
     {
         public SqlCeContextProvider(string connectionstring)
+            : base(new SqlCeConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
 
-            ConnectionProvider = new SqlCeConnectionProvider(connectionstring);
             Settings = new Settings();
         }
-        
+
         /// <summary>
         /// Creates a context for connecting to a SqlCe database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>DatabaseContext for database operations</returns>
         public virtual SqlCeDatabaseContext Open()
         {
-            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
+            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
         }
     }
 }

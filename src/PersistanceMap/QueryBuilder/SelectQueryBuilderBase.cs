@@ -28,7 +28,10 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_logger == null)
+                {
                     _logger = Context.Kernel.LoggerFactory.CreateLogger();
+                }
+
                 return _logger;
             }
         }
@@ -50,7 +53,10 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_queryParts == null)
+                {
                     _queryParts = new SelectQueryPartsContainer();
+                }
+
                 return _queryParts;
             }
         }
@@ -177,7 +183,7 @@ namespace PersistanceMap.QueryBuilder
             FieldQueryPart.FiedlPartsFactory(QueryParts, fields.ToArray());
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             return query;
         }

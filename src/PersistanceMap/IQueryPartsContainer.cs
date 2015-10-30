@@ -1,15 +1,13 @@
-﻿using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryParts;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {
     /// <summary>
     /// A container for all queryparts needed for a sql statement
     /// </summary>
-    public interface IQueryPartsContainer
+    public interface IQueryPartsContainer : IEnumerable<IQueryPart>
     {
         /// <summary>
         /// Add a querypart
@@ -51,7 +49,7 @@ namespace PersistanceMap
         /// The list of queryparts in the container
         /// </summary>
         IEnumerable<IQueryPart> Parts { get; }
-        
-        bool IsSealed { get; }
+
+        IQueryPart AggregatePart { get; }
     }
 }

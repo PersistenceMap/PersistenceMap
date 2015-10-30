@@ -1,11 +1,15 @@
-﻿using PersistanceMap.QueryParts;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap.SqlServer
 {
     public class QueryCompiler : PersistanceMap.QueryCompiler
     {
+        public QueryCompiler()
+        {
+        }
+
         protected override void InitializeCompilers()
         {
             // Database

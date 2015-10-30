@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistanceMap.UnitTest
 {
@@ -22,6 +19,11 @@ namespace PersistanceMap.UnitTest
         }
 
         public IEnumerable<IQueryCommand> QueryStore
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public InterceptorCollection Interceptors
         {
             get { throw new NotImplementedException(); }
         }

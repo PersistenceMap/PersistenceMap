@@ -15,7 +15,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.IsTrue(query.QueryString.Contains("CREATE DATABASE DbName"));
             Assert.IsTrue(query.QueryString.Contains("ON PRIMARY (NAME = N''DbName'', FILENAME = N''' + @device_directory + N'DbName.mdf'')"));
@@ -30,7 +30,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "CREATE TABLE TableName ()");
         }
@@ -43,7 +43,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "EXEC ProcName ");
         }
@@ -57,7 +57,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Param=value");
         }
@@ -72,7 +72,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Param1=value1, Param2=value2");
         }
@@ -86,7 +86,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Param1=value1 OUTPUT");
         }
@@ -101,7 +101,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Param1=value1 OUTPUT, Param2=value2 OUTPUT");
         }
@@ -109,14 +109,14 @@ namespace PersistanceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileOutputParameterDefinitionTest()
         {
-            var part = new ItemsQueryPart();
+            var part = new ItemsQueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => "Param int"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSet, () => "Param=1"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DECLARE @Param int\r\nSET @Param=1\r\n");
         }
@@ -129,7 +129,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DECLARE @ParamName int\r\n");
         }
@@ -142,7 +142,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "SET @ParamName=1\r\n");
         }
@@ -155,7 +155,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "@Param AS Param");
         }
@@ -170,7 +170,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "SELECT @Param1 AS Param1, @Param2 AS Param2");
         }
@@ -185,7 +185,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ALTER TABLE Table ");
         }
@@ -198,7 +198,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DROP TABLE Table");
         }
@@ -211,7 +211,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DROP COLUMN ColumnName");
         }
@@ -228,7 +228,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int");
         }
@@ -244,7 +244,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int");
         }
@@ -261,7 +261,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int");
         }
@@ -278,7 +278,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int NOT NULL");
         }
@@ -301,7 +301,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
         }
@@ -317,7 +317,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int");
         }
@@ -334,7 +334,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int");
         }
@@ -351,7 +351,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
         }
@@ -379,7 +379,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName1 int NOT NULL, ColumnName2 VARCHAR(20)");
         }
@@ -396,7 +396,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "FOREIGN KEY(ColumnName) REFERENCES RefTable(RefColumn)");
         }
@@ -411,7 +411,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1)");
         }
@@ -427,7 +427,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1, Column2)");
         }

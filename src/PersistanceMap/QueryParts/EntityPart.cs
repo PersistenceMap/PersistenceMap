@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
     public class EntityPart : ItemsQueryPart, IEntityPart, IQueryPart
     {
-        public EntityPart(OperationType operation, string entity = null, string entityAlias = null, string id = null)
+        public EntityPart(OperationType operation, string entity = null, string entityAlias = null, Type entityType = null, string id = null)
+            : base(operation, entityType, id)
         {
             Entity = entity;
             EntityAlias = entityAlias;
-            OperationType = operation;
-            ID = id ?? operation.ToString();
         }
-        
+
         #region IEntityQueryPart Implementation
 
         /// <summary>
@@ -29,7 +27,7 @@ namespace PersistanceMap.QueryParts
 
         public override string ToString()
         {
-            return string.Format("{0} - Operation: [{1}] Entity: [{2}] Alias: [{3}]", GetType().Name, OperationType.ToString(), Entity, EntityAlias);
+            return string.Format("{0} - Operation: [{1}] Entity: [{2}] Alias: [{3}]", GetType().Name, OperationType, Entity, EntityAlias);
         }
     }
 }

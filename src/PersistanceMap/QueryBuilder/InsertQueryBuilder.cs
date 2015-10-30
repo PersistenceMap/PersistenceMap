@@ -99,27 +99,24 @@ namespace PersistanceMap.QueryBuilder
 
         private IInsertQueryExpression<T> InsertInternal(LambdaExpression anonym)
         {
-            var insertPart = new DelegateQueryPart(OperationType.Insert, () => typeof(T).Name);
+            var insertPart = new DelegateQueryPart(OperationType.Insert, () => typeof(T).Name, typeof(T));
             QueryParts.Add(insertPart);
 
-            var valuesPart = new ItemsQueryPart(OperationType.Values);
+            var valuesPart = new ItemsQueryPart(OperationType.Values, typeof(T));
             QueryParts.Add(valuesPart);
 
             var dataObject = anonym.Compile().DynamicInvoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
-
-            var first = tableFields.FirstOrDefault();
-            var last = tableFields.LastOrDefault();
 
             foreach (var field in tableFields)
             {
                 var value = field.GetValueFunction(dataObject);
                 var quotated = DialectProvider.Instance.GetQuotedValue(value, field.MemberType);
 
-                var fieldPart = new DelegateQueryPart(OperationType.InsertMember, () => field.MemberName, field.MemberName);
+                var fieldPart = new DelegateQueryPart(OperationType.InsertMember, () => field.MemberName, typeof(T), field.MemberName);
                 insertPart.Add(fieldPart);
 
-                var valuePart = new DelegateQueryPart(OperationType.InsertValue, () => quotated, field.MemberName);
+                var valuePart = new DelegateQueryPart(OperationType.InsertValue, () => quotated, typeof(T), field.MemberName);
                 valuesPart.Add(valuePart);
             }
 
@@ -133,7 +130,9 @@ namespace PersistanceMap.QueryBuilder
                 // remove the ignored element
                 var subpart = decorator.Parts.FirstOrDefault(f => f.ID == id);
                 if (subpart != null)
+                {
                     decorator.Remove(subpart);
+                }
             }
         }
     }

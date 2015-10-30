@@ -1,9 +1,10 @@
-﻿using PersistanceMap.QueryBuilder;
-using PersistanceMap.QueryParts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PersistanceMap.QueryBuilder;
+using PersistanceMap.QueryParts;
+using PersistanceMap.Interception;
 
 namespace PersistanceMap
 {
@@ -22,7 +23,7 @@ namespace PersistanceMap
 
         private void Initialize()
         {
-            AddCompiler(OperationType.None, (part, writer, container, parent) => { writer.Write(part.Compile()); });
+            AddCompiler(OperationType.None, (part, writer, container, parent) => writer.Write(part.Compile()));
             AddCompiler(OperationType.IgnoreColumn, (part, writer, container, parent) => {/* do nothing */});
             AddCompiler(OperationType.IncludeMember, (part, writer, container, parent) => {/* do nothing */});
             AddCompiler(OperationType.Select, (part, writer, container, parent) => CompileString("SELECT", writer));
@@ -155,10 +156,17 @@ namespace PersistanceMap
         /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
         /// <param name="container">The container containing all queryparts to compile to sql</param>
+        /// <param name="interceptors">The collection of interceptors</param>
         /// <returns>The Compiled query</returns>
-        public virtual CompiledQuery Compile(IQueryPartsContainer container)
+        public virtual CompiledQuery Compile(IQueryPartsContainer container, InterceptorCollection interceptors)
         {
             _compiledParts = new HashSet<IQueryPart>();
+
+            if (container.AggregatePart != null)
+            {
+                var interception = new InterceptionHandler(interceptors, container.AggregatePart.EntityType);
+                interception.ExecuteBeforeCompile(container);
+            }
 
             using (var writer = new StringWriter())
             {

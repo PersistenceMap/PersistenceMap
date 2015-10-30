@@ -37,7 +37,7 @@ namespace PersistanceMap.UnitTest.QueryBuilder
         {
             var provider = new Mock<MockedContextProvider>();
             var container = new QueryPartsContainer() as IQueryPartsContainer;
-            container.Add(new DelegateQueryPart(OperationType.Column, () => "", "Name"));
+            container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "Name"));
 
             var builder = new TableQueryBuilder<Warrior, MockedContextProvider>(provider.Object, container);
 
@@ -57,8 +57,8 @@ namespace PersistanceMap.UnitTest.QueryBuilder
         {
             var provider = new Mock<MockedContextProvider>();
             var container = new QueryPartsContainer() as IQueryPartsContainer;
-            container.Add(new DelegateQueryPart(OperationType.Column, () => "", "Name"));
-            container.Add(new DelegateQueryPart(OperationType.Column, () => "", "AditionalField"));
+            container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "Name"));
+            container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "AditionalField"));
 
             var builder = new TableQueryBuilder<Warrior, MockedContextProvider>(provider.Object, container);
 

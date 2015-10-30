@@ -12,8 +12,9 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithPredicate()
         {
-            var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var sql = string.Empty;
+            var provider = new MockedContextProvider();
+            provider.Interceptor<Warrior>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // ignore a member in the select
@@ -33,7 +34,8 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithGroupBy()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(q => sql = q.Flatten());
+            provider.Interceptor<Warrior>().BeforeExecute(q => sql = q.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 context.From<Warrior>().Ignore(w => w.ID).Ignore(w => w.SpecialSkill).Ignore(w => w.WeaponID).Ignore(w => w.Name).GroupBy(w => w.Race).Select();
@@ -62,8 +64,9 @@ namespace PersistanceMap.Test.Expression
         [Test]
         public void SelectWithMax()
         {
-            var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var sql = string.Empty;
+            var provider = new MockedContextProvider(q => sql = q.Flatten());
+            provider.Interceptor<Warrior>().BeforeExecute(q => sql = q.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // select the max id
@@ -87,7 +90,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithMin()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select the min id
@@ -112,7 +115,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithCount()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select the min id
@@ -138,7 +141,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider();
+            provider.Interceptor<OrderWithDetailExtended>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), expected));
             using (var context = provider.Open())
             {
                 // Map => To 
@@ -156,7 +160,8 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider();
+            provider.Interceptor<OrderWithDetailExtended>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), expected));
             using (var context = provider.Open())
             {
                 // Map => To 
@@ -173,8 +178,14 @@ namespace PersistanceMap.Test.Expression
         public void SelectAnonymObjectTypeDefiniton()
         {
             var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
+            var type = new
+            {
+                ProductID = 0,
+                Quantity = 0.0
+            };
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider();
+            provider.Interceptor(() => type).BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), expected));
             using (var context = provider.Open())
             {
                 context.From<Orders>()
@@ -192,7 +203,7 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
                 var items = context.From<Orders>()
@@ -213,7 +224,7 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
                 var items = context.From<Orders>()
@@ -234,7 +245,7 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
                 // SELECT only the properties that are defined in the anony object
@@ -258,7 +269,7 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
                 // select only the properties that are defined in the anony object
@@ -278,7 +289,7 @@ namespace PersistanceMap.Test.Expression
         {
             var expected = "SELECT ID, Name, WeaponID, Race, SpecialSkill FROM Warrior WHERE Warrior.Race In ('Elf','Dwarf')";
 
-            var provider = new CallbackContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
+            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), expected));
             using (var context = provider.Open())
             {
                 IEnumerable<string> races = new List<string>
@@ -297,7 +308,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithOrderTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // join with simple order by
@@ -422,7 +433,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectTestForOrders()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
@@ -457,7 +468,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectTestWithForAndCustomMaps()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
@@ -484,7 +495,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithWhereTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select statement with a where operation and a or operation that has two genereic parameters and alias for both types
@@ -582,7 +593,7 @@ namespace PersistanceMap.Test.Expression
         public void ISelectQueryExpressionWithIgnoringFields()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // ignore a member in the select
@@ -620,7 +631,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithMultipleMapsToSameType()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select the properties that are defined in the mapping
@@ -649,7 +660,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithConstraintInBaseClass()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 // select the properties that are defined in the mapping
@@ -675,7 +686,7 @@ namespace PersistanceMap.Test.Expression
         public void SelectWithDifferenctCasesInMappedPropertyNamesTest()
         {
             var sql = "";
-            var provider = new CallbackContextProvider(s => sql = s.Flatten());
+            var provider = new MockedContextProvider(s => sql = s.Flatten());
             using (var context = provider.Open())
             {
                 var query = context.From<ArbeitsPlan>()

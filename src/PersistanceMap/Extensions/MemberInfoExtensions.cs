@@ -1,5 +1,5 @@
-﻿using PersistanceMap.QueryParts;
-using System.Reflection;
+﻿using System.Reflection;
+using PersistanceMap.QueryParts;
 
 namespace PersistanceMap
 {
@@ -7,7 +7,7 @@ namespace PersistanceMap
     {
         public static FieldQueryPart ToFieldQueryPart(this MemberInfo member, string alias, string entity)
         {
-            return new FieldQueryPart(member.Name, alias, entity)
+            return new FieldQueryPart(member.Name, alias, entity, entityType: member.DeclaringType)
             {
                 OperationType = OperationType.Field
             };

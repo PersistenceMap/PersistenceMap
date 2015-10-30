@@ -80,6 +80,11 @@
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="IDatabaseQueryExpression.cs" />
+    <Compile Include="IInterceptor.cs" />
+    <Compile Include="Interception\InterceptionHandler.cs" />
+    <Compile Include="Interception\Interceptor.cs" />
+    <Compile Include="Interception\InterceptorCollection.cs" />
+    <Compile Include="Interception\InterceptorItem.cs" />
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\CallbackMap.cs" />
@@ -177,9 +182,7 @@
       <Link>Properties\PersistanceMap.snk</Link>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Base\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
     public class ItemsQueryPart : QueryPart, IItemsQueryPart, IQueryPart
     {
-        public ItemsQueryPart(string id = null)
-            : this(OperationType.None, id)
-        {
-        }
-
-        public ItemsQueryPart(OperationType operation, string id = null)
-            : base(operation, id)
+        public ItemsQueryPart(OperationType operation, Type entityType = null, string id = null)
+            : base(operation, entityType, id)
         {
             Parts = new List<IQueryPart>();
         }
-
+        
         #region IQueryPartDecorator Implementation
 
         public virtual void Add(IQueryPart part)

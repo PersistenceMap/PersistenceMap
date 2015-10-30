@@ -11,7 +11,8 @@ namespace PersistanceMap
         /// Compile IQueryPartsContainer to a QueryString
         /// </summary>
         /// <param name="container"></param>
+        /// <param name="interceptorColelction"></param>
         /// <returns></returns>
-        CompiledQuery Compile(IQueryPartsContainer container);
+        CompiledQuery Compile(IQueryPartsContainer container, InterceptorCollection interceptorColelction);
     }
 }

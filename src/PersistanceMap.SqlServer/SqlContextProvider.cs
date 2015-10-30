@@ -5,20 +5,20 @@ namespace PersistanceMap
     public class SqlContextProvider : ContextProvider, IContextProvider
     {
         public SqlContextProvider(string connectionstring)
+            : base(new SqlConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
 
-            ConnectionProvider = new SqlConnectionProvider(connectionstring);
             Settings = new Settings();
         }
-        
+
         /// <summary>
         /// Creates a context for connecting to a Sql Server database
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A DatabaseContext for SQL Databases</returns>
         public virtual SqlDatabaseContext Open()
         {
-            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory);
+            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
         }
     }
 }

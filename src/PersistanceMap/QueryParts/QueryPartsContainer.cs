@@ -1,8 +1,6 @@
-﻿using PersistanceMap.QueryBuilder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PersistanceMap.QueryParts
 {
@@ -16,6 +14,11 @@ namespace PersistanceMap.QueryParts
         public virtual void Add(IQueryPart part)
         {
             Parts.Add(part);
+
+            if (AggregatePart == null)
+            {
+                AggregatePart = part;
+            }
         }
 
         public virtual void AddBefore(IQueryPart part, OperationType operation)
@@ -23,7 +26,9 @@ namespace PersistanceMap.QueryParts
             var first = Parts.FirstOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first);
             if (index < 0)
+            {
                 index = 0;
+            }
 
             Parts.Insert(index, part);
         }
@@ -32,8 +37,6 @@ namespace PersistanceMap.QueryParts
         {
             var first = Parts.LastOrDefault(p => p.OperationType == operation);
             var index = Parts.IndexOf(first) + 1;
-            //if (index > Parts.Count)
-            //    index = 0;
 
             Parts.Insert(index, part);
         }
@@ -83,12 +86,20 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        public bool IsSealed
+        public IQueryPart AggregatePart { get; set; }
+
+        #endregion
+
+        #region IEnumerable<IQueryPart> Implementation
+
+        public IEnumerator<IQueryPart> GetEnumerator()
         {
-            get
-            {
-                return Parts.OfType<IItemsQueryPart>().Any(p => p.IsSealed);
-            }
+            return Parts.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion

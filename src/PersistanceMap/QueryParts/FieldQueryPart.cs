@@ -7,8 +7,8 @@ namespace PersistanceMap.QueryParts
 {
     public class FieldQueryPart : QueryPart, IFieldPart, IEntityPart, IQueryPart
     {
-        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null, Expression<Func<object, object>> converter = null, OperationType operation = OperationType.Field)
-            : base(operation, id)
+        public FieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, Type entityType = null, string id = null, Expression<Func<object, object>> converter = null, OperationType operation = OperationType.Field)
+            : base(operation, entityType, id)
         {
             EntityAlias = entityalias;
             Field = field;
@@ -18,8 +18,6 @@ namespace PersistanceMap.QueryParts
             Converter = converter;
             OperationType = operation;
         }
-
-        //public string ID { get; set; }
 
         public string Sufix { get; set; }
 
@@ -111,7 +109,9 @@ namespace PersistanceMap.QueryParts
                     }
 
                     if (map.IsSealed)
+                    {
                         continue;
+                    }
 
                     // add the new field
                     field.Sufix = ", ";
@@ -133,8 +133,8 @@ namespace PersistanceMap.QueryParts
 
     internal class IgnoreFieldQueryPart : FieldQueryPart
     {
-        public IgnoreFieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, string id = null) :
-            base(field, fieldalias, entityalias, entity, id)
+        public IgnoreFieldQueryPart(string field, string fieldalias, string entityalias = null, string entity = null, Type entityType = null, string id = null) :
+            base(field, fieldalias, entityalias, entity, entityType, id)
         {
             OperationType = OperationType.IgnoreColumn;
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap", "src\PersistanceMap\PersistanceMap.csproj", "{4160375C-5E51-484F-B07B-85A5EB9169F8}"
 EndProject
@@ -37,6 +37,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Sqlite.UnitTest", "src\Tests\PersistanceMap.Sqlite.UnitTest\PersistanceMap.Sqlite.UnitTest.csproj", "{0E01BF8E-C869-4856-97B9-87DA30E0D845}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistanceMap.Samples", "src\Tests\PersistanceMap.Samples\PersistanceMap.Samples.csproj", "{7D7B4FBF-59ED-4685-AC00-BDCA843B991F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A414C2C1-AB05-433D-810F-FDB29CBF8A19}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

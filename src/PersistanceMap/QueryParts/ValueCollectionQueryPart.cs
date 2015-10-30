@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
@@ -6,13 +7,13 @@ namespace PersistanceMap.QueryParts
 {
     public class ValueCollectionQueryPart : QueryPart, IValueCollectionQueryPart, IQueryPart
     {
-        public ValueCollectionQueryPart(OperationType operation, string id = null)
-            : base(operation, id)
+        private readonly Dictionary<object, string> _values;
+
+        public ValueCollectionQueryPart(OperationType operation, Type entityType = null, string id = null)
+            : base(operation, entityType, id)
         {
             _values = new Dictionary<object, string>();
         }
-
-        private Dictionary<object, string> _values;
 
         public IEnumerable<object> Keys
         {

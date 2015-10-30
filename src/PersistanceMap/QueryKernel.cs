@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using PersistanceMap.QueryParts;
 using PersistanceMap.Ensure;
+using PersistanceMap.Interception;
 
 namespace PersistanceMap
 {
@@ -17,13 +18,20 @@ namespace PersistanceMap
     /// </summary>
     public class QueryKernel
     {
-        protected const int NotFound = -1;
-        readonly IConnectionProvider _connectionProvider;
+        private const int NOT_FOUND = -1;
+        private readonly IConnectionProvider _connectionProvider;
+        private readonly InterceptorCollection _interceptors;
 
         public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
+            : this(provider, loggerFactory, new InterceptorCollection())
+        {
+        }
+
+        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
         {
             _connectionProvider = provider;
             _loggerFactory = loggerFactory;
+            _interceptors = interceptors;
         }
 
         readonly ILoggerFactory _loggerFactory;
@@ -39,17 +47,20 @@ namespace PersistanceMap
             }
         }
 
-        ILogger _logger;
+        private ILogger _logger;
         public ILogger Logger
         {
             get
             {
                 if (_logger == null)
+                {
                     _logger = LoggerFactory.CreateLogger();
+                }
+
                 return _logger;
             }
         }
-
+        
         /// <summary>
         /// Executes a CompiledQuery that returnes a resultset against the RDBMS
         /// </summary>
@@ -58,7 +69,15 @@ namespace PersistanceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            //TODO: Add more information to log like time and duration
+            var interception = new InterceptionHandler<T>(_interceptors);
+            interception.BeforeExecute(compiledQuery);
+            var items = interception.Execute(compiledQuery);
+            if (items != null)
+            {
+                return items;
+            }
+            
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -96,7 +115,18 @@ namespace PersistanceMap
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public void Execute(CompiledQuery compiledQuery)
         {
-            //TODO: Add more information to log like time and duration
+            var parts = compiledQuery.QueryParts;
+            if (parts != null && parts.AggregatePart != null)
+            {
+                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType);
+                interception.BeforeExecute(compiledQuery);
+                if(interception.Execute(compiledQuery))
+                {
+                    return;
+                }
+            }
+
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -132,7 +162,7 @@ namespace PersistanceMap
         /// <param name="expressions"></param>
         public void Execute(CompiledQuery compiledQuery, params Action<IReaderContext>[] expressions)
         {
-            //TODO: Add more information to log like time and duration
+            // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
@@ -146,7 +176,9 @@ namespace PersistanceMap
 
                         // read next resultset
                         if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
+                        {
                             break;
+                        }
                     }
                 }
             }
@@ -473,7 +505,7 @@ namespace PersistanceMap
 
         private bool HandledDbNullValue(IReaderContext context, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
-            if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NotFound)
+            if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NOT_FOUND)
                 return true;
 
             if (context.DataReader.IsDBNull(columnIndex))

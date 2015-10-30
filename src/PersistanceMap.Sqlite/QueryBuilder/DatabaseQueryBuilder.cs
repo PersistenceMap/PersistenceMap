@@ -41,7 +41,7 @@ namespace PersistanceMap.Sqlite.QueryBuilder
 
         protected override IQueryPart CreateColumn(string name, Type type, bool isNullable)
         {
-            var part = new ValueCollectionQueryPart(OperationType.Column, name);
+            var part = new ValueCollectionQueryPart(OperationType.Column, typeof(T), name);
             part.AddValue(KeyValuePart.MemberName, name);
             part.AddValue(KeyValuePart.MemberType, type.ToSqlDbType(SqlTypeExtensions.SqliteMappings));
             part.AddValue(KeyValuePart.Nullable, isNullable.ToString());
@@ -164,16 +164,16 @@ namespace PersistanceMap.Sqlite.QueryBuilder
             switch (operation)
             {
                 case FieldOperation.None:
-                    //TODO: precision???
+                    // TODO: add precision
                     var part = CreateColumn(field.MemberName, field.MemberType, isNullable ?? field.IsNullable);
                     QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
-                    //TODO: precision???
-                    var nullable = isNullable != null ? (isNullable.Value ? "" : " NOT NULL") : field.IsNullable ? "" : " NOT NULL";
+                    // TODO: add precision
+                    var nullable = isNullable != null ? (isNullable.Value ? string.Empty : " NOT NULL") : field.IsNullable ? string.Empty : " NOT NULL";
                     var expression = string.Format("ADD COLUMN {0} {1}{2}", field.MemberName, field.MemberType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), nullable);
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression, typeof(T)));
                     break;
 
                 default:
@@ -194,25 +194,23 @@ namespace PersistanceMap.Sqlite.QueryBuilder
         /// <returns></returns>
         public override PersistanceMap.ITableQueryExpression<T> Column(string column, FieldOperation operation = FieldOperation.None, Type fieldType = null, string precision = null, bool? isNullable = null)
         {
-            string expression = "";
-
             switch (operation)
             {
                 case FieldOperation.None:
-                    //TODO: precision???
+                    // TODO: add precision
                     var part = CreateColumn(column, fieldType, isNullable ?? true);
                     QueryParts.AddAfter(part, QueryParts.Parts.Any(p => p.OperationType == OperationType.Column) ? OperationType.Column : OperationType.CreateTable);
                     break;
 
                 case FieldOperation.Add:
-                    //TODO: precision???
+                    // TODO: add precision
                     if (fieldType == null)
                     {
                         throw new ArgumentNullException("fieldType", "Argument Fieldtype is not allowed to be null when adding a column");
                     }
 
-                    expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : "");
-                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression));
+                    var expression = string.Format("ADD COLUMN {0} {1}{2}", column, fieldType.ToSqlDbType(SqlTypeExtensions.SqliteMappings), isNullable != null && !isNullable.Value ? " NOT NULL" : string.Empty);
+                    QueryParts.Add(new DelegateQueryPart(OperationType.AddColumn, () => expression, typeof(T)));
                     break;
 
                 default:
