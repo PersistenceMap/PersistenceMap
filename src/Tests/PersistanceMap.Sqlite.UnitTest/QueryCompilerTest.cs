@@ -17,7 +17,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ALTER TABLE Table ");
         }
@@ -30,7 +30,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DROP TABLE Table");
         }
@@ -43,7 +43,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DROP COLUMN ColumnName");
         }
@@ -60,7 +60,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD COLUMN ColumnName int");
         }
@@ -76,7 +76,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD COLUMN ColumnName int");
         }
@@ -93,7 +93,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD COLUMN ColumnName int");
         }
@@ -110,7 +110,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ADD COLUMN ColumnName int NOT NULL");
         }
@@ -126,7 +126,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ALTER TABLE OriginalTable RENAME TO NewTable");
         }
@@ -143,7 +143,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
         }
@@ -159,7 +159,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int");
         }
@@ -176,7 +176,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int");
         }
@@ -193,7 +193,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName int NOT NULL");
         }
@@ -221,7 +221,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "ColumnName1 int NOT NULL, ColumnName2 VARCHAR(20)");
         }
@@ -238,7 +238,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "FOREIGN KEY(ColumnName) REFERENCES RefTable(RefColumn)");
         }
@@ -253,7 +253,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1)");
         }
@@ -269,7 +269,7 @@ namespace PersistanceMap.Sqlite.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "PRIMARY KEY (Column1, Column2)");
         }

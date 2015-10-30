@@ -183,7 +183,7 @@ namespace PersistanceMap.QueryBuilder
             FieldQueryPart.FiedlPartsFactory(QueryParts, fields.ToArray());
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             return query;
         }

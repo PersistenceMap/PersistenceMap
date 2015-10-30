@@ -10,31 +10,25 @@ namespace PersistanceMap
 
         public IInterceptor<T> Add<T>(IInterceptor<T> interceptor)
         {
-            // TODO: Check if this is correct or if it should be able to add multiple interceptors for same type
-            //var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            //if (item != null)
-            //{
-            //    var existing = item.Interceptor as IInterceptor<T>;
-            //    if (existing != null)
-            //    {
-            //        return existing;
-            //    }
-            //}
-
             _interceptors.Add(new InterceptorItem(typeof(T), interceptor));
 
             return interceptor;
         }
 
-        public IInterceptionExecution<T> GetInterceptor<T>()
+        public IInterceptorExecution GetInterceptor<T>()
         {
             var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            return item != null ? item.Interceptor as IInterceptionExecution<T> : null;
+            return item != null ? item.Interceptor as IInterceptorExecution : null;
         }
 
-        public IEnumerable<IInterceptionExecution<T>> GetInterceptors<T>()
+        public IEnumerable<IInterceptorExecution> GetInterceptors<T>()
         {
-            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptionExecution<T>);
+            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptorExecution);
+        }
+
+        public IEnumerable<IInterceptorExecution> GetInterceptors(Type type)
+        {
+            return _interceptors.Where(i => i.Key == type).Select(i => i.Interceptor as IInterceptorExecution);
         }
 
         /// <summary>
@@ -43,7 +37,7 @@ namespace PersistanceMap
         /// <typeparam name="T">The key type</typeparam>
         public void Remove<T>()
         {
-            var items = _interceptors.Where(i => i.Key == typeof(T));
+            var items = _interceptors.Where(i => i.Key == typeof(T)).ToList();
             foreach (var item in items)
             {
                 _interceptors.Remove(item);

@@ -17,7 +17,7 @@ namespace PersistanceMap.UnitTest
 
             // Act
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts.Object);
+            var query = compiler.Compile(parts.Object, new InterceptorCollection());
 
             Assert.IsNotNull(query);
             //parts.Verify(p => p.Compile(), Times.Once);
@@ -32,7 +32,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(new QueryPart(OperationType.Select, null));
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "SELECT");
         }
@@ -46,7 +46,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(select);            
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "SELECT Name AS Alias");
         }
@@ -60,7 +60,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(select);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "SELECT Name AS Alias");
         }
@@ -73,7 +73,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(select);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, string.Empty);
         }
@@ -87,7 +87,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " Name");
         }
@@ -101,7 +101,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " Name AS Alias");
         }
@@ -115,7 +115,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " Entity.Name");
         }
@@ -129,7 +129,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " EntityAlias.Name");
         }
@@ -143,7 +143,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " EntityAlias.Name");
         }
@@ -157,7 +157,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " EntityAlias.Name AS Alias");
         }
@@ -171,7 +171,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " COUNT(Name) AS Alias");
         }
@@ -185,7 +185,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " MAX(Name) AS Alias");
         }
@@ -199,7 +199,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " MIN(Name) AS Alias");
         }
@@ -212,7 +212,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nFROM Table");
         }
@@ -225,7 +225,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nFROM Table Alias");
         }
@@ -238,7 +238,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nFROM Table");
         }
@@ -251,7 +251,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nJOIN Table");
         }
@@ -264,7 +264,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nJOIN Table Alias");
         }
@@ -277,7 +277,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nJOIN Table");
         }
@@ -290,7 +290,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " ON Field = 1");
         }
@@ -303,7 +303,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "\r\n AND Field = 1");
         }
@@ -316,7 +316,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "\r\n OR Field = 1");
         }
@@ -329,7 +329,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nWHERE Field = 1");
         }
@@ -342,7 +342,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nGROUP BY Field");
         }
@@ -355,7 +355,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, ", Field");
         }
@@ -368,7 +368,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nORDER BY Field ASC");
         }
@@ -381,7 +381,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " \r\nORDER BY Field DESC");
         }
@@ -394,7 +394,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, ", Field ASC");
         }
@@ -407,7 +407,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, ", Field DESC");
         }
@@ -424,7 +424,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "INSERT INTO TableName ()");
         }
@@ -439,7 +439,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "INSERT INTO TableName (Field1, Field2)");
         }
@@ -452,7 +452,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Field1");
         }
@@ -465,7 +465,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " VALUES ()");
         }
@@ -480,7 +480,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, " VALUES (Field1, Field2)");
         }
@@ -494,7 +494,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Field1");
         }
@@ -507,7 +507,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "UPDATE Table SET ");
         }
@@ -522,7 +522,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "UPDATE Table SET Field1=Value1, Field2=Value2");
         }
@@ -535,7 +535,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Field1=Value1");
         }
@@ -550,7 +550,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "Member = Value");
         }
@@ -563,7 +563,7 @@ namespace PersistanceMap.UnitTest
             parts.Add(part);
 
             var compiler = new QueryCompiler();
-            var query = compiler.Compile(parts);
+            var query = compiler.Compile(parts, new InterceptorCollection());
 
             Assert.AreEqual(query.QueryString, "DELETE FROM Table");
         }

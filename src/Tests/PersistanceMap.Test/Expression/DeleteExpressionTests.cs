@@ -14,7 +14,7 @@ namespace PersistanceMap.Test.Expression
         public void SimpleDelete()
         {
             var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), "DELETE FROM Employee"));
-            provider.Interceptor<Employee>().Execute(q => new List<Employee>());
+            provider.Interceptor<Employee>().AsExecute(q => new List<Employee>());
             using (var context = provider.Open())
             {
                 context.Delete<Employee>();

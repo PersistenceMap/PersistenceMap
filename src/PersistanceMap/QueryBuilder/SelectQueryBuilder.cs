@@ -135,7 +135,9 @@ namespace PersistanceMap.QueryBuilder
             // if there is a alias on the last item it has to be used with the map
             var last = QueryParts.Parts.Where(l => l.OperationType == OperationType.From || l.OperationType == OperationType.Join).OfType<IEntityPart>().LastOrDefault();
             if (last != null && !string.IsNullOrEmpty(last.EntityAlias) && entity == last.Entity)
+            {
                 entity = last.EntityAlias;
+            }
 
             // make sure the select part is not sealed so the custom map can be added
             bool isSealed = false;
@@ -147,7 +149,9 @@ namespace PersistanceMap.QueryBuilder
 
                 var duplicate = parent.Parts.FirstOrDefault(p => p.ID == (alias ?? source));
                 if (duplicate != null)
+                {
                     parent.Remove(duplicate);
+                }
             }
 
             var part = new FieldQueryPart(source, alias, entityalias, entity, typeof(T), alias ?? source, converter)

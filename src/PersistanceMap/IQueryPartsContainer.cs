@@ -51,7 +51,5 @@ namespace PersistanceMap
         IEnumerable<IQueryPart> Parts { get; }
 
         IQueryPart AggregatePart { get; }
-
-        bool IsSealed { get; }
     }
 }

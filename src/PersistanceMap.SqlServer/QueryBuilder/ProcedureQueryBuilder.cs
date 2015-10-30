@@ -31,7 +31,10 @@ namespace PersistanceMap.QueryBuilder
             get
             {
                 if (_logger == null)
+                {
                     _logger = Context.Kernel.LoggerFactory.CreateLogger();
+                }
+
                 return _logger;
             }
         }
@@ -320,7 +323,7 @@ namespace PersistanceMap.QueryBuilder
         public void Execute()
         {
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
             // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
@@ -351,7 +354,7 @@ namespace PersistanceMap.QueryBuilder
 
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             IEnumerable<T> values = null;
 
@@ -462,7 +465,7 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             IEnumerable<T> values = null;
 
@@ -508,7 +511,7 @@ namespace PersistanceMap.QueryBuilder
             }
 
             var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, Context.Interceptors);
 
             IEnumerable<TOut> values = null;
 

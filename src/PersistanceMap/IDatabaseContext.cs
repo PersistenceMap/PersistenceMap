@@ -30,6 +30,8 @@ namespace PersistanceMap
         /// </summary>
         IEnumerable<IQueryCommand> QueryStore { get; }
 
+        InterceptorCollection Interceptors { get; }
+
         /// <summary>
         /// The kernel providing the execution of the query and mapping of the data
         /// </summary>

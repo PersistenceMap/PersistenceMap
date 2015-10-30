@@ -14,6 +14,11 @@ namespace PersistanceMap.QueryParts
         public virtual void Add(IQueryPart part)
         {
             Parts.Add(part);
+
+            if (AggregatePart == null)
+            {
+                AggregatePart = part;
+            }
         }
 
         public virtual void AddBefore(IQueryPart part, OperationType operation)
@@ -81,18 +86,7 @@ namespace PersistanceMap.QueryParts
             }
         }
 
-        public bool IsSealed
-        {
-            get
-            {
-                return Parts.OfType<IItemsQueryPart>().Any(p => p.IsSealed);
-            }
-        }
-
-        public IQueryPart AggregatePart
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public IQueryPart AggregatePart { get; set; }
 
         #endregion
 

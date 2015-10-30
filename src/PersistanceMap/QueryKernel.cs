@@ -59,7 +59,7 @@ namespace PersistanceMap
                 return _logger;
             }
         }
-
+        
         /// <summary>
         /// Executes a CompiledQuery that returnes a resultset against the RDBMS
         /// </summary>
@@ -71,9 +71,12 @@ namespace PersistanceMap
             var interceptors = _interceptors.GetInterceptors<T>();
             foreach (var interceptor in interceptors)
             {
-                interceptor.OnBeforeExecute(compiledQuery);
+                interceptor.ExecuteBeforeExecute(compiledQuery);
+            }
 
-                var items = interceptor.OnExecute(compiledQuery);
+            foreach (var interceptor in interceptors)
+            {
+                var items = interceptor.Execute<T>(compiledQuery);
                 if (items != null)
                 {
                     return items;
@@ -118,6 +121,24 @@ namespace PersistanceMap
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public void Execute(CompiledQuery compiledQuery)
         {
+            var parts = compiledQuery.QueryParts;
+            if (parts != null && parts.AggregatePart != null)
+            {
+                var interceptors = _interceptors.GetInterceptors(compiledQuery.QueryParts.AggregatePart.EntityType);
+                foreach (var interceptor in interceptors)
+                {
+                    interceptor.ExecuteBeforeExecute(compiledQuery);
+                }
+
+                foreach (var interceptor in interceptors)
+                {
+                    if (interceptor.Execute(compiledQuery))
+                    {
+                        return;
+                    }
+                }
+            }
+
             // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 

@@ -14,9 +14,7 @@ namespace PersistanceMap.QueryBuilder.Commands
         {
             var expr = context.ConnectionProvider.QueryCompiler;
 
-            //context
-
-            var query = expr.Compile(QueryParts);
+            var query = expr.Compile(QueryParts, context.Interceptors);
             context.Kernel.Execute(query);
         }
     }

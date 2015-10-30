@@ -1,17 +1,25 @@
 ﻿using NUnit.Framework;
-using System;
+using PersistanceMap.QueryParts;
+using PersistanceMap.Test;
+using PersistanceMap.Test.TableTypes;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PersistanceMap.SqlServer.UnitTest
+namespace PersistanceMap.SqlServer.Test
 {
     [TestFixture]
     public class InterceptorTests
     {
+        private IEnumerable<Warrior> _warriors;
+
+        [TestFixtureSetUp]
+        public void FixtureInitialize()
+        {
+            _warriors = new List<Warrior>();
+        }
+
         [Test]
-        public void InterceptorWithBeforeAndExecuteTest()
+        public void Interceptor_WithBeforeAndExecuteTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -23,7 +31,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString).Execute(cq => ordersList);
+            provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList);
             using (var context = provider.Open())
             {
                 var orders = context.Select<Order>();
@@ -34,7 +42,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void InterceptorAddMultipleSameIntersectorTest()
+        public void Interceptor_AddMultipleSameIntersectorTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -47,7 +55,7 @@ namespace PersistanceMap.SqlServer.UnitTest
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
             provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString);
-            provider.Interceptor<Order>().Execute(cq => ordersList);
+            provider.Interceptor<Order>().AsExecute(cq => ordersList);
 
             using (var context = provider.Open())
             {
@@ -59,7 +67,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void InterceptorBeforeCompileTest()
+        public void Interceptor_BeforeCompileTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -71,22 +79,20 @@ namespace PersistanceMap.SqlServer.UnitTest
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().BeforeCompile(cq =>
-            {
-                var part = cq.Parts.FirstOrDefault(p => p.OperationType == OperationType.Select && p.ID == "");
-                Assert.Fail();
-            });
+            provider.Interceptor<Order>().BeforeCompile(cq => cq.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Select).Add(new DelegateQueryPart(OperationType.Where, () => "TestWhere")))
+                .BeforeExecute(cq => beforeExecute = cq.QueryString)
+                .AsExecute(cq => ordersList);
 
             using (var context = provider.Open())
             {
-                var orders = context.Select<Order>();
+                context.Select<Order>();
 
-                Assert.Fail();
+                Assert.IsTrue(beforeExecute.Contains("TestWhere"));
             }
         }
 
         [Test]
-        public void InterceptorWithExecuteTest()
+        public void Interceptor_WithExecuteTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -98,7 +104,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().Execute(cq => ordersList);
+            provider.Interceptor<Order>().AsExecute(cq => ordersList);
 
             using (var context = provider.Open())
             {
@@ -110,7 +116,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void InterceptorWithAnonymosObjectTest()
+        public void Interceptor_WithAnonymosObjectTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -125,7 +131,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             provider.Interceptor(() => new
             {
                 OrdersID = 0
-            }).BeforeExecute(cq => beforeExecute = cq.QueryString).Execute(cq => ordersList.Select(o => new
+            }).BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList.Select(o => new
             {
                 o.OrdersID
             }));
@@ -144,7 +150,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void InterceptorWithFailingAnonymosObjectTest()
+        public void Interceptor_WithFailingAnonymosObjectTest()
         {
             string beforeExecute = null;
             var ordersList = new List<Order>
@@ -160,7 +166,7 @@ namespace PersistanceMap.SqlServer.UnitTest
             {
                 OrdersID = 0,
                 Fail = 0
-            }).BeforeExecute(cq => beforeExecute = cq.QueryString).Execute(cq => ordersList.Select(o => new
+            }).BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList.Select(o => new
             {
                 o.OrdersID,
                 Fail = 0
@@ -177,7 +183,7 @@ namespace PersistanceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void InterceptorWithAnonymosObjectDefinedOutsideTest()
+        public void Interceptor_WithAnonymosObjectDefinedOutsideTest()
         {
             var ordersList = new List<Order>
             {
@@ -200,13 +206,57 @@ namespace PersistanceMap.SqlServer.UnitTest
             }
         }
 
+        [Test]
+        public void Interceptor_BeforeCompile_SelectTest()
+        {
+            var query = string.Empty;
+            var where = new DelegateQueryPart(OperationType.Where, () => "ID = 2");
+
+            var provider = new SqlContextProvider("connectionstring");
+            provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).AsExecute(e => _warriors);
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            using (var context = provider.Open())
+            {
+                context.Select<Warrior>();
+
+                Assert.AreEqual(query.Flatten(), "SELECT ID, Name, WeaponID, Race, SpecialSkill FROM Warrior WHERE ID = 2");
+            }
+        }
+
+        [Test]
+        public void Interceptor_BeforeCompile_FromTest()
+        {
+            var query = string.Empty;
+            var where = new DelegateQueryPart(OperationType.Where, () => "ID = 2");
+
+            var provider = new SqlContextProvider("connectionstring");
+            provider.Interceptor(() => new
+            {
+                ID = 0
+            }).BeforeExecute(q => query = q.QueryString).AsExecute(e => _warriors.Select(w => new
+            {
+                ID = w.ID
+            }));
+
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            using (var context = provider.Open())
+            {
+                context.From<Warrior>().Select(() => new
+                {
+                    ID = 0
+                });
+
+                Assert.AreEqual(query.Flatten(), "SELECT ID FROM Warrior WHERE ID = 2");
+            }
+        }
+
         private SqlContextProvider CreateProvider(IEnumerable<Order> orders)
         {
             var provider = new SqlContextProvider("Not a valid connectionstring");
             provider.Interceptor(() => new
             {
                 OrdersID = 0
-            }).Execute(cq => orders.Select(o => new
+            }).AsExecute(cq => orders.Select(o => new
             {
                 o.OrdersID
             }));
