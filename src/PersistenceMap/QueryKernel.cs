@@ -21,21 +21,20 @@ namespace PersistenceMap
         private const int NOT_FOUND = -1;
         private readonly IConnectionProvider _connectionProvider;
         private readonly InterceptorCollection _interceptors;
+        private readonly ISettings _settings;
 
-        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory)
-            : this(provider, loggerFactory, new InterceptorCollection())
+        public QueryKernel(IConnectionProvider provider, ISettings settings)
+            : this(provider, settings, new InterceptorCollection())
         {
         }
 
-        public QueryKernel(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
+        public QueryKernel(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
         {
             _connectionProvider = provider;
-            _loggerFactory = loggerFactory;
+            _settings = settings;
             _interceptors = interceptors;
         }
-
-        readonly ILoggerFactory _loggerFactory;
-
+        
         /// <summary>
         /// Gets the Loggerfactory for logging
         /// </summary>
@@ -43,7 +42,7 @@ namespace PersistenceMap
         {
             get
             {
-                return _loggerFactory;
+                return _settings.LoggerFactory;
             }
         }
 
@@ -186,6 +185,10 @@ namespace PersistenceMap
             {
                 throw;
             }
+            catch (InvalidMapException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 var sb = new StringBuilder();
@@ -324,7 +327,20 @@ namespace PersistenceMap
 
                             if (index < 0)
                             {
-                                Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
+                                //Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
+                                var sb = new StringBuilder();
+                                sb.AppendLine(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name));
+                                sb.AppendLine("The Type containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition");
+
+                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
+                                {
+                                    Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
+                                }
+
+                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
+                                {
+                                    throw new InvalidMapException(sb.ToString(), null, def.Name);
+                                }
                             }
                         }
                     }
@@ -382,7 +398,19 @@ namespace PersistenceMap
 
                             if (index < 0)
                             {
-                                Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldDefinition.MemberName), category: LoggerCategory.DataMap);
+                                var sb = new StringBuilder();
+                                sb.AppendLine(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", fieldDefinition.MemberName));
+                                sb.AppendLine(string.Format("The Type {0} containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition", fieldDefinition.EntityName));
+
+                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
+                                {
+                                    Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
+                                }
+
+                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
+                                {
+                                    throw new InvalidMapException(sb.ToString(), fieldDefinition.MemberType, fieldDefinition.MemberName);
+                                }
                             }
                         }
                     }
@@ -402,6 +430,11 @@ namespace PersistenceMap
             catch (Exception ex)
             {
                 Logger.Write(string.Format("Error while mapping values:\n{0}", ex.Message), GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+
+                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
+                {
+                    throw ex;
+                }
             }
 
             return instance;
@@ -417,7 +450,9 @@ namespace PersistenceMap
         private void SetValue(IReaderContext context, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
             if (HandledDbNullValue(context, fieldDefinition, columnIndex, instance))
+            {
                 return;
+            }
 
             var databaseValue = context.DataReader.GetValue(columnIndex);
 
@@ -477,13 +512,17 @@ namespace PersistenceMap
         private object GetValue(IReaderContext context, ObjectDefinition objectDefinition, int columnIndex)
         {
             if (columnIndex < 0)
+            {
                 return null;
+            }
 
             var dbValue = context.DataReader.GetValue(columnIndex);
 
             var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDefinition.ObjectType);
             if (convertedValue == null)
+            {
                 convertedValue = dbValue;
+            }
 
             if (objectDefinition.Converter != null)
             {

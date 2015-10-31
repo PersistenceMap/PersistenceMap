@@ -74,7 +74,9 @@
     <Compile Include="ContextProvider.cs" />
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
+    <Compile Include="Enums\RestrictiveMode.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
+    <Compile Include="Exceptions\InvalidMapException.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Interception\Interceptor.cs" />
     <Compile Include="Interception\InterceptorCollection.cs" />
     <Compile Include="Interception\InterceptorItem.cs" />
+    <Compile Include="ISettings.cs" />
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\CallbackMap.cs" />

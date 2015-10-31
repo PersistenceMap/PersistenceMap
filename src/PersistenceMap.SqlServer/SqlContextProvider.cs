@@ -8,8 +8,6 @@ namespace PersistenceMap
             : base(new SqlConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
-
-            Settings = new Settings();
         }
 
         /// <summary>
@@ -18,7 +16,7 @@ namespace PersistenceMap
         /// <returns>A DatabaseContext for SQL Databases</returns>
         public virtual SqlDatabaseContext Open()
         {
-            return new SqlDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
+            return new SqlDatabaseContext(ConnectionProvider, Settings, Interceptors);
         }
     }
 }

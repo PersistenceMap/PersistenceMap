@@ -21,7 +21,7 @@ namespace PersistenceMap.Test
 
         public virtual DatabaseContext Open()
         {
-            return new DatabaseContext(ConnectionProvider, new LoggerFactory(), Interceptors);
+            return new DatabaseContext(ConnectionProvider, new Settings(), Interceptors);
         }
 
         public class MockedConnectionProvider : ConnectionProvider, IConnectionProvider

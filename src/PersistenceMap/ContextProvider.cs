@@ -13,6 +13,7 @@ namespace PersistenceMap
         public ContextProvider(IConnectionProvider connectionProvider)
         {
             ConnectionProvider = connectionProvider;
+            Settings = new Settings();
         }
 
         /// <summary>

@@ -4,13 +4,13 @@ namespace PersistenceMap
 {
     public class SqliteDatabaseContext : DatabaseContext, IDatabaseContext
     {
-        public SqliteDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
-            : base(provider, loggerFactory)
+        public SqliteDatabaseContext(IConnectionProvider provider, ISettings settings)
+            : base(provider, settings)
         {
         }
 
-        public SqliteDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
-            : base(provider, loggerFactory, interceptors)
+        public SqliteDatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
+            : base(provider, settings, interceptors)
         {
         }
 

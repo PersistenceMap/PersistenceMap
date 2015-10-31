@@ -8,8 +8,10 @@ using System.Diagnostics;
 
 namespace PersistenceMap
 {
-    public class Settings
+    public class Settings : ISettings
     {
+        private static ConfigurationSettings _configurationSettings;
+
         public Settings()
         {
             // initialize the loggerfactory
@@ -20,20 +22,22 @@ namespace PersistenceMap
                 ConfigSettings.Loggers.ForEach(l => factory.AddLogger(l.GetType().Name, l));
                 return factory;
             });
+
+            RestrictiveMappingMode = RestrictiveMode.Log;
         }
 
-        
-        static ConfigurationSettings _configurationSettings;
-
         /// <summary>
-        /// Gets the singleton instace of the configuration settings
+        /// Gets the singleton instace of the configuration settings that are defined in the *.config file
         /// </summary>
         private ConfigurationSettings ConfigSettings        
         {
             get
             {
                 if (_configurationSettings == null)
+                {
                     _configurationSettings = new ConfigurationSettings();
+                }
+
                 return _configurationSettings;
             }
         }
@@ -51,6 +55,8 @@ namespace PersistenceMap
             }
         }
 
+        public RestrictiveMode RestrictiveMappingMode { get; set; }
+
         /// <summary>
         /// Adds a logger to the factory to the already defined loggers from the configuration
         /// </summary>
@@ -63,7 +69,7 @@ namespace PersistenceMap
         /// <summary>
         /// Class that is used to read the configuration from the app.config
         /// </summary>
-        class ConfigurationSettings
+        internal class ConfigurationSettings
         {
             public ConfigurationSettings()
             {

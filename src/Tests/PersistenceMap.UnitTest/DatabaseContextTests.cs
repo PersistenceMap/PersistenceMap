@@ -13,7 +13,7 @@ namespace PersistenceMap.UnitTest
     [TestFixture]
     public class DatabaseContextTests
     {
-        private Mock<ILoggerFactory> _loggerFactory;
+        private Mock<ISettings> _settings;
         private Mock<IConnectionProvider> _provider;
 
         [SetUp]
@@ -29,14 +29,17 @@ namespace PersistenceMap.UnitTest
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
             _provider.Setup(p => p.QueryCompiler).Returns(compiler.Object);
 
-            _loggerFactory = new Mock<ILoggerFactory>();
-            _loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogger>().Object);
+            var loggerFactory = new Mock<ILoggerFactory>();
+            loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogger>().Object);
+
+            _settings = new Mock<ISettings>();
+            _settings.Setup(s => s.LoggerFactory).Returns(loggerFactory.Object);
         }
 
         [Test]
         public void AddQueryTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             var query = new Mock<IQueryCommand>();
 
@@ -50,7 +53,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void CommitTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             var query = new Mock<IQueryCommand>();
 
@@ -69,7 +72,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void ExecuteStringTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var query = context.Execute<string>("select");
@@ -81,7 +84,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void ExecuteStringWithAnonymObjectTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var query = context.Execute("select", () => new { Test = 0 });
@@ -93,7 +96,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void ExecuteStringNoReturn()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             context.Execute("select");
@@ -105,7 +108,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void SelectTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var items = context.Select<string>();
@@ -117,7 +120,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void SelectWithCondition()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var items = context.Select<string>(s => s == "condition");
@@ -129,7 +132,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void FromTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.From<string>();
@@ -142,7 +145,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void FromWithAliasTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.From<string>("alias");
@@ -155,7 +158,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void FromWithJoinTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.From<Warrior, Armour>((a, w) => a.WarriorID == w.ID);
@@ -169,7 +172,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void FromWithCondition()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.From<Warrior>(w => w.ID == 1);
@@ -183,7 +186,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void DeleteTest()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Delete<Warrior>();
@@ -199,7 +202,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void DeleteWithCondition()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Delete<Warrior>(w => w.ID == 1);
@@ -215,7 +218,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void DeleteWithDataObjectAndIdParameter()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Delete(() => new Warrior { ID = 1 }, w => w.ID);
@@ -232,7 +235,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void DeleteWithDataObjectAndCondtionInsteadOfIdParameterFail()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             Assert.Throws<ArgumentException>(() => context.Delete(() => new Warrior { ID = 1 }, w => w.ID == 1));
@@ -241,7 +244,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void DeleteWithConditionDefinedInAnonymObject()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Delete<Warrior>(() => new { ID = 1 });
@@ -258,7 +261,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void UpdateWithTableTypeObject()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Update(() => new Warrior { ID = 1, Name = "Wrir" });
@@ -280,7 +283,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void UpdateWithTableTypeObjectAndId()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Update(() => new Warrior { ID = 1, Name = "Wrir" }, w => w.ID);
@@ -302,7 +305,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void UpdateWithTableTypeObjectAndCondtionInsteadOfIdFail()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             Assert.Throws<ArgumentException>(() => context.Update(() => new Warrior { Name = "Wrir" }, w => w.ID == 1));
@@ -311,7 +314,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void UpdateWithAnonymObject()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Update<Warrior>(() => new { ID = 1, Name = "test" });
@@ -333,7 +336,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void UpdateWithAnonymObjectAndCondition()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Update<Warrior>(() => new { Name = "test" }, w => w.ID == 1);
@@ -354,7 +357,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void InserWithTableTypeDataObject()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Insert(() => new Warrior { ID = 1, Name = "test" });
@@ -372,7 +375,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void InsertWithAnonymDataObject()
         {
-            var context = new DatabaseContext(_provider.Object, _loggerFactory.Object);
+            var context = new DatabaseContext(_provider.Object, _settings.Object);
 
             // Act
             var expression = context.Insert<Warrior>(() => new { ID = 1, Name = "test" });

@@ -543,5 +543,40 @@ namespace PersistenceMap.Test.Integration
                 Assert.IsFalse(proc.Any(s => s.Year > 0));
             }
         }
+
+        [Test]
+        public void ProcedureWithRestrictiveMappingTest()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;
+            using (var context = provider.Open())
+            {
+                Assert.Throws<InvalidMapException>(() => context.Procedure("SalesByYear")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .For<SalesByYear>()
+                    //.Ignore(s => s.OrdersID)
+                    //.Ignore(s => s.Subtotal)
+                    //.Ignore(s => s.ShippedDate)
+                    //.Ignore(s => s.Year)
+                    .Execute());
+            }
+        }
+
+        [Test]
+        public void ProcedureWithRestrictiveMappingAndIgnoreFieldTest()
+        {
+            var provider = new SqlContextProvider(ConnectionString);
+            provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;
+            using (var context = provider.Open())
+            {
+                context.Procedure("SalesByYear")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .For<SalesByYear>()
+                    .Ignore(s => s.SpecialSubtotal)
+                    .Execute();
+            }
+        }
     }
 }

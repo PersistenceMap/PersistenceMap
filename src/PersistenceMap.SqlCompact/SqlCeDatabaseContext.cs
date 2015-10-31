@@ -4,13 +4,13 @@ namespace PersistenceMap
 {
     public class SqlCeDatabaseContext : DatabaseContext, IDatabaseContext
     {
-        public SqlCeDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
-            : base(provider, loggerFactory)
+        public SqlCeDatabaseContext(IConnectionProvider provider, ISettings settings)
+            : base(provider, settings)
         {
         }
 
-        public SqlCeDatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
-            : base(provider, loggerFactory, interceptors)
+        public SqlCeDatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
+            : base(provider, settings, interceptors)
         {
         }
     }

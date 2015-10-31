@@ -11,8 +11,6 @@ namespace PersistenceMap
             : base(new SqlCeConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
-
-            Settings = new Settings();
         }
 
         /// <summary>
@@ -21,7 +19,7 @@ namespace PersistenceMap
         /// <returns>DatabaseContext for database operations</returns>
         public virtual SqlCeDatabaseContext Open()
         {
-            return new SqlCeDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
+            return new SqlCeDatabaseContext(ConnectionProvider, Settings, Interceptors);
         }
     }
 }

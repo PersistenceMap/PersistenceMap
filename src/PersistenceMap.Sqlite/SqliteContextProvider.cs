@@ -8,8 +8,6 @@ namespace PersistenceMap
             : base(new SqliteConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
-
-            Settings = new Settings();
         }
 
         /// <summary>
@@ -18,7 +16,7 @@ namespace PersistenceMap
         /// <returns>DatabaseContext for database operations</returns>
         public virtual SqliteDatabaseContext Open()
         {
-            return new SqliteDatabaseContext(ConnectionProvider, Settings.LoggerFactory, Interceptors);
+            return new SqliteDatabaseContext(ConnectionProvider, Settings, Interceptors);
         }
     }
 }

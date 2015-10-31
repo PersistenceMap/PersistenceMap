@@ -15,25 +15,24 @@ namespace PersistenceMap
     {
         private readonly IList<IQueryCommand> _queryStore;
         private readonly InterceptorCollection _interceptors;
+        private readonly ISettings _settings;
         private QueryKernel _kernel;
 
-        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory)
-            : this(provider, loggerFactory, new InterceptorCollection())
+        public DatabaseContext(IConnectionProvider provider, ISettings settings)
+            : this(provider, settings, new InterceptorCollection())
         {
         }
 
-        public DatabaseContext(IConnectionProvider provider, ILoggerFactory loggerFactory, InterceptorCollection interceptors)
+        public DatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
         {
             ConnectionProvider = provider;
             _queryStore = new List<IQueryCommand>();
-            LoggerFactory = loggerFactory;
             _interceptors = interceptors;
+            _settings = settings;
         }
 
         #region IDatabaseContext Implementation
-
-        internal ILoggerFactory LoggerFactory { get; private set; }
-
+        
         /// <summary>
         /// Provides a connection to a specific RDBMS
         /// </summary>
@@ -88,7 +87,7 @@ namespace PersistenceMap
             {
                 if (_kernel == null)
                 {
-                    _kernel = new QueryKernel(ConnectionProvider, LoggerFactory, _interceptors);
+                    _kernel = new QueryKernel(ConnectionProvider, _settings, _interceptors);
                 }
 
                 return _kernel;
