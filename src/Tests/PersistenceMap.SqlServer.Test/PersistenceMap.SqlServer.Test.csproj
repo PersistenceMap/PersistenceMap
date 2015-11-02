@@ -80,6 +80,7 @@
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="InterceptorIntegrationTests.cs" />
     <Compile Include="InterceptorTests.cs" />
+    <Compile Include="LocalDbTests.cs" />
     <Compile Include="ProcedureTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectTests.cs" />
