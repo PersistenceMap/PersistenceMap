@@ -133,9 +133,7 @@ namespace PersistenceMap.QueryBuilder
             foreach (var part in QueryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 // seal part to disalow other parts to be added to selectmaps
-                var map = part as IItemsQueryPart;
-                if (map != null)
-                    map.IsSealed = true;
+                part.IsSealed = true;
             }
 
             return new AfterMapQueryBuilder<TNew>(Context, QueryParts);

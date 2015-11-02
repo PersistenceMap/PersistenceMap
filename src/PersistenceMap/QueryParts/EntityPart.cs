@@ -2,7 +2,7 @@
 
 namespace PersistenceMap.QueryParts
 {
-    public class EntityPart : ItemsQueryPart, IEntityPart, IQueryPart
+    public class EntityPart : QueryPart, IEntityPart, IQueryPart
     {
         public EntityPart(OperationType operation, string entity = null, string entityAlias = null, Type entityType = null, string id = null)
             : base(operation, entityType, id)

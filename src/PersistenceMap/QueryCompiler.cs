@@ -13,7 +13,7 @@ namespace PersistenceMap
     /// </summary>
     public class QueryCompiler : IQueryCompiler
     {
-        readonly Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart>> _compilers = new Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart>>();
+        readonly Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IQueryPart>> _compilers = new Dictionary<OperationType, Action<IQueryPart, TextWriter, IQueryPartsContainer, IQueryPart>>();
         private HashSet<IQueryPart> _compiledParts;
 
         public QueryCompiler()
@@ -185,7 +185,7 @@ namespace PersistenceMap
             }
         }
 
-        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IItemsQueryPart parent = null)
+        protected virtual void CompilePart(IQueryPart part, TextWriter writer, IQueryPartsContainer container, IQueryPart parent = null)
         {
             var compiler = _compilers[part.OperationType];
             compiler(part, writer, container, parent);
@@ -193,12 +193,12 @@ namespace PersistenceMap
             CompileChildParts(part, writer, container);
         }
 
-        protected void AddCompiler(OperationType operation, Action<IQueryPart, TextWriter, IQueryPartsContainer, IItemsQueryPart> compiler)
+        protected void AddCompiler(OperationType operation, Action<IQueryPart, TextWriter, IQueryPartsContainer, IQueryPart> compiler)
         {
             _compilers[operation] = compiler;
         }
 
-        private void CompileMemberEqualsValuePart(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileMemberEqualsValuePart(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             var collection = part as IValueCollectionQueryPart;
             if (collection == null)
@@ -255,7 +255,7 @@ namespace PersistenceMap
             writer.Write("FROM {0}{1}", entityMap.Entity, string.IsNullOrEmpty(entityMap.EntityAlias) ? string.Empty : string.Format(" {0}", entityMap.EntityAlias));
         }
 
-        private void CompileField(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileField(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             var field = part as IFieldPart;
             if (field == null)
@@ -287,7 +287,7 @@ namespace PersistenceMap
             }
         }
 
-        private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileFieldFunction(string function, IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             var field = part as IFieldPart;
             if (field == null)
@@ -330,17 +330,13 @@ namespace PersistenceMap
 
             _compiledParts.Add(part);
 
-            var decorator = part as IItemsQueryPart;
-            if (decorator != null)
+            foreach (var p in part.Parts)
             {
-                foreach (var p in decorator.Parts)
-                {
-                    CompilePart(p, writer, container, decorator);
-                }
+                CompilePart(p, writer, container, part);
             }
         }
 
-        protected void AppendComma(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        protected void AppendComma(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             if (parent != null && parent.Parts.Last() != part)
             {

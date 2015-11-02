@@ -123,9 +123,7 @@
     </Compile>
     <Compile Include="QueryBuilder\UpdateQueryBuilder.cs" />
     <Compile Include="QueryParts\DelegateQueryPart.cs" />
-    <Compile Include="QueryParts\ItemsQueryPart.cs" />
     <Compile Include="QueryParts\IFieldPart.cs" />
-    <Compile Include="QueryParts\IItemsQueryPart.cs" />
     <Compile Include="Extensions\DataReaderExtensions.cs" />
     <Compile Include="Extensions\PropertyExtensions.cs" />
     <Compile Include="Extensions\TypeExtensionsForLambdaExpressionConverter.cs" />

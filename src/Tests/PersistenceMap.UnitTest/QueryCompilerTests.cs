@@ -40,7 +40,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileSelectWithFieldTest()
         {
-            var select = new ItemsQueryPart(OperationType.Select);
+            var select = new QueryPart(OperationType.Select);
             select.Add(new FieldQueryPart("Name", "Alias"));
             var parts = new QueryPartsContainer();
             parts.Add(select);            
@@ -54,7 +54,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileSelectWithIncludeTest()
         {
-            var select = new ItemsQueryPart(OperationType.Select);
+            var select = new QueryPart(OperationType.Select);
             select.Add(new FieldQueryPart("Name", "Alias") { OperationType = OperationType.Include });
             var parts = new QueryPartsContainer();
             parts.Add(select);
@@ -68,7 +68,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileIgnoreTest()
         {
-            var select = new ItemsQueryPart(OperationType.IgnoreColumn);
+            var select = new QueryPart(OperationType.IgnoreColumn);
             var parts = new QueryPartsContainer();
             parts.Add(select);
 
@@ -81,7 +81,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -95,7 +95,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldWithAliasTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -109,7 +109,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldWithTableDefinitionTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entity: "Entity"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -123,7 +123,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldWithTableAliasDefinitionTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entityalias: "EntityAlias"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -137,7 +137,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldWithTableAndTableAliasDefinitionTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entity: "Entity", entityalias: "EntityAlias"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -151,7 +151,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileFieldWithAliasAndTableAndTableAliasDefinitionTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", entity: "Entity", entityalias: "EntityAlias"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -165,7 +165,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileCountTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Count));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -179,7 +179,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileMaxTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Max));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -193,7 +193,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileMinTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Min));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -473,7 +473,7 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void QueryCompilerCompileValuesWithInsertValuesTest()
         {
-            var part = new ItemsQueryPart(OperationType.Values);
+            var part = new QueryPart(OperationType.Values);
             part.Add(new DelegateQueryPart(OperationType.InsertValue, () => "Field1"));
             part.Add(new DelegateQueryPart(OperationType.InsertValue, () => "Field2"));
             var parts = new QueryPartsContainer();

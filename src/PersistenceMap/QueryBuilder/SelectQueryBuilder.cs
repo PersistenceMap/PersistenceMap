@@ -25,7 +25,7 @@ namespace PersistenceMap.QueryBuilder
         internal ISelectQueryExpression<T2> From<T2>()
         {
             // create the begining for the select operation
-            var selectPart = new ItemsQueryPart(OperationType.Select, typeof(T2));
+            var selectPart = new QueryPart(OperationType.Select, typeof(T2));
 
             QueryParts.Add(selectPart);
 
@@ -41,7 +41,7 @@ namespace PersistenceMap.QueryBuilder
             alias.ArgumentNotNullOrEmpty("alias");
 
             // create the begining for the select operation
-            var selectPart = new ItemsQueryPart(OperationType.Select, typeof(T2));
+            var selectPart = new QueryPart(OperationType.Select, typeof(T2));
             QueryParts.Add(selectPart);
 
             // add the from operation with a alias
@@ -141,7 +141,7 @@ namespace PersistenceMap.QueryBuilder
 
             // make sure the select part is not sealed so the custom map can be added
             bool isSealed = false;
-            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 isSealed = parent.IsSealed;
@@ -225,23 +225,17 @@ namespace PersistenceMap.QueryBuilder
         {
             foreach (var part in QueryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
-                var map = part as IItemsQueryPart;
-                if (map == null)
-                {
-                    continue;
-                }
-
                 var fieldName = LambdaExtensions.TryExtractPropertyName(predicate);
 
                 // remove all previous mappings of the ignored field
-                var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
+                var subparts = part.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
                 foreach (var subpart in subparts.ToList())
                 {
-                    map.Remove(subpart);
+                    part.Remove(subpart);
                 }
 
                 // add a field marked as ignored
-                map.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
+                part.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
             }
 
             return new SelectQueryBuilder<T>(Context, QueryParts);
@@ -254,7 +248,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Max(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = predicate.TryExtractPropertyName();
@@ -276,7 +270,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Min(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = predicate.TryExtractPropertyName();
@@ -298,12 +292,11 @@ namespace PersistenceMap.QueryBuilder
         /// <returns>ISelectQueryProvider containing the maps</returns>
         public ISelectQueryExpression<T> Count(Expression<Func<T, object>> predicate, string alias = null)
         {
-            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 var field = predicate.TryExtractPropertyName();
                 alias = alias ?? field;
-                //var id = Guid.NewGuid().ToString();
                 var id = alias;
                 var part = new FieldQueryPart(field, alias, id: id, operation: OperationType.Count, entityType: typeof(T));
 

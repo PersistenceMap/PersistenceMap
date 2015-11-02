@@ -172,7 +172,7 @@ namespace PersistenceMap.SqlServer
             writer.Write("ADD {0} {1}{2}", column, type, string.IsNullOrEmpty(nullable) || nullable.ToLower() == "true" ? "" : " NOT NULL");
         }
 
-        private void CompileParameter(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileParameter(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             writer.Write(part.Compile());
 
@@ -182,7 +182,7 @@ namespace PersistenceMap.SqlServer
             }
         }
 
-        private void CompileOutputParameter(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileOutputParameter(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             writer.Write("{0} OUTPUT", part.Compile());
 
@@ -192,7 +192,7 @@ namespace PersistenceMap.SqlServer
             }
         }
 
-        private void CompileOutputParameterSelect(IQueryPart part, TextWriter writer, IItemsQueryPart parent)
+        private void CompileOutputParameterSelect(IQueryPart part, TextWriter writer, IQueryPart parent)
         {
             if (parent != null && parent.Parts.FirstOrDefault(p => p.OperationType == OperationType.OutParameterSelect) == part)
             {

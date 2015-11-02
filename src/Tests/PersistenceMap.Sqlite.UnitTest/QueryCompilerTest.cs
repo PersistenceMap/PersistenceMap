@@ -201,7 +201,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         [Test]
         public void SqliteQueryCompilerCompileColumnMultipleTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
 
             var part1 = new ValueCollectionQueryPart(OperationType.Column);
             part1.AddValue(KeyValuePart.MemberName, "ColumnName1");
@@ -246,7 +246,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         [Test]
         public void SqliteQueryCompilerCompilePrimaryKeyTest()
         {
-            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
 
             var parts = new QueryPartsContainer();
@@ -261,7 +261,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         [Test]
         public void SqliteQueryCompilerCompilePrimaryKeyWithMultipleColumnsTest()
         {
-            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column2"));
 

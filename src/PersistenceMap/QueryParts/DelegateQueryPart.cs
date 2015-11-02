@@ -2,7 +2,7 @@
 
 namespace PersistenceMap.QueryParts
 {
-    public class DelegateQueryPart : ItemsQueryPart, IItemsQueryPart, IQueryPart
+    public class DelegateQueryPart : QueryPart, IQueryPart
     {
         public DelegateQueryPart(OperationType operation, Func<string> callback)
             : this(operation, callback, null, null)

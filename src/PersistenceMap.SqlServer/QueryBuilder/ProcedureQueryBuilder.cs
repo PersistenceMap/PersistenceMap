@@ -185,7 +185,7 @@ namespace PersistenceMap.QueryBuilder
 
             var paramPart = new DelegateQueryPart(OperationType.Parameter, () => CreateParameterValue(name, predicate));
 
-            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IItemsQueryPart;
+            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure);
             if (proc != null)
             {
                 proc.Add(paramPart);
@@ -219,7 +219,7 @@ namespace PersistenceMap.QueryBuilder
             var paramName = string.Format("P{0}", QueryParts.Parts.Count(p => p.OperationType == OperationType.OutParameterDefinition) + 1);
 
             // container for the output parameter definition
-            var outDecl = new ItemsQueryPart(OperationType.OutParameterDefinition);
+            var outDecl = new QueryPart(OperationType.OutParameterDefinition, null);
             QueryParts.AddBefore(outDecl, OperationType.Procedure);
 
             // declare @p1 datetime
@@ -239,7 +239,7 @@ namespace PersistenceMap.QueryBuilder
 
             // parameter=@p1 output
             var queryMap = new DelegateQueryPart(OperationType.OutputParameter, () => string.Format("{0}=@{1}", name, paramName));
-            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure) as IItemsQueryPart;
+            var proc = QueryParts.Parts.First(p => p.OperationType == OperationType.Procedure);
             if (proc != null)
             {
                 proc.Add(queryMap);
@@ -249,21 +249,21 @@ namespace PersistenceMap.QueryBuilder
             if (select == null)
             {
                 // add a select befor adding the output
-                select = new ItemsQueryPart(OperationType.Select);
+                select = new QueryPart(OperationType.Select, null);
                 QueryParts.Add(select);
             }
 
             // create value for selecting output parameters
             // select @p1 as p1
-            var decorator = select as IItemsQueryPart;
-            if (decorator != null)
-            {
-                decorator.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName));
-            }
-            else
-            {
-                QueryParts.AddAfter(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName), QueryParts.Parts.Any(p => p.OperationType == OperationType.OutParameterSelect) ? OperationType.OutParameterSelect : OperationType.Select);
-            }
+            ////var decorator = select as IItemsQueryPart;
+            ////if (decorator != null)
+            ////{
+                select.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName));
+            ////}
+            ////else
+            ////{
+            ////    QueryParts.AddAfter(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName), QueryParts.Parts.Any(p => p.OperationType == OperationType.OutParameterSelect) ? OperationType.OutParameterSelect : OperationType.Select);
+            ////}
 
             // pass the callback further on to be executed when the procedure was executed
             QueryParts.Add(new CallbackMap(paramName, cb => callback((T)cb), typeof(T)));

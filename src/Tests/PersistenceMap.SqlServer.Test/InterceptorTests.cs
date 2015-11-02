@@ -79,7 +79,7 @@ namespace PersistenceMap.SqlServer.Test
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().BeforeCompile(cq => cq.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Select).Add(new DelegateQueryPart(OperationType.Where, () => "TestWhere")))
+            provider.Interceptor<Order>().BeforeCompile(cq => cq.Parts.FirstOrDefault(p => p.OperationType == OperationType.Select).Add(new DelegateQueryPart(OperationType.Where, () => "TestWhere")))
                 .BeforeExecute(cq => beforeExecute = cq.QueryString)
                 .AsExecute(cq => ordersList);
 
@@ -214,7 +214,7 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = new SqlContextProvider("connectionstring");
             provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).AsExecute(e => _warriors);
-            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where));
             using (var context = provider.Open())
             {
                 context.Select<Warrior>();
@@ -238,7 +238,7 @@ namespace PersistenceMap.SqlServer.Test
                 ID = w.ID
             }));
 
-            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where));
             using (var context = provider.Open())
             {
                 context.From<Warrior>().Select(() => new

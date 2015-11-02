@@ -152,7 +152,7 @@ namespace PersistenceMap.Factories
             var definitions = fields.ToList();
 
             // match all properties that are need to be passed over to the fielddefinitions
-            var fieldParts = queryParts.Parts.OfType<IItemsQueryPart>().SelectMany(p => p.Parts.Where(m => m.OperationType != OperationType.IgnoreColumn));
+            var fieldParts = queryParts.Parts.SelectMany(p => p.Parts.Where(m => m.OperationType != OperationType.IgnoreColumn));
             //TODO: Check if there is a better wy instead of having to cast to the object to select the proper items
             foreach (var part in fieldParts.OfType<FieldQueryPart>().Where(f => f.FieldType != null))
             {

@@ -67,7 +67,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns></returns>
         public IUpdateQueryExpression<T> Ignore(Expression<Func<T, object>> predicate)
         {
-            var set = QueryParts.Parts.OfType<IItemsQueryPart>().FirstOrDefault(p => p.OperationType == OperationType.Update) as IItemsQueryPart;
+            var set = QueryParts.Parts.FirstOrDefault(p => p.OperationType == OperationType.Update);
 
             var fieldName = predicate.TryExtractPropertyName();
 
@@ -159,7 +159,7 @@ namespace PersistenceMap.QueryBuilder
             return new UpdateQueryBuilder<T>(Context, QueryParts);
         }
 
-        private static void RemovePartByID(IItemsQueryPart decorator, string id)
+        private static void RemovePartByID(IQueryPart decorator, string id)
         {
             if (decorator != null)
             {

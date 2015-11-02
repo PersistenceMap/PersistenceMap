@@ -26,7 +26,7 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = BuildContext();
             provider.Interceptor<Warrior>()
-                .BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where))
+                .BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where))
                 .BeforeExecute(q => query = q.QueryString);
 
             using (var context = provider.Open())
@@ -46,7 +46,7 @@ namespace PersistenceMap.SqlServer.Test
             var provider = BuildContext();
             provider.Interceptor(() => new { ID = 0 }).BeforeExecute(q => query = q.QueryString);
 
-            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.From).Add(where));
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where));
             using (var context = provider.Open())
             {
                 context.From<Warrior>().Select(() => new
@@ -67,7 +67,7 @@ namespace PersistenceMap.SqlServer.Test
             var provider = BuildContext();
             provider.Interceptors.Remove<Warrior>();
             provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).AsExecute(a => { });
-            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.OfType<IItemsQueryPart>().First(p => p.OperationType == OperationType.Delete).Add(where));
+            provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.Delete).Add(where));
             using (var context = provider.Open())
             {
                 context.Delete<Warrior>();

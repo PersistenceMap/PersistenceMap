@@ -26,7 +26,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
 
             Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
 
-            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable);
 
             Assert.IsNotNull(part);
             Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
@@ -46,7 +46,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
 
             Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
 
-            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable);
 
             Assert.IsNotNull(part);
             Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 5);
@@ -67,7 +67,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
 
             Assert.IsTrue(container.Parts.Any(p => p.OperationType == OperationType.CreateTable));
 
-            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable) as IItemsQueryPart;
+            var part = container.Parts.First(p => p.OperationType == OperationType.CreateTable);
 
             Assert.IsNotNull(part);
             Assert.IsTrue(part.Parts.Count(p => p.OperationType == OperationType.Column) == 6);

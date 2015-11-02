@@ -28,21 +28,17 @@ namespace PersistenceMap.QueryBuilder
         {
             foreach (var part in QueryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
-                var map = part as IItemsQueryPart;
-                if (map == null)
-                    continue;
-
                 var fieldName = LambdaExtensions.TryExtractPropertyName(predicate);
 
                 // remove all previous mappings of the ignored field
-                var subparts = map.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
+                var subparts = part.Parts.OfType<IFieldPart>().Where(f => f.Field == fieldName || f.FieldAlias == fieldName).OfType<IQueryPart>();
                 foreach (var subpart in subparts.ToList())
                 {
-                    map.Remove(subpart);
+                    part.Remove(subpart);
                 }
 
                 // add a field marked as ignored
-                map.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
+                part.Add(new IgnoreFieldQueryPart(fieldName, string.Empty, entityType: typeof(T)));
             }
 
             return new AfterMapQueryBuilder<T>(Context, QueryParts);
@@ -78,7 +74,7 @@ namespace PersistenceMap.QueryBuilder
 
             // make sure the select part is not sealed so the custom map can be added
             bool isSealed = false;
-            var parent = QueryParts.Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == OperationType.Select);
+            var parent = QueryParts.Parts.LastOrDefault(p => p.OperationType == OperationType.Select);
             if (parent != null)
             {
                 isSealed = parent.IsSealed;

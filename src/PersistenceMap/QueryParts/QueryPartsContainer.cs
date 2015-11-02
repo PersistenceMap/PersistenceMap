@@ -43,18 +43,22 @@ namespace PersistenceMap.QueryParts
 
         public void AddToLast(IQueryPart part, OperationType operation)
         {
-            var last = Parts.OfType<IItemsQueryPart>().LastOrDefault(p => p.OperationType == operation);
+            var last = Parts.LastOrDefault(p => p.OperationType == operation);
             if (last == null)
+            {
                 return;
+            }
 
             last.Add(part);
         }
 
         public void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate)
         {
-            var last = Parts.OfType<IItemsQueryPart>().LastOrDefault(predicate) as IItemsQueryPart;
+            var last = Parts.LastOrDefault(predicate);
             if (last == null)
+            {
                 return;
+            }
 
             last.Add(part);
         }
@@ -81,7 +85,10 @@ namespace PersistenceMap.QueryParts
             get
             {
                 if (_parts == null)
+                { 
                     _parts = new List<IQueryPart>();
+                }
+
                 return _parts;
             }
         }

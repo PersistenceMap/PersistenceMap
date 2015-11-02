@@ -88,7 +88,7 @@ namespace PersistenceMap.QueryParts
         internal static void FiedlPartsFactory(SelectQueryPartsContainer queryParts, FieldQueryPart[] fields)
         {
             //TODO: this method should be removed!
-            foreach (var map in queryParts.Parts.OfType<IItemsQueryPart>().Where(p => p.OperationType == OperationType.Select))
+            foreach (var map in queryParts.Parts.Where(p => p.OperationType == OperationType.Select))
             {
                 // add all mapped fields to a collection to ensure that they are used in the query
                 var unusedMappedFields = map.Parts.OfType<FieldQueryPart>().ToList();

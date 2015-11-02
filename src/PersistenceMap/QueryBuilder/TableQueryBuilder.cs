@@ -149,7 +149,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns></returns>
         public virtual ITableQueryExpression<T> Key(params Expression<Func<T, object>>[] keyFields)
         {
-            var part = new ItemsQueryPart(OperationType.PrimaryKey, typeof(T));
+            var part = new QueryPart(OperationType.PrimaryKey, typeof(T));
 
             foreach (var key in keyFields)
             {

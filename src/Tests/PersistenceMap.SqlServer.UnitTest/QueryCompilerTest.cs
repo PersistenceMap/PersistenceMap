@@ -51,7 +51,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileParameterTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None, null);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param=value"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -65,7 +65,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileMultipleParameterTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param1=value1"));
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param2=value2"));
             var parts = new QueryPartsContainer();
@@ -80,7 +80,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileParameterOutputTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
             var parts = new QueryPartsContainer();
             parts.Add(part);
@@ -94,7 +94,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileMultipleParameterOutputTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param2=value2"));
             var parts = new QueryPartsContainer();
@@ -109,7 +109,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileOutputParameterDefinitionTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => "Param int"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSet, () => "Param=1"));
             var parts = new QueryPartsContainer();
@@ -163,7 +163,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileSelectWithOutputParameterSelectTest()
         {
-            var part = new ItemsQueryPart(OperationType.Select);
+            var part = new QueryPart(OperationType.Select);
             part.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param1"));
             part.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param2"));
             var parts = new QueryPartsContainer();
@@ -359,7 +359,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompileColumnMultipleTest()
         {
-            var part = new ItemsQueryPart(OperationType.None);
+            var part = new QueryPart(OperationType.None);
 
             var part1 = new ValueCollectionQueryPart(OperationType.Column);
             part1.AddValue(KeyValuePart.MemberName, "ColumnName1");
@@ -404,7 +404,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompilePrimaryKeyTest()
         {
-            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
 
             var parts = new QueryPartsContainer();
@@ -419,7 +419,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         [Test]
         public void SqlQueryCompilerCompilePrimaryKeyWithMultipleColumnsTest()
         {
-            var part = new ItemsQueryPart(OperationType.PrimaryKey);
+            var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column2"));
 
