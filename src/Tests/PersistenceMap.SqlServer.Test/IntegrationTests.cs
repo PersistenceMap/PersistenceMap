@@ -5,6 +5,7 @@ using PersistenceMap.Test;
 using PersistenceMap.Test.LocalDb;
 using PersistenceMap.Test.TableTypes;
 using System.Collections.Generic;
+using PersistenceMap.Test.Benchmark;
 
 namespace PersistenceMap.SqlServer.Test
 {
@@ -22,8 +23,7 @@ namespace PersistenceMap.SqlServer.Test
                 }
             };
 
-
-            var profile = new PersistenceMap.Test.Benchmark.ProfileSession()
+            var profile = ProfileSession.StartSession()
                 .Task(() =>
                 {
                     var provider = new SqlContextProvider("Not a valid connectionstring");
@@ -38,9 +38,9 @@ namespace PersistenceMap.SqlServer.Test
                             .Select<Orders>();
                     }
                 })
-                .Iterations(20)
-                .Condition(p => p.AverageMilliseconds < 27)
-                .Run();
+                .SetIterations(20)
+                .AddCondition(p => p.AverageMilliseconds < 27)
+                .RunSession();
             
             Assert.IsTrue(profile.AverageMilliseconds < 27);
         }
