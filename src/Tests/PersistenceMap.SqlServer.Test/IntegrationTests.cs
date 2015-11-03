@@ -5,7 +5,7 @@ using PersistenceMap.Test;
 using PersistenceMap.Test.LocalDb;
 using PersistenceMap.Test.TableTypes;
 using System.Collections.Generic;
-using PersistenceMap.Test.Benchmark;
+using MeasureMap;
 
 namespace PersistenceMap.SqlServer.Test
 {
