@@ -54,7 +54,7 @@ namespace PersistenceMap.Test
                 return new MockedReaderContext();
             }
 
-            public override void ExecuteNonQuery(string query)
+            public override int ExecuteNonQuery(string query)
             {
                 if (_onExecute != null)
                 {
@@ -62,6 +62,8 @@ namespace PersistenceMap.Test
                 }
 
                 _callbackCalled = true;
+
+                return 0;
             }
 
             #region IDisposeable Implementation

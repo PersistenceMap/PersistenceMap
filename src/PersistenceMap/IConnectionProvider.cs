@@ -27,7 +27,8 @@ namespace PersistenceMap
         /// <summary>
         /// Execute the sql string to the RDBMS
         /// </summary>
-        /// <param name="query"></param>
-        void ExecuteNonQuery(string query);
+        /// <param name="query">The query string</param>
+        /// <returns>The amount of afected rows</returns>
+        int ExecuteNonQuery(string query);
     }
 }

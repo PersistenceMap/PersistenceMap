@@ -10,19 +10,20 @@ namespace PersistenceMap
         {
             QueryCompiler = new SqlServer.QueryCompiler();
         }
-        
+
         /// <summary>
         /// Executes a sql query without returning a resultset
         /// </summary>
-        /// <param name="query"></param>
-        public override void ExecuteNonQuery(string query)
+        /// <param name="query">The query string</param>
+        /// <returns>The amount of afected rows</returns>
+        public override int ExecuteNonQuery(string query)
         {
             using (var connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
 
                 var executer = connection.GetExecuter(query);
-                executer.ExecuteNonQuery(connection, query);
+                return executer.ExecuteNonQuery(connection, query);
             }
         }
     }
@@ -43,19 +44,19 @@ namespace PersistenceMap
 
     internal interface IQueryExecuter
     {
-        void ExecuteNonQuery(SqlConnection connection, string query);
+        int ExecuteNonQuery(SqlConnection connection, string query);
     }
 
     internal class QueryExecuter : IQueryExecuter
     {
-        public void ExecuteNonQuery(SqlConnection connection, string query)
+        public int ExecuteNonQuery(SqlConnection connection, string query)
         {
             using (var command = new SqlCommand(query, connection))
             {
                 try
                 {
                     command.CommandText = query;
-                    command.ExecuteNonQuery();
+                    return command.ExecuteNonQuery();
                 }
                 catch (SqlException e)
                 {
@@ -68,14 +69,14 @@ namespace PersistenceMap
 
     internal class TransactionedQueryExeuter : IQueryExecuter
     {
-        public void ExecuteNonQuery(SqlConnection connection, string query)
+        public int ExecuteNonQuery(SqlConnection connection, string query)
         {
             // SqlCommand can't handle go breakes so split all go
             var regex = new Regex("^GO", RegexOptions.IgnoreCase | RegexOptions.Multiline);
             string[] lines = regex.Split(query);
 
             var transaction = connection.BeginTransaction();
-            
+            var affectedRows = 0;
             using (var command = connection.CreateCommand())
             {
                 try
@@ -87,7 +88,7 @@ namespace PersistenceMap
                             command.CommandText = line;
                             command.Transaction = transaction;
 
-                            command.ExecuteNonQuery();
+                            affectedRows = command.ExecuteNonQuery();
                         }
                     }
                 }
@@ -100,6 +101,8 @@ namespace PersistenceMap
             }
 
             transaction.Commit();
+
+            return affectedRows;
         }
     }
 }

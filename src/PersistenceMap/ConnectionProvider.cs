@@ -90,8 +90,9 @@ namespace PersistenceMap
         /// <summary>
         /// Execute the sql string to the RDBMS
         /// </summary>
-        /// <param name="query"></param>
-        public virtual void ExecuteNonQuery(string query)
+        /// <param name="query">The query string</param>
+        /// <returns>The amount of afected rows</returns>
+        public virtual int ExecuteNonQuery(string query)
         {
             using (var connection = _connectionFactory(ConnectionString))
             {
@@ -100,7 +101,7 @@ namespace PersistenceMap
                 {
                     cmd.CommandText = query;
                     cmd.Connection = connection;
-                    cmd.ExecuteNonQuery();
+                    return cmd.ExecuteNonQuery();
                 }
             }
         }

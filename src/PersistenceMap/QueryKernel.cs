@@ -130,7 +130,8 @@ namespace PersistenceMap
 
             try
             {
-                _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString);
+                var affectedRows = _connectionProvider.ExecuteNonQuery(compiledQuery.QueryString);
+                Logger.Write(string.Format("{0} row(s) affected", affectedRows), _connectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
             }
             catch (InvalidConverterException)
             {
