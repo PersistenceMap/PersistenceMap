@@ -47,7 +47,7 @@ namespace PersistenceMap.Test
 
             public bool CheckCallbackCall { get; set; }
             
-            public override IReaderContext Execute(string query)
+            public override IDataReaderContext Execute(string query)
             {
                 ExecuteNonQuery(query);
 
@@ -110,7 +110,7 @@ namespace PersistenceMap.Test
             #endregion
         }
 
-        public class MockedReaderContext : IReaderContext
+        public class MockedReaderContext : IDataReaderContext
         {
             public System.Data.IDataReader DataReader
             {

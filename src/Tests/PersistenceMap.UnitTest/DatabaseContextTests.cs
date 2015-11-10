@@ -20,7 +20,7 @@ namespace PersistenceMap.UnitTest
         public void Setup()
         {
             var dr = new Mock<IDataReader>();
-            var reader = new ReaderContext(dr.Object);
+            var reader = new DataReaderContext(dr.Object);
 
             var compiler = new Mock<IQueryCompiler>();
             compiler.Setup(c => c.Compile(It.IsAny<IQueryPartsContainer>(), It.IsAny<InterceptorCollection>())).Returns(new CompiledQuery());

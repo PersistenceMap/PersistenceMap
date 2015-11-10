@@ -26,6 +26,11 @@ namespace PersistenceMap
         void AddQuery(IQueryCommand command);
 
         /// <summary>
+        /// Gets the settings of the context
+        /// </summary>
+        ISettings Settings { get; }
+
+        /// <summary>
         /// The commandstore containing all queries that have not been executed
         /// </summary>
         IEnumerable<IQueryCommand> QueryStore { get; }

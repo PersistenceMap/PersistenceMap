@@ -21,18 +21,7 @@ namespace PersistenceMap.QueryBuilder
             _context = context;
             _queryParts = container;
         }
-
-        private ILogger _logger;
-        protected ILogger Logger
-        {
-            get
-            {
-                if (_logger == null)
-                    _logger = Context.Kernel.LoggerFactory.CreateLogger();
-                return _logger;
-            }
-        }
-
+        
         #region IQueryProvider Implementation
 
         readonly IDatabaseContext _context;

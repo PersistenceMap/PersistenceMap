@@ -19,7 +19,7 @@ namespace PersistenceMap.UnitTest
         public void Setup()
         {
             var dr = new Mock<IDataReader>();
-            var reader = new ReaderContext(dr.Object);
+            var reader = new DataReaderContext(dr.Object);
 
             _provider = new Mock<IConnectionProvider>();
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
@@ -32,7 +32,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ExecuteCompiledQueryWithReturn()
+        public void QueryKernel_ExecuteCompiledQueryWithReturn()
         {
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
@@ -44,7 +44,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ExecuteCompiledQueryWithoutReturn()
+        public void QueryKernel_ExecuteCompiledQueryWithoutReturn()
         {
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
@@ -56,14 +56,14 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ExecuteCompiledQueryWithMultipleReaderContext()
+        public void QueryKernel_ExecuteCompiledQueryWithMultipleReaderContext()
         {
             bool result = true;
             var dr = new Mock<IDataReader>();
             dr.Setup(d => d.IsClosed).Returns(false);
             dr.Setup(d => d.NextResult()).Returns(() => result).Callback(() => result = false);
 
-            _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new ReaderContext(dr.Object));
+            _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new DataReaderContext(dr.Object));
             
             bool expressionOne = false;
             bool expressionTwo = false;

@@ -7,7 +7,10 @@ namespace PersistenceMap.UnitTest
     {
         public IConnectionProvider ConnectionProvider
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void Commit()
@@ -18,19 +21,36 @@ namespace PersistenceMap.UnitTest
         {
         }
 
+        public ISettings Settings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public IEnumerable<IQueryCommand> QueryStore
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public InterceptorCollection Interceptors
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public QueryKernel Kernel
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void Dispose()

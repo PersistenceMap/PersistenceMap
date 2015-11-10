@@ -6,17 +6,17 @@ namespace PersistenceMap
     /// <summary>
     /// Class providing common implementation for IReaderContext
     /// </summary>
-    public class ReaderContext : IReaderContext
+    public class DataReaderContext : IDataReaderContext
     {
         readonly IDbConnection _connection;
         readonly IDbCommand _command;
 
-        public ReaderContext(IDataReader reader)
+        public DataReaderContext(IDataReader reader)
             : this(reader, null, null)
         {
         }
 
-        public ReaderContext(IDataReader reader, IDbConnection connection, IDbCommand command)
+        public DataReaderContext(IDataReader reader, IDbConnection connection, IDbCommand command)
         {
             DataReader = reader;
             _connection = connection;
@@ -84,7 +84,7 @@ namespace PersistenceMap
         /// <summary>
         /// Releases resources before the object is reclaimed by garbage collection.
         /// </summary>
-        ~ReaderContext()
+        ~DataReaderContext()
         {
             Dispose(false);
         }

@@ -22,7 +22,7 @@ namespace PersistenceMap
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        IReaderContext Execute(string query);
+        IDataReaderContext Execute(string query);
 
         /// <summary>
         /// Execute the sql string to the RDBMS

@@ -6,7 +6,7 @@ namespace PersistenceMap
     /// <summary>
     /// Provides a context containing the datareader
     /// </summary>
-    public interface IReaderContext : IDisposable
+    public interface IDataReaderContext : IDisposable
     {
         /// <summary>
         /// The datareader that was returned from the database
