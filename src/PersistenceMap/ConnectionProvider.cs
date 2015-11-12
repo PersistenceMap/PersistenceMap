@@ -75,7 +75,7 @@ namespace PersistenceMap
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public virtual IReaderContext Execute(string query)
+        public virtual IDataReaderContext Execute(string query)
         {
             var connection = _connectionFactory(ConnectionString);
             connection.Open();
@@ -84,7 +84,7 @@ namespace PersistenceMap
             command.CommandText = query;
             command.Connection = connection;
 
-            return new ReaderContext(command.ExecuteReader(), connection, command);
+            return new DataReaderContext(command.ExecuteReader(), connection, command);
         }
 
         /// <summary>

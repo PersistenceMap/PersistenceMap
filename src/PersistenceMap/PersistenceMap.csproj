@@ -88,6 +88,7 @@
     <Compile Include="Interception\InterceptorCollection.cs" />
     <Compile Include="Interception\InterceptorItem.cs" />
     <Compile Include="ISettings.cs" />
+    <Compile Include="ObjectMap.cs" />
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\CallbackMap.cs" />
@@ -136,9 +137,9 @@
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />
     <Compile Include="IQueryPartsContainer.cs" />
-    <Compile Include="IReaderContext.cs" />
+    <Compile Include="IDataReaderContext.cs" />
     <Compile Include="QueryParts\IEntityPart.cs" />
-    <Compile Include="ReaderContext.cs" />
+    <Compile Include="DataReaderContext.cs" />
     <Compile Include="QueryKernel.cs" />
     <Compile Include="QueryBuilder\CompiledQuery.cs" />
     <Compile Include="QueryCompiler.cs" />

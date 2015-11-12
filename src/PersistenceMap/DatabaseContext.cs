@@ -63,6 +63,17 @@ namespace PersistenceMap
         }
 
         /// <summary>
+        /// Gets the settings of the context
+        /// </summary>
+        public ISettings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+        }
+
+        /// <summary>
         /// The commandstore containing all queries that have not been executed
         /// </summary>
         public IEnumerable<IQueryCommand> QueryStore

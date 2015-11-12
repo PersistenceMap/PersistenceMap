@@ -24,14 +24,11 @@ namespace PersistenceMap.QueryBuilder
             _queryParts = container;
         }
 
-        private ILogger _logger;
         protected ILogger Logger
         {
             get
             {
-                if (_logger == null)
-                    _logger = Context.Kernel.LoggerFactory.CreateLogger();
-                return _logger;
+                return Context.Settings.LoggerFactory.CreateLogger();
             }
         }
 

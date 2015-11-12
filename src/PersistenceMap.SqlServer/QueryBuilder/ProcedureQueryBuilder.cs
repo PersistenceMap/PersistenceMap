@@ -25,19 +25,19 @@ namespace PersistenceMap.QueryBuilder
             }
         }
 
-        private ILogger _logger;
-        protected ILogger Logger
-        {
-            get
-            {
-                if (_logger == null)
-                {
-                    _logger = Context.Kernel.LoggerFactory.CreateLogger();
-                }
+        //private ILogger _logger;
+        //protected ILogger Logger
+        //{
+        //    get
+        //    {
+        //        if (_logger == null)
+        //        {
+        //            _logger = Context.Kernel.LoggerFactory.CreateLogger();
+        //        }
 
-                return _logger;
-            }
-        }
+        //        return _logger;
+        //    }
+        //}
 
         #region IQueryProvider Implementation
 
@@ -73,7 +73,7 @@ namespace PersistenceMap.QueryBuilder
 
         #region Protected Implementation
 
-        protected void ReadReturnValues(IReaderContext reader, QueryKernel kernel)
+        protected void ReadReturnValues(IDataReaderContext context, QueryKernel kernel)
         {
             var objectDefs = QueryParts.Callbacks.Select(p =>
                 new ObjectDefinition
@@ -83,7 +83,7 @@ namespace PersistenceMap.QueryBuilder
                 }).ToArray();
 
 
-            var mapping = kernel.Map(reader, objectDefs).FirstOrDefault();
+            var mapping = kernel.Map(context.DataReader, objectDefs).FirstOrDefault();
 
             if (mapping == null || !mapping.Any())
             {
@@ -358,7 +358,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }
@@ -469,7 +469,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }
@@ -515,7 +515,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<TOut> values = null;
 
-            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<TOut>(dr, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            Context.Kernel.Execute(query, dr => values = Context.Kernel.Map<TOut>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }
