@@ -280,31 +280,7 @@ namespace PersistenceMap.SqlServer.Test
                 Assert.IsFalse(tables.Any(t => t.Name == typeof(Weapon).Name));
             }
         }
-
-        //[Test]
-        //public void RenameTable()
-        //{
-        //    var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
-        //    using (var context = provider.Open())
-        //    {
-        //        context.Database.Create();
-
-        //        // create a table to drop later in the test
-        //        context.Database.Table<Warrior>().Create();
-
-        //        context.Commit();
-
-        //        // drop the table
-        //        context.Database.Table<Warrior>().RenameTo<Solidier>();
-
-        //        context.Commit();
-
-        //        var tables = GetTables(context);
-        //        Assert.IsTrue(tables.Any(t => t.Name == typeof(Solidier).Name));
-        //        Assert.IsFalse(tables.Any(t => t.Name == typeof(Warrior).Name));
-        //    }
-        //}
-
+        
         [Test]
         public void AddFieldByString()
         {

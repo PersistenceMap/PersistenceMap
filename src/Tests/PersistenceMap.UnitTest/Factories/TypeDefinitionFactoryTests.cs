@@ -3,10 +3,7 @@ using PersistenceMap.Factories;
 using PersistenceMap.QueryParts;
 using PersistenceMap.UnitTest.TableTypes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.UnitTest.Factories
 {

@@ -25,6 +25,10 @@ namespace PersistenceMap.UnitTest
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 0))).Returns("Value one");
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 1))).Returns("Value two");
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 2))).Returns("Value three");
+
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("FieldOne");
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("FieldTwo");
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 2))).Returns("FieldThree");
         }
 
         [Test]
@@ -136,15 +140,9 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Test incomplete")]
         public void ObjectMap_ReadDataOfT()
         {
-            var objectDefinitions = new List<FieldDefinition>
-            {
-                new FieldDefinition { MemberName = "One", FieldName =  "One", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Two", FieldName =  "Two", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Three", FieldName =  "Three", MemberType = typeof(string) }
-            };
+            var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
             var indexCache = new Dictionary<string, int>
             {
@@ -154,21 +152,21 @@ namespace PersistenceMap.UnitTest
             };
 
             var map = new ObjectMap(new Settings());
-            var item = map.ReadData<OneTwoThree>(_dataReader.Object, objectDefinitions.ToArray(), indexCache);
+            var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
-            Assert.Fail();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(item.One, "Value one");
+            Assert.AreEqual(item.Two, "Value two");
+            Assert.AreEqual(item.Three, "Value three");
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Test incomplete")]
         public void ObjectMap_ReadDataOfT_WithUnequalFieldsMembers()
         {
-            var objectDefinitions = new List<FieldDefinition>
-            {
-                new FieldDefinition { MemberName = "One", FieldName =  "TestOne", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Two", FieldName =  "TestTwo", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Three", FieldName =  "TestThree", MemberType = typeof(string) }
-            };
+            var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>().ToList();
+            fieldDefinitions[0].FieldName = "TestOne";
+            fieldDefinitions[1].FieldName = "TestTwo";
+            fieldDefinitions[2].FieldName = "TestThree";
 
             var indexCache = new Dictionary<string, int>
             {
@@ -178,67 +176,67 @@ namespace PersistenceMap.UnitTest
             };
 
             var map = new ObjectMap(new Settings());
-            var item = map.ReadData<OneTwoThree>(_dataReader.Object, objectDefinitions.ToArray(), indexCache);
+            var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
-            Assert.Fail();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(item.One, "Value one");
+            Assert.AreEqual(item.Two, "Value two");
+            Assert.AreEqual(item.Three, "Value three");
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Test incomplete")]
         public void ObjectMap_ReadDataOfT_WithoutIndexCache()
         {
-            var objectDefinitions = new List<FieldDefinition>
-            {
-                new FieldDefinition { MemberName = "One", FieldName =  "One", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Two", FieldName =  "Two", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Three", FieldName =  "Three", MemberType = typeof(string) }
-            };
+            var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
             var indexCache = new Dictionary<string, int>();
 
             var map = new ObjectMap(new Settings());
-            var item = map.ReadData<OneTwoThree>(_dataReader.Object, objectDefinitions.ToArray(), indexCache);
+            var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
-            Assert.Fail();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(item.One, "Value one");
+            Assert.AreEqual(item.Two, "Value two");
+            Assert.AreEqual(item.Three, "Value three");
+
+            Assert.IsTrue(indexCache.Count == 3);
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Test incomplete")]
         public void ObjectMap_ReadDataOfT_WithNullIndexCache()
         {
-            var objectDefinitions = new List<FieldDefinition>
-            {
-                new FieldDefinition { MemberName = "One", FieldName =  "One", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Two", FieldName =  "Two", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Three", FieldName =  "Three", MemberType = typeof(string) }
-            };
+            var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
             
             var map = new ObjectMap(new Settings());
-            var item = map.ReadData<OneTwoThree>(_dataReader.Object, objectDefinitions.ToArray(), null);
+            var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), null);
 
-            Assert.Fail();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(item.One, "Value one");
+            Assert.AreEqual(item.Two, "Value two");
+            Assert.AreEqual(item.Three, "Value three");
         }
 
         [Test]
         public void ObjectMap_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
         {
-            var objectDefinitions = new List<FieldDefinition>
-            {
-                new FieldDefinition { MemberName = "One", FieldName =  "TestOne", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Two", FieldName =  "TestTwo", MemberType = typeof(string) },
-                new FieldDefinition { MemberName = "Three", FieldName =  "TestThree", MemberType = typeof(string) }
-            };
+            var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>().ToList();
+            fieldDefinitions[0].FieldName = "FieldOne";
+            fieldDefinitions[1].FieldName = "FieldTwo";
+            fieldDefinitions[2].FieldName = "FieldThree";
 
             var indexCache = new Dictionary<string, int>();
 
             var map = new ObjectMap(new Settings());
-            var item = map.ReadData<OneTwoThree>(_dataReader.Object, objectDefinitions.ToArray(), indexCache);
+            var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
-            Assert.Fail();
+            Assert.IsNotNull(item);
+            Assert.AreEqual(item.One, "Value one");
+            Assert.AreEqual(item.Two, "Value two");
+            Assert.AreEqual(item.Three, "Value three");
+
+            Assert.IsTrue(indexCache.Count == 3);
         }
-
-
-
+        
         internal class OneTwoThree
         {
             public string One { get; set; }
