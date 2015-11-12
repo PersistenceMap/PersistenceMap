@@ -69,8 +69,8 @@ build:
 
 test:
   # assemblies to test - optional
-  assemblies:
-    - '**\*.UnitTest.dll'
+#  assemblies:
+#    - '**\*.UnitTest.dll'
 
 #  categories:
 #    - UI
