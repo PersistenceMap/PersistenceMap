@@ -21,7 +21,7 @@ skip_tags: true
 
 install:
 #  - sudo apt-get install nunit-console
-#  - nuget restore MeasureMap.sln
+#  - nuget restore PersistenceMap.sln
  
 # enable patching of AssemblyInfo.* files
 # assembly_info:
@@ -49,7 +49,7 @@ before_build:
 
 build:
   parallel: true                  # enable MSBuild parallel builds
-  project: MeasureMap.sln      # path to Visual Studio solution or project
+  project: PersitenceMap.sln      # path to Visual Studio solution or project
   publish_wap: true               # package Web Application Projects (WAP) for Web Deploy
   publish_wap_xcopy: true         # package Web Application Projects (WAP) for XCopy deployment
   publish_azure: true             # package Azure Cloud Service projects and push to artifacts
