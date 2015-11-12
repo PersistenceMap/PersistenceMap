@@ -10,8 +10,8 @@ version: 1.0.{build}
 # branches to build
 branches:
   # whitelist
-#  only:
-#    - master
+  only:
+    - master
 
 # Do not build on tags (GitHub only)
 skip_tags: true
@@ -69,8 +69,8 @@ build:
 
 test:
   # assemblies to test - optional
-#  assemblies:
-#    - '**\*.UnitTest.dll'
+  assemblies:
+    - '**\*.UnitTest.dll'
 
 #  categories:
 #    - UI
