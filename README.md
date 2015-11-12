@@ -1,4 +1,4 @@
-![wickedflame persistancemap](assets/wickedflame persistancemap - black.png)
+![wickedflame persistencemap](assets/wickedflame persistencemap - black.png)
 
 PersistenceMap
 ==============
