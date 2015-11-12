@@ -2,6 +2,7 @@
 
 PersistenceMap
 ==============
+[![Build status](https://ci.appveyor.com/api/projects/status/i43jveqowctku03x/branch/master?svg=true)](https://ci.appveyor.com/project/chriswalpen/persistencemap/branch/master)
 
 PersistenceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
 The simple, straight forward, intuitive and easy to use API helps to quickly setup a connction to a Database.
