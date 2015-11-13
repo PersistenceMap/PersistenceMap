@@ -22,13 +22,10 @@ namespace PersistenceMap.UnitTest
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("One");
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("Two");
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 2))).Returns("Three");
+
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 0))).Returns("Value one");
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 1))).Returns("Value two");
             _dataReader.Setup(o => o.GetValue(It.Is<int>(i => i == 2))).Returns("Value three");
-
-            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("FieldOne");
-            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("FieldTwo");
-            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 2))).Returns("FieldThree");
         }
 
         [Test]
@@ -219,6 +216,10 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void ObjectMap_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
         {
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("FieldOne");
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("FieldTwo");
+            _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 2))).Returns("FieldThree");
+
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>().ToList();
             fieldDefinitions[0].FieldName = "FieldOne";
             fieldDefinitions[1].FieldName = "FieldTwo";

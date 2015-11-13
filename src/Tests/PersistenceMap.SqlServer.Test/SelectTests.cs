@@ -1446,7 +1446,7 @@ namespace PersistenceMap.Test.Integration
                     // check the compiled sql
                     Assert.AreEqual(sql, expected);
 
-                    var sw = new NUnit.Framework.Compatibility.Stopwatch();
+                    var sw = new System.Diagnostics.Stopwatch();
                     sw.Start();
 
                     // execute the query
