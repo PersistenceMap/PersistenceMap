@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using PersistenceMap.Test.TableTypes;
+using PersistenceMap.Mock;
 
 namespace PersistenceMap.Test.Expression
 {
@@ -11,7 +12,8 @@ namespace PersistenceMap.Test.Expression
         public void UpdateTests()
         {
             var sql = "";
-            var provider = new MockedContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Warrior>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 });
@@ -61,7 +63,8 @@ namespace PersistenceMap.Test.Expression
         public void UpdateTestWithKeyExpression()
         {
             var sql = "";
-            var provider = new MockedContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Warrior>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 context.Update(() => new Warrior { ID = 1, Race = "Elf", WeaponID = 2 }, e => e.ID);
@@ -73,10 +76,11 @@ namespace PersistenceMap.Test.Expression
         public void UpdateTestWithKeyExpression_Fail()
         {
             var sql = "";
-            var provider = new MockedContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Warrior>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
-                ((MockedContextProvider.MockedConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
+                ((Mock.ConnectionProvider)provider.ConnectionProvider).CheckCallbackCall = false;
 
                 Assert.Throws<ArgumentException>(() => context.Update(() => new Warrior {ID = 1, Race = "Elf", WeaponID = 2}, e => e.ID == 1));
                 context.Commit();

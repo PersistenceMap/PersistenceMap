@@ -6,7 +6,7 @@ namespace PersistenceMap
     /// Base class for the Contextprovider
     /// Implementations have to be specific for the desired SQL Provider
     /// </summary>
-    public abstract class ContextProvider : IContextProvider
+    public class ContextProvider : IContextProvider
     {
         private readonly InterceptorCollection _interceptors = new InterceptorCollection();
 

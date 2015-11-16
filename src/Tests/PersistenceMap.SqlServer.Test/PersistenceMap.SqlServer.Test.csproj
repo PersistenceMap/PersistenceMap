@@ -77,6 +77,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Benchmark\SqlServerSelectBenchmarkTests.cs" />
     <Compile Include="ConverterTests.cs" />
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="DeleteExpressionTests.cs" />

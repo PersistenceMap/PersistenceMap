@@ -222,7 +222,6 @@ namespace PersistenceMap.QueryBuilder
 
                 case FieldOperation.Alter:
                     throw new NotImplementedException();
-                    break;
 
                 default:
                     throw new NotSupportedException("SQL Server only supports ADD column");
@@ -272,7 +271,6 @@ namespace PersistenceMap.QueryBuilder
 
                 case FieldOperation.Alter:
                     throw new NotImplementedException();
-                    break;
 
                 default:
                     throw new NotSupportedException("SQL Server only supports ADD column");

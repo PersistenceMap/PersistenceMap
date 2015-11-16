@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
+using PersistenceMap.Mock;
 using PersistenceMap.Test.TableTypes;
-using System;
-using System.Linq;
 
 namespace PersistenceMap.Test.Expression
 {
@@ -11,7 +10,8 @@ namespace PersistenceMap.Test.Expression
         [Test]
         public void ExecuteSelectStatement()
         {
-            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), "SELECT * FROM Orders"));
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "SELECT * FROM Orders"));
             using (var context = provider.Open())
             {
                 // select with string select statement
@@ -22,7 +22,8 @@ namespace PersistenceMap.Test.Expression
         [Test]
         public void ExecuteSqlStatement()
         {
-            var provider = new MockedContextProvider(s => Assert.AreEqual(s.Flatten(), "UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000"));
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000"));
             using (var context = provider.Open())
             {
                 // select with string select statement
