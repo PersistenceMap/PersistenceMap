@@ -89,6 +89,7 @@
     <Compile Include="ProcedureTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectTests.cs" />
+    <Compile Include="SqlServerCreateLocalDbTests.cs" />
     <Compile Include="TableTypes\Sysobjects.cs" />
     <Compile Include="UpdateTests.cs" />
   </ItemGroup>
