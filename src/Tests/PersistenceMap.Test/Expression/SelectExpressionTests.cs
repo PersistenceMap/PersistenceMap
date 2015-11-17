@@ -353,7 +353,8 @@ namespace PersistenceMap.Test.Expression
         public void SelectWithOrderTest()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Orders>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // join with simple order by
@@ -478,7 +479,8 @@ namespace PersistenceMap.Test.Expression
         public void SelectTestForOrders()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Orders>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
@@ -513,7 +515,14 @@ namespace PersistenceMap.Test.Expression
         public void SelectTestWithForAndCustomMaps()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor(() => new
+            {
+                WarriorName = "",
+                WeaponName = ""
+            })
+            .BeforeExecute(s => sql = s.QueryString.Flatten());
+
             using (var context = provider.Open())
             {
                 // select statement with a FOR expression and mapping members/fields to a specific table
@@ -540,7 +549,9 @@ namespace PersistenceMap.Test.Expression
         public void SelectWithWhereTest()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Employee>().BeforeExecute(s => sql = s.QueryString.Flatten());
+            provider.Interceptor<Orders>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // select statement with a where operation and a or operation that has two genereic parameters and alias for both types
@@ -638,7 +649,8 @@ namespace PersistenceMap.Test.Expression
         public void ISelectQueryExpressionWithIgnoringFields()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<WarriorWithName>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // ignore a member in the select
@@ -676,7 +688,8 @@ namespace PersistenceMap.Test.Expression
         public void SelectWithMultipleMapsToSameType()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<WarriorWithName>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // select the properties that are defined in the mapping
@@ -705,36 +718,25 @@ namespace PersistenceMap.Test.Expression
         public void SelectWithConstraintInBaseClass()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor(() => new { ID = 0 }).BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
                 // select the properties that are defined in the mapping
-                context.From<WarriorDerivate>(a => a.ID == 5).Select(() => new { ID = 0 }).FirstOrDefault();
+                context.From<WarriorDerivate>(a => a.ID == 5).Select(() => new { ID = 0 });
                 Assert.AreEqual(sql, "SELECT ID FROM WarriorDerivate WHERE (WarriorDerivate.ID = 5)");
             }
         }
-
-        //[Test]
-        //public void SelectWithMapAndValueConverter()
-        //{
-        //    var sql = "";
-        //    var provider = new CallbackMockContextProvider(s => sql = s.Flatten());
-        //    using (var context = provider.Open())
-        //    {
-        //        // select the max id with grouping
-        //        context.From<Warrior>().Map(w => w.Race, "ID", opt => opt.ConvertValue<int>(id => id > 0 ? "ID is greader than 0" : "ID is smaller than 0")).GroupBy(w => w.Race).Select();
-        //        Assert.AreEqual(sql, "SELECT ID AS Race, Warrior.Race from Warrior GROUP BY Race");
-        //    }
-        //}
-
+        
         [Test]
         public void SelectWithDifferenctCasesInMappedPropertyNamesTest()
         {
             var sql = "";
-            var provider = new MockContextProvider(s => sql = s.Flatten());
+            var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<ArbeitsPlanHeader>().BeforeExecute(s => sql = s.QueryString.Flatten());
             using (var context = provider.Open())
             {
-                var query = context.From<ArbeitsPlan>()
+                context.From<ArbeitsPlan>()
                         .Map(ap => ap.PlanID)
                         .Map<int>(ap => ap.Status, converter: value => value == 1 ? Status.Active : Status.Inactive)
                         .Map<ArbeitsPlanHeader>(ap => ap.PlanID, aph => aph.ID)
