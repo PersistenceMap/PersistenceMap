@@ -1,11 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.SqlServer.Test
 {
@@ -28,6 +23,10 @@ namespace PersistenceMap.SqlServer.Test
             }
 
             Assert.Fail("The connection is not released b the first connection so it can't be deleted");
+            //SELECT DB_NAME(dbid) as DBName, COUNT(dbid) as NumberOfConnections, loginame as LoginName FROM sys.sysprocesses WHERE dbid > 0 GROUP BY dbid, loginame
+            //SELECT loginame as LoginName, *FROM sys.sysprocesses WHERE dbid > 0
+            //exec sp_who
+            //exec sp_who2
             using (var context = provider.Open())
             {
                 context.Database.Drop();
@@ -36,7 +35,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Connection is not released")]
+        //[NUnit.Framework.Ignore("Connection is not released")]
         public void SqlServer_CreateLocalDbWithDbFilePath_Test()
         {
             var databaseName = "WarriorDB";
