@@ -6,9 +6,19 @@ namespace PersistenceMap
     public interface IDatabaseQueryExpression : IQueryExpression
     {
         /// <summary>
-        /// Creates a create database expression
+        /// Creates a create database
         /// </summary>
         void Create();
+
+        /// <summary>
+        /// Detatches a database
+        /// </summary>
+        void Detach();
+
+        /// <summary>
+        /// Drops the database
+        /// </summary>
+        void Drop();
 
         /// <summary>
         /// Creates a table expression

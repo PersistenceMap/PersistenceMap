@@ -11,7 +11,7 @@ namespace PersistenceMap.UnitTest.Factories
     public class ConnectionStringBuilderTests
     {
         [Test]
-        public void GetDatabaseFromInitialCatalogTest()
+        public void ConnectionStringBuilder_GetDatabaseFromInitialCatalogTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -37,7 +37,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetDatabaseFromDatabaseTest()
+        public void ConnectionStringBuilder_GetDatabaseFromDatabaseTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -63,7 +63,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetDatabaseFromDataSourceTest()
+        public void ConnectionStringBuilder_GetDatabaseFromDataSourceTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -97,7 +97,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void SetDatabaseFromInitialCatalogTest()
+        public void ConnectionStringBuilder_SetDatabaseFromInitialCatalogTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -123,7 +123,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void SetDatabaseFromDatabaseTest()
+        public void ConnectionStringBuilder_SetDatabaseFromDatabaseTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -149,7 +149,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void SetDatabaseFromDataSourceTest()
+        public void ConnectionStringBuilder_SetDatabaseFromDataSourceTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -180,9 +180,27 @@ namespace PersistenceMap.UnitTest.Factories
             connectionString = @"Data Source=c:\TempDB.db;Version=3;New=True;";
             connectionString = builder.SetDatabase(@"c:\WarriorDB.db", connectionString);
             Assert.AreEqual(connectionString, @"Data Source=c:\WarriorDB.db;Version=3;New=True;");
+        }
 
+        [Test]
+        public void ConnectionStringBuilder_FormatConnectionString_LocalDB()
+        {
+            var builder = new ConnectionStringBuilder();
+            var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName=c:\Path\To\Database\WickeFlame.mdf;Initial Catalog=WickeFlame;Integrated Security=True;";
 
-            
+            Assert.AreEqual(builder.FormatConnectionString(connectionString), connectionString);
+        }
+
+        [Test]
+        public void ConnectionStringBuilder_FormatConnectionString_MasterForLocalDB()
+        {
+            var builder = new ConnectionStringBuilder();
+            var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName=c:\Path\To\Database\WickeFlame.mdf;Initial Catalog=WickeFlame;Integrated Security=True;";
+
+            connectionString = builder.SetDatabase("Master", connectionString);
+            var master = builder.FormatConnectionString(connectionString);
+
+            Assert.AreEqual(master, @"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=Master;Integrated Security=True;");
         }
     }
 }

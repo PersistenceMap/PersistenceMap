@@ -516,6 +516,7 @@ namespace PersistenceMap.Test.Expression
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
+            provider.Interceptor<Orders>().BeforeExecute(s => sql = s.QueryString.Flatten());
             provider.Interceptor(() => new
             {
                 WarriorName = "",
@@ -541,7 +542,7 @@ namespace PersistenceMap.Test.Expression
                     .Map<Weapon>(wpn => wpn.Name, a => a.WeaponName)
                     .Select();
                 expected = "SELECT Warrior.Name AS WarriorName, Weapon.Name AS WeaponName FROM Warrior JOIN Weapon ON (Weapon.ID = Warrior.WeaponID)";
-                Assert.AreEqual(sql, expected);
+                Assert.AreEqual(expected, sql);
             }
         }
 

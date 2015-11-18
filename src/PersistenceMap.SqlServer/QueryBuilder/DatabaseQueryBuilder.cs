@@ -51,6 +51,38 @@ namespace PersistenceMap.SqlServer.QueryBuilder
         }
 
         /// <summary>
+        /// Detaches the database
+        /// </summary>
+        public void Detach()
+        {
+            var database = Context.ConnectionProvider.Database;
+            QueryParts.Add(new DelegateQueryPart(OperationType.None, () =>
+            {
+                // set the connectionstring to master database
+                Context.ConnectionProvider.Database = "Master";
+                return string.Empty;
+            }));
+            QueryParts.Add(new DelegateQueryPart(OperationType.DetachDatabase, () => database));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
+        }
+
+        /// <summary>
+        /// Drops the database
+        /// </summary>
+        public void Drop()
+        {
+            var database = Context.ConnectionProvider.Database;
+            QueryParts.Add(new DelegateQueryPart(OperationType.None, () =>
+            {
+                // set the connectionstring to master database
+                Context.ConnectionProvider.Database = "Master";
+                return string.Empty;
+            }));
+            QueryParts.Add(new DelegateQueryPart(OperationType.DropDatabase, () => database));
+            Context.AddQuery(new MapQueryCommand(QueryParts));
+        }
+
+        /// <summary>
         /// Creates a table expression
         /// </summary>
         /// <typeparam name="T">The POCO type defining the table</typeparam>

@@ -83,7 +83,8 @@ namespace PersistenceMap
         ForeignKey = 40, /* */
         AddColumn = 41, /* */
         DropColumn = 42, /* */
-
+        DetachDatabase = 50,
+        DropDatabase = 51,
 
 
 

@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
 using System;
 using System.Linq;
 
-namespace PersistenceMap.Test.Integration
+namespace PersistenceMap.SqlServer.Test
 {
     [TestFixture]
     public class ProcedureTests : TestBase
@@ -313,108 +314,6 @@ namespace PersistenceMap.Test.Integration
                 Assert.IsTrue(returnvalue2 != "tmp");
             }
         }
-
-        //[Test]
-        //[ExpectedException(typeof(SqlException))]
-        //public void ProcedureFailWithResultWithRetval()
-        //{
-        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = provider.Open())
-        //    {
-        //        int returnvalue = 1;
-        //        string returnvalue2 = "tmp";
-
-        //        // name parameter is not supplied => exception
-        //        // proc with resultset with output parameter with names
-        //        var proc = context.Procedure("SalesOfYear")
-        //            .AddParameter("Date", () => new DateTime(1998, 1, 1))
-        //            .AddParameter<int>(() => 1, r => returnvalue = r)
-        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
-        //            .Execute<SalesByYear>();
-
-        //        /* Expected Result *
-        //        declare @p1 int
-        //        set @p1=1
-
-        //        declare @p2 varchar(max)
-        //        set @p2='tmp'
-
-        //        exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
-        //        select @p1 as p1,  @p2 as p2
-        //        */
-
-        //        Assert.IsTrue(proc.Any());
-        //        Assert.IsTrue(returnvalue == 1);
-        //    }
-        //}
-
-        //[Test]
-        //[ExpectedException(typeof(SqlException))]
-        //public void ProcedureFailWithoutResultWithRetvalContainingAt()
-        //{
-        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = provider.Open())
-        //    {
-        //        int returnvalue = 1;
-        //        string returnvalue2 = "tmp";
-
-        //        // name parameter is not supplied => exception
-        //        // proc without resultset with output parameter with names and @ before name
-        //        context.Procedure("SalesOfYear")
-        //            .AddParameter("@Date", () => new DateTime(1998, 1, 1))
-        //            .AddParameter<int>(() => 1, r => returnvalue = r)
-        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
-        //            .Execute();
-
-        //        /* Expected Result *
-        //        declare @p1 int
-        //        set @p1=1
-
-        //        declare @p2 varchar(max)
-        //        set @p2='tmp'
-
-        //        exec SalesOfYear @Date='1998-01-01', 1, 'tmp'
-        //        select @p1 as p1,  @p2 as p2
-        //        */
-
-        //        Assert.IsTrue(returnvalue == 1);
-        //    }
-        //}
-
-        //[Test]
-        //public void ProcedureWithResultWithRetvalWithoutParameterNames()
-        //{
-        //    var provider = new DatabaseConnection(new SqlContextProvider(ConnectionString));
-        //    using (var context = provider.Open())
-        //    {
-        //        int returnvalue = 1;
-        //        string returnvalue2 = "tmp";
-
-        //        // name parameter is not supplied => exception
-        //        // proc with resultset with output parameter with names
-        //        var proc = context.Procedure("SalesOfYear")
-        //            .AddParameter(() => new DateTime(1998, 1, 1))
-        //            .AddParameter<int>(() => 1, r => returnvalue = r)
-        //            .AddParameter<string>(() => returnvalue2, r => returnvalue2 = r)
-        //            .Execute<SalesByYear>();
-
-        //        /* *Using Output compiles to*
-                
-        //        declare @p1 int
-        //        set @p1=1
-        //        declare @p2 varchar(max)
-        //        set @p2='tmp'
-        //        exec SalesByYear '2012-01-01 00:00:00',1,'tmp'
-        //        select @p1 as p1, @p2 as p2     
-        //        */
-
-        //        Assert.IsTrue(proc.Any());
-
-        //        // values did not change!
-        //        Assert.IsTrue(returnvalue == 1);
-        //        Assert.IsTrue(returnvalue2 == "tmp");
-        //    }
-        //}
 
         [Test]
         public void ProcedureWithResultAndFieldMappingsWithFor()

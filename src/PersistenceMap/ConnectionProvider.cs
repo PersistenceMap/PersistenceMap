@@ -6,20 +6,31 @@ namespace PersistenceMap
     public abstract class ConnectionProvider : IConnectionProvider
     {
         private readonly Func<string, IDbConnection> _connectionFactory;
+        private string _connectionString;
         private ConnectionStringBuilder _connectionStringBuilder;
         private IQueryCompiler _queryCompiler;
 
         public ConnectionProvider(string connectionString, Func<string, IDbConnection> connectionFactory)
         {
             // format the string
-            ConnectionString = connectionString;
+            _connectionString = connectionString;
             _connectionFactory = connectionFactory;
         }
 
         /// <summary>
         /// The connectionstring
         /// </summary>
-        protected string ConnectionString { get; private set; }
+        protected string ConnectionString
+        {
+            get
+            {
+                return ConnectionStringBuilder.FormatConnectionString(_connectionString);
+            }
+            private set
+            {
+                _connectionString = value;
+            }
+        }
 
         internal ConnectionStringBuilder ConnectionStringBuilder
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PersistenceMap
@@ -23,7 +24,7 @@ namespace PersistenceMap
         }
 
         private static readonly IEnumerable<string> CatalogPatterns;
-
+        
         /// <summary>
         /// Extracts the database name from the connectionstring
         /// </summary>
@@ -71,6 +72,21 @@ namespace PersistenceMap
                 if (match.Success)
                 {
                     return regex.Replace(connectionString, string.Format("{0}={1}", pattern, database));
+                }
+            }
+
+            return connectionString;
+        }
+
+        public string FormatConnectionString(string connectionString)
+        {
+            if (GetDatabase(connectionString).Equals("master", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var regex = new Regex(@"AttachDBFileName\s?=([^;]*);");
+                var match = regex.Match(connectionString);
+                if (match.Success)
+                {
+                    return regex.Replace(connectionString, string.Empty);
                 }
             }
 

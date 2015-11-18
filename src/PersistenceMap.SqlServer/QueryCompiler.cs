@@ -14,6 +14,8 @@ namespace PersistenceMap.SqlServer
         {
             // Database
             AddCompiler(OperationType.CreateDatabase, (part, writer, container, parent) => CompileCreateDatabase(part, writer));
+            AddCompiler(OperationType.DetachDatabase, (part, writer, container, parent) => CompileString(string.Format("ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db '{0}'", part.Compile()), writer));
+            AddCompiler(OperationType.DropDatabase, (part, writer, container, parent) => CompileString(string.Format("DROP DATABASE {0}", part.Compile()), writer));
             AddCompiler(OperationType.CreateTable, (part, writer, container, parent) =>
             {
                 CreateTable(part, writer);
@@ -91,10 +93,12 @@ namespace PersistenceMap.SqlServer
 
 
 
-            //var sb = new StringBuilder(100);
-            //sb.AppendLine(string.Format("EXECUTE (N'CREATE DATABASE {0}", DatabaseName));
-            //sb.AppendLine(string.Format("ON PRIMARY (NAME = N''{0}'', FILENAME = ''{1}'')", DatabaseName, DatabaseMdfPath));
-            //sb.AppendLine(string.Format("LOG ON (NAME = N''{0}_log'',  FILENAME = ''{1}'')')", DatabaseName, DatabaseLogPath));
+
+            //var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Data");
+
+            //writer.WriteLine(string.Format("EXECUTE (N'CREATE DATABASE {0}", database));
+            //writer.WriteLine(string.Format("ON PRIMARY (NAME = N''{0}'', FILENAME = ''{1}'')", database, Path.Combine(path, database + ".mdf")));
+            //writer.WriteLine(string.Format("LOG ON (NAME = N''{0}_log'',  FILENAME = ''{1}'')')", database, Path.Combine(path, database + "_log.ldf")));
         }
 
         private void CreateTable(IQueryPart part, TextWriter writer)
