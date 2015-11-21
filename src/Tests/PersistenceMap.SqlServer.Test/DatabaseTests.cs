@@ -30,10 +30,14 @@ namespace PersistenceMap.SqlServer.Test
 
                         var tables = GetTables(context);
                         if (tables.Any(t => t.Name == typeof(Warrior).Name))
+                        {
                             context.Database.Table<Warrior>().Drop();
+                        }
 
                         if (tables.Any(t => t.Name == typeof(Weapon).Name))
+                        {
                             context.Database.Table<Weapon>().Drop();
+                        }
                     }
                 }
                 catch (SqlException) { }

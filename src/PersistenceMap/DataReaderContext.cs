@@ -36,11 +36,13 @@ namespace PersistenceMap
             if (DataReader != null)
             {
                 DataReader.Close();
+                DataReader.Dispose();
             }
 
             if (_connection != null)
             {
                 _connection.Close();
+                _connection.Dispose();
             }
 
             if (_command != null)

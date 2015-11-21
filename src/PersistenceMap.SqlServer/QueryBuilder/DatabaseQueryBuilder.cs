@@ -43,6 +43,7 @@ namespace PersistenceMap.SqlServer.QueryBuilder
                 // reset the connectionstring to the created
                 Context.ConnectionProvider.Database = database;
                 return string.Format("USE {0}", database);
+                //return string.Empty;
             });
             var resetQueryMap = new QueryPartsContainer();
             resetQueryMap.Add(resetPart);
