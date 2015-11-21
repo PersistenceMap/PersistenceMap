@@ -6,26 +6,26 @@ namespace PersistenceMap.QueryParts
     {
         #region Properties
 
-        private IList<CallbackMap> _callbacks;
+        private IList<AfterMapCallbackPart> _callbacks;
 
-        internal IEnumerable<CallbackMap> Callbacks
+        internal IEnumerable<AfterMapCallbackPart> Callbacks
         {
             get
             {
                 if (_callbacks == null)
                 {
-                    _callbacks = new List<CallbackMap>();
+                    _callbacks = new List<AfterMapCallbackPart>();
                 }
 
                 return _callbacks;
             }
         }
 
-        internal void Add(CallbackMap callback)
+        internal void Add(AfterMapCallbackPart callback)
         {
             if (_callbacks == null)
             {
-                _callbacks = new List<CallbackMap>();
+                _callbacks = new List<AfterMapCallbackPart>();
             }
 
             _callbacks.Add(callback);

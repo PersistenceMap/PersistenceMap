@@ -266,7 +266,7 @@ namespace PersistenceMap.QueryBuilder
             ////}
 
             // pass the callback further on to be executed when the procedure was executed
-            QueryParts.Add(new CallbackMap(paramName, cb => callback((T)cb), typeof(T)));
+            QueryParts.Add(new AfterMapCallbackPart(paramName, cb => callback((T)cb), typeof(T)));
 
             return new ProcedureQueryProvider(Context, QueryParts);
         }
