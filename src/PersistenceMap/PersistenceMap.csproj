@@ -102,7 +102,6 @@
     <Compile Include="Tracing\TraceLogger.cs" />
     <Compile Include="Enums\FieldOperation.cs" />
     <Compile Include="IConnectionProvider.cs" />
-    <Compile Include="QueryBuilder\Commands\DelegateQueryCommand.cs" />
     <Compile Include="Tracing\ILogger.cs" />
     <Compile Include="Tracing\ILoggerFactory.cs" />
     <Compile Include="Tracing\LogDelegate.cs" />
@@ -114,7 +113,7 @@
     <Compile Include="Extensions\LambdaExtensions.cs" />
     <Compile Include="IUpdateQueryExpression.cs" />
     <Compile Include="Configuration\PersistenceMapSection.cs" />
-    <Compile Include="QueryBuilder\Commands\MapQueryCommand.cs" />
+    <Compile Include="QueryBuilder\Commands\QueryCommand.cs" />
     <Compile Include="Factories\TypeDefinitionFactory.cs" />
     <Compile Include="IQueryCommand.cs" />
     <Compile Include="QueryBuilder\DeleteQueryBuilder.cs" />

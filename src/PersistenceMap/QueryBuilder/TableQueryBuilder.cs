@@ -80,7 +80,7 @@ namespace PersistenceMap.QueryBuilder
                 createPart.Add(key);
             }
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace PersistenceMap.QueryBuilder
             var createPart = new DelegateQueryPart(OperationType.AlterTable, () => typeof(T).Name, typeof(T));
             QueryParts.AddBefore(createPart, OperationType.None);
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace PersistenceMap.QueryBuilder
             var part = new DelegateQueryPart(OperationType.DropTable, () => typeof(T).Name, typeof(T));
             QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>

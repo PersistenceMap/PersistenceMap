@@ -36,7 +36,7 @@ namespace PersistenceMap.SqlServer.QueryBuilder
             var part = new DelegateQueryPart(OperationType.CreateDatabase, () => database);
             QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
 
             var resetPart = new DelegateQueryPart(OperationType.None, () =>
             {
@@ -48,7 +48,7 @@ namespace PersistenceMap.SqlServer.QueryBuilder
             var resetQueryMap = new QueryPartsContainer();
             resetQueryMap.Add(resetPart);
 
-            Context.AddQuery(new MapQueryCommand(resetQueryMap));
+            Context.AddQuery(new QueryCommand(resetQueryMap));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace PersistenceMap.SqlServer.QueryBuilder
                 return string.Empty;
             }));
             QueryParts.Add(new DelegateQueryPart(OperationType.DetachDatabase, () => database));
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace PersistenceMap.SqlServer.QueryBuilder
                 return string.Empty;
             }));
             QueryParts.Add(new DelegateQueryPart(OperationType.DropDatabase, () => database));
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>
