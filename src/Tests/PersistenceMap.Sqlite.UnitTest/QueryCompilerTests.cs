@@ -5,7 +5,7 @@ using PersistenceMap.QueryParts;
 namespace PersistenceMap.Sqlite.UnitTest
 {
     [TestFixture]
-    public class QueryCompilerTest
+    public class QueryCompilerTests
     {
         #region Database Tests
 
