@@ -94,7 +94,7 @@ namespace PersistenceMap.Sqlite.QueryBuilder
             part.AddValue(KeyValuePart.Value, typeof(TNew).Name);
             QueryParts.Add(part);
 
-            Context.AddQuery(new MapQueryCommand(QueryParts));
+            Context.AddQuery(new QueryCommand(QueryParts));
         }
 
         /// <summary>
