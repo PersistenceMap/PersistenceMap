@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PersistenceMap.SqlServer.QueryBuilder
 {
-    internal class DatabaseQueryBuilder : QueryBuilderBase<SqlDatabaseContext>, IDatabaseQueryExpression, IQueryExpression
+    public class DatabaseQueryBuilder : QueryBuilderBase<SqlDatabaseContext>, IDatabaseQueryExpression, IQueryExpression
     {
         public DatabaseQueryBuilder(SqlDatabaseContext context)
             : base(context)

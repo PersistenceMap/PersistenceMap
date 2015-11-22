@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MeasureMap, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MeasureMap.0.1.0-RC01\lib\net45\MeasureMap.dll</HintPath>
+      <HintPath>..\..\..\packages\MeasureMap.0.1.2-RC01\lib\net45\MeasureMap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.core, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
