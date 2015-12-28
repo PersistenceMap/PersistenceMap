@@ -372,20 +372,13 @@ namespace PersistenceMap
 
                     ConnectionProvider.Dispose();
 
+                    //Kernel.Dispose();
+
                     IsDisposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
         }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~DatabaseContext()
-        {
-            Dispose(false);
-        }
-
+        
         #endregion
     }
 

@@ -61,19 +61,10 @@ namespace PersistenceMap.Samples.UnitOfWorkSample
                     _context.Dispose();
 
                     IsDisposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
         }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~UnitOfWork()
-        {
-            Dispose(false);
-        }
-
+        
         #endregion
     }
 }

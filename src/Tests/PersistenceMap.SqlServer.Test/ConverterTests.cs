@@ -1,12 +1,7 @@
 ﻿using NUnit.Framework;
 using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.SqlServer.Test
 {
@@ -14,7 +9,7 @@ namespace PersistenceMap.SqlServer.Test
     public class ConverterTests : TestBase
     {
         [Test]
-        public void ConvertValueToEnumWithLambdaTest()
+        public void ConverterTests_ConvertValueToEnumWithLambdaTest()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -30,7 +25,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ConvertValueToEnumWithMethodTest()
+        public void ConverterTests_ConvertValueToEnumWithMethodTest()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())

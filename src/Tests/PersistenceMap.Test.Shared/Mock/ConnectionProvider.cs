@@ -5,7 +5,6 @@ namespace PersistenceMap.Mock
     public class ConnectionProvider : PersistenceMap.ConnectionProvider, PersistenceMap.IConnectionProvider
     {
         private readonly Action<string> _onExecute;
-        private bool _callbackCalled = false;
 
         public ConnectionProvider()
             : base(null, null)
@@ -39,21 +38,7 @@ namespace PersistenceMap.Mock
                 _onExecute(query);
             }
 
-            _callbackCalled = true;
-
             return 0;
         }
-
-        #region IDisposeable Implementation
-        
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~ConnectionProvider()
-        {
-            Dispose(false);
-        }
-
-        #endregion
     }
 }
