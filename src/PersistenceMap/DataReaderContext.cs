@@ -31,7 +31,7 @@ namespace PersistenceMap
         /// <summary>
         /// Close all connections to the reader and the database
         /// </summary>
-        public virtual void Close()
+        public void Close()
         {
             if (DataReader != null)
             {
@@ -78,17 +78,8 @@ namespace PersistenceMap
                     Close();
 
                     IsDisposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
-        }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~DataReaderContext()
-        {
-            Dispose(false);
         }
 
         #endregion

@@ -12,7 +12,7 @@ namespace PersistenceMap.Test.Expression
     {
         [Test]
         [Description("A simple delete statement that deletes all items in a table")]
-        public void SimpleDelete()
+        public void DeleteExpression_SimpleDelete()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee"));
@@ -25,7 +25,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("A delete satement with a where operation")]
-        public void SimpleDeleteWithWhere()
+        public void DeleteExpression_SimpleDeleteWithWhere()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
@@ -38,7 +38,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("A delete satement that defines the deletestatement according to the values of a given entity")]
-        public void DeleteEntity()
+        public void DeleteExpression_DeleteEntity()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
@@ -51,7 +51,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("A delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        public void DeleteEntityWithSpecialKey()
+        public void DeleteExpression_DeleteEntityWithSpecialKey()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
@@ -64,7 +64,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("A delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        public void DeleteEntityWithSpecialKey_Fail()
+        public void DeleteExpression_DeleteEntityWithSpecialKey_Fail()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.Fail("This should not be reached"));
@@ -79,7 +79,7 @@ namespace PersistenceMap.Test.Expression
         
         [Test]
         [Description("A delete statement that is build depending on the properties of a anonym object containing one property")]
-        public void DeleteEntityWithAnonymObjectContainingOneParam()
+        public void DeleteExpression_DeleteEntityWithAnonymObjectContainingOneParam()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1)"));
@@ -92,7 +92,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("A delete statement that is build depending on the properties of a anonym object containing multile properties")]
-        public void DeleteEntityWithAnonymObjectContainingMultipleParams()
+        public void DeleteExpression_DeleteEntityWithAnonymObjectContainingMultipleParams()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee WHERE (Employee.EmployeeID = 1) AND (Employee.LastName = 'Lastname') AND (Employee.FirstName = 'Firstname')"));

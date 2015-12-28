@@ -10,6 +10,11 @@ namespace PersistenceMap
     {
         private readonly InterceptorCollection _interceptors = new InterceptorCollection();
 
+        /// <summary>
+        /// Base class for the Contextprovider
+        /// Implementations have to be specific for the desired SQL Provider
+        /// </summary>
+        /// <param name="connectionProvider">The connectionprovider for the desired SQL Provider</param>
         public ContextProvider(IConnectionProvider connectionProvider)
         {
             ConnectionProvider = connectionProvider;
@@ -77,19 +82,10 @@ namespace PersistenceMap
                 if (disposing && !IsDisposed)
                 {
                     IsDisposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
         }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~ContextProvider()
-        {
-            Dispose(false);
-        }
-
+        
         #endregion
     }
 }

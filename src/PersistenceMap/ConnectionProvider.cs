@@ -142,17 +142,8 @@ namespace PersistenceMap
                 if (disposing && !IsDisposed)
                 {
                     IsDisposed = true;
-                    GC.SuppressFinalize(this);
                 }
             }
-        }
-
-        /// <summary>
-        /// Releases resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~ConnectionProvider()
-        {
-            Dispose(false);
         }
 
         #endregion
