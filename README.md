@@ -12,8 +12,8 @@ PersistenceMap is extremely lightweight and leaves no traces in the client code.
 PersistenceMap currently supports MSSql and SQLite RDMBS Servers.
 
 ## Important Notice
-### PersistenceMap was renamed from Persist__a__nceMap to PersistenceMap (note the change of **a** to **e**) in Source and on Nuget.
-### The Current Version of **PersistanceMap 0.4.0** is no longer supported! 
+PersistenceMap was renamed from PersistanceMap to PersistenceMap (note the change of **a** to **e**) in Source and on Nuget.
+The Current Version of **PersistanceMap 0.4.0** is no longer supported! 
 
 ## Installation
 ------------------------------
