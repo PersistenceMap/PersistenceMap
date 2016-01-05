@@ -4,6 +4,7 @@ PersistenceMap
 ==============
 [![Build status](https://ci.appveyor.com/api/projects/status/i43jveqowctku03x/branch/master?svg=true)](https://ci.appveyor.com/project/chriswalpen/persistencemap/branch/master)
 [![NuGet Version](https://img.shields.io/nuget/v/persistencemap.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap/)
+[![NuGet Version](https://img.shields.io/nuget/v/PersistenceMap.Sqlite.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
 
 PersistenceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
 The simple, straight forward, intuitive and easy to use API helps to quickly setup a connction to a Database.
@@ -13,7 +14,7 @@ PersistenceMap currently supports MSSql and SQLite RDMBS Servers.
 
 ## Important Notice
 PersistenceMap was renamed from PersistanceMap to PersistenceMap (note the change of **a** to **e**) in Source and on Nuget.
-The Current Version of **PersistanceMap 0.4.0** is no longer supported! 
+The Current Version of **PersistanceMap 0.4.0** is no longer supported! For future use refer to [PersistenceMap](https://www.nuget.org/packages/PersistenceMap/) or [PersistenceMap.Sqlite](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
 
 ## Installation
 ------------------------------
