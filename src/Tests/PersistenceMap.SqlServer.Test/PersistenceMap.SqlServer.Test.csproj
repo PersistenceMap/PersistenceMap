@@ -37,8 +37,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MeasureMap, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MeasureMap.0.1.2-RC01\lib\net45\MeasureMap.dll</HintPath>
+    <Reference Include="MeasureMap, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\MeasureMap.0.1.2-RC02\lib\net45\MeasureMap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.core, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -83,10 +83,10 @@
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="DeleteExpressionTests.cs" />
     <Compile Include="ExecuteTests.cs" />
-    <Compile Include="IntegrationTests.cs" />
     <Compile Include="InterceptorIntegrationTests.cs" />
     <Compile Include="InterceptorTests.cs" />
     <Compile Include="LocalDbTests.cs" />
+    <Compile Include="Mocked\Select.cs" />
     <Compile Include="ProcedureTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectTests.cs" />
