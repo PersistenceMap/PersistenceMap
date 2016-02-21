@@ -4,10 +4,13 @@ namespace PersistenceMap
 {
     public class SqlContextProvider : ContextProvider, IContextProvider
     {
+        string _connectionString;
+
         public SqlContextProvider(string connectionstring)
             : base(new SqlConnectionProvider(connectionstring))
         {
             connectionstring.ArgumentNotNullOrEmpty("connectionstring");
+            _connectionString = connectionstring;
         }
 
         /// <summary>
@@ -16,7 +19,8 @@ namespace PersistenceMap
         /// <returns>A DatabaseContext for SQL Databases</returns>
         public virtual SqlDatabaseContext Open()
         {
-            return new SqlDatabaseContext(ConnectionProvider, Settings, Interceptors);
+            //return new SqlDatabaseContext(ConnectionProvider, Settings, Interceptors); 
+            return new SqlDatabaseContext(new SqlConnectionProvider(_connectionString), Settings, Interceptors);
         }
     }
 }

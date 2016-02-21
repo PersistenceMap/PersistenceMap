@@ -81,6 +81,8 @@ namespace PersistenceMap
             }
         }
 
+        IDbConnection _connection;
+
         /// <summary>
         /// Execute the sql string to the RDBMS
         /// </summary>
@@ -88,14 +90,17 @@ namespace PersistenceMap
         /// <returns></returns>
         public virtual IDataReaderContext Execute(string query)
         {
-            var connection = _connectionFactory(ConnectionString);
-            connection.Open();
+            if (_connection == null || _connection.State == ConnectionState.Closed)
+            {
+                _connection = _connectionFactory(ConnectionString);
+                _connection.Open();
+            }
 
-            var command = connection.CreateCommand();
+            var command = _connection.CreateCommand();
             command.CommandText = query;
-            command.Connection = connection;
+            command.Connection = _connection;
 
-            return new DataReaderContext(command.ExecuteReader(), connection, command);
+            return new DataReaderContext(command.ExecuteReader(), _connection, command);
         }
 
         /// <summary>
@@ -105,16 +110,21 @@ namespace PersistenceMap
         /// <returns>The amount of afected rows</returns>
         public virtual int ExecuteNonQuery(string query)
         {
-            using (var connection = _connectionFactory(ConnectionString))
+            if (_connection == null || _connection.State == ConnectionState.Closed)
             {
-                connection.Open();
-                using (var cmd = connection.CreateCommand())
+                _connection = _connectionFactory(ConnectionString);
+                _connection.Open();
+            }
+            //using (var connection = _connectionFactory(ConnectionString))
+            //{
+                //connection.Open();
+                using (var cmd = _connection.CreateCommand())
                 {
                     cmd.CommandText = query;
-                    cmd.Connection = connection;
+                    cmd.Connection = _connection;
                     return cmd.ExecuteNonQuery();
                 }
-            }
+            //}
         }
 
         #region IDisposeable Implementation
