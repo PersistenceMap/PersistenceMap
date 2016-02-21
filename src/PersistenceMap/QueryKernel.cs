@@ -97,7 +97,7 @@ namespace PersistenceMap
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
-                Trace.WriteLine($"#### PersistenceMap - An error occured while executing a query:\n {ex.Message}");
+                Trace.WriteLine($"PersistenceMap - An error occured while executing a query:\n {ex.Message}");
 
                 sb.AppendLine($"For more information see the inner exception");
 
@@ -144,7 +144,7 @@ namespace PersistenceMap
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
-                Trace.WriteLine($"#### PersistenceMap - An error occured while executing a query:\n {ex.Message}");
+                Trace.WriteLine($"PersistenceMap - An error occured while executing a query:\n {ex.Message}");
 
                 sb.AppendLine($"For more information see the inner exception");
 
@@ -197,7 +197,7 @@ namespace PersistenceMap
                 Logger.Write(sb.ToString(), _connectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
                 Logger.Write(ex.Message, _connectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
 
-                Trace.WriteLine($"#### PersistenceMap - An error occured while executing a query:\n {ex.Message}");
+                Trace.WriteLine($"PersistenceMap - An error occured while executing a query:\n {ex.Message}");
 
                 sb.AppendLine($"For more information see the inner exception");
 

@@ -99,7 +99,7 @@ namespace PersistenceMap
                                 var message = string.Format("Logger {0} cannot be created because the Type does not exist or does not derive from {1}.", element.Type, typeof(ILogger).Name);
                                 
                                 logger.Write(message, "Configuration error", "Configuration", DateTime.Now);
-                                Trace.WriteLine(string.Format("#### PersistenceMap - Configuration error: {0}", message));
+                                Trace.WriteLine(string.Format("PersistenceMap - Configuration error: {0}", message));
                             }
                         }
                     }

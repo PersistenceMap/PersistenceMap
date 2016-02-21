@@ -16,7 +16,7 @@ namespace PersistenceMap.Tracing
             switch (category)
             {
                 case LoggerCategory.Query:
-                    sb.AppendLine(string.Format("#### PersistenceMap - {0}", source));
+                    sb.AppendLine(string.Format("PersistenceMap - {0}", source));
                     sb.AppendLine(message.TrimEnd());
                     AppendCategory(sb, category);
                     AppendTime(sb, logtime);
@@ -24,7 +24,7 @@ namespace PersistenceMap.Tracing
                     break;
 
                 default:
-                    sb.AppendLine(string.Format("#### PersistenceMap - {0}", message.TrimEnd()));
+                    sb.AppendLine(string.Format("PersistenceMap - {0}", message.TrimEnd()));
                     AppendCategory(sb, category);
                     AppendTime(sb, logtime);
                     AppendSource(sb, source);
@@ -38,7 +38,7 @@ namespace PersistenceMap.Tracing
                     break;
 
                 case LoggerCategory.Query:
-                    Trace.TraceInformation(sb.ToString());
+                    Trace.WriteLine(sb.ToString());
                     break;
 
                 default:

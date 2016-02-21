@@ -180,7 +180,7 @@ namespace PersistenceMap.Test.LocalDb
             }
 
             // If the database does not already exist, create it.
-            var connectionString = @"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True";
+            var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True";
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -208,7 +208,7 @@ namespace PersistenceMap.Test.LocalDb
             }
 
             // Open newly created, or old database.
-            ConnectionString = $@"Data Source=(LocalDB)\v11.0;AttachDBFileName={DatabaseMdfPath};Initial Catalog={DatabaseName};Integrated Security=True;";
+            ConnectionString = $@"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName={DatabaseMdfPath};Initial Catalog={DatabaseName};Integrated Security=True;";
         }
 
         private void DetachDatabase(bool silent)
@@ -216,7 +216,7 @@ namespace PersistenceMap.Test.LocalDb
             try
             {
                 // detatch the database
-                var connectionString = @"Data Source=(LocalDB)\v11.0;Initial Catalog=master;Integrated Security=True";
+                var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;Initial Catalog=master;Integrated Security=True";
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
