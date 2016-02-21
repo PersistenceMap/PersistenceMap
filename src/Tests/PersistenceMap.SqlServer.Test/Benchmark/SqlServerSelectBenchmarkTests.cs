@@ -23,7 +23,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 }
             };
 
-            var profile = ProfileSession.StartSession()
+            var profile = ProfilerSession.StartSession()
                 .Task(() =>
                 {
                     var provider = new SqlContextProvider("Not a valid connectionstring");
