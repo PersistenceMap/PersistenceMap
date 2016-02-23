@@ -1,12 +1,12 @@
-﻿using PersistenceMap.Tracing;
+﻿using PersistenceMap.Diagnostics;
 using System;
 using System.Collections.Generic;
 
 namespace PersistenceMap.Test
 {
-    public class MessageStackLogger : ILogger
+    public class MessageStackLogWriter : ILogWriter
     {
-        public MessageStackLogger()
+        public MessageStackLogWriter()
         {
             Logs = new List<LogMessage>();
         }

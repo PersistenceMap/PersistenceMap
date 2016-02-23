@@ -1,13 +1,13 @@
-﻿using PersistenceMap.Tracing;
+﻿using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap
 {
     public interface ISettings
     {
-        ILoggerFactory LoggerFactory { get; }
+        ILogWriterFactory LoggerFactory { get; }
 
         RestrictiveMode RestrictiveMappingMode { get; set; }
 
-        void AddLogger(ILogger logger);
+        void AddLogger(ILogWriter logger);
     }
 }

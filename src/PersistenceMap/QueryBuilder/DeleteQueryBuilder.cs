@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using PersistenceMap.Factories;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Sql;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap.QueryBuilder
 {
@@ -24,7 +24,7 @@ namespace PersistenceMap.QueryBuilder
             _queryParts = container;
         }
 
-        protected ILogger Logger
+        protected ILogWriter Logger
         {
             get
             {

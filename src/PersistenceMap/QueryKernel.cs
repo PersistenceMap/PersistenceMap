@@ -2,7 +2,7 @@
 using PersistenceMap.Factories;
 using PersistenceMap.Interception;
 using PersistenceMap.QueryBuilder;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,7 +25,7 @@ namespace PersistenceMap
 
         private readonly ObjectMap _mapper;
 
-        private ILogger _logger;
+        private ILogWriter _logger;
 
         public QueryKernel(IConnectionProvider provider, ISettings settings)
             : this(provider, settings, new InterceptorCollection())
@@ -44,7 +44,7 @@ namespace PersistenceMap
         /// <summary>
         /// Gets the Loggerfactory for logging
         /// </summary>
-        public ILogger Logger
+        public ILogWriter Logger
         {
             get
             {

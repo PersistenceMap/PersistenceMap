@@ -1,4 +1,4 @@
-﻿using PersistenceMap.Tracing;
+﻿using PersistenceMap.Diagnostics;
 using PersistenceMap.QueryBuilder;
 using PersistenceMap.QueryBuilder.Commands;
 using System;

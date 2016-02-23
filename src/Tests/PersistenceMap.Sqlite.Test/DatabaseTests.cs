@@ -120,7 +120,7 @@ namespace PersistenceMap.Sqlite.Test
         public void CreateTableNotNullableColumn()
         {
             var provider = new SqliteContextProvider(ConnectionString);
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
             {
@@ -261,7 +261,7 @@ namespace PersistenceMap.Sqlite.Test
         public void AddFieldByString()
         {
             var provider = new SqliteContextProvider(ConnectionString);
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
             {

@@ -1,5 +1,5 @@
 ﻿using PersistenceMap.Factories;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,7 +19,7 @@ namespace PersistenceMap
             _settings = settings;
         }
 
-        public ILogger Logger
+        public ILogWriter Logger
         {
             get
             {

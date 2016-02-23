@@ -10,7 +10,7 @@ namespace PersistenceMap.Test.Integration
         [Test]
         public void ExecuteSelectStatement()
         {
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
@@ -26,7 +26,7 @@ namespace PersistenceMap.Test.Integration
         [Test]
         public void ExecuteAnonymSelectStatement()
         {
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
@@ -42,7 +42,7 @@ namespace PersistenceMap.Test.Integration
         [Test]
         public void ExecuteUpateStatement()
         {
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())

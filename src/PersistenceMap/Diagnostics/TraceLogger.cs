@@ -2,12 +2,12 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PersistenceMap.Tracing
+namespace PersistenceMap.Diagnostics
 {
     /// <summary>
     /// ILogger class that formats and places all logs to Trace output
     /// </summary>
-    public class TraceLogger : ILogger
+    public class TraceLogger : ILogWriter
     {
         public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
         {
@@ -47,26 +47,32 @@ namespace PersistenceMap.Tracing
             }
         }
 
-        static void AppendCategory(StringBuilder sb, string category)
+        private static void AppendCategory(StringBuilder sb, string category)
         {
             if (string.IsNullOrEmpty(category))
+            {
                 return;
+            }
 
             sb.AppendLine(string.Format("## Category: {0}", category));
         }
 
-        static void AppendSource(StringBuilder sb, string source)
+        private static void AppendSource(StringBuilder sb, string source)
         {
             if (string.IsNullOrEmpty(source))
+            {
                 return;
+            }
 
             sb.AppendLine(string.Format("## Source: {0}", source));
         }
 
-        static void AppendTime(StringBuilder sb, DateTime? logtime)
+        private static void AppendTime(StringBuilder sb, DateTime? logtime)
         {
             if (logtime == null)
+            {
                 return;
+            }
 
             sb.AppendLine(string.Format("## Execute at: {0}", logtime ?? DateTime.Now));
         }

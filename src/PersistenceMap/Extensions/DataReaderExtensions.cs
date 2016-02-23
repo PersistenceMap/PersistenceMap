@@ -1,4 +1,4 @@
-﻿using PersistenceMap.Tracing;
+﻿using PersistenceMap.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Data;

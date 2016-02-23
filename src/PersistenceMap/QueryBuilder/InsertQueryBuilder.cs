@@ -4,7 +4,7 @@ using PersistenceMap.Sql;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 using PersistenceMap.Expressions;
 
 namespace PersistenceMap.QueryBuilder

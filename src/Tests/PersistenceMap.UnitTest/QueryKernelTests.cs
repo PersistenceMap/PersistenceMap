@@ -1,7 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using PersistenceMap.QueryBuilder;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 using PersistenceMap.UnitTest.TableTypes;
 using System.Collections.Generic;
 using System.Data;
@@ -24,8 +24,8 @@ namespace PersistenceMap.UnitTest
             _provider = new Mock<IConnectionProvider>();
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
 
-            var loggerFactory = new Mock<ILoggerFactory>();
-            loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogger>().Object);
+            var loggerFactory = new Mock<ILogWriterFactory>();
+            loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogWriter>().Object);
 
             _settings = new Mock<ISettings>();
             _settings.Setup(s => s.LoggerFactory).Returns(loggerFactory.Object);

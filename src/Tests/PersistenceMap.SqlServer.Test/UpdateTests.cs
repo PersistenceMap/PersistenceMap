@@ -10,7 +10,7 @@ namespace PersistenceMap.Test.Integration
         [Test]
         public void UpdateIntegrationTest()
         {
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())

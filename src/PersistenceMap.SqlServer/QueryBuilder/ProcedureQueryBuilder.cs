@@ -3,7 +3,6 @@ using PersistenceMap.Expressions;
 using PersistenceMap.Factories;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Sql;
-using PersistenceMap.Tracing;
 using System;
 using System.Collections.Generic;
 using System.Linq;

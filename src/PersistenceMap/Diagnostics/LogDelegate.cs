@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace PersistenceMap.Tracing
+namespace PersistenceMap.Diagnostics
 {
     /// <summary>
     /// Delegates all log entries to all the defined loggers in the loggerfactory
     /// </summary>
-    public class LogDelegate : ILogger
+    public class LogDelegate : ILogWriter
     {
-        readonly ILoggerFactory _loggerFactory;
+        private readonly ILogWriterFactory _loggerFactory;
 
-        public LogDelegate(ILoggerFactory loggerFactory)
+        public LogDelegate(ILogWriterFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
         }

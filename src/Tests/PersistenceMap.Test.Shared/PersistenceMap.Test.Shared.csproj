@@ -46,7 +46,7 @@
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="LocalDb\LocalDbManager.cs" />
-    <Compile Include="MessageStackLogger.cs" />
+    <Compile Include="MessageStackLogWriter.cs" />
     <Compile Include="Mock\DataReader.cs" />
     <Compile Include="Mock\DataReaderContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

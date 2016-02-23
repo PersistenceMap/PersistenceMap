@@ -1,5 +1,5 @@
 ﻿
-namespace PersistenceMap.Tracing
+namespace PersistenceMap.Diagnostics
 {
     internal static class LoggerCategory
     {

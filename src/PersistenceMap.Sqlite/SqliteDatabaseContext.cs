@@ -1,6 +1,4 @@
-﻿using PersistenceMap.Tracing;
-
-namespace PersistenceMap
+﻿namespace PersistenceMap
 {
     public class SqliteDatabaseContext : DatabaseContext, IDatabaseContext
     {

@@ -1,5 +1,5 @@
 ﻿using PersistenceMap.QueryParts;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap.QueryBuilder
 {

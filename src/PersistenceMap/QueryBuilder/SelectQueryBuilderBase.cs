@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Sql;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 using PersistenceMap.Ensure;
 using System.Collections.Generic;
 using System.Linq;

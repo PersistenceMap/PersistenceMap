@@ -332,7 +332,7 @@ namespace PersistenceMap.SqlServer.Test
             CreateDatabaseIfNotExists();
 
             var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
-            var logger = new MessageStackLogger();
+            var logger = new MessageStackLogWriter();
             provider.Settings.AddLogger(logger);
             using (var context = provider.Open())
             {

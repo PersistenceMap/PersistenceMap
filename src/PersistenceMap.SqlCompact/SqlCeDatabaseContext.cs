@@ -1,4 +1,4 @@
-﻿using PersistenceMap.Tracing;
+﻿using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap
 {

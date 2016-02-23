@@ -5,7 +5,7 @@ using PersistenceMap.Expressions;
 using PersistenceMap.Factories;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Sql;
-using PersistenceMap.Tracing;
+using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap.QueryBuilder
 {
