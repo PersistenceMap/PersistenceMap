@@ -1,23 +1,22 @@
 ﻿using NUnit.Framework;
 using PersistenceMap.Test.TableTypes;
 using System;
-using System.Data.SqlClient;
 using System.Linq;
+using PersistenceMap.Test;
 
-namespace PersistenceMap.Test.Integration
+namespace PersistenceMap.SqlServer.Test.Integration
 {
     [TestFixture]
     public class SelectTests : TestBase
     {
 
         [Test]
-        public void SimpleSelectTest()
+        public void PersistenceMap_SqlServer_Integration_SimpleSelectTest()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
                 var orders = context.Select<Orders>();
-
                 
                 /* *Expected Query*
                 select OrdersID, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry 
@@ -30,7 +29,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SimpleNongenericSelectWithJoinTest()
+        public void PersistenceMap_SqlServer_Integration_SimpleNongenericSelectWithJoinTest()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -53,7 +52,7 @@ namespace PersistenceMap.Test.Integration
 
 
         [Test]
-        public void SelectWithMax()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMax()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -104,7 +103,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithMin()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMin()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -152,7 +151,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithCount()
+        public void PersistenceMap_SqlServer_Integration_SelectWithCount()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -201,7 +200,7 @@ namespace PersistenceMap.Test.Integration
 
 
         [Test]
-        public void SelectWithFormatException()
+        public void PersistenceMap_SqlServer_Integration_SelectWithFormatException()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -216,7 +215,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement that compiles FROM a FOR operation with a anonym object defining the resultset entries and mapped to a defined type")]
-        public void SelectForAnonymToDefinedType()
+        public void PersistenceMap_SqlServer_Integration_SelectForAnonymToDefinedType()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -245,7 +244,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement that compiles FROM a FOR operation with a anonym object defining the resultset entries and mapped to a defined type using a delegate")]
-        public void SelectForAnonymCastToDefinedTypeDelegate()
+        public void PersistenceMap_SqlServer_Integration_SelectForAnonymCastToDefinedTypeDelegate()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -273,7 +272,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithoutEmptyConstructor()
+        public void PersistenceMap_SqlServer_Integration_SelectWithoutEmptyConstructor()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -294,7 +293,7 @@ namespace PersistenceMap.Test.Integration
 
 
         [Test]
-        public void SelectFromDirect()
+        public void PersistenceMap_SqlServer_Integration_SelectFromDirect()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -312,7 +311,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectFromWithAliasInFrom()
+        public void PersistenceMap_SqlServer_Integration_SelectFromWithAliasInFrom()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -330,7 +329,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectFromWithJoinWithAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectFromWithJoinWithAlias()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -354,7 +353,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectFromWithAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectFromWithAlias()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -383,7 +382,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("A select statement where the map takes the alias FROM the previous operation")]
-        public void FromWithIncludeWithAliasMapWithoutAlias()
+        public void PersistenceMap_SqlServer_Integration_FromWithIncludeWithAliasMapWithoutAlias()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -411,7 +410,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void IncludeWithWrongLambdaExpressionFailTest()
+        public void PersistenceMap_SqlServer_Integration_IncludeWithWrongLambdaExpressionFailTest()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -427,7 +426,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void JoinWithIndexerInMember()
+        public void PersistenceMap_SqlServer_Integration_JoinWithIndexerInMember()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -452,7 +451,7 @@ namespace PersistenceMap.Test.Integration
 
 
         [Test]
-        public void SelectJoin()
+        public void PersistenceMap_SqlServer_Integration_SelectJoin()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -468,7 +467,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinInFrom()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinInFrom()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -490,7 +489,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithOnWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithOnWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -506,7 +505,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithAliasWithMapsWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAliasWithMapsWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -530,7 +529,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithAliasInFromWithMapsWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAliasInFromWithMapsWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -555,7 +554,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithOnAndInJoinWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithOnAndInJoinWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -579,7 +578,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithAndWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAndWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -605,7 +604,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithAndWithAliasWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAndWithAliasWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -634,7 +633,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinWithOnWithMap()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithOnWithMap()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -659,7 +658,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectJoinsWithOnWithMaps()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinsWithOnWithMaps()
         {
             var contextProvider = new SqlContextProvider(ConnectionString);
             using (var context = contextProvider.Open())
@@ -688,7 +687,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("A select statemenent with a join and a or operation")]
-        public void SelectJoinWithGenericOr()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithGenericOr()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -721,7 +720,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select with a join that connects to a other table than the previous")]
-        public void SelectJoinToOtherTable()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinToOtherTable()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -750,7 +749,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select with a join that contains a alias connects to a other table than the previous")]
-        public void SelectJoinWithAliasToOtherTable()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAliasToOtherTable()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -779,7 +778,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select with a join that containes an alias and connects to a other table than the previous that also contains an alias")]
-        public void SelectJoinWithAliasToOtherTableWithAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAliasToOtherTableWithAlias()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -808,7 +807,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select expression containing a and with an alias for the source table")]
-        public void SelectJoinWithAndWithOnlySourceAliasWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAndWithOnlySourceAliasWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -838,7 +837,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select expression containing a and with an alias for the joined table")]
-        public void SelectJoinWithAndWithOnlyAliasWithProjection()
+        public void PersistenceMap_SqlServer_Integration_SelectJoinWithAndWithOnlyAliasWithProjection()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -865,14 +864,9 @@ namespace PersistenceMap.Test.Integration
                 Assert.IsTrue(employees.Any());
             }
         }
-
-
-
-
-
-
+        
         [Test]
-        public void SelectWithMapToInJoinWithTypeSourceAndStringAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMapToInJoinWithTypeSourceAndStringAlias()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -897,7 +891,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithMapToInJoinWithTypeSourceAndTypeAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMapToInJoinWithTypeSourceAndTypeAlias()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -921,76 +915,9 @@ namespace PersistenceMap.Test.Integration
             }
         }
 
-        //[Test]
-        //public void SelectWithMultipleMapsToSameType()
-        //{
-        //    var sql = "";
-        //    var provider = new CallbackContextProvider(s => sql = s.Flatten());
-        //    using (var context = provider.Open())
-        //    {
-        //        // select the properties that are defined in the mapping
-        //        context.From<WarriorWithName>()
-        //            .Map(w => w.WeaponID, "ID")
-        //            .Map(w => w.WeaponID)
-        //            .Map(w => w.Race, "Name")
-        //            .Map(w => w.Race)
-        //            .Select();
-
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS ID, WarriorWithName.WeaponID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
-
-        //        // map one property to a custom field
-        //        context.From<WarriorWithName>()
-        //            .Map(w => w.WeaponID, "ID")
-        //            .Map(w => w.Race, "Name")
-        //            .Map(w => w.Race)
-        //            .Select();
-
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS ID, WarriorWithName.Race AS Name, WarriorWithName.Race, SpecialSkill FROM WarriorWithName");
-        //    }
-        //}
-
-        //[Test]
-        //public void ISelectQueryExpressionWithIgnoringFields()
-        //{
-        //    var sql = "";
-        //    var provider = new CallbackContextProvider(s => sql = s.Flatten());
-        //    using (var context = provider.Open())
-        //    {
-        //        // ignore a member in the select
-        //        context.From<WarriorWithName>()
-        //            .Ignore(w => w.ID)
-        //            .Ignore(w => w.Name)
-        //            .Ignore(w => w.SpecialSkill)
-        //            .Select();
-
-        //        Assert.AreEqual(sql, "select WeaponID, Race FROM WarriorWithName");
-
-        //        // ignore a member in the select
-        //        context.From<WarriorWithName>()
-        //            .Ignore(w => w.ID)
-        //            .Ignore(w => w.Name)
-        //            .Ignore(w => w.SpecialSkill)
-        //            .Map(w => w.Name)
-        //            .Select();
-
-        //        Assert.AreEqual(sql, "select WarriorWithName.Name, WeaponID, Race FROM WarriorWithName");
-
-        //        // ignore a member in the select
-        //        context.From<WarriorWithName>()
-        //            .Ignore(w => w.ID)
-        //            .Ignore(w => w.Name)
-        //            .Map(w => w.WeaponID, "TestFieldName")
-        //            .Ignore(w => w.SpecialSkill)
-        //            .Select();
-
-        //        Assert.AreEqual(sql, "select WarriorWithName.WeaponID AS TestFieldName, Race FROM WarriorWithName");
-        //    }
-        //}
-
-
         [Test]
         [Description("select statement with where operation for generic type")]
-        public void SelectWhereForGenericType()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereForGenericType()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1016,7 +943,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with where operation for multiple generic types")]
-        public void SelectWhereForMultipeGnenericTypes()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereForMultipeGnenericTypes()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1046,7 +973,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with where operation and a simple generic and operation")]
-        public void SelectWhereWithGenericAnd()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithGenericAnd()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1073,7 +1000,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where operationion and a and operation mapped to 2 differen types")]
-        public void SelectWhereWithMultyGenericAnd()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithMultyGenericAnd()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1102,7 +1029,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a simple or operation")]
-        public void SelectWhereWithSimpleGenericOr2()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithSimpleGenericOr2()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1136,7 +1063,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where and a or operation containing two entities")]
-        public void SelectWhereWithSimpleComplexGenericOr()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithSimpleComplexGenericOr()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1170,7 +1097,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where operation and a or operation that has two genereic parameters")]
-        public void SelectWhereWithComplexGenericOr()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithComplexGenericOr()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1201,7 +1128,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias")]
-        public void SelectWhereWithMultyGenericAndWithAlias()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithMultyGenericAndWithAlias()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1230,7 +1157,7 @@ namespace PersistenceMap.Test.Integration
 
         [Test]
         [Description("select statement with a where operationion and a and operation mapped to 2 differen types and containing an alias for the source")]
-        public void SelectWhereWithMultyGenericAndWithAliasForSource()
+        public void PersistenceMap_SqlServer_Integration_SelectWhereWithMultyGenericAndWithAliasForSource()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1258,7 +1185,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithMapAndValueConverter()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMapAndValueConverter()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1293,7 +1220,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithMapExtendedAndValueConverter()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMapExtendedAndValueConverter()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1323,7 +1250,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithMapWitoutAliasAndValueConverter()
+        public void PersistenceMap_SqlServer_Integration_SelectWithMapWitoutAliasAndValueConverter()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1353,7 +1280,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithIgnoreOnAnonymObject()
+        public void PersistenceMap_SqlServer_Integration_SelectWithIgnoreOnAnonymObject()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1387,9 +1314,8 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithIgnore()
+        public void PersistenceMap_SqlServer_Integration_SelectWithIgnore()
         {
-
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
@@ -1412,7 +1338,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithIgnoreOnAnonymObjectTimer()
+        public void PersistenceMap_SqlServer_Integration_SelectWithIgnoreOnAnonymObjectTimer()
         {
             for (int i = 0; i < 10; i++)
             {
@@ -1463,7 +1389,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectWithFalseConverterInvalidCast()
+        public void PersistenceMap_SqlServer_Integration_SelectWithFalseConverterInvalidCast()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -1478,7 +1404,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void SelectAnonymousObjectWithFalseConverterInvalidCast()
+        public void PersistenceMap_SqlServer_Integration_SelectAnonymousObjectWithFalseConverterInvalidCast()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())

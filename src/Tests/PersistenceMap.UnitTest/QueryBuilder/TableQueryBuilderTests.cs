@@ -3,11 +3,7 @@ using NUnit.Framework;
 using PersistenceMap.QueryBuilder;
 using PersistenceMap.QueryParts;
 using PersistenceMap.UnitTest.TableTypes;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.UnitTest.QueryBuilder
 {
@@ -15,7 +11,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
     public class TableQueryBuilderTests
     {
         [Test]
-        public void DatabaseQueryBuilderCreate()
+        public void PersistenceMap_TableQueryBuilder_Create()
         {
             var provider = new Mock<MockedContextProvider>();
             var container = new QueryPartsContainer() as IQueryPartsContainer;
@@ -33,7 +29,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilderCreateWithNonEmptyContainer()
+        public void PersistenceMap_TableQueryBuilder_CreateWithNonEmptyContainer()
         {
             var provider = new Mock<MockedContextProvider>();
             var container = new QueryPartsContainer() as IQueryPartsContainer;
@@ -53,7 +49,7 @@ namespace PersistenceMap.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilderCreateWithNonEmptyContainerExtraField()
+        public void PersistenceMap_TableQueryBuilder_CreateWithNonEmptyContainerExtraField()
         {
             var provider = new Mock<MockedContextProvider>();
             var container = new QueryPartsContainer() as IQueryPartsContainer;

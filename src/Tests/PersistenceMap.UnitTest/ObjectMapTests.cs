@@ -1,11 +1,8 @@
 ﻿using Moq;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.UnitTest
 {
@@ -29,7 +26,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData()
+        public void PersistenceMap_ObjectMap_ReadData()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -55,7 +52,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData_WithEmptyIndexCache()
+        public void PersistenceMap_ObjectMap_ReadData_WithEmptyIndexCache()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -78,7 +75,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData_WithNullIndexCache()
+        public void PersistenceMap_ObjectMap_ReadData_WithNullIndexCache()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -97,7 +94,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData_FalseField()
+        public void PersistenceMap_ObjectMap_ReadData_FalseField()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -111,7 +108,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData_RestrictiveMode_Fail()
+        public void PersistenceMap_ObjectMap_ReadData_RestrictiveMode_Fail()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -123,7 +120,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadData_RestrictiveMode_Success()
+        public void PersistenceMap_ObjectMap_ReadData_RestrictiveMode_Success()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -137,7 +134,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadDataOfT()
+        public void PersistenceMap_ObjectMap_ReadDataOfT()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
@@ -158,7 +155,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadDataOfT_WithUnequalFieldsMembers()
+        public void PersistenceMap_ObjectMap_ReadDataOfT_WithUnequalFieldsMembers()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>().ToList();
             fieldDefinitions[0].FieldName = "TestOne";
@@ -182,7 +179,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadDataOfT_WithoutIndexCache()
+        public void PersistenceMap_ObjectMap_ReadDataOfT_WithoutIndexCache()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
@@ -200,7 +197,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadDataOfT_WithNullIndexCache()
+        public void PersistenceMap_ObjectMap_ReadDataOfT_WithNullIndexCache()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
             
@@ -214,7 +211,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ObjectMap_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
+        public void PersistenceMap_ObjectMap_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
         {
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("FieldOne");
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("FieldTwo");

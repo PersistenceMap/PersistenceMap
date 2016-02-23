@@ -8,7 +8,7 @@ namespace PersistenceMap.Test.Expression
     public class ExecuteExpressionTests
     {
         [Test]
-        public void ExecuteSelectStatement()
+        public void PersistenceMap_Integration_Execute_SelectStatement()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "SELECT * FROM Orders"));
@@ -20,7 +20,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void ExecuteSqlStatement()
+        public void PersistenceMap_Integration_Execute_SqlStatement()
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "UPDATE Orders SET Freight = 20 WHERE OrdersID = 10000000"));

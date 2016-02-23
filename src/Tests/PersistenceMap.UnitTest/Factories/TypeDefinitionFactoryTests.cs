@@ -11,7 +11,7 @@ namespace PersistenceMap.UnitTest.Factories
     public class TypeDefinitionFactoryTests
     {
         [Test]
-        public void GetFieldDefinitionsFromGenericType()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromGenericType()
         {
             // Act
             var fields = TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
@@ -27,7 +27,7 @@ namespace PersistenceMap.UnitTest.Factories
 
 
         [Test]
-        public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatch()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromGenericTypeWithQueryPartsMatch()
         {
             var parts = new QueryPartsContainer();
             var item = new QueryPart(OperationType.None);
@@ -54,7 +54,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetFieldDefinitionsFromGenericTypeWithQueryPartsMatchAndIgnoreFields()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromGenericTypeWithQueryPartsMatchAndIgnoreFields()
         {
             var parts = new QueryPartsContainer();
             var item = new QueryPart(OperationType.None);
@@ -81,7 +81,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetFieldDefinitionsFromGenericTypeMatchedWithParameterType()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromGenericTypeMatchedWithParameterType()
         {
             var anonym = new
             {
@@ -105,7 +105,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetFieldDefinitionsWithExtensionMethod()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsWithExtensionMethod()
         {
             // Act
             var fields = typeof(Warrior).GetFieldDefinitions();
@@ -120,7 +120,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetFieldDefinitionsFromInstance()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromInstance()
         {
             var wrir = new Warrior();
 
@@ -137,7 +137,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void GetFieldDefinitionsFromGenericTypeMatchedWithInvariantCaseMatch()
+        public void PersistenceMap_TypeDefinitionFactory_GetFieldDefinitionsFromGenericTypeMatchedWithInvariantCaseMatch()
         {
             var parts = new QueryPartsContainer();
             var item = new QueryPart(OperationType.None);

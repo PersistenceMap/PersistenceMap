@@ -10,7 +10,7 @@ namespace PersistenceMap.SqlServer.Test
     public class ProcedureTests : TestBase
     {
         [Test]
-        public void ProcedureWithResultWithoutParamNames()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithoutParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -26,7 +26,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithoutParamNamesAndBaseClass()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithoutParamNamesAndBaseClass()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -45,7 +45,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithMapToMultipleFields()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithMapToMultipleFields()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -68,7 +68,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithMapAndValueConverters()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithMapAndValueConverters()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -93,7 +93,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithParamNames()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -109,7 +109,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithParamNamesContainingAt()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithParamNamesContainingAt()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -125,7 +125,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultDefinedAsAnonymousObject()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultDefinedAsAnonymousObject()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -149,7 +149,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithoutResultWithoutParamNames()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithoutResultWithoutParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -163,7 +163,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithoutResultWithParamNames()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithoutResultWithParamNames()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -177,7 +177,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithoutResultWithParamNamesContainingAt()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithoutResultWithParamNamesContainingAt()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -191,7 +191,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithRetval()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithRetval()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -223,7 +223,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithoutResultWithRetval()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithoutResultWithRetval()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -254,7 +254,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithRetvalContainingAt()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithRetvalContainingAt()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -286,7 +286,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithoutResultWithRetvalContainingAt()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithoutResultWithRetvalContainingAt()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -316,7 +316,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultAndFieldMappingsWithFor()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultAndFieldMappingsWithFor()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -335,7 +335,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultAndFieldMappingsWithoutFor()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultAndFieldMappingsWithoutFor()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -353,7 +353,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultAndIndexerFieldInMember()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultAndIndexerFieldInMember()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -369,7 +369,7 @@ namespace PersistenceMap.SqlServer.Test
 
         [Test]
         [Description("Executes a procedure to a anonym object")]
-        public void ProcedureWithResultToAnonymObject()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultToAnonymObject()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -393,7 +393,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithMappings()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithMappings()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -419,7 +419,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithResultWithIgnores()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithResultWithIgnores()
         {
             var provider = new SqlContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -444,7 +444,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithRestrictiveMappingTest()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithRestrictiveMappingTest()
         {
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;
@@ -463,7 +463,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ProcedureWithRestrictiveMappingAndIgnoreFieldTest()
+        public void PersistenceMap_SqlServer_Integration_Procedure_WithRestrictiveMappingAndIgnoreFieldTest()
         {
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;

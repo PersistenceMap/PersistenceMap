@@ -8,7 +8,7 @@ namespace PersistenceMap.Test.Integration
     public class ExecuteTests : TestBase
     {
         [Test]
-        public void ExecuteSelectStatement()
+        public void PersistenceMap_Integration_ExecuteSelectStatement()
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
@@ -24,7 +24,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void ExecuteAnonymSelectStatement()
+        public void PersistenceMap_Integration_ExecuteAnonymSelectStatement()
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
@@ -40,7 +40,7 @@ namespace PersistenceMap.Test.Integration
         }
 
         [Test]
-        public void ExecuteUpateStatement()
+        public void PersistenceMap_Integration_ExecuteUpateStatement()
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);

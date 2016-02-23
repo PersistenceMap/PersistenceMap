@@ -9,7 +9,7 @@ namespace PersistenceMap.SqlServer.Test
     public class ConverterTests : TestBase
     {
         [Test]
-        public void ConverterTests_ConvertValueToEnumWithLambdaTest()
+        public void PersistenceMap_SqlServer_Integration_ConverterTests_ConvertValueToEnumWithLambdaTest()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())
@@ -25,7 +25,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void ConverterTests_ConvertValueToEnumWithMethodTest()
+        public void PersistenceMap_SqlServer_Integration_ConverterTests_ConvertValueToEnumWithMethodTest()
         {
             var dbConnection = new SqlContextProvider(ConnectionString);
             using (var context = dbConnection.Open())

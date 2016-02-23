@@ -11,7 +11,7 @@ namespace PersistenceMap.Test.Expression
     public class SelectExpressionTests
     {
         [Test]
-        public void SelectExpression_SelectWithPredicate()
+        public void PersistenceMap_Integration_Select_Expression_SelectWithPredicate()
         {
             var sql = string.Empty;
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -31,7 +31,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithPredicate()
+        public void PersistenceMap_Integration_Select_WithPredicate()
         {
             var sql = string.Empty;
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -52,7 +52,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithGroupBy()
+        public void PersistenceMap_Integration_Select_WithGroupBy()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -86,7 +86,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithMax()
+        public void PersistenceMap_Integration_Select_WithMax()
         {
             var sql = string.Empty;
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -112,7 +112,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithMin()
+        public void PersistenceMap_Integration_Select_WithMin()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -139,7 +139,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithCount()
+        public void PersistenceMap_Integration_Select_WithCount()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -166,7 +166,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithAliasMapping()
+        public void PersistenceMap_Integration_Select_WithAliasMapping()
         {
             var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -185,7 +185,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithExtendedMapping()
+        public void PersistenceMap_Integration_Select_WithExtendedMapping()
         {
             var expected = "SELECT Orders.Freight AS SpecialFreight, CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -204,7 +204,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test(Description = "Select with a anonym object definition")]
-        public void SelectAnonymObjectTypeDefiniton()
+        public void PersistenceMap_Integration_Select_AnonymObjectTypeDefiniton()
         {
             var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
             var type = new
@@ -228,7 +228,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test(Description = "Select to a anonym object")]
-        public void SelectAnonymObject()
+        public void PersistenceMap_Integration_Select_AnonymObject()
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -256,7 +256,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test(Description = "Select to a anonym object delegate")]
-        public void SelectAnonymObject2()
+        public void PersistenceMap_Integration_Select_AnonymObject2()
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -278,7 +278,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test(Description = "Select to a type object delegate")]
-        public void SelectCustomObjectWithDelegate()
+        public void PersistenceMap_Integration_Select_CustomObjectWithDelegate()
         {
             var expected = "SELECT Orders.OrdersID, ProductID, UnitPrice, Quantity, Discount FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -303,7 +303,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [Description("select statement that compiles from a FOR operation with a anonym object defining the resultset entries")]
-        public void SelectForAnonymObjectType()
+        public void PersistenceMap_Integration_Select_ForAnonymObjectType()
         {
             var expected = "SELECT ProductID, Quantity FROM Orders JOIN OrderDetails ON (OrderDetails.OrdersID = Orders.OrdersID)";
 
@@ -329,7 +329,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithINExpression()
+        public void PersistenceMap_Integration_Select_WithINExpression()
         {
             var expected = "SELECT ID, Name, WeaponID, Race, SpecialSkill FROM Warrior WHERE Warrior.Race In ('Elf','Dwarf')";
 
@@ -350,7 +350,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithOrderTest()
+        public void PersistenceMap_Integration_Select_WithOrderTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -476,7 +476,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectTestForOrders()
+        public void PersistenceMap_Integration_Select_TestForOrders()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -512,7 +512,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectTestWithForAndCustomMaps()
+        public void PersistenceMap_Integration_Select_TestWithForAndCustomMaps()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -547,7 +547,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithWhereTest()
+        public void PersistenceMap_Integration_Select_WithWhereTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -686,7 +686,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void SelectWithMultipleMapsToSameType()
+        public void PersistenceMap_Integration_Select_WithMultipleMapsToSameType()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -716,7 +716,7 @@ namespace PersistenceMap.Test.Expression
 
         [Test]
         [NUnit.Framework.Ignore("Not jet implemented")]
-        public void SelectWithConstraintInBaseClass()
+        public void PersistenceMap_Integration_Select_WithConstraintInBaseClass()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -730,7 +730,7 @@ namespace PersistenceMap.Test.Expression
         }
         
         [Test]
-        public void SelectWithDifferenctCasesInMappedPropertyNamesTest()
+        public void PersistenceMap_Integration_Select_WithDifferenctCasesInMappedPropertyNamesTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());

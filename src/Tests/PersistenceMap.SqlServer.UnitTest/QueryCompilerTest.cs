@@ -8,7 +8,7 @@ namespace PersistenceMap.SqlServer.UnitTest
     public class QueryCompilerTest
     {
         [Test]
-        public void SqlServer_QueryCompiler_Compile_CreateDatabaseTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_CreateDatabaseTest()
         {
             var part = new DelegateQueryPart(OperationType.CreateDatabase, () => "DbName");
             var parts = new QueryPartsContainer();
@@ -23,7 +23,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_DetachDatabaseTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_DetachDatabaseTest()
         {
             var part = new DelegateQueryPart(OperationType.DetachDatabase, () => "DbName");
             var parts = new QueryPartsContainer();
@@ -36,7 +36,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_DroptDatabaseTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_DroptDatabaseTest()
         {
             var part = new DelegateQueryPart(OperationType.DropDatabase, () => "DbName");
             var parts = new QueryPartsContainer();
@@ -49,7 +49,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_CreateTableTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_CreateTableTest()
         {
             var part = new DelegateQueryPart(OperationType.CreateTable, () => "TableName");
             var parts = new QueryPartsContainer();
@@ -62,7 +62,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ProcedureTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ProcedureTest()
         {
             var part = new DelegateQueryPart(OperationType.Procedure, () => "ProcName");
             var parts = new QueryPartsContainer();
@@ -75,7 +75,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ParameterTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ParameterTest()
         {
             var part = new QueryPart(OperationType.None, null);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param=value"));
@@ -89,7 +89,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_MultipleParameterTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_MultipleParameterTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.Parameter, () => "Param1=value1"));
@@ -104,7 +104,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ParameterOutputTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ParameterOutputTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
@@ -118,7 +118,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_MultipleParameterOutputTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_MultipleParameterOutputTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutputParameter, () => "Param1=value1"));
@@ -133,7 +133,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_OutputParameterDefinitionTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_OutputParameterDefinitionTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new DelegateQueryPart(OperationType.OutParameterDeclare, () => "Param int"));
@@ -148,7 +148,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_OutputParameterDeclareTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_OutputParameterDeclareTest()
         {
             var part = new DelegateQueryPart(OperationType.OutParameterDeclare, () => "ParamName int");
             var parts = new QueryPartsContainer();
@@ -161,7 +161,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_OutputParameterSetTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_OutputParameterSetTest()
         {
             var part = new DelegateQueryPart(OperationType.OutParameterSet, () => "ParamName=1");
             var parts = new QueryPartsContainer();
@@ -174,7 +174,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_OutputParameterSelectTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_OutputParameterSelectTest()
         {
             var part = new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param");
             var parts = new QueryPartsContainer();
@@ -187,7 +187,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_SelectWithOutputParameterSelectTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_SelectWithOutputParameterSelectTest()
         {
             var part = new QueryPart(OperationType.Select);
             part.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => "Param1"));
@@ -204,7 +204,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         #region Database Tests
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_AlterTableTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_AlterTableTest()
         {
             var part = new DelegateQueryPart(OperationType.AlterTable, () => "Table");
             var parts = new QueryPartsContainer();
@@ -217,7 +217,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_DropTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_DropTest()
         {
             var part = new DelegateQueryPart(OperationType.DropTable, () => "Table");
             var parts = new QueryPartsContainer();
@@ -230,7 +230,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_DropFieldTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_DropFieldTest()
         {
             var part = new DelegateQueryPart(OperationType.DropColumn, () => "ColumnName");
             var parts = new QueryPartsContainer();
@@ -243,7 +243,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_AddColumnTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_AddColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -260,7 +260,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_AddColumnMissingNUllableTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_AddColumnMissingNUllableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -276,7 +276,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_AddColumnNullableTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_AddColumnNullableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -293,7 +293,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_AddColumnNotNullTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_AddColumnNotNullTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -308,15 +308,9 @@ namespace PersistenceMap.SqlServer.UnitTest
 
             Assert.AreEqual(query.QueryString, "ADD ColumnName int NOT NULL");
         }
-
-
-
-
-
-
-
+        
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ColumnTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -333,7 +327,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ColumnWithoutNullableFieldTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ColumnWithoutNullableFieldTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -349,7 +343,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ColumnWithNullableTrueTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ColumnWithNullableTrueTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -366,7 +360,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ColumnWithNullableFalseTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ColumnWithNullableFalseTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -383,7 +377,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ColumnMultipleTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ColumnMultipleTest()
         {
             var part = new QueryPart(OperationType.None);
 
@@ -411,7 +405,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_ForeignKeyTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_ForeignKeyTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.ForeignKey);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -428,7 +422,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_PrimaryKeyTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_PrimaryKeyTest()
         {
             var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
@@ -443,7 +437,7 @@ namespace PersistenceMap.SqlServer.UnitTest
         }
 
         [Test]
-        public void SqlServer_QueryCompiler_Compile_PrimaryKeyWithMultipleColumnsTest()
+        public void PersistenceMap_SqlServer_QueryCompiler_Compile_PrimaryKeyWithMultipleColumnsTest()
         {
             var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));

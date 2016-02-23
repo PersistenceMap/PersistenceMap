@@ -23,9 +23,9 @@ namespace PersistenceMap.Sqlite.Test
             if (!File.Exists(DatabaseName))
                 CreateDatabase(true);
         }
-
+        
         [Test]
-        public void SimpleSelect()
+        public void PersistenceMap_Sqlite_Integration_SimpleSelect()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -44,7 +44,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void SelectWithJoinAndMap()
+        public void PersistenceMap_Sqlite_Integration_SelectWithJoinAndMap()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())

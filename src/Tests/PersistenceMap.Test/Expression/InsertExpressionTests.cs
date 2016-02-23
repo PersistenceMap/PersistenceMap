@@ -9,7 +9,7 @@ namespace PersistenceMap.Test.Expression
     public class InsertExpressionTests
     {
         [Test]
-        public void InsertTest()
+        public void PersistenceMap_Integration_Insert_Test()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -24,7 +24,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void InsertWithAnonymObjectTest()
+        public void PersistenceMap_Integration_Insert_WithAnonymObjectTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -39,7 +39,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void InsertWithIgnoreTest()
+        public void PersistenceMap_Integration_Insert_WithIgnoreTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -54,7 +54,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void InsertWithIgnoreFirstPropertyTest()
+        public void PersistenceMap_Integration_Insert_WithIgnoreFirstPropertyTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -69,7 +69,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void InsertWithIgnoreLastPropertyTest()
+        public void PersistenceMap_Integration_Insert_WithIgnoreLastPropertyTest()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());

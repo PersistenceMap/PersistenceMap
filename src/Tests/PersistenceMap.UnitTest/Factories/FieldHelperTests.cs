@@ -1,8 +1,8 @@
-﻿using System.Linq.Expressions;
-using NUnit.Framework;
-using System;
-using PersistenceMap.UnitTest.TableTypes;
+﻿using NUnit.Framework;
 using PersistenceMap.Expressions;
+using PersistenceMap.UnitTest.TableTypes;
+using System;
+using System.Linq.Expressions;
 
 namespace PersistenceMap.UnitTest.Factories
 {
@@ -10,7 +10,7 @@ namespace PersistenceMap.UnitTest.Factories
     public class FieldHelperTests
     {
         [Test]
-        public void ExtractPropertyNameFromUnaryExpression()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromUnaryExpression()
         {
             Expression<Func<Warrior, object>> unaryObject = w => w.ID;
             
@@ -21,7 +21,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromMemberExpression()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromMemberExpression()
         {
             Expression<Func<Warrior, int>> memberInt = w => w.ID;
 
@@ -32,7 +32,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromBinaryExpressionLeft()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromBinaryExpressionLeft()
         {
             Expression<Func<Warrior, bool>> binaryInt = w => w.ID == 1;
 
@@ -43,7 +43,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromBinaryExpressionRight()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromBinaryExpressionRight()
         {
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == w.ID;
 
@@ -54,7 +54,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromBinaryExpressionFail()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromBinaryExpressionFail()
         {
             Expression<Func<Warrior, bool>> binaryInt = w => 1 == 1;
 
@@ -65,7 +65,7 @@ namespace PersistenceMap.UnitTest.Factories
             }
 
         [Test]
-        public void ExtractPropertyNameFromBinaryExpression2Fail()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromBinaryExpression2Fail()
         {
             Expression<Func<Warrior, bool>> binaryInt = w => true;
 
@@ -76,7 +76,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromCompiledExpression()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromCompiledExpression()
         {
             Expression<Func<int>> binaryInt = () => 5;
 
@@ -87,7 +87,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromStaticProperty()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromStaticProperty()
         {
             Expression<Func<WithStaticProperty, int>> binaryInt = w => WithStaticProperty.ID;
 
@@ -98,7 +98,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromMethod()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromMethod()
         {
             Expression<Func<int>> binaryInt = () => MethodWithReturnValue();
 
@@ -109,7 +109,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromMethodWithParameter()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromMethodWithParameter()
         {
             Expression<Func<int>> binaryInt = () => MethodWithReturnValueAndParameter(5);
 
@@ -120,7 +120,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ExtractPropertyNameFromMethodWithParameter2()
+        public void PersistenceMap_LambdaExpressions_ExtractPropertyNameFromMethodWithParameter2()
         {
             var id = 5;
             Expression<Func<int>> binaryInt = () => MethodWithReturnValueAndParameter(id);

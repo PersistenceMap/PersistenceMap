@@ -4,13 +4,13 @@ using PersistenceMap.QueryParts;
 using PersistenceMap.SqlServer.QueryBuilder;
 using System.Linq;
 
-namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
+namespace PersistenceMap.SqlServer.UnitTest.QueryBuilder
 {
     [TestFixture]
     public class DatabaseQueryBuilderTests
     {
         [Test]
-        public void DatabaseQueryBuilder_DetachTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_DetachTest()
         {
             var provider = new Mock<IConnectionProvider>();
             var settings = new Mock<ISettings>();
@@ -24,7 +24,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Detach_AddQueryTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Detach_AddQueryTest()
         {
             var provider = new Mock<IConnectionProvider>();
             var settings = new Mock<ISettings>();
@@ -38,7 +38,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Detach_SetMasterDBTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Detach_SetMasterDBTest()
         {
             var db = string.Empty;
             var provider = new Mock<IConnectionProvider>();
@@ -61,7 +61,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Detach_SetDBTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Detach_SetDBTest()
         {
             var provider = new Mock<IConnectionProvider>();
             provider.SetupGet(exp => exp.Database).Returns(() => "DatabaseName");
@@ -77,7 +77,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_DropTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_DropTest()
         {
             var provider = new Mock<IConnectionProvider>();
             var settings = new Mock<ISettings>();
@@ -91,7 +91,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Drop_AddQueryTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Drop_AddQueryTest()
         {
             var provider = new Mock<IConnectionProvider>();
             var settings = new Mock<ISettings>();
@@ -105,7 +105,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Drop_SetMasterDBTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Drop_SetMasterDBTest()
         {
             var db = string.Empty;
             var provider = new Mock<IConnectionProvider>();
@@ -128,7 +128,7 @@ namespace PersistenceMap.Sqlite.UnitTest.QueryBuilder
         }
 
         [Test]
-        public void DatabaseQueryBuilder_Drop_SetDBTest()
+        public void PersistenceMap_SqlServer_DatabaseQueryBuilder_Drop_SetDBTest()
         {
             var provider = new Mock<IConnectionProvider>();
             provider.SetupGet(exp => exp.Database).Returns(() => "DatabaseName");

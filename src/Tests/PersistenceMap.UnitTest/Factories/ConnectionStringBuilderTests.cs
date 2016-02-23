@@ -1,9 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.UnitTest.Factories
 {
@@ -11,7 +6,7 @@ namespace PersistenceMap.UnitTest.Factories
     public class ConnectionStringBuilderTests
     {
         [Test]
-        public void ConnectionStringBuilder_GetDatabaseFromInitialCatalogTest()
+        public void PersistenceMap_ConnectionStringBuilder_GetDatabaseFromInitialCatalogTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -37,7 +32,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_GetDatabaseFromDatabaseTest()
+        public void PersistenceMap_ConnectionStringBuilder_GetDatabaseFromDatabaseTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -63,7 +58,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_GetDatabaseFromDataSourceTest()
+        public void PersistenceMap_ConnectionStringBuilder_GetDatabaseFromDataSourceTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -97,7 +92,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_SetDatabaseFromInitialCatalogTest()
+        public void PersistenceMap_ConnectionStringBuilder_SetDatabaseFromInitialCatalogTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -123,7 +118,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_SetDatabaseFromDatabaseTest()
+        public void PersistenceMap_ConnectionStringBuilder_SetDatabaseFromDatabaseTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -149,7 +144,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_SetDatabaseFromDataSourceTest()
+        public void PersistenceMap_ConnectionStringBuilder_SetDatabaseFromDataSourceTest()
         {
             var builder = new ConnectionStringBuilder();
 
@@ -183,7 +178,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_FormatConnectionString_LocalDB()
+        public void PersistenceMap_ConnectionStringBuilder_FormatConnectionString_LocalDB()
         {
             var builder = new ConnectionStringBuilder();
             var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName=c:\Path\To\Database\WickeFlame.mdf;Initial Catalog=WickeFlame;Integrated Security=True;";
@@ -192,7 +187,7 @@ namespace PersistenceMap.UnitTest.Factories
         }
 
         [Test]
-        public void ConnectionStringBuilder_FormatConnectionString_MasterForLocalDB()
+        public void PersistenceMap_ConnectionStringBuilder_FormatConnectionString_MasterForLocalDB()
         {
             var builder = new ConnectionStringBuilder();
             var connectionString = @"Data Source=(LocalDB)\mssqllocaldb;AttachDBFileName=c:\Path\To\Database\WickeFlame.mdf;Initial Catalog=WickeFlame;Integrated Security=True;";

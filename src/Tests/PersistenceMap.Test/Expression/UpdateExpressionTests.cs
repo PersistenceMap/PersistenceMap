@@ -9,7 +9,7 @@ namespace PersistenceMap.Test.Expression
     public class UpdateExpressionTests
     {
         [Test(Description = "Testmethod containing update statements")]
-        public void UpdateTests()
+        public void PersistenceMap_Integration_Update_Tests()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -60,7 +60,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void UpdateTestWithKeyExpression()
+        public void PersistenceMap_Integration_Update_WithKeyExpression()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());
@@ -73,7 +73,7 @@ namespace PersistenceMap.Test.Expression
         }
 
         [Test]
-        public void UpdateTestWithKeyExpression_Fail()
+        public void PersistenceMap_Integration_Update_WithKeyExpression_Fail()
         {
             var sql = "";
             var provider = new ContextProvider(new Mock.ConnectionProvider());

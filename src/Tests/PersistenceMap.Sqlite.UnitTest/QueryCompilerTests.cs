@@ -8,9 +8,9 @@ namespace PersistenceMap.Sqlite.UnitTest
     public class QueryCompilerTests
     {
         #region Database Tests
-
+        
         [Test]
-        public void SqliteQueryCompilerCompileAlterTableTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileAlterTableTest()
         {
             var part = new DelegateQueryPart(OperationType.AlterTable, () => "Table");
             var parts = new QueryPartsContainer();
@@ -23,7 +23,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileDropTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileDropTest()
         {
             var part = new DelegateQueryPart(OperationType.DropTable, () => "Table");
             var parts = new QueryPartsContainer();
@@ -36,7 +36,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileDropColumnTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileDropColumnTest()
         {
             var part = new DelegateQueryPart(OperationType.DropColumn, () => "ColumnName");
             var parts = new QueryPartsContainer();
@@ -49,7 +49,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileAddColumnTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileAddColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -66,7 +66,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileAddColumnMissingNUllableTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileAddColumnMissingNUllableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -82,7 +82,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileAddColumnNullableTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileAddColumnNullableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -99,7 +99,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileAddColumnNotNullTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileAddColumnNotNullTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.AddColumn);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -116,7 +116,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileRenameTableTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileRenameTableTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.RenameTable);
             part.AddValue(KeyValuePart.Key, "OriginalTable");
@@ -132,7 +132,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileColumnTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileColumnTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -149,7 +149,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileColumnWithoutNullableFieldTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileColumnWithoutNullableFieldTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -165,7 +165,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileColumnWithNullableTrueTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileColumnWithNullableTrueTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -182,7 +182,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileColumnWithNullableFalseTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileColumnWithNullableFalseTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.Column);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -199,7 +199,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileColumnMultipleTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileColumnMultipleTest()
         {
             var part = new QueryPart(OperationType.None);
 
@@ -227,7 +227,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompileForeignKeyTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompileForeignKeyTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.ForeignKey);
             part.AddValue(KeyValuePart.MemberName, "ColumnName");
@@ -244,7 +244,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompilePrimaryKeyTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompilePrimaryKeyTest()
         {
             var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));
@@ -259,7 +259,7 @@ namespace PersistenceMap.Sqlite.UnitTest
         }
 
         [Test]
-        public void SqliteQueryCompilerCompilePrimaryKeyWithMultipleColumnsTest()
+        public void PersistenceMap_Sqlite_Integration_QueryCompiler_CompilePrimaryKeyWithMultipleColumnsTest()
         {
             var part = new QueryPart(OperationType.PrimaryKey);
             part.Add(new DelegateQueryPart(OperationType.Column, () => "Column1"));

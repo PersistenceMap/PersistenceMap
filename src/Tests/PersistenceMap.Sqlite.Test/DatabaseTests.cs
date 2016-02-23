@@ -10,35 +10,19 @@ namespace PersistenceMap.Sqlite.Test
     [TestFixture]
     public class DatabaseTests : TestBase
     {
-        const string DatabaseName = "SQLiteDemo.db";
+        private const string DatabaseName = "SQLiteDemo.db";
 
         [SetUp]
         public void Setup()
         {
             if (File.Exists(DatabaseName))
+            {
                 File.Delete(DatabaseName);
+            }
         }
-
-        //[Test]
-        //public void CreateDatabase()
-        //{
-        //    Assert.IsFalse(File.Exists(DatabaseName));
-
-        //    var provider = new SqliteContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        context.Database.Create();
-
-        //        Assert.IsFalse(File.Exists(DatabaseName));
-
-        //        context.Commit();
-
-        //        Assert.IsTrue(File.Exists(DatabaseName));
-        //    }
-        //}
-
+        
         [Test]
-        public void CreateTable()
+        public void PersistenceMap_Sqlite_Integration_CreateTable()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -57,7 +41,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void GetDatabaseFromConnectionStringTest()
+        public void PersistenceMap_Sqlite_Integration_GetDatabaseFromConnectionStringTest()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -70,7 +54,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void CreateTableMultyKey()
+        public void PersistenceMap_Sqlite_Integration_CreateTableMultyKey()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -89,7 +73,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void CreateTableForeignKey()
+        public void PersistenceMap_Sqlite_Integration_CreateTableForeignKey()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -117,7 +101,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void CreateTableNotNullableColumn()
+        public void PersistenceMap_Sqlite_Integration_CreateTableNotNullableColumn()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             var logger = new MessageStackLogWriter();
@@ -131,51 +115,15 @@ namespace PersistenceMap.Sqlite.Test
                     .Create();
 
                 Assert.IsFalse(File.Exists(DatabaseName));
-
-                //context.QueryCommandStore.First().Execute(context);
-
+                
                 context.Commit();
 
                 Assert.AreEqual(logger.Logs.First().Message.Flatten(), "CREATE TABLE IF NOT EXISTS Warrior (ID int NOT NULL, Race varchar(1000) NOT NULL, Name varchar(1000), WeaponID int NOT NULL, SpecialSkill varchar(1000))");
             }
         }
 
-        //[Test]
-        //public void AlterTableDropForeignKey()
-        //{
-        //    var provider = new SqliteContextProvider(ConnectionString);
-        //    using (var context = provider.Open())
-        //    {
-        //        context.Database.Table<Weapon>()
-        //            .Key(wpn => wpn.ID)
-        //            .Create();
-
-        //        // table with a foreign key
-        //        context.Database.Table<Warrior>()
-        //            .Key(wrir => wrir.ID)
-        //            .ForeignKey<Weapon>(wrir => wrir.WeaponID, wpn => wpn.ID)
-        //            .Create();
-
-        //        Assert.IsFalse(File.Exists(DatabaseName));
-
-        //        context.Commit();
-
-        //        Assert.IsTrue(File.Exists(DatabaseName));
-
-        //        context.Database.Table<Warrior>()
-        //            .DropKey(wrir => wrir.WeaponID)
-        //            .Alter();
-
-        //        context.Commit();
-
-        //        var tables = context.Select<Sqlite_Master>(m => m.Type == "table");
-        //        Assert.IsTrue(tables.Any(t => t.Name == typeof(Warrior).Name));
-        //        Assert.IsTrue(tables.Any(t => t.Name == typeof(Weapon).Name));
-        //    }
-        //}
-
         [Test]
-        public void AlterTableAddField()
+        public void PersistenceMap_Sqlite_Integration_AlterTableAddField()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -209,7 +157,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void DropTable()
+        public void PersistenceMap_Sqlite_Integration_DropTable()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -236,7 +184,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void RenameTable()
+        public void PersistenceMap_Sqlite_Integration_RenameTable()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
@@ -258,7 +206,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void AddFieldByString()
+        public void PersistenceMap_Sqlite_Integration_AddFieldByString()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             var logger = new MessageStackLogWriter();
@@ -272,7 +220,7 @@ namespace PersistenceMap.Sqlite.Test
         }
 
         [Test]
-        public void AddFieldByStringFail()
+        public void PersistenceMap_Sqlite_Integration_AddFieldByStringFail()
         {
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())

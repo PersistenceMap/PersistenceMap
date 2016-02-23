@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NUnit.Framework;
-using PersistenceMap.QueryBuilder;
 using PersistenceMap.QueryParts;
 
 namespace PersistenceMap.UnitTest
@@ -9,24 +8,22 @@ namespace PersistenceMap.UnitTest
     public class QueryCompilerTests
     {
         [Test]
-        public void CompileQueryTest()
+        public void PersistenceMap_QueryCompiler_CompileQueryTest()
         {
             // setup
             var parts = new Mock<IQueryPartsContainer>();
-            //parts.Setup(p => p.Compile()).Returns(new CompiledQuery());
 
             // Act
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts.Object, new InterceptorCollection());
 
             Assert.IsNotNull(query);
-            //parts.Verify(p => p.Compile(), Times.Once);
         }
 
         #region Selection Tests
 
         [Test]
-        public void QueryCompilerCompileSelectTest()
+        public void PersistenceMap_QueryCompiler_CompileSelectTest()
         {
             var parts = new QueryPartsContainer();
             parts.Add(new QueryPart(OperationType.Select, null));
@@ -38,7 +35,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileSelectWithFieldTest()
+        public void PersistenceMap_QueryCompiler_CompileSelectWithFieldTest()
         {
             var select = new QueryPart(OperationType.Select);
             select.Add(new FieldQueryPart("Name", "Alias"));
@@ -52,7 +49,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileSelectWithIncludeTest()
+        public void PersistenceMap_QueryCompiler_CompileSelectWithIncludeTest()
         {
             var select = new QueryPart(OperationType.Select);
             select.Add(new FieldQueryPart("Name", "Alias") { OperationType = OperationType.Include });
@@ -66,7 +63,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileIgnoreTest()
+        public void PersistenceMap_QueryCompiler_CompileIgnoreTest()
         {
             var select = new QueryPart(OperationType.IgnoreColumn);
             var parts = new QueryPartsContainer();
@@ -79,7 +76,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null));
@@ -93,7 +90,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldWithAliasTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldWithAliasTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias"));
@@ -107,7 +104,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldWithTableDefinitionTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldWithTableDefinitionTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entity: "Entity"));
@@ -121,7 +118,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldWithTableAliasDefinitionTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldWithTableAliasDefinitionTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entityalias: "EntityAlias"));
@@ -135,7 +132,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldWithTableAndTableAliasDefinitionTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldWithTableAndTableAliasDefinitionTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", null, entity: "Entity", entityalias: "EntityAlias"));
@@ -149,7 +146,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFieldWithAliasAndTableAndTableAliasDefinitionTest()
+        public void PersistenceMap_QueryCompiler_CompileFieldWithAliasAndTableAndTableAliasDefinitionTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", entity: "Entity", entityalias: "EntityAlias"));
@@ -163,7 +160,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileCountTest()
+        public void PersistenceMap_QueryCompiler_CompileCountTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Count));
@@ -177,7 +174,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileMaxTest()
+        public void PersistenceMap_QueryCompiler_CompileMaxTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Max));
@@ -191,7 +188,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileMinTest()
+        public void PersistenceMap_QueryCompiler_CompileMinTest()
         {
             var part = new QueryPart(OperationType.None);
             part.Add(new FieldQueryPart("Name", "Alias", operation: OperationType.Min));
@@ -205,7 +202,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFromTest()
+        public void PersistenceMap_QueryCompiler_CompileFromTest()
         {
             var part = new EntityPart(OperationType.From, entity: "Table");
             var parts = new QueryPartsContainer();
@@ -218,7 +215,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileFromWithAliasTest()
+        public void PersistenceMap_QueryCompiler_CompileFromWithAliasTest()
         {
             var part = new EntityPart(OperationType.From, entity: "Table", entityAlias: "Alias");
             var parts = new QueryPartsContainer();
@@ -231,7 +228,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileSimpleFromTest()
+        public void PersistenceMap_QueryCompiler_CompileSimpleFromTest()
         {
             var part = new DelegateQueryPart(OperationType.From, () => "Table");
             var parts = new QueryPartsContainer();
@@ -244,7 +241,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileJoinTest()
+        public void PersistenceMap_QueryCompiler_CompileJoinTest()
         {
             var part = new EntityPart(OperationType.Join, entity: "Table");
             var parts = new QueryPartsContainer();
@@ -257,7 +254,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileJoinithAliasTest()
+        public void PersistenceMap_QueryCompiler_CompileJoinithAliasTest()
         {
             var part = new EntityPart(OperationType.Join, entity: "Table", entityAlias: "Alias");
             var parts = new QueryPartsContainer();
@@ -270,7 +267,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileSimpleJoinTest()
+        public void PersistenceMap_QueryCompiler_CompileSimpleJoinTest()
         {
             var part = new DelegateQueryPart(OperationType.Join, () => "Table");
             var parts = new QueryPartsContainer();
@@ -283,7 +280,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileOnTest()
+        public void PersistenceMap_QueryCompiler_CompileOnTest()
         {
             var part = new DelegateQueryPart(OperationType.On, () => "Field = 1");
             var parts = new QueryPartsContainer();
@@ -296,7 +293,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileAndTest()
+        public void PersistenceMap_QueryCompiler_CompileAndTest()
         {
             var part = new DelegateQueryPart(OperationType.And, () => "Field = 1");
             var parts = new QueryPartsContainer();
@@ -309,7 +306,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileOrTest()
+        public void PersistenceMap_QueryCompiler_CompileOrTest()
         {
             var part = new DelegateQueryPart(OperationType.Or, () => "Field = 1");
             var parts = new QueryPartsContainer();
@@ -322,7 +319,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileWhereTest()
+        public void PersistenceMap_QueryCompiler_CompileWhereTest()
         {
             var part = new DelegateQueryPart(OperationType.Where, () => "Field = 1");
             var parts = new QueryPartsContainer();
@@ -335,7 +332,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileGroupByTest()
+        public void PersistenceMap_QueryCompiler_CompileGroupByTest()
         {
             var part = new DelegateQueryPart(OperationType.GroupBy, () => "Field");
             var parts = new QueryPartsContainer();
@@ -348,7 +345,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileThenByTest()
+        public void PersistenceMap_QueryCompiler_CompileThenByTest()
         {
             var part = new DelegateQueryPart(OperationType.ThenBy, () => "Field");
             var parts = new QueryPartsContainer();
@@ -361,7 +358,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileOrderByTest()
+        public void PersistenceMap_QueryCompiler_CompileOrderByTest()
         {
             var part = new DelegateQueryPart(OperationType.OrderBy, () => "Field");
             var parts = new QueryPartsContainer();
@@ -374,7 +371,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileOrderByDescTest()
+        public void PersistenceMap_QueryCompiler_CompileOrderByDescTest()
         {
             var part = new DelegateQueryPart(OperationType.OrderByDesc, () => "Field");
             var parts = new QueryPartsContainer();
@@ -387,7 +384,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileThenByAscTest()
+        public void PersistenceMap_QueryCompiler_CompileThenByAscTest()
         {
             var part = new DelegateQueryPart(OperationType.ThenByAsc, () => "Field");
             var parts = new QueryPartsContainer();
@@ -400,7 +397,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileThenByDescTest()
+        public void PersistenceMap_QueryCompiler_CompileThenByDescTest()
         {
             var part = new DelegateQueryPart(OperationType.ThenByDesc, () => "Field");
             var parts = new QueryPartsContainer();
@@ -417,7 +414,7 @@ namespace PersistenceMap.UnitTest
         #region Data Tests
 
         [Test]
-        public void QueryCompilerCompileInsertTest()
+        public void PersistenceMap_QueryCompiler_CompileInsertTest()
         {
             var part = new DelegateQueryPart(OperationType.Insert, () => "TableName");
             var parts = new QueryPartsContainer();
@@ -430,7 +427,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileInsertWithInsertMemberTest()
+        public void PersistenceMap_QueryCompiler_CompileInsertWithInsertMemberTest()
         {
             var part = new DelegateQueryPart(OperationType.Insert, () => "TableName");
             part.Add(new DelegateQueryPart(OperationType.InsertMember, () => "Field1"));
@@ -445,7 +442,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileInsertMemberTest()
+        public void PersistenceMap_QueryCompiler_CompileInsertMemberTest()
         {
             var part = new DelegateQueryPart(OperationType.InsertMember, () => "Field1");
             var parts = new QueryPartsContainer();
@@ -458,7 +455,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileValuesTest()
+        public void PersistenceMap_QueryCompiler_CompileValuesTest()
         {
             var part = new QueryPart(OperationType.Values, null);
             var parts = new QueryPartsContainer();
@@ -471,7 +468,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileValuesWithInsertValuesTest()
+        public void PersistenceMap_QueryCompiler_CompileValuesWithInsertValuesTest()
         {
             var part = new QueryPart(OperationType.Values);
             part.Add(new DelegateQueryPart(OperationType.InsertValue, () => "Field1"));
@@ -487,7 +484,7 @@ namespace PersistenceMap.UnitTest
 
 
         [Test]
-        public void QueryCompilerCompileInsertValueTest()
+        public void PersistenceMap_QueryCompiler_CompileInsertValueTest()
         {
             var part = new DelegateQueryPart(OperationType.InsertValue, () => "Field1");
             var parts = new QueryPartsContainer();
@@ -500,7 +497,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileUpdateTest()
+        public void PersistenceMap_QueryCompiler_CompileUpdateTest()
         {
             var part = new DelegateQueryPart(OperationType.Update, () => "Table");
             var parts = new QueryPartsContainer();
@@ -513,7 +510,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileUpdateWithUpdateValueTest()
+        public void PersistenceMap_QueryCompiler_CompileUpdateWithUpdateValueTest()
         {
             var part = new DelegateQueryPart(OperationType.Update, () => "Table");
             part.Add(new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1, "));
@@ -528,7 +525,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileUpdateValueTest()
+        public void PersistenceMap_QueryCompiler_CompileUpdateValueTest()
         {
             var part = new DelegateQueryPart(OperationType.UpdateValue, () => "Field1=Value1");
             var parts = new QueryPartsContainer();
@@ -541,7 +538,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileUpdateValueWithValueCollectionTest()
+        public void PersistenceMap_QueryCompiler_CompileUpdateValueWithValueCollectionTest()
         {
             var part = new ValueCollectionQueryPart(OperationType.UpdateValue);
             part.AddValue(KeyValuePart.MemberName, "Member");
@@ -556,7 +553,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryCompilerCompileDeleteTest()
+        public void PersistenceMap_QueryCompiler_CompileDeleteTest()
         {
             var part = new DelegateQueryPart(OperationType.Delete, () => "Table");
             var parts = new QueryPartsContainer();

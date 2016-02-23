@@ -98,7 +98,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void CreateDatabase()
+        public void PersistenceMap_SqlServer_Integration_CreateDatabase()
         {
             DropDatabaseIfExists();
 
@@ -115,7 +115,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void CreateDatabaseWithTable()
+        public void PersistenceMap_SqlServer_Integration_CreateDatabaseWithTable()
         {
             DropDatabaseIfExists();
 
@@ -145,7 +145,7 @@ namespace PersistenceMap.SqlServer.Test
         }
         
         [Test]
-        public void CreateTableMultyKey()
+        public void PersistenceMap_SqlServer_Integration_CreateTableMultyKey()
         {
             CreateDatabaseIfNotExists();
 
@@ -165,7 +165,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void CreateTableForeignKey()
+        public void PersistenceMap_SqlServer_Integration_CreateTableForeignKey()
         {
             CreateDatabaseIfNotExists();
 
@@ -191,7 +191,7 @@ namespace PersistenceMap.SqlServer.Test
         }
         
         [Test]
-        public void AlterTableAddColumn()
+        public void PersistenceMap_SqlServer_Integration_AlterTableAddColumn()
         {
             CreateDatabaseIfNotExists();
 
@@ -226,7 +226,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void AlterTableDropColumn()
+        public void PersistenceMap_SqlServer_Integration_AlterTableDropColumn()
         {
             CreateDatabaseIfNotExists();
 
@@ -260,7 +260,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void DropTable()
+        public void PersistenceMap_SqlServer_Integration_DropTable()
         {
             CreateDatabaseIfNotExists();
 
@@ -286,7 +286,7 @@ namespace PersistenceMap.SqlServer.Test
         }
         
         [Test]
-        public void AddFieldByString()
+        public void PersistenceMap_SqlServer_Integration_AddFieldByString()
         {
             CreateDatabaseIfNotExists();
 
@@ -300,7 +300,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void AddFieldByStringFail()
+        public void PersistenceMap_SqlServer_Integration_AddFieldByStringFail()
         {
             CreateDatabaseIfNotExists();
 
@@ -313,7 +313,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void DeleteField()
+        public void PersistenceMap_SqlServer_Integration_DeleteField()
         {
             CreateDatabaseIfNotExists();
 
@@ -327,7 +327,7 @@ namespace PersistenceMap.SqlServer.Test
         }
 
         [Test]
-        public void CreateTableNotNullableColumn()
+        public void PersistenceMap_SqlServer_Integration_CreateTableNotNullableColumn()
         {
             CreateDatabaseIfNotExists();
 

@@ -37,7 +37,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void AddQueryTest()
+        public void PersistenceMap_DatabaseContext_AddQueryTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -51,7 +51,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void CommitTest()
+        public void PersistenceMap_DatabaseContext_CommitTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -70,7 +70,7 @@ namespace PersistenceMap.UnitTest
 
 
         [Test]
-        public void ExecuteStringTest()
+        public void PersistenceMap_DatabaseContext_ExecuteStringTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -82,7 +82,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ExecuteStringWithAnonymObjectTest()
+        public void PersistenceMap_DatabaseContext_ExecuteStringWithAnonymObjectTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -94,7 +94,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void ExecuteStringNoReturn()
+        public void PersistenceMap_DatabaseContext_ExecuteStringNoReturn()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -106,7 +106,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void SelectTest()
+        public void PersistenceMap_DatabaseContext_SelectTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -118,7 +118,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void SelectWithCondition()
+        public void PersistenceMap_DatabaseContext_SelectWithCondition()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -130,7 +130,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void FromTest()
+        public void PersistenceMap_DatabaseContext_FromTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -143,7 +143,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void FromWithAliasTest()
+        public void PersistenceMap_DatabaseContext_FromWithAliasTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -156,7 +156,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void FromWithJoinTest()
+        public void PersistenceMap_DatabaseContext_FromWithJoinTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -170,7 +170,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void FromWithCondition()
+        public void PersistenceMap_DatabaseContext_FromWithCondition()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -184,7 +184,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void DeleteTest()
+        public void PersistenceMap_DatabaseContext_DeleteTest()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -200,7 +200,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void DeleteWithCondition()
+        public void PersistenceMap_DatabaseContext_DeleteWithCondition()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -216,7 +216,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void DeleteWithDataObjectAndIdParameter()
+        public void PersistenceMap_DatabaseContext_DeleteWithDataObjectAndIdParameter()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -233,7 +233,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void DeleteWithDataObjectAndCondtionInsteadOfIdParameterFail()
+        public void PersistenceMap_DatabaseContext_DeleteWithDataObjectAndCondtionInsteadOfIdParameterFail()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -242,7 +242,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void DeleteWithConditionDefinedInAnonymObject()
+        public void PersistenceMap_DatabaseContext_DeleteWithConditionDefinedInAnonymObject()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -259,7 +259,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void UpdateWithTableTypeObject()
+        public void PersistenceMap_DatabaseContext_UpdateWithTableTypeObject()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -268,7 +268,6 @@ namespace PersistenceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update all properties except id
@@ -281,7 +280,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void UpdateWithTableTypeObjectAndId()
+        public void PersistenceMap_DatabaseContext_UpdateWithTableTypeObjectAndId()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -290,7 +289,6 @@ namespace PersistenceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update all properties except id
@@ -303,7 +301,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void UpdateWithTableTypeObjectAndCondtionInsteadOfIdFail()
+        public void PersistenceMap_DatabaseContext_UpdateWithTableTypeObjectAndCondtionInsteadOfIdFail()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -312,7 +310,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void UpdateWithAnonymObject()
+        public void PersistenceMap_DatabaseContext_UpdateWithAnonymObject()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -321,7 +319,6 @@ namespace PersistenceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update only name property
@@ -334,7 +331,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void UpdateWithAnonymObjectAndCondition()
+        public void PersistenceMap_DatabaseContext_UpdateWithAnonymObjectAndCondition()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -343,7 +340,6 @@ namespace PersistenceMap.UnitTest
 
             Assert.IsNotNull(expression);
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Update));
-            //Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Set));
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count() == 1);
@@ -355,7 +351,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void InserWithTableTypeDataObject()
+        public void PersistenceMap_DatabaseContext_InserWithTableTypeDataObject()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 
@@ -373,7 +369,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void InsertWithAnonymDataObject()
+        public void PersistenceMap_DatabaseContext_InsertWithAnonymDataObject()
         {
             var context = new DatabaseContext(_provider.Object, _settings.Object);
 

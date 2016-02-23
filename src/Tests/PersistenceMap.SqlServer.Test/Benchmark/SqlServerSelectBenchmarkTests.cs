@@ -13,7 +13,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
     class SqlServerSelectBenchmarkTests
     {
         [Test]
-        public void SqlServer_Benchmark_SelectPerformanceTest()
+        public void PersistenceMap_SqlServer_Integration_Benchmark_SelectPerformanceTest()
         {
             var ordersList = new List<Orders>
             {

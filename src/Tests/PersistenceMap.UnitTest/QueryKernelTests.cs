@@ -32,7 +32,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryKernel_ExecuteCompiledQueryWithReturn()
+        public void PersistenceMap_QueryKernel_ExecuteCompiledQueryWithReturn()
         {
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
@@ -44,7 +44,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryKernel_ExecuteCompiledQueryWithoutReturn()
+        public void PersistenceMap_QueryKernel_ExecuteCompiledQueryWithoutReturn()
         {
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
@@ -56,7 +56,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryKernel_ExecuteCompiledQueryWithMultipleReaderContext()
+        public void PersistenceMap_QueryKernel_ExecuteCompiledQueryWithMultipleReaderContext()
         {
             bool result = true;
             var dr = new Mock<IDataReader>();
@@ -82,7 +82,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryKernel_InterceptExecuteTest()
+        public void PersistenceMap_QueryKernel_InterceptExecuteTest()
         {
             var warriors = new List<Warrior>
             {
@@ -100,7 +100,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void QueryKernel_InterceptBeforeExecuteTest()
+        public void PersistenceMap_QueryKernel_InterceptBeforeExecuteTest()
         {
             var query = string.Empty;
 
