@@ -33,8 +33,31 @@ namespace PersistenceMap.SqlServer.Test.Mocked
                     })
                     .Select();
 
+                context.From<ObjectWithDate>()
+                    .Where(w => SqlFunctions.DatePart("YYYY", w.Date) == DateTime.Now.Month)
+                    .For(() => new
+                    {
+                        Name = ""
+                    })
+                    .Select();
+
                 Assert.That("SELECT Name FROM Warrior WHERE Name = test", Is.EqualTo(result));
             }
+        }
+
+        private class SqlFunctions
+        {
+            public static int? DatePart(string part, DateTime date)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class ObjectWithDate
+        {
+            public DateTime Date { get; set; }
+
+            public string Name { get; set; }
         }
     }
 }
