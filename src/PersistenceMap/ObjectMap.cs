@@ -53,10 +53,9 @@ namespace PersistenceMap
 
                             if (index < 0)
                             {
-                                //Logger.Write(string.Format("There is no Field with the name {0} contained in the IDataReader. The Field {0} will be ignored when mapping the data to the objects.", def.Name), category: LoggerCategory.DataMap);
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"There is no Field with the name {def.Name} contained in the IDataReader. The Field {def.Name} will be ignored when mapping the data to the objects.");
                                 sb.AppendLine($"The Type containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition");
+                                sb.AppendLine($"There is no Field with the name {def.Name} contained in the IDataReader. The Field {def.Name} will be ignored when mapping the data to the objects.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
@@ -129,8 +128,8 @@ namespace PersistenceMap
                             if (index < 0)
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader. The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
                                 sb.AppendLine($"The Type {fieldDefinition.EntityName} containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition");
+                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader. The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
