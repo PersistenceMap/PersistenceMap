@@ -54,7 +54,8 @@ namespace PersistenceMap
                             if (index < 0)
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"The Type containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition");
+                                sb.AppendLine($"The destination Type containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
+                                sb.AppendLine($"Failed to Map: {def.ObjectType}.{def.Name}");
                                 sb.AppendLine($"There is no Field with the name {def.Name} contained in the IDataReader. The Field {def.Name} will be ignored when mapping the data to the objects.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
@@ -128,7 +129,8 @@ namespace PersistenceMap
                             if (index < 0)
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"The Type {fieldDefinition.EntityName} containes fields that are not contained in the IDataReader result. Make sure that the Field is conteined in the Result or ignore the Field in the Querydefinition");
+                                sb.AppendLine($"The destination Type {fieldDefinition.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
+                                sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType}.{fieldDefinition.MemberName}");
                                 sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader. The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
