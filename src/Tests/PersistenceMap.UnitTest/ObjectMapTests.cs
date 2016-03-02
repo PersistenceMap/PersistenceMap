@@ -112,7 +112,7 @@ namespace PersistenceMap.UnitTest
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
-                new ObjectDefinition { Name = "Four", ObjectType = typeof(string) }
+                new ObjectDefinition { Name = "Four", ObjectType = typeof(OneTwoThree) }
             };
 
             var map = new ObjectMap(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });

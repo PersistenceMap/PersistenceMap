@@ -57,7 +57,7 @@ namespace PersistenceMap
                                 sb.AppendLine($"The destination Type containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
                                 sb.AppendLine($"Failed to Map: {def.ObjectType}.{def.Name}");
                                 sb.AppendLine($"There is no Field with the name {def.Name} contained in the IDataReader. The Field {def.Name} will be ignored when mapping the data to the objects.");
-
+                                
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
                                     Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
@@ -65,6 +65,15 @@ namespace PersistenceMap
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
                                 {
+                                    sb.AppendLine("Fields that will be ignored:");
+                                    foreach (var tmpDef in objectDefinitions)
+                                    {
+                                        if (reader.GetIndex(tmpDef.Name) < 0)
+                                        {
+                                            sb.AppendLine($"{tmpDef.ObjectType}.{tmpDef.Name}");
+                                        }
+                                    }
+
                                     throw new InvalidMapException(sb.ToString(), null, def.Name);
                                 }
                             }
@@ -140,6 +149,15 @@ namespace PersistenceMap
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
                                 {
+                                    sb.AppendLine("Fields that will be ignored:");
+                                    foreach (var tmpDef in fieldDefinitions)
+                                    {
+                                        if (reader.GetIndex(tmpDef.FieldName) < 0)
+                                        {
+                                            sb.AppendLine($"{tmpDef.EntityType}.{tmpDef.MemberName}");
+                                        }
+                                    }
+
                                     throw new InvalidMapException(sb.ToString(), fieldDefinition.MemberType, fieldDefinition.MemberName);
                                 }
                             }
