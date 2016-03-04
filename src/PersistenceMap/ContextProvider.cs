@@ -11,7 +11,7 @@ namespace PersistenceMap
         private readonly InterceptorCollection _interceptors = new InterceptorCollection();
 
         /// <summary>
-        /// Base class for the Contextprovider
+        /// Base class for the Contextprovider.
         /// Implementations have to be specific for the desired SQL Provider
         /// </summary>
         /// <param name="connectionProvider">The connectionprovider for the desired SQL Provider</param>

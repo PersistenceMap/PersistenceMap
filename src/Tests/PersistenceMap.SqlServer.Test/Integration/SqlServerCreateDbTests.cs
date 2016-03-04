@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Linq;
-using System;
+using System.Data;
 
 namespace PersistenceMap.SqlServer.Test.Integration
 {
@@ -12,9 +12,15 @@ namespace PersistenceMap.SqlServer.Test.Integration
         [Test]
         public void SqlServer_LocalDb_CreateLocalDb_Test()
         {
-            var databaseName = "WarriorDB";
+            var databaseName = "WarriorDB1";
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;Initial Catalog={databaseName};Integrated Security=True;";
+
+            try
+            {
+                RemoveDatabase(new SqlContextProvider(connectionString));
+            }
+            catch (DataException) { }
 
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())
@@ -35,7 +41,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
         [Test]
         public void SqlServer_LocalDb_CreateLocalDbWithDbFilePath_Test()
         {
-            var databaseName = "WarriorDB";
+            var databaseName = "WarriorDB2";
             var outputFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data");
             var mdfFilename = $"{databaseName}.mdf";
             var databaseMdfPath = Path.Combine(outputFolder, mdfFilename);
@@ -47,6 +53,12 @@ namespace PersistenceMap.SqlServer.Test.Integration
             }
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;AttachDBFileName={databaseMdfPath};Initial Catalog={databaseName};Integrated Security=True;";
+
+            try
+            {
+                RemoveDatabase(new SqlContextProvider(connectionString));
+            }
+            catch (DataException) { }
 
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())
@@ -67,9 +79,15 @@ namespace PersistenceMap.SqlServer.Test.Integration
         [Test]
         public void SqlServer_LocalDb_MultipleConnections_Test()
         {
-            var databaseName = "WarriorDB";
+            var databaseName = "WarriorDB3";
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;Initial Catalog={databaseName};Integrated Security=True;";
+
+            try
+            {
+                RemoveDatabase(new SqlContextProvider(connectionString));
+            }
+            catch (DataException) { }
 
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())

@@ -88,7 +88,7 @@
     <Compile Include="Interception\InterceptorCollection.cs" />
     <Compile Include="Interception\InterceptorItem.cs" />
     <Compile Include="ISettings.cs" />
-    <Compile Include="ObjectMap.cs" />
+    <Compile Include="ObjectMaper.cs" />
     <Compile Include="QueryBuilder\TableQueryBuilder.cs" />
     <Compile Include="QueryBuilder\QueryBuilderBase.cs" />
     <Compile Include="QueryParts\AfterMapCallbackPart.cs" />
@@ -182,6 +182,7 @@
     <None Include="..\PersistenceMap.snk">
       <Link>Properties\PersistenceMap.snk</Link>
     </None>
+    <None Include="PersistenceMap ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
