@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using PersistenceMap.QueryParts;
+using System.Text;
 
 namespace PersistenceMap.UnitTest
 {
@@ -211,7 +212,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nFROM Table");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("FROM Table");
+            Assert.AreEqual(query.QueryString, sb.ToString());// " \r\nFROM Table");
         }
 
         [Test]
@@ -224,7 +228,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nFROM Table Alias");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("FROM Table Alias");
+            Assert.AreEqual(query.QueryString, sb.ToString());// " \r\nFROM Table Alias");
         }
 
         [Test]
