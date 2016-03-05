@@ -81,7 +81,7 @@ namespace PersistenceMap.QueryBuilder
                     ObjectType = p.CallbackValueType
                 }).ToArray();
 
-            var mapper = new ObjectMaper(Context.Settings);
+            var mapper = new ObjectMapper(Context.Settings);
             var mapping = mapper.Map(context.DataReader, objectDefs).FirstOrDefault();
 
             if (mapping == null || !mapping.Any())
@@ -357,7 +357,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            var mapper = new ObjectMaper(Context.Settings);
+            var mapper = new ObjectMapper(Context.Settings);
             Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
@@ -469,7 +469,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
 
-            var mapper = new ObjectMaper(Context.Settings);
+            var mapper = new ObjectMapper(Context.Settings);
             Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
@@ -516,7 +516,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<TOut> values = null;
 
-            var mapper = new ObjectMaper(Context.Settings);
+            var mapper = new ObjectMapper(Context.Settings);
             Context.Kernel.Execute(query, dr => values = mapper.Map<TOut>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;

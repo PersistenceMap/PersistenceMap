@@ -1,5 +1,4 @@
-﻿using PersistenceMap.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,13 +18,6 @@ namespace PersistenceMap
         public static Dictionary<string, int> CreateFieldIndexCache(this IDataReader reader, Type modeltype)
         {
             var cache = new Dictionary<string, int>();
-            //if (modelDefinition != null)
-            //{
-            //    foreach (var field in modelDefinition.IgnoredFieldDefinitions)
-            //    {
-            //        cache[field.FieldName] = -1;
-            //    }
-            //}
             var members = modeltype.GetTypeDefinitionMemberNames().Select(m => m.ToLower());
             for (var i = 0; i < reader.FieldCount; i++)
             {
@@ -45,7 +37,9 @@ namespace PersistenceMap
             {
                 var name = reader.GetName(i);
                 if (objectDefs.Any(o => o.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
+                {
                     cache[name] = i;
+                }
             }
 
             return cache;

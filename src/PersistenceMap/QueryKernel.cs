@@ -23,7 +23,7 @@ namespace PersistenceMap
         private readonly InterceptorCollection _interceptors;
         private readonly ISettings _settings;
 
-        private readonly ObjectMaper _mapper;
+        private readonly ObjectMapper _mapper;
 
         private ILogWriter _logger;
 
@@ -38,7 +38,7 @@ namespace PersistenceMap
             _settings = settings;
             _interceptors = interceptors;
 
-            _mapper = new ObjectMaper(_settings);
+            _mapper = new ObjectMapper(_settings);
         }
 
         /// <summary>

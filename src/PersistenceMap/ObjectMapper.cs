@@ -10,12 +10,12 @@ using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap
 {
-    public class ObjectMaper
+    public class ObjectMapper
     {
         private const int NotFound = -1;
         private readonly ISettings _settings;
         
-        public ObjectMaper(ISettings settings)
+        public ObjectMapper(ISettings settings)
         {
             _settings = settings;
         }
@@ -105,13 +105,13 @@ namespace PersistenceMap
         /// <returns>A collection of dictionaries containing the data</returns>
         public IEnumerable<Dictionary<string, object>> Map(IDataReader reader, ObjectDefinition[] objectDefinitions)
         {
-            //reader.ArgumentNotNull("reader");
-
             var rows = new List<Dictionary<string, object>>();
 
             var indexCache = reader.CreateFieldIndexCache(objectDefinitions);
             if (!indexCache.Any())
+            {
                 return rows;
+            }
 
             while (reader.Read())
             {

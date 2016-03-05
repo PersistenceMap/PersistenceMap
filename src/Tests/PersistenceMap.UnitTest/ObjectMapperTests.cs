@@ -1,5 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
+using PersistenceMap.QueryBuilder;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Linq;
 namespace PersistenceMap.UnitTest
 {
     [TestFixture]
-    public class ObjectMapTests
+    public class ObjectMapperTests
     {
         private Mock<IDataReader> _dataReader;
 
@@ -26,7 +28,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData()
+        public void PersistenceMap_ObjectMapper_ReadData()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -42,7 +44,7 @@ namespace PersistenceMap.UnitTest
                 {"Three", 2 }
             };
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var items = map.ReadData(_dataReader.Object, objectDefinitions, indexCache);
 
             Assert.IsNotNull(items);
@@ -52,7 +54,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData_WithEmptyIndexCache()
+        public void PersistenceMap_ObjectMapper_ReadData_WithEmptyIndexCache()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -63,7 +65,7 @@ namespace PersistenceMap.UnitTest
 
             var indexCache = new Dictionary<string, int>();
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var items = map.ReadData(_dataReader.Object, objectDefinitions, indexCache);
 
             Assert.IsTrue(indexCache.Count == 3);
@@ -75,7 +77,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData_WithNullIndexCache()
+        public void PersistenceMap_ObjectMapper_ReadData_WithNullIndexCache()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
@@ -84,7 +86,7 @@ namespace PersistenceMap.UnitTest
                 new ObjectDefinition { Name = "Three", ObjectType = typeof(string) }
             };
             
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var items = map.ReadData(_dataReader.Object, objectDefinitions, null);
             
             Assert.IsNotNull(items);
@@ -94,47 +96,47 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData_FalseField()
+        public void PersistenceMap_ObjectMapper_ReadData_FalseField()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
                 new ObjectDefinition { Name = "Four", ObjectType = typeof(string) }
             };
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var items = map.ReadData(_dataReader.Object, objectDefinitions, new Dictionary<string, int>());
 
             Assert.IsNull(items["Four"]);
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData_RestrictiveMode_Fail()
+        public void PersistenceMap_ObjectMapper_ReadData_RestrictiveMode_Fail()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
                 new ObjectDefinition { Name = "Four", ObjectType = typeof(OneTwoThree) }
             };
 
-            var map = new ObjectMaper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
+            var map = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
             Assert.Throws<InvalidMapException>(() => map.ReadData(_dataReader.Object, objectDefinitions, new Dictionary<string, int>()));
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadData_RestrictiveMode_Success()
+        public void PersistenceMap_ObjectMapper_ReadData_RestrictiveMode_Success()
         {
             var objectDefinitions = new List<ObjectDefinition>
             {
                 new ObjectDefinition { Name = "Three", ObjectType = typeof(string) }
             };
 
-            var map = new ObjectMaper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
+            var map = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
             var items = map.ReadData(_dataReader.Object, objectDefinitions, new Dictionary<string, int>());
 
             Assert.IsNotNull(items["Three"]);
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadDataOfT()
+        public void PersistenceMap_ObjectMapper_ReadDataOfT()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
@@ -145,7 +147,7 @@ namespace PersistenceMap.UnitTest
                 {"Three", 2 }
             };
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
             Assert.IsNotNull(item);
@@ -155,7 +157,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadDataOfT_WithUnequalFieldsMembers()
+        public void PersistenceMap_ObjectMapper_ReadDataOfT_WithUnequalFieldsMembers()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>().ToList();
             fieldDefinitions[0].FieldName = "TestOne";
@@ -169,7 +171,7 @@ namespace PersistenceMap.UnitTest
                 {"Three", 2 }
             };
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
             Assert.IsNotNull(item);
@@ -179,13 +181,13 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadDataOfT_WithoutIndexCache()
+        public void PersistenceMap_ObjectMapper_ReadDataOfT_WithoutIndexCache()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
 
             var indexCache = new Dictionary<string, int>();
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
             Assert.IsNotNull(item);
@@ -197,11 +199,11 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadDataOfT_WithNullIndexCache()
+        public void PersistenceMap_ObjectMapper_ReadDataOfT_WithNullIndexCache()
         {
             var fieldDefinitions = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
             
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), null);
 
             Assert.IsNotNull(item);
@@ -211,7 +213,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_ObjectMap_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
+        public void PersistenceMap_ObjectMapper_ReadDataOfT_WithUnequalFieldsMembers_EmptyIndexCache()
         {
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 0))).Returns("FieldOne");
             _dataReader.Setup(o => o.GetName(It.Is<int>(i => i == 1))).Returns("FieldTwo");
@@ -224,7 +226,7 @@ namespace PersistenceMap.UnitTest
 
             var indexCache = new Dictionary<string, int>();
 
-            var map = new ObjectMaper(new Settings());
+            var map = new ObjectMapper(new Settings());
             var item = map.ReadData<OneTwoThree>(_dataReader.Object, fieldDefinitions.ToArray(), indexCache);
 
             Assert.IsNotNull(item);
@@ -234,7 +236,110 @@ namespace PersistenceMap.UnitTest
 
             Assert.IsTrue(indexCache.Count == 3);
         }
-        
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_CompiledQuery()
+        {
+            var readCnt = 0;
+            _dataReader.Setup(exp => exp.Read()).Returns(() => readCnt < 3).Callback(() => readCnt++);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = mapper.Map<OneTwoThree>(_dataReader.Object, new CompiledQuery());
+
+            Assert.That(mapped.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_NullReader()
+        {
+            var mapper = new ObjectMapper(new Settings());
+            IDataReader reader = null;
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
+
+            var mapped = mapper.Map<OneTwoThree>(reader, fields.ToArray());
+
+            Assert.That(mapped.Any(), Is.False);
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_DefaultReader()
+        {
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
+
+            var readCnt = 0;
+            _dataReader.Setup(exp => exp.Read()).Returns(() => readCnt < 3).Callback(() => readCnt++);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = mapper.Map<OneTwoThree>(_dataReader.Object, fields.ToArray());
+
+            Assert.That(mapped.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_AnonymousObject()
+        {
+            var readCnt = 0;
+            _dataReader.Setup(exp => exp.Read()).Returns(() => readCnt < 3).Callback(() => readCnt++);
+
+            var obj = new
+            {
+                One = "",
+                Two = "",
+                Three = ""
+            };
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions(obj);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = AnonymMapper(obj, mapper, fields.ToArray());
+
+            Assert.That(mapped.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ObjectDefinition()
+        {
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
+            var objectDefs = fields.Select(f => new ObjectDefinition
+            {
+                Name = f.FieldName,
+                ObjectType = f.MemberType,
+                Converter = f.Converter
+            });
+
+            var readCnt = 0;
+            _dataReader.Setup(exp => exp.Read()).Returns(() => readCnt < 3).Callback(() => readCnt++);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = mapper.Map(_dataReader.Object, objectDefs.ToArray());
+
+            Assert.That(mapped.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ObjectDefinition_EmptyIndexCache()
+        {
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<OneTwoThree>();
+            var objectDefs = fields.Select(f => new ObjectDefinition
+            {
+                Name = f.FieldName,
+                ObjectType = f.MemberType,
+                Converter = f.Converter
+            });
+
+            _dataReader = new Mock<IDataReader>();
+            _dataReader.Setup(o => o.FieldCount).Returns(() => 0);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = mapper.Map(_dataReader.Object, objectDefs.ToArray());
+
+            Assert.That(mapped.Any(), Is.False);
+        }
+
+        private IEnumerable<T> AnonymMapper<T>(T obj, ObjectMapper mapper, FieldDefinition[] fields)
+        {
+            return mapper.Map<T>(_dataReader.Object, fields);
+        }
+
         internal class OneTwoThree
         {
             public string One { get; set; }
