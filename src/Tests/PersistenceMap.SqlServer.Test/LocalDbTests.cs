@@ -1,20 +1,19 @@
 ﻿using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PersistenceMap.Test;
 using PersistenceMap.Test.LocalDb;
 using PersistenceMap.Test.TableTypes;
-using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace PersistenceMap.SqlServer.Test
 {
-    //[TestClass]
+    //[SetUpFixture]
     public class LocalDbTests
     {
         private static LocalDbManager _localDbManager;
 
-        [AssemblyInitialize]
-        public static void AssemblyInit(TestContext context)
+        [OneTimeSetUp]
+        public static void AssemblyInit()
         {
             _localDbManager = new LocalDbManager("Northwind");
 
@@ -23,13 +22,13 @@ namespace PersistenceMap.SqlServer.Test
             //_localDbManager.ExecuteString(script);
         }
 
-        [AssemblyCleanup]
+        [OneTimeTearDown]
         public static void AssemblyCleanup()
         {
             _localDbManager.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void TestWithLocalDbTest()
         {
             var provider = new SqlContextProvider(_localDbManager.ConnectionString);
