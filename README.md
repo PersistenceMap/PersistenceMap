@@ -2,6 +2,7 @@
 
 PersistenceMap
 ==============
+[![Build Status](https://travis-ci.org/PersistenceMap/PersistenceMap.svg?branch=master)](https://travis-ci.org/PersistenceMap/PersistenceMap)
 [![Build status](https://ci.appveyor.com/api/projects/status/i43jveqowctku03x/branch/master?svg=true)](https://ci.appveyor.com/project/chriswalpen/persistencemap/branch/master)
 [![NuGet Version](https://img.shields.io/nuget/v/persistencemap.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap/)
 [![NuGet Version](https://img.shields.io/nuget/v/PersistenceMap.Sqlite.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
