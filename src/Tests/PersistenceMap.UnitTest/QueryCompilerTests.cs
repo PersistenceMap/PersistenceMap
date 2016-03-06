@@ -244,7 +244,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nFROM Table");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("FROM Table");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -257,7 +260,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nJOIN Table");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("JOIN Table");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -270,7 +276,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nJOIN Table Alias");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("JOIN Table Alias");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -283,7 +292,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nJOIN Table");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("JOIN Table");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -309,7 +321,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, "\r\n AND Field = 1");
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            sb.Append("AND Field = 1");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -322,7 +337,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, "\r\n OR Field = 1");
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            sb.Append("OR Field = 1");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -335,7 +353,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nWHERE Field = 1");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("WHERE Field = 1");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -348,7 +369,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nGROUP BY Field");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("GROUP BY Field");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -374,7 +398,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nORDER BY Field ASC");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("ORDER BY Field ASC");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]
@@ -387,7 +414,10 @@ namespace PersistenceMap.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, " \r\nORDER BY Field DESC");
+            var sb = new StringBuilder();
+            sb.AppendLine(" ");
+            sb.Append("ORDER BY Field DESC");
+            Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
         [Test]

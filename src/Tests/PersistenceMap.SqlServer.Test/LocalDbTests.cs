@@ -12,8 +12,8 @@ namespace PersistenceMap.SqlServer.Test
     {
         private static LocalDbManager _localDbManager;
 
-        [OneTimeSetUp]
-        public static void AssemblyInit()
+        //[OneTimeSetUp]
+        public void AssemblyInit()
         {
             _localDbManager = new LocalDbManager("Northwind");
 
@@ -22,13 +22,13 @@ namespace PersistenceMap.SqlServer.Test
             //_localDbManager.ExecuteString(script);
         }
 
-        [OneTimeTearDown]
-        public static void AssemblyCleanup()
+        //[OneTimeTearDown]
+        public void AssemblyCleanup()
         {
             _localDbManager.Dispose();
         }
 
-        [Test]
+        //[Test]
         public void TestWithLocalDbTest()
         {
             var provider = new SqlContextProvider(_localDbManager.ConnectionString);
