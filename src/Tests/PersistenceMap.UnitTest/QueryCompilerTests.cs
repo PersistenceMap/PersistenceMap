@@ -323,7 +323,7 @@ namespace PersistenceMap.UnitTest
 
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.Append("AND Field = 1");
+            sb.Append(" AND Field = 1");
             Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
@@ -339,7 +339,7 @@ namespace PersistenceMap.UnitTest
 
             var sb = new StringBuilder();
             sb.AppendLine();
-            sb.Append("OR Field = 1");
+            sb.Append(" OR Field = 1");
             Assert.AreEqual(query.QueryString, sb.ToString());
         }
 
