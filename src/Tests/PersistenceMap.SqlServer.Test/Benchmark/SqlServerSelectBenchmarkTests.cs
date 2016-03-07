@@ -1,16 +1,12 @@
 ﻿using MeasureMap;
 using NUnit.Framework;
 using PersistenceMap.Test.TableTypes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.SqlServer.Test.Benchmark
 {
     [TestFixture]
-    class SqlServerSelectBenchmarkTests
+    public class SqlServerSelectBenchmarkTests
     {
         [Test]
         public void PersistenceMap_SqlServer_Integration_Benchmark_SelectPerformanceTest()

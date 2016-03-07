@@ -15,13 +15,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
             var databaseName = "WarriorDB1";
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;Initial Catalog={databaseName};Integrated Security=True;";
-
-            try
-            {
-                RemoveDatabase(new SqlContextProvider(connectionString));
-            }
-            catch (DataException) { }
-
+            
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())
             {
@@ -53,13 +47,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
             }
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;AttachDBFileName={databaseMdfPath};Initial Catalog={databaseName};Integrated Security=True;";
-
-            try
-            {
-                RemoveDatabase(new SqlContextProvider(connectionString));
-            }
-            catch (DataException) { }
-
+            
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())
             {
@@ -82,13 +70,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
             var databaseName = "WarriorDB3";
 
             var connectionString = $"Data Source=(LocalDB)\\mssqllocaldb;Initial Catalog={databaseName};Integrated Security=True;";
-
-            try
-            {
-                RemoveDatabase(new SqlContextProvider(connectionString));
-            }
-            catch (DataException) { }
-
+            
             var provider = new SqlContextProvider(connectionString);
             using (var context = provider.Open())
             {
@@ -136,7 +118,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
         [Test]
         public void SqlServer_CreateDb_Test()
         {
-            var databaseName = "WarriorDB1";
+            var databaseName = "WarriorDB4";
 
             var connectionString = $"Data Source=.;Initial Catalog={databaseName};Integrated Security=True;";
 
@@ -159,7 +141,7 @@ namespace PersistenceMap.SqlServer.Test.Integration
         [Test]
         public void SqlServer_MultipleConnections_Test()
         {
-            var databaseName = "WarriorDB2";
+            var databaseName = "WarriorDB5";
 
             var connectionString = $"Data Source=.;Initial Catalog={databaseName};Integrated Security=True;";
 
