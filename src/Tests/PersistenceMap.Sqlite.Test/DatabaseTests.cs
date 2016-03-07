@@ -46,7 +46,7 @@ namespace PersistenceMap.Sqlite.Test
             var provider = new SqliteContextProvider(ConnectionString);
             using (var context = provider.Open())
             {
-                Assert.AreEqual(DatabaseName, context.ConnectionProvider.Database);
+                Assert.AreEqual($".\\{DatabaseName}", context.ConnectionProvider.Database);
 
                 context.ConnectionProvider.Database = "Test.db";
                 Assert.AreEqual(context.ConnectionProvider.Database, "Test.db");
