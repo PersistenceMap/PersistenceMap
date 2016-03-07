@@ -23,7 +23,9 @@ namespace PersistenceMap
             {
                 var name = reader.GetName(i);
                 if (members.Contains(name.ToLower()))
+                {
                     cache[name] = i;
+                }
             }
 
             return cache;
@@ -56,7 +58,9 @@ namespace PersistenceMap
             for (int i = 0; i < dataReader.FieldCount; i++)
             {
                 if (dataReader.GetName(i).Equals(fieldName, StringComparison.InvariantCultureIgnoreCase))
+                {
                     return i;
+                }
             }
 
             return NotFound;
