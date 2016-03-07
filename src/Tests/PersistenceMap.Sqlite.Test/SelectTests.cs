@@ -10,18 +10,22 @@ namespace PersistenceMap.Sqlite.Test
     {
         const string DatabaseName = "SQLiteDemo.db";
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void ClassIniti()
         {
             if (File.Exists(DatabaseName))
+            {
                 File.Delete(DatabaseName);
+            }
         }
 
         [SetUp]
         public void Initialize()
         {
             if (!File.Exists(DatabaseName))
+            {
                 CreateDatabase(true);
+            }
         }
         
         [Test]

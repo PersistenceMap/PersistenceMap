@@ -12,7 +12,7 @@ namespace PersistenceMap.SqlServer.Test
     {
         private IEnumerable<Warrior> _warriors;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureInitialize()
         {
             _warriors = new List<Warrior>();
