@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using PersistenceMap.QueryParts;
+using System.Text;
 
 namespace PersistenceMap.SqlServer.UnitTest
 {
@@ -144,7 +145,10 @@ namespace PersistenceMap.SqlServer.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, "DECLARE @Param int\r\nSET @Param=1\r\n");
+            var expected = new StringBuilder();
+            expected.AppendLine("DECLARE @Param int");
+            expected.AppendLine("SET @Param=1");
+            Assert.AreEqual(query.QueryString, expected.ToString());
         }
 
         [Test]
@@ -157,7 +161,9 @@ namespace PersistenceMap.SqlServer.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, "DECLARE @ParamName int\r\n");
+            var expected = new StringBuilder();
+            expected.AppendLine("DECLARE @ParamName int");
+            Assert.AreEqual(query.QueryString, expected.ToString());
         }
 
         [Test]
@@ -170,7 +176,9 @@ namespace PersistenceMap.SqlServer.UnitTest
             var compiler = new QueryCompiler();
             var query = compiler.Compile(parts, new InterceptorCollection());
 
-            Assert.AreEqual(query.QueryString, "SET @ParamName=1\r\n");
+            var expected = new StringBuilder();
+            expected.AppendLine("SET @ParamName=1");
+            Assert.AreEqual(query.QueryString, expected.ToString());
         }
 
         [Test]
