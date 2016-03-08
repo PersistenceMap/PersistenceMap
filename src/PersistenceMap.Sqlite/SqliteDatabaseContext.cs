@@ -2,11 +2,6 @@
 {
     public class SqliteDatabaseContext : DatabaseContext, IDatabaseContext
     {
-        public SqliteDatabaseContext(IConnectionProvider provider, ISettings settings)
-            : base(provider, settings)
-        {
-        }
-
         public SqliteDatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
             : base(provider, settings, interceptors)
         {

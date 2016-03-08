@@ -12,6 +12,10 @@ namespace PersistenceMap
         private Action<CompiledQuery> _executeNonQuery;
         private Action<IQueryPartsContainer> _beforeCompile;
 
+        public Interceptor()
+        {
+        }
+
         public IInterceptor<T> BeforeCompile(Action<IQueryPartsContainer> container)
         {
             _beforeCompile = container;

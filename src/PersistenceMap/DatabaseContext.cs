@@ -17,17 +17,12 @@ namespace PersistenceMap
         private readonly InterceptorCollection _interceptors;
         private readonly ISettings _settings;
         private QueryKernel _kernel;
-
-        public DatabaseContext(IConnectionProvider provider, ISettings settings)
-            : this(provider, settings, new InterceptorCollection())
-        {
-        }
-
-        public DatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
+        
+        public DatabaseContext(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors = null)
         {
             ConnectionProvider = provider;
             _queryStore = new List<IQueryCommand>();
-            _interceptors = interceptors;
+            _interceptors = interceptors ?? new InterceptorCollection();
             _settings = settings;
         }
 
@@ -102,6 +97,10 @@ namespace PersistenceMap
                 }
 
                 return _kernel;
+            }
+            set
+            {
+                _kernel = value;
             }
         }
 
@@ -378,31 +377,7 @@ namespace PersistenceMap
                 }
             }
         }
-        
+
         #endregion
-    }
-
-    internal static class DatabaseContextExtensions
-    {
-        internal static IDeleteQueryExpression AddToStore(this IDeleteQueryExpression expression)
-        {
-            expression.Context.AddQuery(new QueryCommand(expression.QueryParts));
-
-            return expression;
-        }
-
-        internal static IUpdateQueryExpression<T> AddToStore<T>(this IUpdateQueryExpression<T> expression)
-        {
-            expression.Context.AddQuery(new QueryCommand(expression.QueryParts));
-
-            return expression;
-        }
-
-        internal static IInsertQueryExpression<T> AddToStore<T>(this IInsertQueryExpression<T> expression)
-        {
-            expression.Context.AddQuery(new QueryCommand(expression.QueryParts));
-
-            return expression;
-        }
     }
 }
