@@ -64,7 +64,7 @@ build:
 
 notifications:
   - provider: Webhook
-    url: https://webhooks.gitter.im/e/8fcebbe4ae7f2e561052
+    url: https://webhooks.gitter.im/e/26cac67e668e15cf2caf
   
 #---------------------------------#
 #       tests configuration       #
