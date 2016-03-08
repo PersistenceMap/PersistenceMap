@@ -63,7 +63,7 @@ build:
 # verbosity: quiet|minimal|normal|detailed
 
 notifications:
-  - provider: Gitter
+  - provider: Webhook
     url:https://webhooks.gitter.im/e/8fcebbe4ae7f2e561052notifications:
   
 #---------------------------------#
