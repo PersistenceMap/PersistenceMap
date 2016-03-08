@@ -92,7 +92,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ConnectionTests.cs" />
+    <Compile Include="MockedConnectionTests.cs" />
     <Compile Include="Expression\ExecuteExpressionTests.cs" />
     <Compile Include="Expression\InsertExpressionTests.cs" />
     <Compile Include="Expression\SelectExpressionTests.cs" />

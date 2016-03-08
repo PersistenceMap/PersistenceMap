@@ -1,13 +1,9 @@
-﻿using PersistenceMap.Ensure;
-using PersistenceMap.Factories;
+﻿using PersistenceMap.Diagnostics;
 using PersistenceMap.Interception;
 using PersistenceMap.QueryBuilder;
-using PersistenceMap.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 namespace PersistenceMap
@@ -17,8 +13,6 @@ namespace PersistenceMap
     /// </summary>
     public class QueryKernel
     {
-        private const int NotFound = -1;
-
         private readonly IConnectionProvider _connectionProvider;
         private readonly InterceptorCollection _interceptors;
         private readonly ISettings _settings;
@@ -78,6 +72,7 @@ namespace PersistenceMap
 
             try
             {
+                // TODO: _connectionProvider has to be wrapped to be able to return a EnumerableDataReader or the efective DataReader
                 using (var context = _connectionProvider.Execute(compiledQuery.QueryString))
                 {
                     return _mapper.Map<T>(context.DataReader, compiledQuery);
