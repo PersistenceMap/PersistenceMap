@@ -7,6 +7,7 @@ PersistenceMap
 [![NuGet Version](https://img.shields.io/nuget/v/persistencemap.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap/)
 [![NuGet Version](https://img.shields.io/nuget/v/PersistenceMap.Sqlite.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
 [![Documentation Status](https://readthedocs.org/projects/persistencemap/badge/?version=latest)](http://persistencemap.readthedocs.org/en/latest/?badge=latest)
+[![Join the chat at https://gitter.im/PersistenceMap](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PersistenceMap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 PersistenceMap is a small, extremely lightweight and intuitive code fist, convention based Micro ORM Framework for .NET. It uses a Fluent API to define Queries that translate to SQL. The SQL is executed against the RDBMS using ADO.NET and the result is automaticaly mapped to Typed POCO's.
 The simple, straight forward, intuitive and easy to use API helps to quickly setup a connction to a Database.

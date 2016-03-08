@@ -1,4 +1,5 @@
-﻿using PersistenceMap.QueryBuilder;
+﻿using PersistenceMap.Interception;
+using PersistenceMap.QueryBuilder;
 using PersistenceMap.SqlServer.QueryBuilder;
 
 namespace PersistenceMap

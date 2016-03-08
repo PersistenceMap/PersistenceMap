@@ -73,6 +73,7 @@
     <Compile Include="ConnectionProvider.cs" />
     <Compile Include="ContextProvider.cs" />
     <Compile Include="DatabaseContext.cs" />
+    <Compile Include="DatabaseContextExtensions.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Enums\RestrictiveMode.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
@@ -82,7 +83,10 @@
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="IDatabaseQueryExpression.cs" />
-    <Compile Include="IInterceptor.cs" />
+    <Compile Include="Interception\IInterceptionBuilder.cs" />
+    <Compile Include="Interception\IInterceptionContext.cs" />
+    <Compile Include="Interception\IInterceptor.cs" />
+    <Compile Include="Interception\InterceptionContext.cs" />
     <Compile Include="Interception\InterceptionHandler.cs" />
     <Compile Include="Interception\Interceptor.cs" />
     <Compile Include="Interception\InterceptorCollection.cs" />

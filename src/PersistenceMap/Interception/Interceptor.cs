@@ -3,43 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using PersistenceMap.QueryBuilder;
 
-namespace PersistenceMap
+namespace PersistenceMap.Interception
 {
-    public class Interceptor<T> : IInterceptor<T>, IInterceptorExecution
+    public class Interceptor<T> : IInterceptor, IInterceptor<T>, IInterceptionBuilder<T>
     {
         private Action<CompiledQuery> _beforeExecute;
         private Func<CompiledQuery, IEnumerable<T>> _execute;
         private Action<CompiledQuery> _executeNonQuery;
         private Action<IQueryPartsContainer> _beforeCompile;
-
-        public IInterceptor<T> BeforeCompile(Action<IQueryPartsContainer> container)
-        {
-            _beforeCompile = container;
-
-            return this;
-        }
-
-        public IInterceptor<T> BeforeExecute(Action<CompiledQuery> query)
-        {
-            _beforeExecute = query;
-
-            return this;
-        }
-
-        public IInterceptor<T> AsExecute(Func<CompiledQuery, IEnumerable<T>> query)
-        {
-            _execute = query;
-
-            return this;
-        }
-
-        public IInterceptor<T> AsExecute(Action<CompiledQuery> query)
-        {
-            _executeNonQuery = query;
-
-            return this;
-        }
-
+        
         public void ExecuteBeforeExecute(CompiledQuery query)
         {
             if (_beforeExecute == null)
@@ -81,6 +53,54 @@ namespace PersistenceMap
             }
 
             _beforeCompile(container);
+        }
+
+        public Interceptor<T> BeforeCompile(Action<IQueryPartsContainer> container)
+        {
+            _beforeCompile = container;
+
+            return this;
+        }
+
+        public Interceptor<T> BeforeExecute(Action<CompiledQuery> query)
+        {
+            _beforeExecute = query;
+
+            return this;
+        }
+
+        public Interceptor<T> AsExecute(Func<CompiledQuery, IEnumerable<T>> query)
+        {
+            _execute = query;
+
+            return this;
+        }
+
+        public Interceptor<T> AsExecute(Action<CompiledQuery> query)
+        {
+            _executeNonQuery = query;
+
+            return this;
+        }
+
+        IInterceptionBuilder<T> IInterceptionBuilder<T>.BeforeCompile(Action<IQueryPartsContainer> container)
+        {
+            return BeforeCompile(container);
+        }
+
+        IInterceptionBuilder<T> IInterceptionBuilder<T>.BeforeExecute(Action<CompiledQuery> query)
+        {
+            return BeforeExecute(query);
+        }
+
+        IInterceptionBuilder<T> IInterceptionBuilder<T>.AsExecute(Func<CompiledQuery, IEnumerable<T>> query)
+        {
+            return AsExecute(query);
+        }
+
+        IInterceptionBuilder<T> IInterceptionBuilder<T>.AsExecute(Action<CompiledQuery> query)
+        {
+            return AsExecute(query);
         }
     }
 }

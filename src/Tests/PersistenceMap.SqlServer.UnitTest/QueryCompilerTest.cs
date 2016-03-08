@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using PersistenceMap.QueryParts;
 using System.Text;
+using PersistenceMap.Interception;
 
 namespace PersistenceMap.SqlServer.UnitTest
 {

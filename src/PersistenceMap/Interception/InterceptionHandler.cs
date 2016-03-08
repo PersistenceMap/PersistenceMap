@@ -6,7 +6,7 @@ namespace PersistenceMap.Interception
 {
     internal class InterceptionHandler<T>
     {
-        private readonly IEnumerable<IInterceptorExecution> _interceptors;
+        private readonly IEnumerable<IInterceptor> _interceptors;
 
         public InterceptionHandler(InterceptorCollection collection)
         {
@@ -38,7 +38,7 @@ namespace PersistenceMap.Interception
 
     internal class InterceptionHandler
     {
-        private readonly IEnumerable<IInterceptorExecution> _interceptors;
+        private readonly IEnumerable<IInterceptor> _interceptors;
 
         public InterceptionHandler(InterceptorCollection collection, Type type)
         {

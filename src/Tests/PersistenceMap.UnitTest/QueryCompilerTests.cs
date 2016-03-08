@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.QueryParts;
 using System.Text;
 

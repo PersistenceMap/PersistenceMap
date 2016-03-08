@@ -3,7 +3,7 @@ using System.Data;
 
 namespace PersistenceMap
 {
-    public abstract class ConnectionProvider : IConnectionProvider
+    public class ConnectionProvider : IConnectionProvider
     {
         private readonly Func<string, IDbConnection> _connectionFactory;
         private string _connectionString;

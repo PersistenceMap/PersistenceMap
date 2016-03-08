@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\PersistenceMap.Sqlite.nuspec = src\PersistenceMap.Sqlite.nuspec
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistenceMap.SqlCompact.Test", "src\Tests\PersistenceMap.SqlCompact.Test\PersistenceMap.SqlCompact.Test.csproj", "{E3492F3B-30D8-480E-8DDD-710F31CC799B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistenceMap.Sqlite", "src\PersistenceMap.Sqlite\PersistenceMap.Sqlite.csproj", "{1A648C38-3AD8-4C05-90B8-4C40D1F7CFA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistenceMap.Sqlite.Test", "src\Tests\PersistenceMap.Sqlite.Test\PersistenceMap.Sqlite.Test.csproj", "{A38CBF04-F0AD-4679-AC00-FDF3B166E7F2}"
@@ -69,14 +67,6 @@ Global
 		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Release|x86.ActiveCfg = Release|x86
 		{923AB5EF-6D65-4452-A0C2-BF441308BE33}.Release|x86.Build.0 = Release|x86
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Debug|x86.ActiveCfg = Debug|x86
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Debug|x86.Build.0 = Debug|x86
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Release|x86.ActiveCfg = Release|x86
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B}.Release|x86.Build.0 = Release|x86
 		{1A648C38-3AD8-4C05-90B8-4C40D1F7CFA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A648C38-3AD8-4C05-90B8-4C40D1F7CFA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A648C38-3AD8-4C05-90B8-4C40D1F7CFA2}.Debug|x86.ActiveCfg = Debug|x86
@@ -141,7 +131,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{923AB5EF-6D65-4452-A0C2-BF441308BE33} = {554CB4F9-23E8-45E3-A418-695F1D979249}
-		{E3492F3B-30D8-480E-8DDD-710F31CC799B} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{A38CBF04-F0AD-4679-AC00-FDF3B166E7F2} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{E99038FE-D0C9-47FA-A60F-F550976CBBAE} = {554CB4F9-23E8-45E3-A418-695F1D979249}
 		{2D5D803E-DE51-471B-B650-8E3B6272D89F} = {554CB4F9-23E8-45E3-A418-695F1D979249}

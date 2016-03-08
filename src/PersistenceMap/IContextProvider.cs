@@ -12,11 +12,11 @@ namespace PersistenceMap
         /// </summary>
         IConnectionProvider ConnectionProvider { get; }
 
-        /// <summary>
-        /// Add a interceptor to the executionmodel
-        /// </summary>
-        /// <typeparam name="T">The type that will be executed</typeparam>
-        /// <returns>A instance of a interceptor</returns>
-        IInterceptor<T> Interceptor<T>();
+        ///// <summary>
+        ///// Add a interceptor to the executionmodel
+        ///// </summary>
+        ///// <typeparam name="T">The type that will be executed</typeparam>
+        ///// <returns>A instance of a interceptor</returns>
+        //IInterceptor<T> Interceptor<T>();
     }
 }
