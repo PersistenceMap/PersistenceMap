@@ -2,33 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PersistenceMap
+namespace PersistenceMap.Interception
 {
     public class InterceptorCollection
     {
         private readonly List<InterceptorItem> _interceptors = new List<InterceptorItem>();
 
-        public IInterceptor<T> Add<T>(IInterceptor<T> interceptor)
+        public IInterceptor Add<T>(IInterceptor interceptor)
         {
             _interceptors.Add(new InterceptorItem(typeof(T), interceptor));
 
             return interceptor;
         }
 
-        public IInterceptorExecution GetInterceptor<T>()
+        public IInterceptor Add<T>(IInterceptor<T> interceptor)
+        {
+            _interceptors.Add(new InterceptorItem(typeof(T), interceptor));
+
+            return interceptor;
+        }
+
+        public IInterceptor GetInterceptor<T>()
         {
             var item = _interceptors.FirstOrDefault(i => i.Key == typeof(T));
-            return item != null ? item.Interceptor as IInterceptorExecution : null;
+            return item != null ? item.Interceptor : null;
         }
 
-        public IEnumerable<IInterceptorExecution> GetInterceptors<T>()
+        public IEnumerable<IInterceptor> GetInterceptors<T>()
         {
-            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor as IInterceptorExecution);
+            return _interceptors.Where(i => i.Key == typeof(T)).Select(i => i.Interceptor);
         }
 
-        public IEnumerable<IInterceptorExecution> GetInterceptors(Type type)
+        public IEnumerable<IInterceptor> GetInterceptors(Type type)
         {
-            return _interceptors.Where(i => i.Key == type).Select(i => i.Interceptor as IInterceptorExecution);
+            return _interceptors.Where(i => i.Key == type).Select(i => i.Interceptor);
         }
 
         /// <summary>

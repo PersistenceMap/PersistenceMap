@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using PersistenceMap.QueryParts;
+using PersistenceMap.Interception;
 
 namespace PersistenceMap.Sqlite.UnitTest
 {

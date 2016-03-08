@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.Mock;
 using System;
 using System.Collections.Generic;
@@ -69,9 +70,9 @@ namespace PersistenceMap.Test
 
     public static class InterceptorExtensions
     {
-        public static IInterceptor<T> Returns<T>(this IInterceptor<T> interceptor, IEnumerable<T> list)
+        public static IInterceptionContext<T> Returns<T>(this IInterceptionContext<T> interceptionContext, IEnumerable<T> list)
         {
-            //interceptor.
+            
             throw new NotImplementedException();
         }
     }

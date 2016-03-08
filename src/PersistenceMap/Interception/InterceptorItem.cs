@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PersistenceMap
+namespace PersistenceMap.Interception
 {
     internal class InterceptorItem
     {

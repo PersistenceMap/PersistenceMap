@@ -7,6 +7,7 @@ using PersistenceMap.UnitTest.TableTypes;
 using System;
 using System.Data;
 using System.Linq;
+using PersistenceMap.Interception;
 
 namespace PersistenceMap.UnitTest
 {

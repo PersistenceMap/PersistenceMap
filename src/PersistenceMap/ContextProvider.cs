@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PersistenceMap.Interception;
+using System;
 
 namespace PersistenceMap
 {
@@ -47,14 +48,20 @@ namespace PersistenceMap
         /// </summary>
         /// <typeparam name="T">The type that will be executed</typeparam>
         /// <returns>A instance of a interceptor</returns>
-        public IInterceptor<T> Interceptor<T>()
+        public IInterceptionContext<T> Interceptor<T>()
         {
-            return _interceptors.Add(new Interceptor<T>());
+            var interceptor = new Interceptor<T>();
+            _interceptors.Add(interceptor);
+            var context = new InterceptionContext<T>(Interceptors, interceptor);
+            return context;
         }
 
-        public IInterceptor<T> Interceptor<T>(Func<T> anonymObject)
+        public IInterceptionContext<T> Interceptor<T>(Func<T> anonymObject)
         {
-            return _interceptors.Add(new Interceptor<T>());
+            var interceptor = new Interceptor<T>();
+            _interceptors.Add(interceptor);
+            var context = new InterceptionContext<T>(Interceptors, interceptor);
+            return context;
         }
 
         #region IDisposeable Implementation

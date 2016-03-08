@@ -1,4 +1,6 @@
-﻿namespace PersistenceMap
+﻿using PersistenceMap.Interception;
+
+namespace PersistenceMap
 {
     public class SqliteDatabaseContext : DatabaseContext, IDatabaseContext
     {
