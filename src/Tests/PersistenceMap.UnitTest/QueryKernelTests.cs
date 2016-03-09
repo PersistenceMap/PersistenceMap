@@ -91,7 +91,7 @@ namespace PersistenceMap.UnitTest
             };
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new Interceptor<Warrior>().AsExecute(qc => warriors));
+            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => warriors));
             var kernel = new QueryKernel(_provider.Object, _settings.Object, interceptors);
 
             // Act
@@ -106,7 +106,7 @@ namespace PersistenceMap.UnitTest
             var query = string.Empty;
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new Interceptor<Warrior>().BeforeExecute(qc => query = qc.QueryString));
+            interceptors.Add(new CompileInterceptor<Warrior>(qc => query = qc.QueryString));
             var kernel = new QueryKernel(_provider.Object, _settings.Object, interceptors);
 
             // Act

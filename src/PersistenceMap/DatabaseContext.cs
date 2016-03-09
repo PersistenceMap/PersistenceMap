@@ -116,7 +116,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            return Kernel.Execute<T>(query);
+            return Execute<T>(query);
         }
 
         public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
@@ -126,7 +126,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            return Kernel.Execute<T>(query);
+            return Execute<T>(query);
         }
 
         public void Execute(string queryString)
@@ -136,7 +136,33 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
+            Execute(query);
+        }
+
+        /// <summary>
+        /// Executes the query against a RDBMS
+        /// </summary>
+        /// <typeparam name="T">The expected return type</typeparam>
+        /// <param name="query">The query that will be executed</param>
+        /// <returns>A list of T</returns>
+        public IEnumerable<T> Execute<T>(CompiledQuery query)
+        {
+            // TODO: Interceptors BeforeExecute
+            var items = Kernel.Execute<T>(query);
+
+            // TODO: Interceptors AfterExecute
+            return items;
+        }
+
+        /// <summary>
+        /// Executes the query against a RDBMS
+        /// </summary>
+        /// <param name="query">The query that will be executed</param>
+        public void Execute(CompiledQuery query)
+        {
+            // TODO: Interceptors BeforeExecute
             Kernel.Execute(query);
+            // TODO: Interceptors AfterExecute
         }
 
         #endregion

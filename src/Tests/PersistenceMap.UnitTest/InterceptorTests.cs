@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using PersistenceMap.Interception;
+using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.UnitTest
 {
@@ -11,7 +13,7 @@ namespace PersistenceMap.UnitTest
         public void Interceptor_AddInterceptorTest()
         {
             var collection = new InterceptorCollection();
-            var orig = new Interceptor<Order>();
+            var orig = new TestInterceptor<Order>();
             collection.Add(orig);
 
             var reference = collection.GetInterceptor<Order>();
@@ -23,9 +25,9 @@ namespace PersistenceMap.UnitTest
         public void Interceptor_AddInterceptorTwiceTest()
         {
             var collection = new InterceptorCollection();
-            var orig = new Interceptor<Order>();
+            var orig = new TestInterceptor<Order>();
             collection.Add(orig);
-            var second = collection.Add(new Interceptor<Order>());
+            var second = collection.Add(new TestInterceptor<Order>());
 
             Assert.AreNotSame(orig, second);
         }
@@ -34,9 +36,9 @@ namespace PersistenceMap.UnitTest
         public void Interceptor_GetInterceptorOfTTest()
         {
             var collection = new InterceptorCollection();
-            var first = collection.Add(new Interceptor<Order>());
-            collection.Add(new Interceptor<Bill>());
-            collection.Add(new Interceptor<Order>());
+            var first = collection.Add(new TestInterceptor<Order>());
+            collection.Add(new TestInterceptor<Bill>());
+            collection.Add(new TestInterceptor<Order>());
 
             var order = collection.GetInterceptor<Order>();
 
@@ -47,9 +49,9 @@ namespace PersistenceMap.UnitTest
         public void Interceptor_GetInterceptorsOfTTest()
         {
             var collection = new InterceptorCollection();
-            var first = collection.Add(new Interceptor<Order>());
-            collection.Add(new Interceptor<Bill>());
-            var seccond = collection.Add(new Interceptor<Order>());
+            var first = collection.Add(new TestInterceptor<Order>());
+            collection.Add(new TestInterceptor<Bill>());
+            var seccond = collection.Add(new TestInterceptor<Order>());
 
             var orders = collection.GetInterceptors<Order>();
 
@@ -61,14 +63,35 @@ namespace PersistenceMap.UnitTest
         public void Interceptor_GetInterceptorsByTypeTest()
         {
             var collection = new InterceptorCollection();
-            var first = collection.Add(new Interceptor<Order>());
-            collection.Add(new Interceptor<Bill>());
-            var seccond = collection.Add(new Interceptor<Order>());
+            var first = collection.Add(new TestInterceptor<Order>());
+            collection.Add(new TestInterceptor<Bill>());
+            var seccond = collection.Add(new TestInterceptor<Order>());
 
             var orders = collection.GetInterceptors(typeof(Order));
 
             Assert.AreSame(first, orders.First());
             Assert.AreSame(seccond, orders.Last());
+        }
+
+        private class TestInterceptor<T> : IInterceptor<T>
+        {
+            public void VisitBeforeExecute(CompiledQuery query)
+            {
+            }
+
+            public IEnumerable<T1> VisitOnExecute<T1>(CompiledQuery query)
+            {
+                return null;
+            }
+
+            public bool VisitOnExecute(CompiledQuery query)
+            {
+                return false;
+            }
+
+            public void VisitBeforeCompile(IQueryPartsContainer container)
+            {
+            }
         }
 
         private class Order

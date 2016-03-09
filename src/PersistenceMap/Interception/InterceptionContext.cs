@@ -7,38 +7,45 @@ namespace PersistenceMap.Interception
     public class InterceptionContext<T> : IInterceptionContext<T>
     {
         private readonly InterceptorCollection _interceptors;
-        private readonly IInterceptionBuilder<T> _interceptor;
 
-        public InterceptionContext(InterceptorCollection interceptors, IInterceptionBuilder<T> interceptor)
+        /// <summary>
+        /// Gets the InterceptionCollection related to the context
+        /// </summary>
+        public InterceptorCollection Interceptors => _interceptors;
+
+        public InterceptionContext(InterceptorCollection interceptors)
         {
             _interceptors = interceptors;
-            _interceptor = interceptor;
         }
 
         public IInterceptionBuilder<T> BeforeCompile(Action<IQueryPartsContainer> container)
         {
-            _interceptor.BeforeCompile(container);
+            var interceptor = new CompileInterceptor<T>(container);
+            _interceptors.Add(interceptor);
 
             return this;
         }
 
         public IInterceptionBuilder<T> BeforeExecute(Action<CompiledQuery> query)
         {
-            _interceptor.BeforeExecute(query);
+            var interceptor = new CompileInterceptor<T>(query);
+            _interceptors.Add(interceptor);
 
             return this;
         }
 
         public IInterceptionBuilder<T> AsExecute(Func<CompiledQuery, IEnumerable<T>> query)
         {
-            _interceptor.AsExecute(query);
+            var interceptor = new ExecutionInterceptor<T>(query);
+            _interceptors.Add(interceptor);
 
             return this;
         }
 
         public IInterceptionBuilder<T> AsExecute(Action<CompiledQuery> query)
         {
-            _interceptor.AsExecute(query);
+            var interceptor = new ExecutionInterceptor<T>(query);
+            _interceptors.Add(interceptor);
 
             return this;
         }

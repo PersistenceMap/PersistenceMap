@@ -64,7 +64,7 @@ namespace PersistenceMap.QueryBuilder
         {
             var query = Compile<T2>();
 
-            return Context.Kernel.Execute<T2>(query);
+            return Context.Execute<T2>(query);
         }
 
         /// <summary>

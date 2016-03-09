@@ -1,6 +1,7 @@
 ﻿using PersistenceMap.Interception;
 using System;
 using System.Collections.Generic;
+using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.UnitTest
 {
@@ -52,6 +53,16 @@ namespace PersistenceMap.UnitTest
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public IEnumerable<T> Execute<T>(CompiledQuery query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(CompiledQuery query)
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()

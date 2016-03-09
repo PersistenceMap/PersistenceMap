@@ -2,5 +2,6 @@
 {
     public interface IInterceptionContext<T> : IInterceptionBuilder<T>
     {
+        InterceptorCollection Interceptors { get; }
     }
 }

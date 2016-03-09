@@ -17,7 +17,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.ExecuteBeforeExecute(query);
+                interceptor.VisitBeforeExecute(query);
             }
         }
 
@@ -25,7 +25,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                var items = interceptor.Execute<T>(query);
+                var items = interceptor.VisitOnExecute<T>(query);
                 if (items != null)
                 {
                     return items;
@@ -49,7 +49,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.ExecuteBeforeCompile(container);
+                interceptor.VisitBeforeCompile(container);
             }
         }
 
@@ -57,7 +57,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.ExecuteBeforeExecute(query);
+                interceptor.VisitBeforeExecute(query);
             }
         }
 
@@ -65,7 +65,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                if(interceptor.Execute(query))
+                if(interceptor.VisitOnExecute(query))
                 {
                     return true;
                 }

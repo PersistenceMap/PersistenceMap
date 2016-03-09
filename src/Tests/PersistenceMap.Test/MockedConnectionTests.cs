@@ -5,6 +5,7 @@ using PersistenceMap.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.Test
 {
@@ -52,7 +53,7 @@ namespace PersistenceMap.Test
             var provider = new ContextProvider(connectionProviderMock.Object);
 
             provider.Interceptor<Person>().Returns(personList);
-
+            
             using (var context = provider.Open())
             {
                 var tmp = context.Select<Person>();
@@ -72,8 +73,32 @@ namespace PersistenceMap.Test
     {
         public static IInterceptionContext<T> Returns<T>(this IInterceptionContext<T> interceptionContext, IEnumerable<T> list)
         {
-            
-            throw new NotImplementedException();
+            var interceptor = new MockInterceptor<T>();
+            interceptionContext.Interceptors.Add(interceptor);
+
+            return interceptionContext;
+        }
+
+        private class MockInterceptor<T> : IInterceptor<T>
+        {
+            public void VisitBeforeExecute(CompiledQuery query)
+            {
+
+            }
+
+            public IEnumerable<T1> VisitOnExecute<T1>(CompiledQuery query)
+            {
+                return null;
+            }
+
+            public bool VisitOnExecute(CompiledQuery query)
+            {
+                return false;
+            }
+
+            public void VisitBeforeCompile(IQueryPartsContainer container)
+            {
+            }
         }
     }
 }
