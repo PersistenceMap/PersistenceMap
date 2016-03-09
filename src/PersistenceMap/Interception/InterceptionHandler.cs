@@ -7,17 +7,19 @@ namespace PersistenceMap.Interception
     internal class InterceptionHandler<T>
     {
         private readonly IEnumerable<IInterceptor> _interceptors;
+        private readonly IDatabaseContext _context;
 
-        public InterceptionHandler(InterceptorCollection collection)
+        public InterceptionHandler(InterceptorCollection collection, IDatabaseContext context)
         {
             _interceptors = collection.GetInterceptors<T>();
+            _context = context;
         }
 
         public void BeforeExecute(CompiledQuery query)
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.VisitBeforeExecute(query);
+                interceptor.VisitBeforeExecute(query, _context);
             }
         }
 
@@ -39,10 +41,12 @@ namespace PersistenceMap.Interception
     internal class InterceptionHandler
     {
         private readonly IEnumerable<IInterceptor> _interceptors;
+        private readonly IDatabaseContext _context;
 
-        public InterceptionHandler(InterceptorCollection collection, Type type)
+        public InterceptionHandler(InterceptorCollection collection, Type type, IDatabaseContext context)
         {
             _interceptors = collection.GetInterceptors(type);
+            _context = context;
         }
 
         public void ExecuteBeforeCompile(IQueryPartsContainer container)
@@ -57,7 +61,7 @@ namespace PersistenceMap.Interception
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.VisitBeforeExecute(query);
+                interceptor.VisitBeforeExecute(query, _context);
             }
         }
 

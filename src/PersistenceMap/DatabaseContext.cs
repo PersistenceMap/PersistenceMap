@@ -147,7 +147,7 @@ namespace PersistenceMap
         /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery query)
         {
-            var interception = new InterceptionHandler<T>(_interceptors);
+            var interception = new InterceptionHandler<T>(_interceptors, this);
             interception.BeforeExecute(query);
             var mocked = interception.Execute(query);
             if (mocked != null)
@@ -170,7 +170,7 @@ namespace PersistenceMap
             var parts = query.QueryParts;
             if (parts != null && parts.AggregatePart != null)
             {
-                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType);
+                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
                 interception.BeforeExecute(query);
                 if (interception.Execute(query))
                 {

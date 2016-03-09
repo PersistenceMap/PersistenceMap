@@ -42,7 +42,7 @@ namespace PersistenceMap
             }
         }
 
-        protected IConnectionProvider ConnectionProvider { get; set; }
+        public IConnectionProvider ConnectionProvider { get; set; }
 
         /// <summary>
         /// Executes a CompiledQuery that returnes a resultset against the RDBMS

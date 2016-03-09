@@ -19,7 +19,7 @@ namespace PersistenceMap.Interception
             _beforeCompile = beforeCompile;
         }
         
-        public void VisitBeforeExecute(CompiledQuery query)
+        public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
         {
             if (_beforeExecute == null)
             {

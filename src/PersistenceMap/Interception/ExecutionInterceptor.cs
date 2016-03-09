@@ -19,8 +19,8 @@ namespace PersistenceMap.Interception
         {
             _executeNonQuery = executeNonQuery;
         }
-
-        public void VisitBeforeExecute(CompiledQuery query)
+        
+        public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
         {
         }
 

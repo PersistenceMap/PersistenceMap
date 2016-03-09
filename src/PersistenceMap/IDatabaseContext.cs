@@ -43,6 +43,6 @@ namespace PersistenceMap
         /// <summary>
         /// The kernel providing the execution of the query and mapping of the data
         /// </summary>
-        QueryKernel Kernel { get; }
+        QueryKernel Kernel { get; set; }
     }
 }

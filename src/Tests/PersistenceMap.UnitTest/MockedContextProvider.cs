@@ -53,6 +53,10 @@ namespace PersistenceMap.UnitTest
             {
                 throw new NotImplementedException();
             }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public IEnumerable<T> Execute<T>(CompiledQuery query)

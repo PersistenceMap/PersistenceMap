@@ -75,7 +75,7 @@ namespace PersistenceMap.UnitTest
 
         private class TestInterceptor<T> : IInterceptor<T>
         {
-            public void VisitBeforeExecute(CompiledQuery query)
+            public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
             {
             }
 
