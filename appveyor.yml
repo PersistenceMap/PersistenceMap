@@ -62,10 +62,6 @@ build:
 # MSBuild verbosity level
 # verbosity: quiet|minimal|normal|detailed
 
-notifications:
-  - provider: Webhook
-    url: https://webhooks.gitter.im/e/26cac67e668e15cf2caf
-  
 #---------------------------------#
 #       tests configuration       #
 #---------------------------------#
