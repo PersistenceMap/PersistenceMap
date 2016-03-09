@@ -83,6 +83,7 @@
     <Compile Include="Configuration\LoggerElement.cs" />
     <Compile Include="Configuration\LoggerElementCollection.cs" />
     <Compile Include="IDatabaseQueryExpression.cs" />
+    <Compile Include="IExecutionContext.cs" />
     <Compile Include="Interception\IInterceptionBuilder.cs" />
     <Compile Include="Interception\IInterceptionContext.cs" />
     <Compile Include="Interception\IInterceptor.cs" />

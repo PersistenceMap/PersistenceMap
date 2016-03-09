@@ -92,7 +92,7 @@ namespace PersistenceMap
             {
                 if (_kernel == null)
                 {
-                    _kernel = new QueryKernel(ConnectionProvider, _settings, _interceptors);
+                    _kernel = new QueryKernel(ConnectionProvider, _settings);
                 }
 
                 return _kernel;
@@ -147,7 +147,14 @@ namespace PersistenceMap
         /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(CompiledQuery query)
         {
-            // TODO: Interceptors BeforeExecute
+            var interception = new InterceptionHandler<T>(_interceptors);
+            interception.BeforeExecute(query);
+            var mocked = interception.Execute(query);
+            if (mocked != null)
+            {
+                return mocked;
+            }
+
             var items = Kernel.Execute<T>(query);
 
             // TODO: Interceptors AfterExecute
@@ -160,7 +167,17 @@ namespace PersistenceMap
         /// <param name="query">The query that will be executed</param>
         public void Execute(CompiledQuery query)
         {
-            // TODO: Interceptors BeforeExecute
+            var parts = query.QueryParts;
+            if (parts != null && parts.AggregatePart != null)
+            {
+                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType);
+                interception.BeforeExecute(query);
+                if (interception.Execute(query))
+                {
+                    return;
+                }
+            }
+
             Kernel.Execute(query);
             // TODO: Interceptors AfterExecute
         }

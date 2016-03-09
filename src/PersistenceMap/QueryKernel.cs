@@ -11,25 +11,17 @@ namespace PersistenceMap
     /// <summary>
     /// Represents a kernel that reads the data from the provided datareader and mapps the data to the generated dataobjects
     /// </summary>
-    public class QueryKernel
+    public class QueryKernel : IExecutionContext
     {
-        private readonly InterceptorCollection _interceptors;
         private readonly ISettings _settings;
-
         private readonly ObjectMapper _mapper;
 
         private ILogWriter _logger;
-
+        
         public QueryKernel(IConnectionProvider provider, ISettings settings)
-            : this(provider, settings, new InterceptorCollection())
-        {
-        }
-
-        public QueryKernel(IConnectionProvider provider, ISettings settings, InterceptorCollection interceptors)
         {
             ConnectionProvider = provider;
             _settings = settings;
-            _interceptors = interceptors;
 
             _mapper = new ObjectMapper(_settings);
         }
@@ -60,14 +52,6 @@ namespace PersistenceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public virtual IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            var interception = new InterceptionHandler<T>(_interceptors);
-            interception.BeforeExecute(compiledQuery);
-            var items = interception.Execute(compiledQuery);
-            if (items != null)
-            {
-                return items;
-            }
-
             // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
@@ -107,17 +91,6 @@ namespace PersistenceMap
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public virtual void Execute(CompiledQuery compiledQuery)
         {
-            var parts = compiledQuery.QueryParts;
-            if (parts != null && parts.AggregatePart != null)
-            {
-                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType);
-                interception.BeforeExecute(compiledQuery);
-                if (interception.Execute(compiledQuery))
-                {
-                    return;
-                }
-            }
-
             // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 

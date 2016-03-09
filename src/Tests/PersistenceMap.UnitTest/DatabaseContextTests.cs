@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using PersistenceMap.Interception;
+using System.Collections.Generic;
 
 namespace PersistenceMap.UnitTest
 {
@@ -388,6 +389,88 @@ namespace PersistenceMap.UnitTest
 
             context.Commit();
             Assert.IsFalse(context.QueryStore.Any());
+        }
+
+        [Test]
+        public void PersistenceMap_DatabaseContext_InterceptExecuteTest()
+        {
+            var warriors = new List<Warrior>
+            {
+                new Warrior()
+            };
+
+            var interceptors = new InterceptorCollection();
+            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => warriors));
+            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
+
+            // Act
+            var items = kernel.Execute<Warrior>(new CompiledQuery());
+
+            Assert.AreSame(items.First(), warriors.First());
+        }
+
+        [Test]
+        public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteTest()
+        {
+            var query = string.Empty;
+
+            var interceptors = new InterceptorCollection();
+            interceptors.Add(new CompileInterceptor<Warrior>(qc => query = qc.QueryString));
+            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
+
+            // Act
+            var items = kernel.Execute<Warrior>(new CompiledQuery { QueryString = "Mocked Query" });
+
+            Assert.AreEqual(query, "Mocked Query");
+        }
+
+        [Test]
+        public void PersistenceMap_DatabaseContext_InterceptExecuteNonQueryTest()
+        {
+            var warriors = new List<Warrior>
+            {
+                new Warrior()
+            };
+
+            var interceptors = new InterceptorCollection();
+            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => warriors));
+            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
+
+            var compiledquery = new CompiledQuery
+            {
+                QueryString = "Mocked Query",
+                QueryParts = new QueryPartsContainer {
+                    new QueryPart(OperationType.None, typeof(Warrior))
+                }
+            };
+
+            // Act
+            var items = kernel.Execute<Warrior>(compiledquery);
+
+            Assert.AreSame(items.First(), warriors.First());
+        }
+
+        [Test]
+        public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteNonQueryTest()
+        {
+            var query = string.Empty;
+
+            var interceptors = new InterceptorCollection();
+            interceptors.Add(new CompileInterceptor<Warrior>(qc => query = qc.QueryString));
+            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
+
+            var compiledquery = new CompiledQuery
+            {
+                QueryString = "Mocked Query",
+                QueryParts = new QueryPartsContainer {
+                    new QueryPart(OperationType.None, typeof(Warrior))
+                }
+            };
+
+            // Act
+            kernel.Execute(compiledquery);
+
+            Assert.AreEqual(query, "Mocked Query");
         }
     }
 }

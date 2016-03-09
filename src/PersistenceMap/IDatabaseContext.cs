@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using PersistenceMap.Interception;
-using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap
 {
     /// <summary>
     /// The context that is needed to connect to a database
     /// </summary>
-    public interface IDatabaseContext : IDisposable
+    public interface IDatabaseContext : IExecutionContext, IDisposable
     {
         /// <summary>
         /// Provides a connection to a specific RDBMS
@@ -36,25 +35,14 @@ namespace PersistenceMap
         /// </summary>
         IEnumerable<IQueryCommand> QueryStore { get; }
 
+        /// <summary>
+        /// Gets the collection of interceptors
+        /// </summary>
         InterceptorCollection Interceptors { get; }
 
         /// <summary>
         /// The kernel providing the execution of the query and mapping of the data
         /// </summary>
         QueryKernel Kernel { get; }
-
-        /// <summary>
-        /// Executes the query against a RDBMS
-        /// </summary>
-        /// <typeparam name="T">The expected return type</typeparam>
-        /// <param name="query">The query that will be executed</param>
-        /// <returns>A list of T</returns>
-        IEnumerable<T> Execute<T>(CompiledQuery query);
-
-        /// <summary>
-        /// Executes the query against a RDBMS
-        /// </summary>
-        /// <param name="query">The query that will be executed</param>
-        void Execute(CompiledQuery query);
     }
 }
