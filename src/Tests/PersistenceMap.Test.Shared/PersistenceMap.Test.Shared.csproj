@@ -48,7 +48,6 @@
     <Compile Include="Mock\ConnectionProvider.cs" />
     <Compile Include="Interception\DynamicProperties.cs" />
     <Compile Include="Interception\MockedDataReader.cs" />
-    <Compile Include="Mock\MockContextProvider.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="LocalDb\LocalDbManager.cs" />

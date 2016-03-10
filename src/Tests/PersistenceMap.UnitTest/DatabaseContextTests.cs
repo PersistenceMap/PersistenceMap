@@ -392,24 +392,6 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_DatabaseContext_InterceptExecuteTest()
-        {
-            var warriors = new List<Warrior>
-            {
-                new Warrior()
-            };
-
-            var interceptors = new InterceptorCollection();
-            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => warriors));
-            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
-
-            // Act
-            var items = kernel.Execute<Warrior>(new CompiledQuery());
-
-            Assert.AreSame(items.First(), warriors.First());
-        }
-
-        [Test]
         public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteTest()
         {
             var query = string.Empty;
@@ -433,7 +415,7 @@ namespace PersistenceMap.UnitTest
             };
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => warriors));
+            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => { }));
             var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
 
             var compiledquery = new CompiledQuery
@@ -445,9 +427,9 @@ namespace PersistenceMap.UnitTest
             };
 
             // Act
-            var items = kernel.Execute<Warrior>(compiledquery);
+            kernel.Execute(compiledquery);
 
-            Assert.AreSame(items.First(), warriors.First());
+            _provider.Verify(exp => exp.ExecuteNonQuery(It.IsAny<string>()), Times.Never);
         }
 
         [Test]

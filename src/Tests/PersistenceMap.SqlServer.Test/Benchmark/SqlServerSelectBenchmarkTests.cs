@@ -36,7 +36,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                     }
                 })
                 .SetIterations(20)
-                .AddCondition(p => p.AverageMilliseconds < 19)
+                .AddCondition(p => p.AverageMilliseconds < 27)
                 .RunSession();
 
             Assert.IsTrue(profile.AverageMilliseconds < 19);

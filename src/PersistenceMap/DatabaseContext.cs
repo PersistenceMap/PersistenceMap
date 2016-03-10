@@ -149,11 +149,6 @@ namespace PersistenceMap
         {
             var interception = new InterceptionHandler<T>(_interceptors, this);
             interception.BeforeExecute(query);
-            var mocked = interception.Execute(query);
-            if (mocked != null)
-            {
-                return mocked;
-            }
 
             var items = Kernel.Execute<T>(query);
 
