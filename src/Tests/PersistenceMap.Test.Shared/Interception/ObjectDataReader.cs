@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace PersistenceMap.Mock
+namespace PersistenceMap.Interception
 {
     public abstract class ObjectDataReader : IDataReader
     {

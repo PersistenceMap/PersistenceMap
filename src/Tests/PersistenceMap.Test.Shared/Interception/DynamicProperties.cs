@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace PersistenceMap.Mock
+namespace PersistenceMap.Interception
 {
     /// <summary>
     /// Gets IL setters and getters for a property

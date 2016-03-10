@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace PersistenceMap.Mock
+namespace PersistenceMap.Interception
 {
     /// <summary>
     /// Creates an IDataReader over an instance of IEnumerable&lt;> or IEnumerable.
