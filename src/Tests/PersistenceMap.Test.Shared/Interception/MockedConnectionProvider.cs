@@ -2,11 +2,11 @@
 
 namespace PersistenceMap.Interception
 {
-    internal class InterceptionConnectionProvider : IConnectionProvider
+    internal class MockedConnectionProvider : IConnectionProvider
     {
         private readonly IDataReader _dataReader;
 
-        public InterceptionConnectionProvider(IQueryCompiler compiler, IDataReader dataReader)
+        public MockedConnectionProvider(IQueryCompiler compiler, IDataReader dataReader)
         {
             _dataReader = dataReader;
             QueryCompiler = compiler;

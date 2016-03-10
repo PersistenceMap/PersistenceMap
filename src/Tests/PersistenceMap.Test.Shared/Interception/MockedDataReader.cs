@@ -8,66 +8,24 @@ namespace PersistenceMap.Interception
     /// Creates an IDataReader over an instance of IEnumerable&lt;> or IEnumerable.
     /// Anonymous type arguments are acceptable.
     /// </summary>
-    public class EnumerableDataReader : ObjectDataReader
+    public class MockedDataReader<T> : ObjectDataReader
     {
         private readonly IEnumerator _enumerator;
         private readonly Type _type;
         private object _current;
-
-        /// <summary>
-        /// Create an IDataReader over an instance of IEnumerable&lt;>.
-        /// Note: anonymous type arguments are acceptable.
-        /// Use other constructor for IEnumerable.
-        /// </summary>
-        /// <param name="collection">IEnumerable&lt;>. For IEnumerable use other constructor and specify type.</param>
-        public EnumerableDataReader(IEnumerable collection)
-        {
-            foreach (Type intface in collection.GetType().GetInterfaces())
-            {
-                if (intface.IsGenericType && intface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                {
-                    _type = intface.GetGenericArguments()[0];
-                }
-            }
-
-            if (_type == null && collection.GetType().IsGenericType)
-            {
-                _type = collection.GetType().GetGenericArguments()[0];
-            }
-
-            if (_type == null)
-            {
-                throw new ArgumentException("collection must be IEnumerable<>. Use other constructor for IEnumerable and specify type");
-            }
-
-            SetFields(_type);
-
-            _enumerator = collection.GetEnumerator();
-        }
-
+        
         /// <summary>
         /// Create an IDataReader over an instance of IEnumerable.
         /// Use other constructor for IEnumerable&lt;>
         /// </summary>
         /// <param name="collection">The collection</param>
-        /// <param name="elementType">The type in the collection</param>
-        public EnumerableDataReader(IEnumerable collection, Type elementType)
-            : base(elementType)
+        public MockedDataReader(IEnumerable<T> collection)
+            : base(typeof(T))
         {
-            _type = elementType;
-            _enumerator = collection.GetEnumerator();
+            _type = typeof(T);
+            _enumerator = collection?.GetEnumerator();
         }
         
-        /// <summary>
-        /// Helper method to create generic lists from anonymous type
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static IList ToGenericList(Type type)
-        {
-            return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(new[] { type }));
-        }
-
         /// <summary>
         /// Return the value of the specified field.
         /// </summary>

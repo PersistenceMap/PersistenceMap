@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
@@ -31,13 +32,14 @@ namespace PersistenceMap.SqlServer.Test
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList);
+            provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString);
+            provider.Interceptor<Order>().Returns(() => ordersList);
             using (var context = provider.Open())
             {
                 var orders = context.Select<Order>();
 
                 Assert.AreEqual("SELECT OrdersID \r\nFROM Order", beforeExecute);
-                Assert.AreSame(orders.First(), ordersList.First());
+                Assert.AreEqual(orders.First().OrdersID, ordersList.First().OrdersID);
             }
         }
 
@@ -55,14 +57,14 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
             provider.Interceptor<Order>().BeforeExecute(cq => beforeExecute = cq.QueryString);
-            provider.Interceptor<Order>().AsExecute(cq => ordersList);
+            provider.Interceptor<Order>().Returns(() => ordersList);
 
             using (var context = provider.Open())
             {
                 var orders = context.Select<Order>();
 
                 Assert.AreEqual("SELECT OrdersID \r\nFROM Order", beforeExecute);
-                Assert.AreSame(orders.First(), ordersList.First());
+                Assert.AreEqual(orders.First().OrdersID, ordersList.First().OrdersID);
             }
         }
 
@@ -80,8 +82,8 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
             provider.Interceptor<Order>().BeforeCompile(cq => cq.Parts.FirstOrDefault(p => p.OperationType == OperationType.Select).Add(new DelegateQueryPart(OperationType.Where, () => "TestWhere")))
-                .BeforeExecute(cq => beforeExecute = cq.QueryString)
-                .AsExecute(cq => ordersList);
+                .BeforeExecute(cq => beforeExecute = cq.QueryString);
+            provider.Interceptor<Order>().Returns(() => ordersList);
 
             using (var context = provider.Open())
             {
@@ -104,14 +106,14 @@ namespace PersistenceMap.SqlServer.Test
             };
 
             var provider = new SqlContextProvider("Not a valid connectionstring");
-            provider.Interceptor<Order>().AsExecute(cq => ordersList);
+            provider.Interceptor<Order>().Returns(() => ordersList);
 
             using (var context = provider.Open())
             {
                 var orders = context.Select<Order>();
 
                 Assert.IsNull(beforeExecute);
-                Assert.AreSame(orders.First(), ordersList.First());
+                Assert.AreEqual(orders.First().OrdersID, ordersList.First().OrdersID);
             }
         }
 
@@ -131,7 +133,7 @@ namespace PersistenceMap.SqlServer.Test
             provider.Interceptor(() => new
             {
                 OrdersID = 0
-            }).BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList.Select(o => new
+            }).BeforeExecute(cq => beforeExecute = cq.QueryString).Returns(() => ordersList.Select(o => new
             {
                 o.OrdersID
             }));
@@ -166,7 +168,7 @@ namespace PersistenceMap.SqlServer.Test
             {
                 OrdersID = 0,
                 Fail = 0
-            }).BeforeExecute(cq => beforeExecute = cq.QueryString).AsExecute(cq => ordersList.Select(o => new
+            }).BeforeExecute(cq => beforeExecute = cq.QueryString).Returns(() => ordersList.Select(o => new
             {
                 o.OrdersID,
                 Fail = 0
@@ -213,7 +215,7 @@ namespace PersistenceMap.SqlServer.Test
             var where = new DelegateQueryPart(OperationType.Where, () => "ID = 2");
 
             var provider = new SqlContextProvider("connectionstring");
-            provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).AsExecute(e => _warriors);
+            provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).Returns(() => _warriors);
             provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where));
             using (var context = provider.Open())
             {
@@ -233,7 +235,7 @@ namespace PersistenceMap.SqlServer.Test
             provider.Interceptor(() => new
             {
                 ID = 0
-            }).BeforeExecute(q => query = q.QueryString).AsExecute(e => _warriors.Select(w => new
+            }).BeforeExecute(q => query = q.QueryString).Returns(() => _warriors.Select(w => new
             {
                 ID = w.ID
             }));
@@ -256,7 +258,7 @@ namespace PersistenceMap.SqlServer.Test
             provider.Interceptor(() => new
             {
                 OrdersID = 0
-            }).AsExecute(cq => orders.Select(o => new
+            }).Returns(() => orders.Select(o => new
             {
                 o.OrdersID
             }));

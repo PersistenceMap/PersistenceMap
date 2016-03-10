@@ -40,14 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interception\InterceptionConnectionProvider.cs" />
-    <Compile Include="Interception\InterceptionQueryKernel.cs" />
+    <Compile Include="Interception\MockedConnectionProvider.cs" />
+    <Compile Include="Interception\MockedQueryKernel.cs" />
     <Compile Include="Interception\InterceptorExtensions.cs" />
-    <Compile Include="Interception\MockInterceptor.cs" />
+    <Compile Include="Interception\DataReaderInterceptor.cs" />
     <Compile Include="Mock\ContextProviderExtensions.cs" />
     <Compile Include="Mock\ConnectionProvider.cs" />
     <Compile Include="Interception\DynamicProperties.cs" />
-    <Compile Include="Interception\EnumerableDataReader.cs" />
+    <Compile Include="Interception\MockedDataReader.cs" />
     <Compile Include="Mock\MockContextProvider.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

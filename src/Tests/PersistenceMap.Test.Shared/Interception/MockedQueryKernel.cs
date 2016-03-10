@@ -1,18 +1,19 @@
 ﻿using PersistenceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace PersistenceMap.Interception
 {
-    internal class InterceptionQueryKernel : QueryKernel
+    internal class MockedQueryKernel : QueryKernel
     {
-        private readonly Dictionary<Type, EnumerableDataReader> _datareaders;
+        private readonly Dictionary<Type, IDataReader> _datareaders;
 
-        public InterceptionQueryKernel(IDatabaseContext context)
+        public MockedQueryKernel(IDatabaseContext context)
             : base(context.ConnectionProvider, context.Settings)
         {
-            _datareaders = new Dictionary<Type, EnumerableDataReader>();
-            var kernel = context.Kernel as InterceptionQueryKernel;
+            _datareaders = new Dictionary<Type, IDataReader>();
+            var kernel = context.Kernel as MockedQueryKernel;
             if (kernel != null)
             {
                 foreach (var reader in kernel.DataReaders)
@@ -22,11 +23,12 @@ namespace PersistenceMap.Interception
             }
         }
 
-        internal Dictionary<Type, EnumerableDataReader> DataReaders => _datareaders;
+        internal Dictionary<Type, IDataReader> DataReaders => _datareaders;
 
-        public void AddDataReader<T>(EnumerableDataReader dataReader)
+        public void AddDataReader<T>(IDataReader dataReader)
         {
-            _datareaders.Add(typeof(T), dataReader);
+            // only allow one datareader per type
+            _datareaders[typeof(T)] = dataReader;
         }
 
         public override IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
@@ -36,7 +38,7 @@ namespace PersistenceMap.Interception
             if (_datareaders.ContainsKey(typeof(T)))
             {
                 var reader = _datareaders[typeof(T)];
-                ConnectionProvider = new InterceptionConnectionProvider(provider.QueryCompiler, reader);
+                ConnectionProvider = new MockedConnectionProvider(provider.QueryCompiler, reader);
             }
 
             var items = base.Execute<T>(compiledQuery);

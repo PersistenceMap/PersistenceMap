@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
@@ -49,7 +50,7 @@ namespace PersistenceMap.SqlServer.Test
             provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.From).Add(where));
             using (var context = provider.Open())
             {
-                context.From<Warrior>().Select(() => new
+                var tmp = context.From<Warrior>().Select(() => new
                 {
                     ID = 0
                 });
@@ -81,9 +82,9 @@ namespace PersistenceMap.SqlServer.Test
         private SqlContextProvider BuildContext()
         {
             var provider = new SqlContextProvider("connectionstring");
-            provider.Interceptor<Warrior>().AsExecute(e => _warriors);
-            provider.Interceptor<Warrior>().AsExecute(a => { });
-            provider.Interceptor(() => new { ID = 0 }).AsExecute(e => _warriors.Select(w => new { ID = w.ID }));
+            provider.Interceptor<Warrior>().Returns<Warrior>(() => null);
+            provider.Interceptor<Warrior>().Returns(() => _warriors);
+            provider.Interceptor(() => new { ID = 0 }).Returns(() => _warriors.Select(w => new { ID = w.ID }));
 
             return provider;
         }

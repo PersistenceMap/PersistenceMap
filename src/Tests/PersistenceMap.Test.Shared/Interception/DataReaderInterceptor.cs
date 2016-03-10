@@ -3,20 +3,19 @@ using System.Collections.Generic;
 
 namespace PersistenceMap.Interception
 {
-    internal class MockInterceptor<T> : IInterceptor<T>
+    internal class DataReaderInterceptor<T> : IInterceptor<T>
     {
-        private readonly IEnumerable<T> _result;
+        private readonly MockedDataReader<T> _dataReader;
 
-        public MockInterceptor(IEnumerable<T> result)
+        public DataReaderInterceptor(IEnumerable<T> result)
         {
-            _result = result;
+            _dataReader = new MockedDataReader<T>(result);
         }
 
         public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
         {
-            var dataReader = new EnumerableDataReader(_result);
-            var kernel = new InterceptionQueryKernel(context);
-            kernel.AddDataReader<T>(dataReader);
+            var kernel = new MockedQueryKernel(context);
+            kernel.AddDataReader<T>(_dataReader);
 
             context.Kernel = kernel;
         }

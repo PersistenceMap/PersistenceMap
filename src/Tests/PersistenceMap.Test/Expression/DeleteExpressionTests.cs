@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using PersistenceMap.Interception;
+using PersistenceMap.Mock;
 using PersistenceMap.Test.TableTypes;
 using System;
-using PersistenceMap.Mock;
+using System.Collections.Generic;
 
 namespace PersistenceMap.Test.Expression
 {
@@ -16,7 +16,7 @@ namespace PersistenceMap.Test.Expression
         {
             var provider = new ContextProvider(new Mock.ConnectionProvider());
             provider.Interceptor<Orders>().BeforeExecute(s => Assert.AreEqual(s.QueryString.Flatten(), "DELETE FROM Employee"));
-            provider.Interceptor<Employee>().AsExecute(q => new List<Employee>());
+            provider.Interceptor<Employee>().Returns(() => new List<Employee>());
             using (var context = provider.Open())
             {
                 context.Delete<Employee>();

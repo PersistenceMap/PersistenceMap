@@ -2,11 +2,8 @@
 using NUnit.Framework;
 using PersistenceMap.Interception;
 using PersistenceMap.Mock;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using PersistenceMap.QueryBuilder;
-using System.Data;
 
 namespace PersistenceMap.Test
 {
@@ -22,7 +19,7 @@ namespace PersistenceMap.Test
                 new Person { Name = "2.1", Firstname = "2.2" }
             };
 
-            var dataReader = new EnumerableDataReader(personList);
+            var dataReader = new MockedDataReader<Person>(personList);
 
             var connectionProviderMock = new Mock<IConnectionProvider>();
             connectionProviderMock.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
