@@ -20,3 +20,12 @@ script:
   - mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/Tests/PersistenceMap.Sqlite.UnitTest/bin/Release/PersistenceMap.Sqlite.UnitTest.dll
   - mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/Tests/PersistenceMap.SqlServer.UnitTest/bin/Release/PersistenceMap.SqlServer.UnitTest.dll
   - mono ./testrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/Tests/PersistenceMap.UnitTest/bin/Release/PersistenceMap.UnitTest.dll
+  
+  
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/adc80b54dde920b03fcd
+    on_success: always  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
