@@ -4,17 +4,17 @@ using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.Interception
 {
-    public class CompileInterceptor<T> : IInterceptor, IInterceptor<T>
+    public class BasicInterceptor<T> : IInterceptor, IInterceptor<T>
     {
         private readonly Action<CompiledQuery> _beforeExecute;
         private readonly Action<IQueryPartsContainer> _beforeCompile;
 
-        public CompileInterceptor(Action<CompiledQuery> beforeExecute)
+        public BasicInterceptor(Action<CompiledQuery> beforeExecute)
         {
             _beforeExecute = beforeExecute;
         }
 
-        public CompileInterceptor(Action<IQueryPartsContainer> beforeCompile)
+        public BasicInterceptor(Action<IQueryPartsContainer> beforeCompile)
         {
             _beforeCompile = beforeCompile;
         }

@@ -30,7 +30,7 @@ namespace PersistenceMap
         /// <summary>
         /// The connection to a SqlCe database
         /// </summary>
-        public IConnectionProvider ConnectionProvider { get; }
+        public IConnectionProvider ConnectionProvider { get; set; }
 
         /// <summary>
         /// Gets the interceptorcollection

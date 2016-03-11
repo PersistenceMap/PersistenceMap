@@ -90,7 +90,7 @@
     <Compile Include="Interception\InterceptionContext.cs" />
     <Compile Include="Interception\InterceptionHandler.cs" />
     <Compile Include="Interception\ExecutionInterceptor.cs" />
-    <Compile Include="Interception\CompileInterceptor.cs" />
+    <Compile Include="Interception\BasicInterceptor.cs" />
     <Compile Include="Interception\InterceptorCollection.cs" />
     <Compile Include="Interception\InterceptorItem.cs" />
     <Compile Include="ISettings.cs" />

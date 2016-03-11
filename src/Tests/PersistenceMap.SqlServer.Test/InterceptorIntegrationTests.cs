@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
 using PersistenceMap.Interception;
 using PersistenceMap.QueryParts;
@@ -81,7 +82,12 @@ namespace PersistenceMap.SqlServer.Test
         
         private SqlContextProvider BuildContext()
         {
+            var connectionProvider = new Mock<IConnectionProvider>();
+            connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
+
             var provider = new SqlContextProvider("connectionstring");
+            provider.ConnectionProvider = connectionProvider.Object;
+
             provider.Interceptor<Warrior>().Returns<Warrior>(() => null);
             provider.Interceptor<Warrior>().Returns(() => _warriors);
             provider.Interceptor(() => new { ID = 0 }).Returns(() => _warriors.Select(w => new { ID = w.ID }));

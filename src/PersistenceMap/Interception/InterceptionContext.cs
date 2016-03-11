@@ -20,7 +20,7 @@ namespace PersistenceMap.Interception
 
         public IInterceptionBuilder<T> BeforeCompile(Action<IQueryPartsContainer> container)
         {
-            var interceptor = new CompileInterceptor<T>(container);
+            var interceptor = new BasicInterceptor<T>(container);
             _interceptors.Add(interceptor);
 
             return this;
@@ -28,7 +28,7 @@ namespace PersistenceMap.Interception
 
         public IInterceptionBuilder<T> BeforeExecute(Action<CompiledQuery> query)
         {
-            var interceptor = new CompileInterceptor<T>(query);
+            var interceptor = new BasicInterceptor<T>(query);
             _interceptors.Add(interceptor);
 
             return this;

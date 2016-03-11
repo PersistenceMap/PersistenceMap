@@ -397,7 +397,7 @@ namespace PersistenceMap.UnitTest
             var query = string.Empty;
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new CompileInterceptor<Warrior>(qc => query = qc.QueryString));
+            interceptors.Add(new BasicInterceptor<Warrior>(qc => query = qc.QueryString));
             var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
 
             // Act
@@ -407,44 +407,19 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void PersistenceMap_DatabaseContext_InterceptExecuteNonQueryTest()
-        {
-            var warriors = new List<Warrior>
-            {
-                new Warrior()
-            };
-
-            var interceptors = new InterceptorCollection();
-            interceptors.Add(new ExecutionInterceptor<Warrior>(qc => { }));
-            var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
-
-            var compiledquery = new CompiledQuery
-            {
-                QueryString = "Mocked Query",
-                QueryParts = new QueryPartsContainer {
-                    new QueryPart(OperationType.None, typeof(Warrior))
-                }
-            };
-
-            // Act
-            kernel.Execute(compiledquery);
-
-            _provider.Verify(exp => exp.ExecuteNonQuery(It.IsAny<string>()), Times.Never);
-        }
-
-        [Test]
         public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteNonQueryTest()
         {
             var query = string.Empty;
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new CompileInterceptor<Warrior>(qc => query = qc.QueryString));
+            interceptors.Add(new BasicInterceptor<Warrior>(qc => query = qc.QueryString));
             var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
 
             var compiledquery = new CompiledQuery
             {
                 QueryString = "Mocked Query",
-                QueryParts = new QueryPartsContainer {
+                QueryParts = new QueryPartsContainer
+                {
                     new QueryPart(OperationType.None, typeof(Warrior))
                 }
             };

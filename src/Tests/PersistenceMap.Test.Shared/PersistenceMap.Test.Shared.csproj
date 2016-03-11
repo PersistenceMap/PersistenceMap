@@ -44,16 +44,13 @@
     <Compile Include="Interception\MockedQueryKernel.cs" />
     <Compile Include="Interception\InterceptorExtensions.cs" />
     <Compile Include="Interception\DataReaderInterceptor.cs" />
-    <Compile Include="Mock\ContextProviderExtensions.cs" />
-    <Compile Include="Mock\ConnectionProvider.cs" />
+    <Compile Include="Interception\ContextProviderExtensions.cs" />
     <Compile Include="Interception\DynamicProperties.cs" />
     <Compile Include="Interception\MockedDataReader.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="LocalDb\LocalDbManager.cs" />
     <Compile Include="MessageStackLogWriter.cs" />
-    <Compile Include="Mock\DataReader.cs" />
-    <Compile Include="Mock\DataReaderContext.cs" />
     <Compile Include="Interception\ObjectDataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableTypes\Armour.cs" />

@@ -50,7 +50,7 @@ namespace PersistenceMap
         /// <summary>
         /// Add a query to the commandstore
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">The QueryCommand</param>
         public void AddQuery(IQueryCommand command)
         {
             _queryStore.Add(command);
@@ -148,7 +148,7 @@ namespace PersistenceMap
         public IEnumerable<T> Execute<T>(CompiledQuery query)
         {
             var interception = new InterceptionHandler<T>(_interceptors, this);
-            interception.BeforeExecute(query);
+            interception.HandleBeforeExecute(query);
 
             var items = Kernel.Execute<T>(query);
 
@@ -166,11 +166,7 @@ namespace PersistenceMap
             if (parts != null && parts.AggregatePart != null)
             {
                 var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
-                interception.BeforeExecute(query);
-                if (interception.Execute(query))
-                {
-                    return;
-                }
+                interception.HandleBeforeExecute(query);
             }
 
             Kernel.Execute(query);
