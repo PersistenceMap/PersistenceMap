@@ -4,74 +4,39 @@ using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.Interception
 {
-    internal class InterceptionHandler<T>
-    {
-        private readonly IEnumerable<IInterceptor> _interceptors;
-
-        public InterceptionHandler(InterceptorCollection collection)
-        {
-            _interceptors = collection.GetInterceptors<T>();
-        }
-
-        public void BeforeExecute(CompiledQuery query)
-        {
-            foreach (var interceptor in _interceptors)
-            {
-                interceptor.ExecuteBeforeExecute(query);
-            }
-        }
-
-        public IEnumerable<T> Execute(CompiledQuery query)
-        {
-            foreach (var interceptor in _interceptors)
-            {
-                var items = interceptor.Execute<T>(query);
-                if (items != null)
-                {
-                    return items;
-                }
-            }
-
-            return null;
-        }
-    }
-
     internal class InterceptionHandler
     {
         private readonly IEnumerable<IInterceptor> _interceptors;
+        private readonly IDatabaseContext _context;
 
-        public InterceptionHandler(InterceptorCollection collection, Type type)
+        public InterceptionHandler(InterceptorCollection collection, Type type, IDatabaseContext context)
         {
             _interceptors = collection.GetInterceptors(type);
+            _context = context;
         }
 
-        public void ExecuteBeforeCompile(IQueryPartsContainer container)
+        public void HandleBeforeCompile(IQueryPartsContainer container)
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.ExecuteBeforeCompile(container);
+                interceptor.VisitBeforeCompile(container);
             }
         }
 
-        public void BeforeExecute(CompiledQuery query)
+        public void HandleBeforeExecute(CompiledQuery query)
         {
             foreach (var interceptor in _interceptors)
             {
-                interceptor.ExecuteBeforeExecute(query);
+                interceptor.VisitBeforeExecute(query, _context);
             }
         }
+    }
 
-        public bool Execute(CompiledQuery query)
+    internal class InterceptionHandler<T> : InterceptionHandler
+    {
+        public InterceptionHandler(InterceptorCollection collection, IDatabaseContext context)
+            : base(collection, typeof(T), context)
         {
-            foreach (var interceptor in _interceptors)
-            {
-                if(interceptor.Execute(query))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }

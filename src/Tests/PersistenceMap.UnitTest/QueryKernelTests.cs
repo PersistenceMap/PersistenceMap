@@ -81,38 +81,5 @@ namespace PersistenceMap.UnitTest
             Assert.IsTrue(expressionTwo);
             _provider.Verify(p => p.Execute(It.IsAny<string>()), Times.Once);
         }
-
-        [Test]
-        public void PersistenceMap_QueryKernel_InterceptExecuteTest()
-        {
-            var warriors = new List<Warrior>
-            {
-                new Warrior()
-            };
-
-            var interceptors = new InterceptorCollection();
-            interceptors.Add(new Interceptor<Warrior>().AsExecute(qc => warriors));
-            var kernel = new QueryKernel(_provider.Object, _settings.Object, interceptors);
-
-            // Act
-            var items = kernel.Execute<Warrior>(new CompiledQuery());
-
-            Assert.AreSame(items.First(), warriors.First());
-        }
-
-        [Test]
-        public void PersistenceMap_QueryKernel_InterceptBeforeExecuteTest()
-        {
-            var query = string.Empty;
-
-            var interceptors = new InterceptorCollection();
-            interceptors.Add(new Interceptor<Warrior>().BeforeExecute(qc => query = qc.QueryString));
-            var kernel = new QueryKernel(_provider.Object, _settings.Object, interceptors);
-
-            // Act
-            var items = kernel.Execute<Warrior>(new CompiledQuery { QueryString = "Mocked Query" });
-
-            Assert.AreEqual(query, "Mocked Query");
-        }
     }
 }

@@ -7,7 +7,7 @@ namespace PersistenceMap
     /// <summary>
     /// The context that is needed to connect to a database
     /// </summary>
-    public interface IDatabaseContext : IDisposable
+    public interface IDatabaseContext : IExecutionContext, IDisposable
     {
         /// <summary>
         /// Provides a connection to a specific RDBMS
@@ -35,11 +35,14 @@ namespace PersistenceMap
         /// </summary>
         IEnumerable<IQueryCommand> QueryStore { get; }
 
+        /// <summary>
+        /// Gets the collection of interceptors
+        /// </summary>
         InterceptorCollection Interceptors { get; }
 
         /// <summary>
         /// The kernel providing the execution of the query and mapping of the data
         /// </summary>
-        QueryKernel Kernel { get; }
+        QueryKernel Kernel { get; set; }
     }
 }

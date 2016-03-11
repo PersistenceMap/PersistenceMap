@@ -17,6 +17,7 @@ namespace PersistenceMap.SqlServer.Test.Mocked
             {
                 Name = ""
             }).AsExecute(cq => new List<Warrior>());
+            
             using (var context = provider.Open())
             {
                 string result = string.Empty;

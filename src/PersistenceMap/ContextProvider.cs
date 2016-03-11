@@ -25,23 +25,17 @@ namespace PersistenceMap
         /// <summary>
         /// The settings for the context
         /// </summary>
-        public Settings Settings { get; protected set; }
+        public Settings Settings { get; }
 
         /// <summary>
         /// The connection to a SqlCe database
         /// </summary>
-        public IConnectionProvider ConnectionProvider { get; protected set; }
+        public IConnectionProvider ConnectionProvider { get; set; }
 
         /// <summary>
         /// Gets the interceptorcollection
         /// </summary>
-        public InterceptorCollection Interceptors
-        {
-            get
-            {
-                return _interceptors;
-            }
-        }
+        public InterceptorCollection Interceptors =>  _interceptors;
 
         /// <summary>
         /// Add a interceptor to the executionmodel
@@ -50,17 +44,13 @@ namespace PersistenceMap
         /// <returns>A instance of a interceptor</returns>
         public IInterceptionContext<T> Interceptor<T>()
         {
-            var interceptor = new Interceptor<T>();
-            _interceptors.Add(interceptor);
-            var context = new InterceptionContext<T>(Interceptors, interceptor);
+            var context = new InterceptionContext<T>(Interceptors);
             return context;
         }
 
         public IInterceptionContext<T> Interceptor<T>(Func<T> anonymObject)
         {
-            var interceptor = new Interceptor<T>();
-            _interceptors.Add(interceptor);
-            var context = new InterceptionContext<T>(Interceptors, interceptor);
+            var context = new InterceptionContext<T>(Interceptors);
             return context;
         }
 

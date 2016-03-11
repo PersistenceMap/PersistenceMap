@@ -50,7 +50,7 @@ namespace PersistenceMap
         /// <summary>
         /// Add a query to the commandstore
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">The QueryCommand</param>
         public void AddQuery(IQueryCommand command)
         {
             _queryStore.Add(command);
@@ -92,7 +92,7 @@ namespace PersistenceMap
             {
                 if (_kernel == null)
                 {
-                    _kernel = new QueryKernel(ConnectionProvider, _settings, _interceptors);
+                    _kernel = new QueryKernel(ConnectionProvider, _settings);
                 }
 
                 return _kernel;
@@ -116,7 +116,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            return Kernel.Execute<T>(query);
+            return Execute<T>(query);
         }
 
         public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
@@ -126,7 +126,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            return Kernel.Execute<T>(query);
+            return Execute<T>(query);
         }
 
         public void Execute(string queryString)
@@ -136,7 +136,41 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
+            Execute(query);
+        }
+
+        /// <summary>
+        /// Executes the query against a RDBMS
+        /// </summary>
+        /// <typeparam name="T">The expected return type</typeparam>
+        /// <param name="query">The query that will be executed</param>
+        /// <returns>A list of T</returns>
+        public IEnumerable<T> Execute<T>(CompiledQuery query)
+        {
+            var interception = new InterceptionHandler<T>(_interceptors, this);
+            interception.HandleBeforeExecute(query);
+
+            var items = Kernel.Execute<T>(query);
+
+            // TODO: Interceptors AfterExecute
+            return items;
+        }
+
+        /// <summary>
+        /// Executes the query against a RDBMS
+        /// </summary>
+        /// <param name="query">The query that will be executed</param>
+        public void Execute(CompiledQuery query)
+        {
+            var parts = query.QueryParts;
+            if (parts != null && parts.AggregatePart != null)
+            {
+                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
+                interception.HandleBeforeExecute(query);
+            }
+
             Kernel.Execute(query);
+            // TODO: Interceptors AfterExecute
         }
 
         #endregion

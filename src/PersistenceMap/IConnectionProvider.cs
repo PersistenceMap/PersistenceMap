@@ -20,8 +20,8 @@ namespace PersistenceMap
         /// <summary>
         /// Execute the sql string to the RDBMS
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        /// <param name="query">The query string</param>
+        /// <returns>The contex containing the IDataReader</returns>
         IDataReaderContext Execute(string query);
 
         /// <summary>

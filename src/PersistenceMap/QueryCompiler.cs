@@ -164,8 +164,8 @@ namespace PersistenceMap
 
             if (container.AggregatePart != null)
             {
-                var interception = new InterceptionHandler(interceptors, container.AggregatePart.EntityType);
-                interception.ExecuteBeforeCompile(container);
+                var interception = new InterceptionHandler(interceptors, container.AggregatePart.EntityType, null);
+                interception.HandleBeforeCompile(container);
             }
 
             using (var writer = new StringWriter())

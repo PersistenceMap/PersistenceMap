@@ -4,8 +4,6 @@ PersistenceMap
 ==============
 [![Build Status](https://travis-ci.org/PersistenceMap/PersistenceMap.svg?branch=master)](https://travis-ci.org/PersistenceMap/PersistenceMap)
 [![Build status](https://ci.appveyor.com/api/projects/status/i43jveqowctku03x/branch/master?svg=true)](https://ci.appveyor.com/project/chriswalpen/persistencemap/branch/master)
-[![NuGet Version](https://img.shields.io/nuget/v/persistencemap.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap/)
-[![NuGet Version](https://img.shields.io/nuget/v/PersistenceMap.Sqlite.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
 [![Documentation Status](https://readthedocs.org/projects/persistencemap/badge/?version=latest)](http://persistencemap.readthedocs.org/en/latest/?badge=latest)
 [![Join the chat at https://gitter.im/PersistenceMap](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/PersistenceMap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -22,6 +20,9 @@ The Current Version of **PersistanceMap 0.4.0** is no longer supported! For futu
 ## Installation
 ------------------------------
 PersistenceMap can be installed from [NuGet](http://docs.nuget.org/docs/start-here/installing-nuget) through the package manager console.  
+[![NuGet Version](https://img.shields.io/nuget/v/persistencemap.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap/)
+[![NuGet Version](https://img.shields.io/nuget/v/PersistenceMap.Sqlite.svg?style=flat)](https://www.nuget.org/packages/PersistenceMap.Sqlite/)
+
 MSSql Server:  
 ```
 PM > Install-Package PersistenceMap

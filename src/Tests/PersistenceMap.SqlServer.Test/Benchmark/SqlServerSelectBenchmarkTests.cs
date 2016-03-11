@@ -1,5 +1,6 @@
 ﻿using MeasureMap;
 using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.Test.TableTypes;
 using System.Collections.Generic;
 
@@ -23,7 +24,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 .Task(() =>
                 {
                     var provider = new SqlContextProvider("Not a valid connectionstring");
-                    provider.Interceptor<Orders>().AsExecute(cq => ordersList);
+                    provider.Interceptor<Orders>().Returns(ordersList);
 
                     using (var context = provider.Open())
                     {
@@ -38,7 +39,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 .AddCondition(p => p.AverageMilliseconds < 27)
                 .RunSession();
 
-            Assert.IsTrue(profile.AverageMilliseconds < 27);
+            Assert.IsTrue(profile.AverageMilliseconds < 19);
         }
     }
 }
