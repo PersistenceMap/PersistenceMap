@@ -28,17 +28,7 @@ namespace PersistenceMap.Interception
 
             _beforeExecute.Invoke(query);
         }
-
-        public IEnumerable<TRes> VisitOnExecute<TRes>(CompiledQuery query)
-        {
-            return null;
-        }
-
-        public bool VisitOnExecute(CompiledQuery query)
-        {
-            return false;
-        }
-
+        
         public void VisitBeforeCompile(IQueryPartsContainer container)
         {
             if (_beforeCompile == null)

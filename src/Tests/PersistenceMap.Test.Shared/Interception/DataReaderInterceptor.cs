@@ -19,17 +19,7 @@ namespace PersistenceMap.Interception
 
             context.Kernel = kernel;
         }
-
-        public IEnumerable<T1> VisitOnExecute<T1>(CompiledQuery query)
-        {
-            return null;
-        }
-
-        public bool VisitOnExecute(CompiledQuery query)
-        {
-            return false;
-        }
-
+        
         public void VisitBeforeCompile(IQueryPartsContainer container)
         {
         }

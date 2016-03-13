@@ -9,11 +9,7 @@ namespace PersistenceMap.Interception
     public interface IInterceptor
     {
         void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context);
-
-        IEnumerable<T> VisitOnExecute<T>(CompiledQuery query);
-
-        bool VisitOnExecute(CompiledQuery query);
-
+        
         void VisitBeforeCompile(IQueryPartsContainer container);
     }
 
