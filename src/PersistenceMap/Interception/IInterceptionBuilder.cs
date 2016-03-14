@@ -18,7 +18,5 @@ namespace PersistenceMap.Interception
         /// <param name="query">The compiled query and the querystring</param>
         /// <returns>The interceptor</returns>
         IInterceptionBuilder<T> BeforeExecute(Action<CompiledQuery> query);
-        
-        IInterceptionBuilder<T> AsExecute(Action<CompiledQuery> query);
     }
 }

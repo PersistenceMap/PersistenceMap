@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.Interception
 {
-    public class BasicInterceptor<T> : IInterceptor, IInterceptor<T>
+    internal class BasicInterceptor<T> : IInterceptor, IInterceptor<T>
     {
         private readonly Action<CompiledQuery> _beforeExecute;
         private readonly Action<IQueryPartsContainer> _beforeCompile;

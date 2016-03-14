@@ -2,6 +2,8 @@
 using PersistenceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using PersistenceMap.Interception;
 
 namespace PersistenceMap.SqlServer.Test.Mocked
 {
@@ -12,25 +14,27 @@ namespace PersistenceMap.SqlServer.Test.Mocked
         [NUnit.Framework.Ignore("")]
         public void PersistenceMap_SqlServer_Mocked_Select_WhereConstraintWithStringCondition()
         {
+            var lst = new List<Warrior>().Select(w => new { Name = w.Name });
+
             var provider = new SqlContextProvider("connection");
             provider.Interceptor(() => new
             {
-                Name = ""
-            }).AsExecute(cq => new List<Warrior>());
-            
+                Name = string.Empty
+            }).Returns(lst);
+
             using (var context = provider.Open())
             {
                 string result = string.Empty;
                 provider.Interceptor(() => new
                 {
-                    Name = ""
+                    Name = string.Empty
                 }).BeforeExecute(cq => result = cq.QueryString);
 
                 context.From<Warrior>()
                     .Where(w => "DATEPART(YYYY,Von) " == DateTime.Now.Month.ToString())
-                    .For(()=> new
+                    .For(() => new
                     {
-                        Name = ""
+                        Name = string.Empty
                     })
                     .Select();
 
@@ -38,7 +42,7 @@ namespace PersistenceMap.SqlServer.Test.Mocked
                     .Where(w => SqlFunctions.DatePart("YYYY", w.Date) == DateTime.Now.Month)
                     .For(() => new
                     {
-                        Name = ""
+                        Name = string.Empty
                     })
                     .Select();
 

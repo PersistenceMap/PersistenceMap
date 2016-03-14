@@ -1,14 +1,13 @@
 ﻿using Moq;
 using NUnit.Framework;
+using PersistenceMap.Diagnostics;
+using PersistenceMap.Interception;
 using PersistenceMap.QueryBuilder;
 using PersistenceMap.QueryParts;
-using PersistenceMap.Diagnostics;
 using PersistenceMap.UnitTest.TableTypes;
 using System;
 using System.Data;
 using System.Linq;
-using PersistenceMap.Interception;
-using System.Collections.Generic;
 
 namespace PersistenceMap.UnitTest
 {
@@ -394,25 +393,26 @@ namespace PersistenceMap.UnitTest
         [Test]
         public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteTest()
         {
-            var query = string.Empty;
+            var interceptor = new Mock<IInterceptor<Warrior>>();
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new BasicInterceptor<Warrior>(qc => query = qc.QueryString));
+            interceptors.Add(interceptor.Object);
             var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
+            var query = new CompiledQuery { QueryString = "Mocked Query" };
 
             // Act
-            var items = kernel.Execute<Warrior>(new CompiledQuery { QueryString = "Mocked Query" });
-
-            Assert.AreEqual(query, "Mocked Query");
+            kernel.Execute<Warrior>(query);
+            
+            interceptor.Verify(exp => exp.VisitBeforeExecute(It.Is<CompiledQuery>(q => q == query), It.IsAny<IDatabaseContext>()), Times.Once);
         }
 
         [Test]
         public void PersistenceMap_DatabaseContext_InterceptBeforeExecuteNonQueryTest()
         {
-            var query = string.Empty;
+            var interceptor = new Mock<IInterceptor<Warrior>>();
 
             var interceptors = new InterceptorCollection();
-            interceptors.Add(new BasicInterceptor<Warrior>(qc => query = qc.QueryString));
+            interceptors.Add(interceptor.Object);
             var kernel = new DatabaseContext(_provider.Object, _settings.Object, interceptors);
 
             var compiledquery = new CompiledQuery
@@ -427,7 +427,7 @@ namespace PersistenceMap.UnitTest
             // Act
             kernel.Execute(compiledquery);
 
-            Assert.AreEqual(query, "Mocked Query");
+            interceptor.Verify(exp => exp.VisitBeforeExecute(It.Is<CompiledQuery>(q => q == compiledquery), It.IsAny<IDatabaseContext>()), Times.Once);
         }
     }
 }
