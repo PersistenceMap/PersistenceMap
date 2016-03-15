@@ -71,6 +71,9 @@
     <Compile Include="Factories\ConnectionStringBuilderTests.cs" />
     <Compile Include="Factories\FieldHelperTests.cs" />
     <Compile Include="Factories\TypeDefinitionFactoryTests.cs" />
+    <Compile Include="Interception\InterceptionContextTests.cs" />
+    <Compile Include="Interception\InterceptionHandlerTests.cs" />
+    <Compile Include="Interception\InterceptorCollectionTests.cs" />
     <Compile Include="InterceptorTests.cs" />
     <Compile Include="MockedContextProvider.cs" />
     <Compile Include="ObjectMapperTests.cs" />

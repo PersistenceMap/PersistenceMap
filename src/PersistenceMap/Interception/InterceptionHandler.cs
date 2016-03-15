@@ -4,7 +4,7 @@ using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap.Interception
 {
-    internal class InterceptionHandler
+    public class InterceptionHandler
     {
         private readonly IEnumerable<IInterceptor> _interceptors;
         private readonly IDatabaseContext _context;
@@ -32,7 +32,7 @@ namespace PersistenceMap.Interception
         }
     }
 
-    internal class InterceptionHandler<T> : InterceptionHandler
+    public class InterceptionHandler<T> : InterceptionHandler
     {
         public InterceptionHandler(InterceptorCollection collection, IDatabaseContext context)
             : base(collection, typeof(T), context)

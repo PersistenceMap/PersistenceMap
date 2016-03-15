@@ -23,30 +23,7 @@ namespace PersistenceMap.Interception
         public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
         {
         }
-
-        public IEnumerable<TRes> VisitOnExecute<TRes>(CompiledQuery query)
-        {
-            if (_execute == null)
-            {
-                return null;
-            }
-
-            // the problem is that this is not the same T as in the Class!!!!
-            return _execute.Invoke(query).Cast<TRes>();
-        }
-
-        public bool VisitOnExecute(CompiledQuery query)
-        {
-            if (_executeNonQuery == null)
-            {
-                return false;
-            }
-
-            _executeNonQuery(query);
-
-            return true;
-        }
-
+        
         public void VisitBeforeCompile(IQueryPartsContainer container)
         {
         }

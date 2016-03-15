@@ -33,13 +33,5 @@ namespace PersistenceMap.Interception
 
             return this;
         }
-        
-        public IInterceptionBuilder<T> AsExecute(Action<CompiledQuery> query)
-        {
-            var interceptor = new ExecutionInterceptor<T>(query);
-            _interceptors.Add(interceptor);
-
-            return this;
-        }
     }
 }

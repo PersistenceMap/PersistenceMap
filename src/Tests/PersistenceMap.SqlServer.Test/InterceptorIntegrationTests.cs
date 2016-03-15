@@ -68,7 +68,7 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = BuildContext();
             provider.Interceptors.Remove<Warrior>();
-            provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString).AsExecute(a => { });
+            provider.Interceptor<Warrior>().BeforeExecute(q => query = q.QueryString);
             provider.Interceptor<Warrior>().BeforeCompile(c => c.Parts.First(p => p.OperationType == OperationType.Delete).Add(where));
             using (var context = provider.Open())
             {
