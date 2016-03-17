@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Moq;
 using NUnit.Framework;
 using PersistenceMap.Interception;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PersistenceMap.SqlServer.UnitTest.Procedure
 {
@@ -12,7 +11,6 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
     public class InterceptionTests
     {
         [Test]
-        [NUnit.Framework.Ignore("not finished")]
         public void PersistenceMap_SqlServer_Procedure_Interception_Mock_Test()
         {
             var lst = new List<SalesByYear>
@@ -24,8 +22,14 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
                 }
             };
 
-            var provider = new SqlContextProvider("Empty connection string");
-            provider.Interceptor<SalesByYear>().Returns(() => lst);
+            var dataReader = new MockedDataReader<SalesByYear>(lst);
+
+            var connectionProvider = new Mock<IConnectionProvider>();
+            connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
+            connectionProvider.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(dataReader));
+
+            var provider = new SqlContextProvider(connectionProvider.Object);
+            //ovider.Interceptor<SalesByYear>().Returns(() => lst);
 
             using (var context = provider.Open())
             {
