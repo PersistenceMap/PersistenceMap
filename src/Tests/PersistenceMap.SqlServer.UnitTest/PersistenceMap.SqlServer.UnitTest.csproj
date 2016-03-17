@@ -67,6 +67,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Procedure\InterceptionTests.cs" />
+    <Compile Include="Procedure\ProcedureTests.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilderTests.cs" />
     <Compile Include="QueryCompilerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -86,10 +88,12 @@
       <Project>{4160375c-5e51-484f-b07b-85a5eb9169f8}</Project>
       <Name>PersistenceMap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PersistenceMap.Test.Shared\PersistenceMap.Test.Shared.csproj">
+      <Project>{2d5d803e-de51-471b-b650-8e3b6272d89f}</Project>
+      <Name>PersistenceMap.Test.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Procedure\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

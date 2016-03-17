@@ -105,39 +105,7 @@ namespace PersistenceMap
 
         #endregion
 
-        #region QueryEpressions
-
-        #region Execute
-
-        public IEnumerable<T> Execute<T>(string queryString)
-        {
-            var query = new CompiledQuery
-            {
-                QueryString = queryString
-            };
-
-            return Execute<T>(query);
-        }
-
-        public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
-        {
-            var query = new CompiledQuery
-            {
-                QueryString = queryString
-            };
-
-            return Execute<T>(query);
-        }
-
-        public void Execute(string queryString)
-        {
-            var query = new CompiledQuery
-            {
-                QueryString = queryString
-            };
-
-            Execute(query);
-        }
+        #region IExecutionContext
 
         /// <summary>
         /// Executes the query against a RDBMS
@@ -171,6 +139,59 @@ namespace PersistenceMap
 
             Kernel.Execute(query);
             // TODO: Interceptors AfterExecute
+        }
+
+        ///// <summary>
+        ///// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
+        ///// </summary>
+        ///// <param name="query">The CompiledQuery containing the expression</param>
+        ///// <param name="expressions">All contexts that have to be parsed</param>
+        //public void Execute(CompiledQuery query, params Action<IDataReaderContext>[] expressions)
+        //{
+        //    var parts = query.QueryParts;
+        //    if (parts != null && parts.AggregatePart != null)
+        //    {
+        //        var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
+        //        interception.HandleBeforeExecute(query);
+        //    }
+
+        //    Kernel.Execute(query, expressions);
+        //}
+
+        #endregion
+
+        #region QueryEpressions
+
+        #region Execute
+
+        public IEnumerable<T> Execute<T>(string queryString)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            return Execute<T>(query);
+        }
+
+        public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            return Execute<T>(query);
+        }
+
+        public void Execute(string queryString)
+        {
+            var query = new CompiledQuery
+            {
+                QueryString = queryString
+            };
+
+            Execute(query);
         }
 
         #endregion

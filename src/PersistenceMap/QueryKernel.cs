@@ -124,7 +124,7 @@ namespace PersistenceMap
         /// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
         /// </summary>
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
-        /// <param name="expressions"></param>
+        /// <param name="expressions">All contexts that have to be parsed</param>
         public virtual void Execute(CompiledQuery compiledQuery, params Action<IDataReaderContext>[] expressions)
         {
             // TODO: Add more information to log like time and duration
