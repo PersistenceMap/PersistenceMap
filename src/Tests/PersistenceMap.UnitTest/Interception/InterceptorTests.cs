@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using PersistenceMap.Interception;
 using PersistenceMap.QueryBuilder;
 
-namespace PersistenceMap.UnitTest
+namespace PersistenceMap.UnitTest.Interception
 {
     [TestFixture]
     public class InterceptorTests
     {
         [Test]
-        public void Interceptor_AddInterceptorTest()
+        public void PersistenceMap_Interception_Interceptor_AddInterceptorTest()
         {
             var collection = new InterceptorCollection();
             var orig = new TestInterceptor<Order>();
@@ -22,7 +21,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void Interceptor_AddInterceptorTwiceTest()
+        public void PersistenceMap_Interception_Interceptor_AddInterceptorTwiceTest()
         {
             var collection = new InterceptorCollection();
             var orig = new TestInterceptor<Order>();
@@ -33,7 +32,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void Interceptor_GetInterceptorOfTTest()
+        public void PersistenceMap_Interception_Interceptor_GetInterceptorOfTTest()
         {
             var collection = new InterceptorCollection();
             var first = collection.Add(new TestInterceptor<Order>());
@@ -46,7 +45,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void Interceptor_GetInterceptorsOfTTest()
+        public void PersistenceMap_Interception_Interceptor_GetInterceptorsOfTTest()
         {
             var collection = new InterceptorCollection();
             var first = collection.Add(new TestInterceptor<Order>());
@@ -60,7 +59,7 @@ namespace PersistenceMap.UnitTest
         }
 
         [Test]
-        public void Interceptor_GetInterceptorsByTypeTest()
+        public void PersistenceMap_Interception_Interceptor_GetInterceptorsByTypeTest()
         {
             var collection = new InterceptorCollection();
             var first = collection.Add(new TestInterceptor<Order>());

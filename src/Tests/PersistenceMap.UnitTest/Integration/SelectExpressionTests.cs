@@ -5,8 +5,9 @@ using PersistenceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PersistenceMap.Test;
 
-namespace PersistenceMap.Test.Expression
+namespace PersistenceMap.UnitTest.Expression
 {
     [TestFixture]
     public class SelectExpressionTests
