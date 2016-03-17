@@ -28,8 +28,8 @@ namespace PersistenceMap
         /// <summary>
         /// Extracts the database name from the connectionstring
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
+        /// <param name="connectionString">The connectionstring</param>
+        /// <returns>The database name</returns>
         public string GetDatabase(string connectionString)
         {
             foreach (var pattern in CatalogPatterns)
@@ -38,19 +38,19 @@ namespace PersistenceMap
                 var match = regex.Match(connectionString);
                 if (match.Success)
                 {
-                    return match.Value.Replace(pattern, "").Replace(";", "").Replace("=", "").Trim();
+                    return match.Value.Replace(pattern, string.Empty).Replace(";", string.Empty).Replace("=", string.Empty).Trim();
                 }
             }
 
-            return null;
+            return string.Empty;
         }
 
         /// <summary>
         /// Appends the database to a connectionstring
         /// </summary>
-        /// <param name="database"></param>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
+        /// <param name="database">The database name</param>
+        /// <param name="connectionString">The connectionstring</param>
+        /// <returns>The new connectionstring</returns>
         public string SetDatabase(string database, string connectionString)
         {
             // set new database name
@@ -78,6 +78,11 @@ namespace PersistenceMap
             return connectionString;
         }
 
+        /// <summary>
+        /// Formats the connectionstring and removes AttachDBFileName attribute when the database is the Master database
+        /// </summary>
+        /// <param name="connectionString">The connectionstring</param>
+        /// <returns>The new connectionstring</returns>
         public string FormatConnectionString(string connectionString)
         {
             if (GetDatabase(connectionString).Equals("master", StringComparison.InvariantCultureIgnoreCase))

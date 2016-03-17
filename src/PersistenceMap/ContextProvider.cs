@@ -18,6 +18,11 @@ namespace PersistenceMap
         /// <param name="connectionProvider">The connectionprovider for the desired SQL Provider</param>
         public ContextProvider(IConnectionProvider connectionProvider)
         {
+            if (connectionProvider.QueryCompiler == null)
+            {
+                throw new InvalidOperationException("The ConnectionProvider does not contain a QueryCompiler.");
+            }
+
             ConnectionProvider = connectionProvider;
             Settings = new Settings();
         }
