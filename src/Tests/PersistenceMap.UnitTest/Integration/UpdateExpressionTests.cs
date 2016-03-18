@@ -3,8 +3,9 @@ using NUnit.Framework;
 using PersistenceMap.Interception;
 using PersistenceMap.Test.TableTypes;
 using System;
+using PersistenceMap.Test;
 
-namespace PersistenceMap.Test.Expression
+namespace PersistenceMap.UnitTest.Expression
 {
     [TestFixture]
     public class UpdateExpressionTests

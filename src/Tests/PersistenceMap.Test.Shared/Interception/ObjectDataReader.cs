@@ -188,7 +188,9 @@ namespace PersistenceMap.Interception
 
         public virtual bool NextResult()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            return false;
         }
 
         public virtual int Depth

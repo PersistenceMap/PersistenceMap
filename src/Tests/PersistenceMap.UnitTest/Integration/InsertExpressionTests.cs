@@ -1,9 +1,10 @@
 ﻿using Moq;
 using NUnit.Framework;
 using PersistenceMap.Interception;
+using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
 
-namespace PersistenceMap.Test.Expression
+namespace PersistenceMap.UnitTest.Expression
 {
     [TestFixture]
     public class InsertExpressionTests

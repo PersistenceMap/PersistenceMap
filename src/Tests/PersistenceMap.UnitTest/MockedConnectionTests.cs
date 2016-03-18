@@ -4,7 +4,7 @@ using PersistenceMap.Interception;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PersistenceMap.Test
+namespace PersistenceMap.UnitTest
 {
     [TestFixture]
     public class MockedConnectionTests
@@ -18,6 +18,7 @@ namespace PersistenceMap.Test
                 new Person { Name = "2.1", Firstname = "2.2" }
             };
 
+            // use a datareader that retruns the values from a collection
             var dataReader = new MockedDataReader<Person>(personList);
 
             var connectionProvider = new Mock<IConnectionProvider>();
@@ -51,6 +52,7 @@ namespace PersistenceMap.Test
 
             var provider = new ContextProvider(connectionProvider.Object);
 
+            // Mock the return values
             provider.Interceptor<Person>().Returns(personList);
             provider.Interceptor<Address>().Returns(addresses);
 

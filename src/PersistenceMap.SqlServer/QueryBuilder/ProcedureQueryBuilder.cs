@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using PersistenceMap.Interception;
 
 namespace PersistenceMap.QueryBuilder
 {
@@ -327,6 +328,7 @@ namespace PersistenceMap.QueryBuilder
             //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
             // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
             Context.Kernel.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
+            //Context.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
         }
         
         /// <summary>
@@ -355,15 +357,18 @@ namespace PersistenceMap.QueryBuilder
 
                 field.MemberName = map.FieldAlias;
             }
-
-
+            
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
+
+            var interception = new InterceptionHandler<T>(Context.Interceptors, Context);
+            interception.HandleBeforeExecute(query);
 
             IEnumerable<T> values = null;
 
             var mapper = new ObjectMapper(Context.Settings);
             Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            //Context.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
             return values;
         }

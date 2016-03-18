@@ -92,12 +92,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="MockedConnectionTests.cs" />
-    <Compile Include="Expression\ExecuteExpressionTests.cs" />
-    <Compile Include="Expression\InsertExpressionTests.cs" />
-    <Compile Include="Expression\SelectExpressionTests.cs" />
-    <Compile Include="Expression\UpdateExpressionTests.cs" />
-    <Compile Include="Expression\DeleteExpressionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

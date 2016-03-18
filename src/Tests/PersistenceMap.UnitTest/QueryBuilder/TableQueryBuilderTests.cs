@@ -13,9 +13,10 @@ namespace PersistenceMap.UnitTest.QueryBuilder
         [Test]
         public void PersistenceMap_TableQueryBuilder_Create()
         {
-            var provider = new Mock<MockedContextProvider>();
-            var container = new QueryPartsContainer() as IQueryPartsContainer;
-            var builder = new TableQueryBuilder<Warrior, MockedContextProvider>(provider.Object, container);
+            IQueryPartsContainer container = new QueryPartsContainer();
+
+            var context = new Mock<IDatabaseContext>();
+            var builder = new TableQueryBuilder<Warrior, IDatabaseContext>(context.Object, container);
 
             // Act
             builder.Create();
@@ -31,11 +32,11 @@ namespace PersistenceMap.UnitTest.QueryBuilder
         [Test]
         public void PersistenceMap_TableQueryBuilder_CreateWithNonEmptyContainer()
         {
-            var provider = new Mock<MockedContextProvider>();
-            var container = new QueryPartsContainer() as IQueryPartsContainer;
+            IQueryPartsContainer container = new QueryPartsContainer();
             container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "Name"));
 
-            var builder = new TableQueryBuilder<Warrior, MockedContextProvider>(provider.Object, container);
+            var context = new Mock<IDatabaseContext>();
+            var builder = new TableQueryBuilder<Warrior, IDatabaseContext>(context.Object, container);
 
             // Act
             builder.Create();
@@ -51,12 +52,12 @@ namespace PersistenceMap.UnitTest.QueryBuilder
         [Test]
         public void PersistenceMap_TableQueryBuilder_CreateWithNonEmptyContainerExtraField()
         {
-            var provider = new Mock<MockedContextProvider>();
-            var container = new QueryPartsContainer() as IQueryPartsContainer;
+            IQueryPartsContainer container = new QueryPartsContainer();
             container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "Name"));
             container.Add(new DelegateQueryPart(OperationType.Column, () => string.Empty, typeof(Warrior), "AditionalField"));
 
-            var builder = new TableQueryBuilder<Warrior, MockedContextProvider>(provider.Object, container);
+            var context = new Mock<IDatabaseContext>();
+            var builder = new TableQueryBuilder<Warrior, IDatabaseContext>(context.Object, container);
 
             // Act
             builder.Create();
