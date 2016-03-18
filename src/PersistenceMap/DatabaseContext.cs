@@ -125,10 +125,10 @@ namespace PersistenceMap
         }
 
         /// <summary>
-        /// Executes the query against a RDBMS
+        /// Executes the query against a RDBMS without retrieving a result
         /// </summary>
         /// <param name="query">The query that will be executed</param>
-        public void Execute(CompiledQuery query)
+        public void ExecuteNonQuery(CompiledQuery query)
         {
             var parts = query.QueryParts;
             if (parts != null && parts.AggregatePart != null)
@@ -137,7 +137,7 @@ namespace PersistenceMap
                 interception.HandleBeforeExecute(query);
             }
 
-            Kernel.Execute(query);
+            Kernel.ExecuteNonQuery(query);
             // TODO: Interceptors AfterExecute
         }
 
@@ -191,7 +191,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            Execute(query);
+            ExecuteNonQuery(query);
         }
 
         #endregion

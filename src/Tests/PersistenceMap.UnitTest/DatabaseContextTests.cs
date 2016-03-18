@@ -425,7 +425,7 @@ namespace PersistenceMap.UnitTest
             };
 
             // Act
-            kernel.Execute(compiledquery);
+            kernel.ExecuteNonQuery(compiledquery);
 
             interceptor.Verify(exp => exp.VisitBeforeExecute(It.Is<CompiledQuery>(q => q == compiledquery), It.IsAny<IDatabaseContext>()), Times.Once);
         }

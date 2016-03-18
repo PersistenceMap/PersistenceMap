@@ -85,10 +85,10 @@ namespace PersistenceMap
         }
 
         /// <summary>
-        /// Executes a CompiledQuery against the RDBMS
+        /// Executes the query against a RDBMS without retrieving a result
         /// </summary>
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
-        public virtual void Execute(CompiledQuery compiledQuery)
+        public virtual void ExecuteNonQuery(CompiledQuery compiledQuery)
         {
             // TODO: Add more information to log like time and duration
             Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);

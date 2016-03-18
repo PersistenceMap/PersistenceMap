@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace PersistenceMap
 {
+    /// <summary>
+    /// A context that can execute queries
+    /// </summary>
     public interface IExecutionContext
     {
         /// <summary>
@@ -15,10 +18,10 @@ namespace PersistenceMap
         IEnumerable<T> Execute<T>(CompiledQuery query);
 
         /// <summary>
-        /// Executes the query against a RDBMS
+        /// Executes the query against a RDBMS without retrieving a result
         /// </summary>
         /// <param name="query">The query that will be executed</param>
-        void Execute(CompiledQuery query);
+        void ExecuteNonQuery(CompiledQuery query);
 
         ///// <summary>
         ///// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS

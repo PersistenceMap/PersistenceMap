@@ -50,7 +50,7 @@ namespace PersistenceMap.UnitTest
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
             // Act
-            kernel.Execute(new CompiledQuery());
+            kernel.ExecuteNonQuery(new CompiledQuery());
 
             _provider.Verify(p => p.Execute(It.IsAny<string>()), Times.Never);
             _provider.Verify(p => p.ExecuteNonQuery(It.IsAny<string>()), Times.Once);
