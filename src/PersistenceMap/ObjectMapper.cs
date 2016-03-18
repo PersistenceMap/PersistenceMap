@@ -125,6 +125,33 @@ namespace PersistenceMap
         }
 
         /// <summary>
+        /// Reads the Reader result and mapps the result to a ReaderResult
+        /// </summary>
+        /// <param name="reader">The datareader</param>
+        /// <returns>A ReaderResult containing all returned data</returns>
+        public ReaderResult Map(IDataReader reader)
+        {
+            var result = new ReaderResult();
+
+            while (reader.Read())
+            {
+                var row = new ResultRow();
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    var header = reader.GetName(i);
+                    var value = GetValue(reader, i);
+
+                    row.Add(header, value);
+                }
+
+                result.Add(row);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Maps the result to a dictionary containing the key/value
         /// </summary>
         /// <param name="reader">The datareader with the result</param>
@@ -246,7 +273,7 @@ namespace PersistenceMap
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
                                 {
-                                    sb.AppendLine("Fields that will be ignored:");
+                                    sb.AppendLine(value: "Fields that will be ignored:");
                                     foreach (var tmpDef in fieldDefinitions)
                                     {
                                         if (reader.GetIndex(tmpDef.FieldName) < 0)
@@ -388,6 +415,24 @@ namespace PersistenceMap
             return convertedValue;
         }
 
+        private object GetValue(IDataReader reader, int columnIndex)
+        {
+            if (columnIndex < 0)
+            {
+                return null;
+            }
+
+            var dbValue = reader.GetValue(columnIndex);
+
+            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue);
+            if (convertedValue == null)
+            {
+                convertedValue = dbValue;
+            }
+            
+            return convertedValue;
+        }
+
         private bool HandledDbNullValue(IDataReader reader, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
             if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NotFound)
@@ -523,6 +568,16 @@ namespace PersistenceMap
             }
 
             return null;
+        }
+
+        private object ConvertDatabaseValueToTypeValue(object value)
+        {
+            if (value == null || value is DBNull)
+            {
+                return null;
+            }
+
+            return value;
         }
 
         private static ulong ConvertToULong(byte[] bytes)

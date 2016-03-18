@@ -121,6 +121,29 @@ namespace PersistenceMap
         }
 
         /// <summary>
+        /// Executes the query against a RDBMS and parses all values to a Colleciton of ReaderResult
+        /// </summary>
+        /// <param name="query">The query to execute</param>
+        /// <returns>All results as a List of ReaderResult</returns>
+        public IEnumerable<ReaderResult> Execute(CompiledQuery query)
+        {
+            var results = new List<ReaderResult>();
+
+            using (var context = ConnectionProvider.Execute(query.QueryString))
+            {
+                var reader = context.DataReader;
+                
+                do
+                {
+                    var result = _mapper.Map(reader);
+                    results.Add(result);
+                } while (reader.NextResult());
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
         /// </summary>
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
