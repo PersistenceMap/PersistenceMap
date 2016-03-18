@@ -89,7 +89,7 @@ namespace PersistenceMap.QueryBuilder
                 return;
             }
 
-            foreach(var param in QueryParts.Callbacks)
+            foreach (var param in QueryParts.Callbacks)
             {
                 object value = null;
                 if (!mapping.TryGetValue(param.Id, out value))
@@ -328,11 +328,12 @@ namespace PersistenceMap.QueryBuilder
             // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
             Context.Kernel.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
         }
-
+        
         /// <summary>
         /// Execute the Procedure
         /// </summary>
-        /// <returns></returns>
+        /// <typeparam name="T">The type that the data is mapped to</typeparam>
+        /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>()
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
@@ -342,11 +343,15 @@ namespace PersistenceMap.QueryBuilder
             {
                 var map = p as IFieldPart;
                 if (map == null)
+                {
                     continue;
+                }
 
                 var field = fields.FirstOrDefault(f => f.FieldName == map.Field);
                 if (field == null)
+                {
                     continue;
+                }
 
                 field.MemberName = map.FieldAlias;
             }

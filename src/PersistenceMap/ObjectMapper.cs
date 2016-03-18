@@ -89,6 +89,7 @@ namespace PersistenceMap
         /// </summary>
         /// <typeparam name="T">The type to map to</typeparam>
         /// <param name="reader">The datareader with the result</param>
+        /// <param name="compiledQuery">The querytree</param>
         /// <returns></returns>
         public IEnumerable<T> Map<T>(IDataReader reader, CompiledQuery compiledQuery)
         {
@@ -192,7 +193,7 @@ namespace PersistenceMap
             catch (InvalidConverterException invalidCast)
             {
                 Logger.Write(invalidCast.Message, GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-                throw invalidCast;
+                throw;
             }
             catch (InvalidMapException)
             {
@@ -270,7 +271,7 @@ namespace PersistenceMap
             catch (InvalidConverterException invalidCast)
             {
                 Logger.Write(invalidCast.Message, GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-                throw invalidCast;
+                throw;
             }
             catch (Exception ex)
             {
@@ -278,7 +279,7 @@ namespace PersistenceMap
 
                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
                 {
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -390,7 +391,9 @@ namespace PersistenceMap
         private bool HandledDbNullValue(IDataReader reader, FieldDefinition fieldDefinition, int columnIndex, object instance)
         {
             if (fieldDefinition == null || fieldDefinition.SetValueFunction == null || columnIndex == NotFound)
+            {
                 return true;
+            }
 
             if (reader.IsDBNull(columnIndex))
             {
@@ -488,7 +491,7 @@ namespace PersistenceMap
             }
             else
             {
-                if (value.GetType() == typeof(int))
+                if (value is int)
                 {
                     // member is an enum
                     if (Enum.IsDefined(memberType, (int)value))
@@ -496,7 +499,7 @@ namespace PersistenceMap
                         return Enum.ToObject(memberType, (int)value);
                     }
                 }
-                else if (value.GetType() == typeof(string))
+                else if (value is string)
                 {
                     return Enum.Parse(memberType, (string)value);
                 }
@@ -507,8 +510,10 @@ namespace PersistenceMap
                 if (strValue != null)
                 {
                     bool boolVal;
-                    if (Boolean.TryParse(strValue, out boolVal))
+                    if (bool.TryParse(strValue, out boolVal))
+                    {
                         return boolVal;
+                    }
                 }
 
                 if (value is int)
