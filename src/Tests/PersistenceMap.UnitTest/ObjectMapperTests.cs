@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using PersistenceMap.QueryBuilder;
+using PersistenceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -335,9 +336,125 @@ namespace PersistenceMap.UnitTest
             Assert.That(mapped.Any(), Is.False);
         }
 
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ReaderResult_Type()
+        {
+            var result = new ReaderResult
+            {
+                new ResultRow ()
+                .Add("ID", 1)
+                .Add("Name", "Igor"),
+                new ResultRow ()
+                .Add("ID", 2)
+                .Add("Name", "Sanjo")
+                .Add("Race", "Dwarf"),
+            };
+
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
+            
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = mapper.Map<Warrior>(result, fields);
+
+            Assert.That(mapped.Count() == 2);
+
+            var row = mapped.First();
+            Assert.AreEqual(row.ID, result.First()["ID"]);
+            Assert.AreEqual(row.Name, result.First()["Name"]);
+
+            row = mapped.Last();
+            Assert.AreEqual(row.ID, result.Last()["ID"]);
+            Assert.AreEqual(row.Name, result.Last()["Name"]);
+            Assert.AreEqual(row.Race, result.Last()["Race"]);
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ReaderResult_AnonymousType()
+        {
+            var result = new ReaderResult
+            {
+                new ResultRow ()
+                .Add("ID", 1)
+                .Add("Name", "Igor")
+                .Add("Race", null),
+                new ResultRow ()
+                .Add("ID", 2)
+                .Add("Name", "Sanjo")
+                .Add("Race", "Dwarf"),
+            };
+
+            var obj = new
+            {
+                ID = 0,
+                Name = string.Empty,
+                Race = string.Empty
+            };
+
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions(obj);
+
+            var mapper = new ObjectMapper(new Settings());
+            var mapped = AnonymMapper(obj, mapper, result, fields);
+
+            Assert.That(mapped.Count() == 2);
+
+            var row = mapped.First();
+            Assert.AreEqual(row.ID, result.First()["ID"]);
+            Assert.AreEqual(row.Name, result.First()["Name"]);
+            Assert.That(row.Race, Is.Null);
+
+            row = mapped.Last();
+            Assert.AreEqual(row.ID, result.Last()["ID"]);
+            Assert.AreEqual(row.Name, result.Last()["Name"]);
+            Assert.AreEqual(row.Race, result.Last()["Race"]);
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ReaderResult_Type_RestrictiveMode()
+        {
+            var result = new ReaderResult
+            {
+                new ResultRow ()
+                .Add("ID", 1)
+                .Add("Name", "Igor"),
+                new ResultRow ()
+                .Add("ID", 2)
+                .Add("Name", "Sanjo")
+                .Add("Race", "Dwarf"),
+            };
+
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
+
+            var mapper = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
+            Assert.Throws<InvalidMapException>(() => mapper.Map<Warrior>(result, fields));
+        }
+
+        [Test]
+        public void PersistenceMap_ObjectMapper_Map_ReaderResult_Type_WrongMappingType()
+        {
+            var result = new ReaderResult
+            {
+                new ResultRow ()
+                .Add("ID", 1)
+                .Add("Name", 10),
+                new ResultRow ()
+                .Add("ID", 2)
+                .Add("Name", "Sanjo")
+                .Add("Race", "Dwarf"),
+            };
+
+            var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
+
+            var mapper = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
+            Assert.Throws<InvalidConverterException>(() => mapper.Map<Warrior>(result, fields));
+        }
+
         private IEnumerable<T> AnonymMapper<T>(T obj, ObjectMapper mapper, FieldDefinition[] fields)
         {
             return mapper.Map<T>(_dataReader.Object, fields);
+        }
+
+        private IEnumerable<T> AnonymMapper<T>(T obj, ObjectMapper mapper, ReaderResult result, IEnumerable<FieldDefinition> fields)
+        {
+            return mapper.Map<T>(result, fields);
         }
 
         internal class OneTwoThree

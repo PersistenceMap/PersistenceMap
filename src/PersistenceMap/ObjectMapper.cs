@@ -84,6 +84,46 @@ namespace PersistenceMap
             return rows;
         }
 
+        public IEnumerable<T> Map<T>(ReaderResult readerResult, IEnumerable<FieldDefinition> fields)
+        {
+            var rows = new List<T>();
+            if (readerResult == null)
+            {
+                return rows;
+            }
+            
+            if (typeof(T).IsAnonymousType())
+            {
+                // Anonymous objects have a constructor that accepts all arguments in the same order as defined
+                // To populate a anonymous object the data has to be passed in the same order as defined to the constructor
+                foreach (var result in readerResult)
+                {
+                    // TODO: When the readerresult does not contain all values needed an exception is thrown
+                    // TODO: Create a list of all values according to the definition of the fields
+                    // TODO: In restrictive mode throw an exception
+                    // TODO: pass the list of values to the creator
+
+                    // create a list of the data objects that can be injected to the instance generator
+                    var args = result.Values;
+
+                    // create a instance an inject the data
+                    var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
+                    rows.Add(row);
+                }
+            }
+            else
+            {
+                foreach (var result in readerResult)
+                {
+                    // Create a instance of T and inject all the data
+                    var row = ReadData<T>(result, fields);
+                    rows.Add(row);
+                }
+            }
+
+            return rows;
+        }
+        
         /// <summary>
         /// Maps the resultset to a POCO
         /// </summary>
@@ -278,7 +318,7 @@ namespace PersistenceMap
                                     {
                                         if (reader.GetIndex(tmpDef.FieldName) < 0)
                                         {
-                                            sb.AppendLine($"{tmpDef.EntityType}.{tmpDef.MemberName}");
+                                            sb.AppendLine($"{tmpDef.EntityType.Name}.{tmpDef.MemberName}");
                                         }
                                     }
 
@@ -313,16 +353,27 @@ namespace PersistenceMap
             return instance;
         }
 
+        private T ReadData<T>(ResultRow result, IEnumerable<FieldDefinition> fields)
+        {
+            var instance = InstanceFactory.CreateInstance<T>();
+            foreach (var field in fields)
+            {
+                SetValue(result, field, instance);
+            }
+
+            return instance;
+        }
+
         /// <summary>
         /// Populates row fields during re-hydration of results.
         /// </summary>
         /// <param name="reader">The datareader</param>
-        /// <param name="fieldDefinition">The definition of the field to populate</param>
+        /// <param name="field">The definition of the field to populate</param>
         /// <param name="columnIndex">The index of the value in the datareader</param>
         /// <param name="instance">The object to populate</param>
-        private void SetValue(IDataReader reader, FieldDefinition fieldDefinition, int columnIndex, object instance)
+        private void SetValue(IDataReader reader, FieldDefinition field, int columnIndex, object instance)
         {
-            if (HandledDbNullValue(reader, fieldDefinition, columnIndex, instance))
+            if (HandledDbNullValue(reader, field, columnIndex, instance))
             {
                 return;
             }
@@ -331,47 +382,95 @@ namespace PersistenceMap
 
             // try to convert the value to the value that the destination type has.
             // if the destination type is named same as the source (table) type it can be that the types don't match
-            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, fieldDefinition.MemberType);
+            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.MemberType);
 
             // try to convert to the source type inside the original table.
             // this type is not necessarily the same as the destination typ if a converter is used
-            if (convertedValue == null && fieldDefinition.FieldType != fieldDefinition.MemberType)
+            if (convertedValue == null && field.FieldType != field.MemberType)
             {
-                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, fieldDefinition.FieldType);
+                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
             }
 
             // if still no match than just pass the db value and hope it works...
             if (convertedValue == null)
             {
-                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue} from type {databaseValue.GetType()} to type {fieldDefinition.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue} from type {databaseValue.GetType()} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
                 convertedValue = databaseValue;
             }
 
-            if (fieldDefinition.Converter != null)
+            if (field.Converter != null)
             {
                 try
                 {
-                    convertedValue = fieldDefinition.Converter.Invoke(convertedValue);
+                    convertedValue = field.Converter.Invoke(convertedValue);
                 }
                 catch (InvalidCastException invalidCast)
                 {
                     var sb = new StringBuilder();
-                    sb.AppendLine($"There was an error when trying to convert a value using the converter {fieldDefinition.Converter.Method}.");
-                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {fieldDefinition.MemberType} for the property {fieldDefinition.MemberName} on object {fieldDefinition.EntityType}");
+                    sb.AppendLine($"There was an error when trying to convert a value using the converter {field.Converter.Method}.");
+                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
                     throw new InvalidConverterException(sb.ToString(), invalidCast);
                 }
             }
 
             if (convertedValue == null)
+            {
                 return;
+            }
 
             try
             {
-                fieldDefinition.SetValueFunction(instance, convertedValue);
+                field.SetValueFunction(instance, convertedValue);
             }
             catch (NullReferenceException ex)
             {
                 Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+            }
+        }
+
+        private void SetValue<T>(ResultRow result, FieldDefinition field, T instance)
+        {
+            if (!result.ContainsField(field.MemberName))
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine($"The destination Type {field.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
+                sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName}");
+                sb.AppendLine($"There is no Field with the name {field.MemberName} contained in the IDataReader. The Field {field.MemberName} will be ignored when mapping the data to the objects.");
+
+                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
+                {
+                    Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
+                }
+
+                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
+                {
+                    sb.AppendLine($"Field that will be ignored: {field.EntityType.Name}.{field.MemberName}");
+                    
+                    throw new InvalidMapException(sb.ToString(), field.MemberType, field.MemberName);
+                }
+
+                return;
+            }
+            
+            var value = result[field.MemberName];
+            if (value == null)
+            {
+                return;
+            }
+
+            try
+            {
+                field.SetValueFunction(instance, value);
+            }
+            catch (NullReferenceException ex)
+            {
+                Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
+            }
+            catch (InvalidCastException invalidCast)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine($"The value {value} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
+                throw new InvalidConverterException(sb.ToString(), invalidCast);
             }
         }
 

@@ -11,7 +11,7 @@ namespace PersistenceMap
         {
             _rows = new List<ResultRow>();
         }
-
+        
         public void Add(ResultRow row)
         {
             _rows.Add(row);
@@ -37,9 +37,24 @@ namespace PersistenceMap
             _columns = new Dictionary<string, object>();
         }
 
-        public void Add(string header, object value)
+        public IEnumerable<object> Values
         {
-            _columns.Add(header, value);
+            get
+            {
+                return _columns.Values;
+            }
+        }
+
+        public ResultRow Add(string field, object value)
+        {
+            _columns.Add(field, value);
+
+            return this;
+        }
+
+        public bool ContainsField(string field)
+        {
+            return _columns.ContainsKey(field);
         }
 
         public object this[string id]

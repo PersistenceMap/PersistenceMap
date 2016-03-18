@@ -370,6 +370,9 @@ namespace PersistenceMap.QueryBuilder
             Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
             //Context.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
 
+            //var results = Context.Kernel.Execute(query);
+            //values = mapper.Map<T>(results.FirstOrDefault(), fields);
+
             return values;
         }
 
