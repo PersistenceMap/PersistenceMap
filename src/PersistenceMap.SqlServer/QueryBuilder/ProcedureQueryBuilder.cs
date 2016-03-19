@@ -72,39 +72,31 @@ namespace PersistenceMap.QueryBuilder
         #endregion
 
         #region Protected Implementation
-
-        protected void ReadReturnValues(IDataReaderContext context, QueryKernel kernel)
+        
+        protected void ReadReturnValues(IEnumerable<ReaderResult> results)
         {
-            var objectDefs = QueryParts.Callbacks.Select(p =>
-                new ObjectDefinition
-                {
-                    Name = p.Id,
-                    ObjectType = p.CallbackValueType
-                }).ToArray();
-
-            var mapper = new ObjectMapper(Context.Settings);
-            var mapping = mapper.Map(context.DataReader, objectDefs).FirstOrDefault();
-
-            if (mapping == null || !mapping.Any())
+            var processed = new List<AfterMapCallbackPart>();
+            foreach (var result in results)
             {
-                return;
-            }
+                var row = result.First();
+                foreach (var param in QueryParts.Callbacks.Where(c => !processed.Contains(c)))
+                {
+                    if (!row.ContainsField(param.Id))
+                    {
+                        continue;
+                    }
 
-            foreach (var param in QueryParts.Callbacks)
-            {
-                object value = null;
-                if (!mapping.TryGetValue(param.Id, out value))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    param.Callback(value);
-                }
-                catch (Exception e)
-                {
-                    kernel.Logger.Write(e.Message);
+                    try
+                    {
+                        param.Callback(row[param.Id]);
+                        processed.Add(param);
+                    }
+                    catch (Exception e)
+                    {
+                        var logger = Context.Settings.LoggerFactory.CreateLogger();
+                        logger.Write(e.Message);
+                        //kernel.Logger.Write(e.Message);
+                    }
                 }
             }
         }
@@ -136,6 +128,63 @@ namespace PersistenceMap.QueryBuilder
 
             return string.Empty;
         }
+
+        protected void MergeIncludes(IEnumerable<FieldDefinition> fields)
+        {
+            // merge fields that were defined with Maps
+            foreach (var map in QueryParts.Parts.OfType<IFieldPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
+            {
+                // get the Member from the object that is mapped from a field with a differnt name
+                var field = fields.FirstOrDefault(f => f.MemberName == map.FieldAlias);
+                if (field == null)
+                {
+                    continue;
+                }
+
+                // update the definition to use the field that is contained in the resultset
+                field.FieldName = map.Field;
+                if (map.Converter != null)
+                {
+                    field.Converter = map.Converter.Compile();
+                }
+            }
+        }
+
+        //private void test2(IEnumerable<FieldDefinition> mapfields)
+        //{
+        //    foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
+        //    {
+        //        var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
+        //        if (field == null)
+        //        {
+        //            continue;
+        //        }
+
+        //        field.MemberName = map.FieldAlias;
+        //        if (map.Converter != null)
+        //        {
+        //            field.Converter = map.Converter.Compile();
+        //        }
+        //    }
+        //}
+
+        //private void test(IEnumerable<FieldDefinition> fields)
+        //{
+        //    foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
+        //    {
+        //        var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
+        //        if (field == null)
+        //        {
+        //            continue;
+        //        }
+
+        //        field.FieldName = map.Field;
+        //        if (map.Converter != null)
+        //        {
+        //            field.Converter = map.Converter.Compile();
+        //        }
+        //    }
+        //}
 
         #endregion
     }
@@ -255,15 +304,7 @@ namespace PersistenceMap.QueryBuilder
 
             // create value for selecting output parameters
             // select @p1 as p1
-            ////var decorator = select as IItemsQueryPart;
-            ////if (decorator != null)
-            ////{
-                select.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName));
-            ////}
-            ////else
-            ////{
-            ////    QueryParts.AddAfter(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName), QueryParts.Parts.Any(p => p.OperationType == OperationType.OutParameterSelect) ? OperationType.OutParameterSelect : OperationType.Select);
-            ////}
+            select.Add(new DelegateQueryPart(OperationType.OutParameterSelect, () => paramName));
 
             // pass the callback further on to be executed when the procedure was executed
             QueryParts.Add(new AfterMapCallbackPart(paramName, cb => callback((T)cb), typeof(T)));
@@ -324,11 +365,11 @@ namespace PersistenceMap.QueryBuilder
         {
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
+            
+            var results = Context.Kernel.Execute(query);
 
-            //TODO: the ReadReturnValue should first check if the return datareader realy returns the resultset so the method dowsn't have to be called twice!
-            // the return values could be in the first result set. If the proc returns something that wont be used the return values (parameters) are in the second result set
-            Context.Kernel.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
-            //Context.Execute(query, dr => ReadReturnValues(dr, Context.Kernel), dr => ReadReturnValues(dr, Context.Kernel));
+            // read all results to check for the return values
+            ReadReturnValues(results);
         }
         
         /// <summary>
@@ -340,23 +381,7 @@ namespace PersistenceMap.QueryBuilder
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            // merge fields that were defined with Maps
-            foreach (var p in QueryParts.Parts.Where(pr => pr.OperationType == OperationType.IncludeMember))
-            {
-                var map = p as IFieldPart;
-                if (map == null)
-                {
-                    continue;
-                }
-
-                var field = fields.FirstOrDefault(f => f.FieldName == map.Field);
-                if (field == null)
-                {
-                    continue;
-                }
-
-                field.MemberName = map.FieldAlias;
-            }
+            MergeIncludes(fields);
             
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
@@ -365,17 +390,16 @@ namespace PersistenceMap.QueryBuilder
             interception.HandleBeforeExecute(query);
 
             IEnumerable<T> values = null;
-
+            
+            var results = Context.Kernel.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
-            Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
-            //Context.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            values = mapper.Map<T>(results.FirstOrDefault(), fields);
 
-            //var results = Context.Kernel.Execute(query);
-            //values = mapper.Map<T>(results.FirstOrDefault(), fields);
+            // read all results to check for the return values
+            ReadReturnValues(results);
 
             return values;
         }
-
 
         /// <summary>
         /// Execute the Procedure and returns a list of the type defined by the anonymous object
@@ -450,23 +474,10 @@ namespace PersistenceMap.QueryBuilder
         {
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
-            {
-                var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
-                if (field == null)
-                {
-                    continue;
-                }
-
-                field.FieldName = map.Field;
-                if (map.Converter != null)
-                {
-                    field.Converter = map.Converter.Compile();
-                }
-            }
+            MergeIncludes(fields);
 
             // remove ignore fields
-            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IgnoreColumn))
+            foreach (var map in QueryParts.Parts.OfType<IFieldPart>().Where(pr => pr.OperationType == OperationType.IgnoreColumn))
             {
                 var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
                 if (field == null)
@@ -481,9 +492,13 @@ namespace PersistenceMap.QueryBuilder
             var query = expr.Compile(QueryParts, Context.Interceptors);
 
             IEnumerable<T> values = null;
-
+            
+            var results = Context.Kernel.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
-            Context.Kernel.Execute(query, dr => values = mapper.Map<T>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            values = mapper.Map<T>(results.FirstOrDefault(), fields);
+
+            // read all results to check for the return values
+            ReadReturnValues(results);
 
             return values;
         }
@@ -496,20 +511,7 @@ namespace PersistenceMap.QueryBuilder
         {
             var mapfields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
-            foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
-            {
-                var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
-                if (field == null)
-                {
-                    continue;
-                }
-
-                field.MemberName = map.FieldAlias;
-                if (map.Converter != null)
-                {
-                    field.Converter = map.Converter.Compile();
-                }
-            }
+            MergeIncludes(mapfields);
 
             var fields = new List<FieldDefinition>();
             foreach (var field in TypeDefinitionFactory.GetFieldDefinitions<TOut>())
@@ -528,9 +530,13 @@ namespace PersistenceMap.QueryBuilder
             var query = expr.Compile(QueryParts, Context.Interceptors);
 
             IEnumerable<TOut> values = null;
-
+            
+            var results = Context.Kernel.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
-            Context.Kernel.Execute(query, dr => values = mapper.Map<TOut>(dr.DataReader, fields.ToArray()), dr => ReadReturnValues(dr, Context.Kernel));
+            values = mapper.Map<TOut>(results.FirstOrDefault(), fields);
+
+            // read all results to check for the return values
+            ReadReturnValues(results);
 
             return values;
         }

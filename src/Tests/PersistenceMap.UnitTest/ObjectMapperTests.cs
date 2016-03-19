@@ -444,7 +444,7 @@ namespace PersistenceMap.UnitTest
             var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
 
             var mapper = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
-            Assert.Throws<InvalidConverterException>(() => mapper.Map<Warrior>(result, fields));
+            Assert.Throws<InvalidMapException>(() => mapper.Map<Warrior>(result, fields));
         }
 
         private IEnumerable<T> AnonymMapper<T>(T obj, ObjectMapper mapper, FieldDefinition[] fields)

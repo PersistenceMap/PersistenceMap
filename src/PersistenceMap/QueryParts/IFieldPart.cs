@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace PersistenceMap.QueryParts
 {
     /// <summary>
     /// Marks a class to contain properties describing fields
     /// </summary>
-    public interface IFieldPart
+    public interface IFieldPart : IQueryPart
     {
         /// <summary>
         /// Gets the name of the field
@@ -26,5 +27,10 @@ namespace PersistenceMap.QueryParts
         /// Gets the alias name of the entity
         /// </summary>
         string EntityAlias { get; set; }
+
+        /// <summary>
+        /// A expression that converts the db value to the object value
+        /// </summary>
+        Expression<Func<object, object>> Converter { get; }
     }
 }

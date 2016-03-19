@@ -380,62 +380,30 @@ namespace PersistenceMap
 
             var databaseValue = reader.GetValue(columnIndex);
 
-            // try to convert the value to the value that the destination type has.
-            // if the destination type is named same as the source (table) type it can be that the types don't match
-            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.MemberType);
-
-            // try to convert to the source type inside the original table.
-            // this type is not necessarily the same as the destination typ if a converter is used
-            if (convertedValue == null && field.FieldType != field.MemberType)
-            {
-                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
-            }
-
-            // if still no match than just pass the db value and hope it works...
-            if (convertedValue == null)
-            {
-                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue} from type {databaseValue.GetType()} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
-                convertedValue = databaseValue;
-            }
-
-            if (field.Converter != null)
-            {
-                try
-                {
-                    convertedValue = field.Converter.Invoke(convertedValue);
-                }
-                catch (InvalidCastException invalidCast)
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine($"There was an error when trying to convert a value using the converter {field.Converter.Method}.");
-                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
-                    throw new InvalidConverterException(sb.ToString(), invalidCast);
-                }
-            }
-
-            if (convertedValue == null)
+            var converted = ConvertValue(databaseValue, field);
+            if (converted == null)
             {
                 return;
             }
 
             try
             {
-                field.SetValueFunction(instance, convertedValue);
+                field.SetValueFunction(instance, converted);
             }
             catch (NullReferenceException ex)
             {
                 Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
             }
         }
-
+        
         private void SetValue<T>(ResultRow result, FieldDefinition field, T instance)
         {
-            if (!result.ContainsField(field.MemberName))
+            if (!result.ContainsField(field.FieldName))
             {
                 var sb = new StringBuilder();
                 sb.AppendLine($"The destination Type {field.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
-                sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName}");
-                sb.AppendLine($"There is no Field with the name {field.MemberName} contained in the IDataReader. The Field {field.MemberName} will be ignored when mapping the data to the objects.");
+                sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName} from Field in Query {field.FieldName}");
+                sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet. The Member {field.MemberName} will be ignored when mapping the data to the objects.");
 
                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                 {
@@ -452,15 +420,22 @@ namespace PersistenceMap
                 return;
             }
             
-            var value = result[field.MemberName];
+            // get the Field and map to Member
+            var value = result[field.FieldName];
             if (value == null)
+            {
+                return;
+            }
+
+            var converted = ConvertValue(value, field);
+            if (converted == null)
             {
                 return;
             }
 
             try
             {
-                field.SetValueFunction(instance, value);
+                field.SetValueFunction(instance, converted);
             }
             catch (NullReferenceException ex)
             {
@@ -554,6 +529,44 @@ namespace PersistenceMap
             }
 
             return false;
+        }
+
+        private object ConvertValue(object databaseValue, FieldDefinition field)
+        {
+            // try to convert the value to the value that the destination type has.
+            // if the destination type is named same as the source (table) type it can be that the types don't match
+            var convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.MemberType);
+
+            // try to convert to the source type inside the original table.
+            // this type is not necessarily the same as the destination typ if a converter is used
+            if (convertedValue == null && field.FieldType != field.MemberType)
+            {
+                convertedValue = ConvertDatabaseValueToTypeValue(databaseValue, field.FieldType);
+            }
+
+            // if still no match than just pass the db value and hope it works...
+            if (convertedValue == null)
+            {
+                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue} from type {databaseValue.GetType()} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
+                convertedValue = databaseValue;
+            }
+
+            if (field.Converter != null)
+            {
+                try
+                {
+                    convertedValue = field.Converter.Invoke(convertedValue);
+                }
+                catch (InvalidCastException invalidCast)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"There was an error when trying to convert a value using the converter {field.Converter.Method}.");
+                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
+                    throw new InvalidConverterException(sb.ToString(), invalidCast);
+                }
+            }
+
+            return convertedValue;
         }
 
         /// <summary>
