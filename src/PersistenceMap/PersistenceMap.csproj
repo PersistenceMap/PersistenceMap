@@ -137,7 +137,8 @@
     <Compile Include="IQueryCompiler.cs" />
     <Compile Include="Factories\InstanceFactory.cs" />
     <Compile Include="QueryParts\IExpressionPart.cs" />
-    <Compile Include="ReaderResult.cs" />
+    <Compile Include="Result\DataRow.cs" />
+    <Compile Include="Result\ReaderResult.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Sql\LambdaToSqlCompiler.cs" />
     <Compile Include="IQueryExpression.cs" />

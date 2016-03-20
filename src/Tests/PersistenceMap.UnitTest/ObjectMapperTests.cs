@@ -193,10 +193,10 @@ namespace PersistenceMap.UnitTest
         {
             var result = new ReaderResult
             {
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 1)
                 .Add("Name", "Igor"),
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 2)
                 .Add("Name", "Sanjo")
                 .Add("Race", "Dwarf"),
@@ -224,11 +224,11 @@ namespace PersistenceMap.UnitTest
         {
             var result = new ReaderResult
             {
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 1)
                 .Add("Name", "Igor")
                 .Add("Race", null),
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 2)
                 .Add("Name", "Sanjo")
                 .Add("Race", "Dwarf"),
@@ -264,10 +264,10 @@ namespace PersistenceMap.UnitTest
         {
             var result = new ReaderResult
             {
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 1)
                 .Add("Name", "Igor"),
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 2)
                 .Add("Name", "Sanjo")
                 .Add("Race", "Dwarf"),
@@ -284,10 +284,10 @@ namespace PersistenceMap.UnitTest
         {
             var result = new ReaderResult
             {
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 1)
                 .Add("Name", 10),
-                new ResultRow ()
+                new DataRow ()
                 .Add("ID", 2)
                 .Add("Name", "Sanjo")
                 .Add("Race", "Dwarf"),
@@ -296,7 +296,7 @@ namespace PersistenceMap.UnitTest
             var fields = PersistenceMap.Factories.TypeDefinitionFactory.GetFieldDefinitions<Warrior>();
 
             var mapper = new ObjectMapper(new Settings { RestrictiveMappingMode = RestrictiveMode.ThrowException });
-            Assert.Throws<InvalidMapException>(() => mapper.Map<Warrior>(result, fields));
+            Assert.Throws<InvalidConverterException>(() => mapper.Map<Warrior>(result, fields));
         }
 
         private IEnumerable<T> AnonymMapper<T>(T obj, ObjectMapper mapper, FieldDefinition[] fields)

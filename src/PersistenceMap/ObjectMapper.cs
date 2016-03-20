@@ -54,16 +54,8 @@ namespace PersistenceMap
                 // To populate a anonymous object the data has to be passed in the same order as defined to the constructor
                 foreach (var result in readerResult)
                 {
-                    // TODO: When the readerresult does not contain all values needed an exception is thrown
-                    // TODO: Create a list of all values according to the definition of the fields
-                    // TODO: In restrictive mode throw an exception
-                    // TODO: pass the list of values to the creator
-
-                    // create a list of the data objects that can be injected to the instance generator
-                    var args = result.Values;
-
-                    // create a instance an inject the data
-                    var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
+                    var args = BuildArgumentList(result, fields);
+                    var row = InstanceFactory.CreateAnonymousObject<T>(args);
                     rows.Add(row);
                 }
             }
@@ -99,11 +91,25 @@ namespace PersistenceMap
                     // TODO: In restrictive mode throw an exception
                     // TODO: pass the list of values to the creator
 
-                    // create a list of the data objects that can be injected to the instance generator
-                    var args = result.Values;
+                    //// create a list of the data objects that can be injected to the instance generator
+                    //var args = new List<object>();
 
-                    // create a instance an inject the data
-                    var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
+                    //foreach (var field in fields)
+                    //{
+                    //    if (!result.ContainsField(field.FieldName))
+                    //    {
+                    //        args.Add(null);
+                    //        continue;
+                    //    }
+
+                    //    var item = result[field.FieldName];
+                    //    args.Add(item);
+                    //}                    
+
+                    //// create a instance an inject the data
+                    //var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
+                    var args = BuildArgumentList(result, fields);
+                    var row = InstanceFactory.CreateAnonymousObject<T>(args);
                     rows.Add(row);
                 }
             }
@@ -118,6 +124,34 @@ namespace PersistenceMap
             }
 
             return rows;
+        }
+
+        /// <summary>
+        /// Anonymous objects have a constructor that accepts all arguments in the same order as defined.
+        /// To populate a anonymous object the data has to be passed in the same order as defined to the constructor
+        /// </summary>
+        /// <param name="row">The data row</param>
+        /// <param name="fields">The fielddefinitions</param>
+        /// <returns></returns>
+        private IEnumerable<object> BuildArgumentList(DataRow row, IEnumerable<FieldDefinition> fields)
+        {
+            // create a list of the data objects that can be injected to the instance generator
+            var args = new List<object>();
+
+            foreach (var field in fields)
+            {
+                if (!row.ContainsField(field.FieldName))
+                {
+                    args.Add(item: null);
+                    continue;
+                }
+
+                var item = row[field.FieldName];
+                var converted = ConvertValue(item, field);
+                args.Add(converted);
+            }
+
+            return args;
         }
         
         /// <summary>
@@ -145,7 +179,7 @@ namespace PersistenceMap
 
             while (reader.Read())
             {
-                var row = new ResultRow();
+                var row = new DataRow();
 
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
@@ -240,7 +274,7 @@ namespace PersistenceMap
             return instance;
         }
 
-        private T ReadData<T>(ResultRow result, IEnumerable<FieldDefinition> fields)
+        private T ReadData<T>(DataRow result, IEnumerable<FieldDefinition> fields)
         {
             var instance = InstanceFactory.CreateInstance<T>();
             foreach (var field in fields)
@@ -283,7 +317,7 @@ namespace PersistenceMap
             }
         }
         
-        private void SetValue<T>(ResultRow result, FieldDefinition field, T instance)
+        private void SetValue<T>(DataRow result, FieldDefinition field, T instance)
         {
             if (!result.ContainsField(field.FieldName))
             {
@@ -394,7 +428,7 @@ namespace PersistenceMap
             // if still no match than just pass the db value and hope it works...
             if (convertedValue == null)
             {
-                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue} from type {databaseValue.GetType()} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
+                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue??"NULL"} from type {field.FieldType.Name} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
                 convertedValue = databaseValue;
             }
 
