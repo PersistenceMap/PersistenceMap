@@ -47,24 +47,20 @@ namespace PersistenceMap
 
             if (typeof(T).IsAnonymousType())
             {
+                // read the result to a ReaderResult collection
+                var readerResult = Map(reader);
+
                 // Anonymous objects have a constructor that accepts all arguments in the same order as defined
                 // To populate a anonymous object the data has to be passed in the same order as defined to the constructor
-                while (reader.Read())
+                foreach (var result in readerResult)
                 {
-                    // http://stackoverflow.com/questions/478013/how-do-i-create-and-access-a-new-instance-of-an-anonymous-class-passed-as-a-para
-                    // convert all fielddefinitions to objectdefinitions
-                    var objectDefs = fields.Select(f => new ObjectDefinition
-                    {
-                        Name = f.FieldName,
-                        ObjectType = f.MemberType,
-                        Converter = f.Converter
-                    });
-
-                    // read all data to a dictionary
-                    var dict = ReadData(reader, objectDefs, indexCache);
+                    // TODO: When the readerresult does not contain all values needed an exception is thrown
+                    // TODO: Create a list of all values according to the definition of the fields
+                    // TODO: In restrictive mode throw an exception
+                    // TODO: pass the list of values to the creator
 
                     // create a list of the data objects that can be injected to the instance generator
-                    var args = dict.Values;
+                    var args = result.Values;
 
                     // create a instance an inject the data
                     var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
@@ -137,33 +133,7 @@ namespace PersistenceMap
 
             return Map<T>(reader, fields);
         }
-
-        /// <summary>
-        /// Maps the resultset to a key/value collection. The key represents the name of the field or property
-        /// </summary>
-        /// <param name="reader">The datareader with the result</param>
-        /// <param name="objectDefinitions">A collection of definitons of the objects that have to be read from the datareader</param>
-        /// <returns>A collection of dictionaries containing the data</returns>
-        public IEnumerable<Dictionary<string, object>> Map(IDataReader reader, ObjectDefinition[] objectDefinitions)
-        {
-            var rows = new List<Dictionary<string, object>>();
-
-            var indexCache = reader.CreateFieldIndexCache(objectDefinitions);
-            if (!indexCache.Any())
-            {
-                return rows;
-            }
-
-            while (reader.Read())
-            {
-                var row = ReadData(reader, objectDefinitions, indexCache);
-
-                rows.Add(row);
-            }
-
-            return rows;
-        }
-
+        
         /// <summary>
         /// Reads the Reader result and mapps the result to a ReaderResult
         /// </summary>
@@ -190,90 +160,7 @@ namespace PersistenceMap
 
             return result;
         }
-
-        /// <summary>
-        /// Maps the result to a dictionary containing the key/value
-        /// </summary>
-        /// <param name="reader">The datareader with the result</param>
-        /// <param name="objectDefinitions">A collection of definitons of the objects that have to be read from the datareader</param>
-        /// <param name="indexCache">A collection of the keys with the indexes inside the datareader</param>
-        /// <returns>A collection of key/value pairs containing the data</returns>
-        public Dictionary<string, object> ReadData(IDataReader reader, IEnumerable<ObjectDefinition> objectDefinitions, Dictionary<string, int> indexCache)
-        {
-            var row = new Dictionary<string, object>();
-
-            try
-            {
-                foreach (var def in objectDefinitions)
-                {
-                    int index;
-                    if (indexCache != null)
-                    {
-                        if (!indexCache.TryGetValue(def.Name, out index))
-                        {
-                            // try to get the index using case insensitive search on the datareader
-                            index = reader.GetIndex(def.Name);
-                            indexCache.Add(def.Name, index);
-
-                            if (index < 0)
-                            {
-                                var sb = new StringBuilder();
-                                sb.AppendLine($"The destination Type containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
-                                sb.AppendLine($"Failed to Map: {def.ObjectType}.{def.Name}");
-                                sb.AppendLine($"There is no Field with the name {def.Name} contained in the IDataReader. The Field {def.Name} will be ignored when mapping the data to the objects.");
-                                
-                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
-                                {
-                                    Logger.Write(sb.ToString(), category: LoggerCategory.DataMap);
-                                }
-
-                                if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.ThrowException))
-                                {
-                                    sb.AppendLine("Fields that will be ignored:");
-                                    foreach (var tmpDef in objectDefinitions)
-                                    {
-                                        if (reader.GetIndex(tmpDef.Name) < 0)
-                                        {
-                                            sb.AppendLine($"{tmpDef.ObjectType}.{tmpDef.Name}");
-                                        }
-                                    }
-
-                                    throw new InvalidMapException(sb.ToString(), null, def.Name);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        index = reader.GetIndex(def.Name);
-                    }
-
-                    // pass the value to the dictionary with the name of the property/field as key
-                    row[def.Name] = GetValue(reader, def, index);
-                }
-            }
-            catch (FormatException fe)
-            {
-                Logger.Write($"A Value coud not be converted to the expected format:\n{fe.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-                throw;
-            }
-            catch (InvalidConverterException invalidCast)
-            {
-                Logger.Write(invalidCast.Message, GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-                throw;
-            }
-            catch (InvalidMapException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Logger.Write($"Error while mapping values:\n{ex.Message}", GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-            }
-
-            return row;
-        }
-
+        
         /// <summary>
         /// Reads the data from the datareader and populates the dataobjects
         /// </summary>
@@ -448,47 +335,7 @@ namespace PersistenceMap
                 throw new InvalidConverterException(sb.ToString(), invalidCast);
             }
         }
-
-        /// <summary>
-        /// Reads and converts the value from the datareader
-        /// </summary>
-        /// <param name="reader">The datareader</param>
-        /// <param name="objectDefinition">The definition of the field to populate</param>
-        /// <param name="columnIndex">The index of the value in the datareader</param>
-        /// <returns>The value contained in the datareader</returns>
-        private object GetValue(IDataReader reader, ObjectDefinition objectDefinition, int columnIndex)
-        {
-            if (columnIndex < 0)
-            {
-                return null;
-            }
-
-            var dbValue = reader.GetValue(columnIndex);
-
-            var convertedValue = ConvertDatabaseValueToTypeValue(dbValue, objectDefinition.ObjectType);
-            if (convertedValue == null)
-            {
-                convertedValue = dbValue;
-            }
-
-            if (objectDefinition.Converter != null)
-            {
-                try
-                {
-                    convertedValue = objectDefinition.Converter.Invoke(convertedValue);
-                }
-                catch (InvalidCastException invalidCast)
-                {
-                    var sb = new StringBuilder();
-                    sb.AppendLine($"There was an error when trying to convert a value using the converter {objectDefinition.Converter.Method}.");
-                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {objectDefinition.ObjectType} for the property {objectDefinition.Name}");
-                    throw new InvalidConverterException(sb.ToString(), invalidCast);
-                }
-            }
-
-            return convertedValue;
-        }
-
+        
         private object GetValue(IDataReader reader, int columnIndex)
         {
             if (columnIndex < 0)

@@ -136,7 +136,6 @@
     <Compile Include="Extensions\TypeExtensionsForSql.cs" />
     <Compile Include="IQueryCompiler.cs" />
     <Compile Include="Factories\InstanceFactory.cs" />
-    <Compile Include="ObjectDefinition.cs" />
     <Compile Include="QueryParts\IExpressionPart.cs" />
     <Compile Include="ReaderResult.cs" />
     <Compile Include="Settings.cs" />

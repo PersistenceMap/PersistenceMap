@@ -142,58 +142,5 @@ namespace PersistenceMap
 
             return results;
         }
-
-        /// <summary>
-        /// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
-        /// </summary>
-        /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
-        /// <param name="expressions">All contexts that have to be parsed</param>
-        public virtual void Execute(CompiledQuery compiledQuery, params Action<IDataReaderContext>[] expressions)
-        {
-            // TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
-
-            try
-            {
-                using (var reader = ConnectionProvider.Execute(compiledQuery.QueryString))
-                {
-                    foreach (var expression in expressions)
-                    {
-                        // invoke expression with the reader
-                        expression.Invoke(reader);
-
-                        // read next resultset
-                        if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-            catch (InvalidConverterException)
-            {
-                throw;
-            }
-            catch (InvalidMapException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine($"An error occured while executing a query with PersistenceMap");
-                sb.AppendLine($"Query: {compiledQuery.QueryString}");
-                sb.AppendLine($"Exception Message: {ex.Message}");
-
-                Logger.Write(sb.ToString(), ConnectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, ConnectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-
-                Trace.WriteLine($"PersistenceMap - An error occured while executing a query:\n {ex.Message}");
-
-                sb.AppendLine($"For more information see the inner exception");
-
-                throw new System.Data.DataException(sb.ToString(), ex);
-            }
-        }
     }
 }
