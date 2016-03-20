@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MeasureMap, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MeasureMap.0.1.2-RC02\lib\net45\MeasureMap.dll</HintPath>
+      <HintPath>..\..\..\packages\MeasureMap.0.1.3-RC02\lib\net45\MeasureMap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -66,6 +66,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Benchmark\SqlServerStoreProcBenchmarkTests.cs" />
     <Compile Include="Benchmark\SqlServerSelectBenchmarkTests.cs" />
     <Compile Include="ConverterTests.cs" />
     <Compile Include="DatabaseTests.cs" />
