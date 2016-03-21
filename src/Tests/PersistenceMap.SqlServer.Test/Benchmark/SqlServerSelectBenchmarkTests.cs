@@ -41,15 +41,12 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                     }
                 })
                 .SetIterations(20)
-                //.AddCondition(p => p.AverageMilliseconds < 31)
                 .RunSession();
 
             profile.Trace();
-
-            //Assert.IsTrue(profile.AverageMilliseconds < 19);
         }
 
-        //[Test]
+        [Test]
         [NUnit.Framework.Category("benchmark")]
         public void PersistenceMap_SqlServer_Integration_Benchmark_CreateContext_PerformanceTest()
         {
@@ -68,8 +65,8 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 .Task(() =>
                 {
                     var provider1 = new SqlContextProvider(connection.Object);
-                    provider1.Interceptor<Orders>().Returns(ordersList);
-
+                    provider1.Interceptor<Orders>().Returns(() => ordersList);
+                    
                     using (var context = provider1.Open())
                     {
                         var orders = context.From<Customers>()
@@ -83,7 +80,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 .RunSession();
             
             var provider2 = new SqlContextProvider(connection.Object);
-            provider2.Interceptor<Orders>().Returns(ordersList);
+            provider2.Interceptor<Orders>().Returns(() => ordersList);
             var profile2 = ProfilerSession.StartSession()
                 .Task(() =>
                 {
@@ -99,8 +96,31 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
                 .SetIterations(40)
                 .RunSession();
 
+            ProfilerResult profile3 = null;
+            var provider3 = new SqlContextProvider(connection.Object);
+            provider3.Interceptor<Orders>().Returns(() => ordersList);
+            using (var context3 = provider2.Open())
+            {
+                profile3 = ProfilerSession.StartSession()
+                .Task(() =>
+                {
+
+                    var orders = context3.From<Customers>()
+                        .Join<Employee>((e, c) => e.EmployeeID == c.EmployeeID)
+                        .And<Customers>((e, c) => e.EmployeeID == c.EmployeeID)
+                        .Join<Orders>((o, e) => o.EmployeeID == e.EmployeeID)
+                        .Select<Orders>();
+                })
+                .SetIterations(40)
+                .RunSession();
+            }
+
             profile1.Trace();
             profile2.Trace();
+            profile3.Trace();
+
+            Assert.IsTrue(profile1.TotalTime > profile2.TotalTime);
+            Assert.IsTrue(profile2.TotalTime > profile3.TotalTime);
         }
     }
 }
