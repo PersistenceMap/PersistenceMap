@@ -1,21 +1,22 @@
 ﻿using PersistenceMap.QueryBuilder;
+using System;
 using System.Collections.Generic;
 
 namespace PersistenceMap.Interception
 {
     internal class DataReaderInterceptor<T> : IInterceptor<T>
     {
-        private readonly MockedDataReader<T> _dataReader;
+        private readonly Func<IEnumerable<T>> _result;
 
-        public DataReaderInterceptor(IEnumerable<T> result)
+        public DataReaderInterceptor(Func<IEnumerable<T>> result)
         {
-            _dataReader = new MockedDataReader<T>(result);
+            _result = result;
         }
 
         public void VisitBeforeExecute(CompiledQuery query, IDatabaseContext context)
         {
             var kernel = new MockedQueryKernel(context);
-            kernel.AddDataReader<T>(_dataReader);
+            kernel.AddDataReader<T>(new MockedDataReader<T>(_result.Invoke()));
 
             context.Kernel = kernel;
         }

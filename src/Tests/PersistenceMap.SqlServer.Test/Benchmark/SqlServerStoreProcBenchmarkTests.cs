@@ -13,6 +13,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
     public class SqlServerStoreProcBenchmarkTests
     {
         [Test]
+        [NUnit.Framework.Category("benchmark")]
         public void PersistenceMap_SqlServer_Integration_Benchmark_StoredProcedure_WithReturn_PerformanceTest()
         {
             var warriors = new List<Warrior>
@@ -46,6 +47,7 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
         }
 
         [Test]
+        [NUnit.Framework.Category("benchmark")]
         public void PersistenceMap_SqlServer_Integration_Benchmark_StoredProcedure_NoReturn_PerformanceTest()
         {
             var reader = new Mock<IDataReader>();

@@ -121,56 +121,26 @@ namespace PersistenceMap
         }
 
         /// <summary>
-        /// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
+        /// Executes the query against a RDBMS and parses all values to a Colleciton of ReaderResult
         /// </summary>
-        /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
-        /// <param name="expressions">All contexts that have to be parsed</param>
-        public virtual void Execute(CompiledQuery compiledQuery, params Action<IDataReaderContext>[] expressions)
+        /// <param name="query">The query to execute</param>
+        /// <returns>All results as a List of ReaderResult</returns>
+        public IEnumerable<ReaderResult> Execute(CompiledQuery query)
         {
-            // TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+            var results = new List<ReaderResult>();
 
-            try
+            using (var context = ConnectionProvider.Execute(query.QueryString))
             {
-                using (var reader = ConnectionProvider.Execute(compiledQuery.QueryString))
+                var reader = context.DataReader;
+                
+                do
                 {
-                    foreach (var expression in expressions)
-                    {
-                        // invoke expression with the reader
-                        expression.Invoke(reader);
-
-                        // read next resultset
-                        if (reader.DataReader.IsClosed || !reader.DataReader.NextResult())
-                        {
-                            break;
-                        }
-                    }
-                }
+                    var result = _mapper.Map(reader);
+                    results.Add(result);
+                } while (reader.NextResult());
             }
-            catch (InvalidConverterException)
-            {
-                throw;
-            }
-            catch (InvalidMapException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine($"An error occured while executing a query with PersistenceMap");
-                sb.AppendLine($"Query: {compiledQuery.QueryString}");
-                sb.AppendLine($"Exception Message: {ex.Message}");
 
-                Logger.Write(sb.ToString(), ConnectionProvider.GetType().Name, LoggerCategory.Error, DateTime.Now);
-                Logger.Write(ex.Message, ConnectionProvider.GetType().Name, LoggerCategory.ExceptionDetail, DateTime.Now);
-
-                Trace.WriteLine($"PersistenceMap - An error occured while executing a query:\n {ex.Message}");
-
-                sb.AppendLine($"For more information see the inner exception");
-
-                throw new System.Data.DataException(sb.ToString(), ex);
-            }
+            return results;
         }
     }
 }
