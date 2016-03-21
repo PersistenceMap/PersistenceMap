@@ -107,6 +107,10 @@ namespace PersistenceMap
         public IEnumerable<Dictionary<string, object>> Map(IDataReader reader, ObjectDefinition[] objectDefinitions)
         {
             var rows = new List<Dictionary<string, object>>();
+            if (reader == null)
+            {
+                return rows;
+            }
 
             var indexCache = reader.CreateFieldIndexCache(objectDefinitions);
             if (!indexCache.Any())
