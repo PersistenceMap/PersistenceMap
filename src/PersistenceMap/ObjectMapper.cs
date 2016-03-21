@@ -86,28 +86,6 @@ namespace PersistenceMap
                 // To populate a anonymous object the data has to be passed in the same order as defined to the constructor
                 foreach (var result in readerResult)
                 {
-                    // TODO: When the readerresult does not contain all values needed an exception is thrown
-                    // TODO: Create a list of all values according to the definition of the fields
-                    // TODO: In restrictive mode throw an exception
-                    // TODO: pass the list of values to the creator
-
-                    //// create a list of the data objects that can be injected to the instance generator
-                    //var args = new List<object>();
-
-                    //foreach (var field in fields)
-                    //{
-                    //    if (!result.ContainsField(field.FieldName))
-                    //    {
-                    //        args.Add(null);
-                    //        continue;
-                    //    }
-
-                    //    var item = result[field.FieldName];
-                    //    args.Add(item);
-                    //}                    
-
-                    //// create a instance an inject the data
-                    //var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
                     var args = BuildArgumentList(result, fields);
                     var row = InstanceFactory.CreateAnonymousObject<T>(args);
                     rows.Add(row);

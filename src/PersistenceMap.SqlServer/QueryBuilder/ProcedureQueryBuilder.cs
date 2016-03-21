@@ -15,7 +15,7 @@ namespace PersistenceMap.QueryBuilder
     {
         public ProcedureQueryProviderBase(IDatabaseContext context, ProcedureQueryPartsContainer container)
         {
-            context.ArgumentNotNull("context");
+            context.ArgumentNotNull(name: "context");
 
             _context = context;
 
@@ -24,21 +24,7 @@ namespace PersistenceMap.QueryBuilder
                 _queryParts = container;
             }
         }
-
-        //private ILogger _logger;
-        //protected ILogger Logger
-        //{
-        //    get
-        //    {
-        //        if (_logger == null)
-        //        {
-        //            _logger = Context.Kernel.LoggerFactory.CreateLogger();
-        //        }
-
-        //        return _logger;
-        //    }
-        //}
-
+        
         #region IQueryProvider Implementation
 
         readonly IDatabaseContext _context;
@@ -78,7 +64,12 @@ namespace PersistenceMap.QueryBuilder
             var processed = new List<AfterMapCallbackPart>();
             foreach (var result in results)
             {
-                var row = result.First();
+                var row = result.SingleOrDefault();
+                if (row == null)
+                {
+                    continue;
+                }
+
                 foreach (var param in QueryParts.Callbacks.Where(c => !processed.Contains(c)))
                 {
                     if (!row.ContainsField(param.Id))
@@ -95,7 +86,6 @@ namespace PersistenceMap.QueryBuilder
                     {
                         var logger = Context.Settings.LoggerFactory.CreateLogger();
                         logger.Write(e.Message);
-                        //kernel.Logger.Write(e.Message);
                     }
                 }
             }
@@ -119,11 +109,11 @@ namespace PersistenceMap.QueryBuilder
                 // return the name with the formated value
                 if (quotated != null)
                 {
-                    return string.Format("{0}={1}", name, quotated);
+                    return string.Format(format: "{0}={1}", arg0: name, arg1: quotated);
                 }
 
                 // return the name with the unformated value
-                return string.Format("{0}={1}", name, value);
+                return string.Format(format: "{0}={1}", arg0: name, arg1: value);
             }
 
             return string.Empty;
@@ -149,43 +139,7 @@ namespace PersistenceMap.QueryBuilder
                 }
             }
         }
-
-        //private void test2(IEnumerable<FieldDefinition> mapfields)
-        //{
-        //    foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
-        //    {
-        //        var field = mapfields.FirstOrDefault(f => f.FieldName == map.Field);
-        //        if (field == null)
-        //        {
-        //            continue;
-        //        }
-
-        //        field.MemberName = map.FieldAlias;
-        //        if (map.Converter != null)
-        //        {
-        //            field.Converter = map.Converter.Compile();
-        //        }
-        //    }
-        //}
-
-        //private void test(IEnumerable<FieldDefinition> fields)
-        //{
-        //    foreach (var map in QueryParts.Parts.OfType<FieldQueryPart>().Where(pr => pr.OperationType == OperationType.IncludeMember))
-        //    {
-        //        var field = fields.FirstOrDefault(f => f.FieldName == map.FieldAlias);
-        //        if (field == null)
-        //        {
-        //            continue;
-        //        }
-
-        //        field.FieldName = map.Field;
-        //        if (map.Converter != null)
-        //        {
-        //            field.Converter = map.Converter.Compile();
-        //        }
-        //    }
-        //}
-
+        
         #endregion
     }
 
