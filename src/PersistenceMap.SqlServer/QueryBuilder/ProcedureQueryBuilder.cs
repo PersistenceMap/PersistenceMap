@@ -64,7 +64,7 @@ namespace PersistenceMap.QueryBuilder
             var processed = new List<AfterMapCallbackPart>();
             foreach (var result in results)
             {
-                var row = result.SingleOrDefault();
+                var row = result.FirstOrDefault();
                 if (row == null)
                 {
                     continue;
