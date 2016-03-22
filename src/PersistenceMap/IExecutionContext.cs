@@ -23,11 +23,11 @@ namespace PersistenceMap
         /// <param name="query">The query that will be executed</param>
         void ExecuteNonQuery(CompiledQuery query);
 
-        ///// <summary>
-        ///// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
-        ///// </summary>
-        ///// <param name="compiledQuery">The CompiledQuery containing the expression</param>
-        ///// <param name="expressions">All contexts that have to be parsed</param>
-        //void Execute(CompiledQuery compiledQuery, params Action<IDataReaderContext>[] expressions);
+        /// <summary>
+        /// Executes the query against a RDBMS and parses all values to a Colleciton of ReaderResult
+        /// </summary>
+        /// <param name="query">The query to execute</param>
+        /// <returns>All results as a List of ReaderResult</returns>
+        IEnumerable<ReaderResult> Execute(CompiledQuery query);
     }
 }

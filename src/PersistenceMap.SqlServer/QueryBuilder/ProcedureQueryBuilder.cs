@@ -320,7 +320,7 @@ namespace PersistenceMap.QueryBuilder
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
             
-            var results = Context.Kernel.Execute(query);
+            var results = Context.Execute(query);
 
             // read all results to check for the return values
             ReadReturnValues(results);
@@ -345,7 +345,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
             
-            var results = Context.Kernel.Execute(query);
+            var results = Context.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
             values = mapper.Map<T>(results.FirstOrDefault(), fields);
 
@@ -447,7 +447,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<T> values = null;
             
-            var results = Context.Kernel.Execute(query);
+            var results = Context.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
             values = mapper.Map<T>(results.FirstOrDefault(), fields);
 
@@ -485,7 +485,7 @@ namespace PersistenceMap.QueryBuilder
 
             IEnumerable<TOut> values = null;
             
-            var results = Context.Kernel.Execute(query);
+            var results = Context.Execute(query);
             var mapper = new ObjectMapper(Context.Settings);
             values = mapper.Map<TOut>(results.FirstOrDefault(), fields);
 

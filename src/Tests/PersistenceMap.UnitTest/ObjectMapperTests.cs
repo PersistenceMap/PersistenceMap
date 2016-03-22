@@ -245,7 +245,7 @@ namespace PersistenceMap.UnitTest
 
             var mapper = new ObjectMapper(new Settings());
             var mapped = AnonymMapper(obj, mapper, result, fields);
-
+            
             Assert.That(mapped.Count() == 2);
 
             var row = mapped.First();
