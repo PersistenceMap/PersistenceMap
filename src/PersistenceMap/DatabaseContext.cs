@@ -131,9 +131,9 @@ namespace PersistenceMap
         public void ExecuteNonQuery(CompiledQuery query)
         {
             var parts = query.QueryParts;
-            if (parts != null && parts.AggregatePart != null)
+            if (parts != null && parts.AggregateType != null)
             {
-                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
+                var interception = new InterceptionHandler(_interceptors, parts.AggregateType, this);
                 interception.HandleBeforeExecute(query);
             }
 
@@ -149,9 +149,9 @@ namespace PersistenceMap
         public IEnumerable<ReaderResult> Execute(CompiledQuery query)
         {
             var parts = query.QueryParts;
-            if (parts != null && parts.AggregatePart != null)
+            if (parts != null && parts.AggregateType != null)
             {
-                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
+                var interception = new InterceptionHandler(_interceptors, parts.AggregateType, this);
                 interception.HandleBeforeExecute(query);
             }
 
@@ -164,6 +164,12 @@ namespace PersistenceMap
 
         #region Execute
 
+        /// <summary>
+        /// Execute the query
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="queryString">The SQL query</param>
+        /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(string queryString)
         {
             var query = new CompiledQuery
@@ -174,6 +180,13 @@ namespace PersistenceMap
             return Execute<T>(query);
         }
 
+        /// <summary>
+        /// Execute the query
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="queryString">The SQL query</param>
+        /// <param name="anonymobject">The object that defines T</param>
+        /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
         {
             var query = new CompiledQuery
@@ -184,6 +197,10 @@ namespace PersistenceMap
             return Execute<T>(query);
         }
 
+        /// <summary>
+        /// Execute the query without a result
+        /// </summary>
+        /// <param name="queryString">The SQL query</param>
         public void Execute(string queryString)
         {
             var query = new CompiledQuery

@@ -125,7 +125,7 @@ namespace PersistenceMap
         /// </summary>
         /// <param name="query">The query to execute</param>
         /// <returns>All results as a List of ReaderResult</returns>
-        public IEnumerable<ReaderResult> Execute(CompiledQuery query)
+        public virtual IEnumerable<ReaderResult> Execute(CompiledQuery query)
         {
             var results = new List<ReaderResult>();
 

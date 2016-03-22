@@ -47,5 +47,22 @@ namespace PersistenceMap.Interception
 
             return items;
         }
+
+        public override IEnumerable<ReaderResult> Execute(CompiledQuery query)
+        {
+            var provider = ConnectionProvider;
+
+            if (_datareaders.ContainsKey(query.QueryParts.AggregateType))
+            {
+                var reader = _datareaders[query.QueryParts.AggregateType];
+                ConnectionProvider = new MockedConnectionProvider(provider.QueryCompiler, reader);
+            }
+
+            var items = base.Execute(query);
+
+            ConnectionProvider = provider;
+
+            return items;
+        }
     }
 }

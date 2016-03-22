@@ -17,9 +17,9 @@ namespace PersistenceMap.QueryParts
         OperationType OperationType { get; }
 
         /// <summary>
-        /// Gets the type of the entity/table
+        /// Gets or sets the type of the entity/table
         /// </summary>
-        Type EntityType { get; }
+        Type EntityType { get; set; }
 
         /// <summary>
         /// The colleciton of child parts

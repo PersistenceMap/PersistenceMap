@@ -336,13 +336,13 @@ namespace PersistenceMap.QueryBuilder
             var fields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
 
             MergeIncludes(fields);
+
+            // set the aggregate type for procedures to allow interception
+            QueryParts.AggregateType = typeof(T);
+
+            var compiler = Context.ConnectionProvider.QueryCompiler;
+            var query = compiler.Compile(QueryParts, Context.Interceptors);
             
-            var expr = Context.ConnectionProvider.QueryCompiler;
-            var query = expr.Compile(QueryParts, Context.Interceptors);
-
-            var interception = new InterceptionHandler<T>(Context.Interceptors, Context);
-            interception.HandleBeforeExecute(query);
-
             IEnumerable<T> values = null;
             
             var results = Context.Execute(query);
@@ -442,9 +442,12 @@ namespace PersistenceMap.QueryBuilder
                 fields.Remove(field);
             }
 
+            // set the aggregate type for procedures to allow interception
+            QueryParts.AggregateType = typeof(T);
+
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
-
+            
             IEnumerable<T> values = null;
             
             var results = Context.Execute(query);
@@ -480,9 +483,12 @@ namespace PersistenceMap.QueryBuilder
                 fields.Add(field);
             }
 
+            // set the aggregate type for procedures to allow interception
+            QueryParts.AggregateType = typeof(TOut);
+
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);
-
+            
             IEnumerable<TOut> values = null;
             
             var results = Context.Execute(query);
