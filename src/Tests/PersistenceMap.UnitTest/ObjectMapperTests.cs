@@ -249,14 +249,16 @@ namespace PersistenceMap.UnitTest
             Assert.That(mapped.Count() == 2);
 
             var row = mapped.First();
-            Assert.AreEqual(row.ID, result.First()["ID"]);
-            Assert.AreEqual(row.Name, result.First()["Name"]);
+            var item = result.First();
+            Assert.AreEqual(row.ID, item["ID"]);
+            Assert.AreEqual(row.Name, item["Name"]);
             Assert.That(row.Race, Is.Null);
 
             row = mapped.Last();
-            Assert.AreEqual(row.ID, result.Last()["ID"]);
-            Assert.AreEqual(row.Name, result.Last()["Name"]);
-            Assert.AreEqual(row.Race, result.Last()["Race"]);
+            item = result.Last();
+            Assert.AreEqual(row.ID, item["ID"]);
+            Assert.AreEqual(row.Name, item["Name"]);
+            Assert.AreEqual(row.Race, item["Race"]);
         }
 
         [Test]
