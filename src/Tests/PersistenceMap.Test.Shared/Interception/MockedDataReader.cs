@@ -77,27 +77,18 @@ namespace PersistenceMap.Interception
             return true;
         }
 
-        public MockedDataReader<T> AddResult<T2>(IEnumerable<T2> collection)
+        public MockedDataReader<T> AddResult<T2>(Func<IEnumerable<T2>> collection)
         {
-            _results.Enqueue(new Result(collection.GetEnumerator(), typeof(T2)));
+            _results.Enqueue(new Result(collection, typeof(T2)));
 
             return this;
         }
 
-        private class Result
+        internal MockedDataReader<T> AddResult(Result result)
         {
-            private readonly IEnumerator _enumerator;
-            private readonly Type _type;
+            _results.Enqueue(result);
 
-            public Result(IEnumerator enumerator, Type type)
-            {
-                _enumerator = enumerator;
-                _type = type;
-            }
-
-            public IEnumerator Enumerator => _enumerator;
-
-            public Type Type => _type;
+            return this;
         }
     }
 }

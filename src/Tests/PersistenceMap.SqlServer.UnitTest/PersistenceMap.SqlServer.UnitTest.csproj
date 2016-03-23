@@ -67,8 +67,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Procedure\InterceptionTests.cs" />
-    <Compile Include="Procedure\ProcedureTests.cs" />
+    <Compile Include="Integration\ProcedureIntegrationTests.cs" />
     <Compile Include="QueryBuilder\DatabaseQueryBuilderTests.cs" />
     <Compile Include="QueryCompilerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

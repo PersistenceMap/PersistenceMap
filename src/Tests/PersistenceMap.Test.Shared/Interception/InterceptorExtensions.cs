@@ -5,17 +5,17 @@ namespace PersistenceMap.Interception
 {
     public static class InterceptorExtensions
     {
-        public static IInterceptionContext<T> Returns<T>(this IInterceptionContext<T> interceptionContext, IEnumerable<T> list)
+        public static IReaderInterceptor Returns<T>(this IInterceptionContext<T> interceptionContext, IEnumerable<T> list)
         {
             return Returns<T>(interceptionContext, () => list);
         }
 
-        public static IInterceptionContext<T> Returns<T>(this IInterceptionContext<T> interceptionContext, Func<IEnumerable<T>> list)
+        public static IReaderInterceptor Returns<T>(this IInterceptionContext<T> interceptionContext, Func<IEnumerable<T>> list)
         {
             var interceptor = new DataReaderInterceptor<T>(list);
             interceptionContext.Interceptors.Add(interceptor);
 
-            return interceptionContext;
+            return interceptor;
         }
 
         public static IInterceptionBuilder<T> Returns<T>(this IInterceptionBuilder<T> interceptionBuilder, IEnumerable<T> list)
