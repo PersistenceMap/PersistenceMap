@@ -273,6 +273,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns>A typesage IProcedureQueryProvider</returns>
         public IProcedureQueryExpression<T> For<T>()
         {
+            QueryParts.AggregateType = typeof(T);
             return new ProcedureQueryProvider<T>(Context, QueryParts);
         }
 
@@ -284,6 +285,7 @@ namespace PersistenceMap.QueryBuilder
         /// <returns>A typesafe IProcedureQueryProvider</returns>
         public IProcedureQueryExpression<T> For<T>(Expression<Func<T>> anonymous)
         {
+            QueryParts.AggregateType = typeof(T);
             return new ProcedureQueryProvider<T>(Context, QueryParts);
         }
 
@@ -461,9 +463,9 @@ namespace PersistenceMap.QueryBuilder
         }
 
         /// <summary>
-        /// Execute the Procedure
+        /// Execute the Procedure to the new defined Type TOut
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of Type TOut</returns>
         public IEnumerable<TOut> Execute<TOut>()
         {
             var mapfields = TypeDefinitionFactory.GetFieldDefinitions<T>().ToList();
@@ -473,18 +475,24 @@ namespace PersistenceMap.QueryBuilder
             var fields = new List<FieldDefinition>();
             foreach (var field in TypeDefinitionFactory.GetFieldDefinitions<TOut>())
             {
+                // The reault was already mapped to a Type using the For<T>(...) method
+                // Map from the retrieved Type to the expected executed type
+                // Set the source of the new field to the name of the member of the already mapped
                 var tmp = mapfields.FirstOrDefault(f => f.FieldName == field.FieldName);
                 if (tmp == null)
                 {
                     continue;
                 }
-
-                field.MemberName = tmp.MemberName;
+                
+                field.FieldName = tmp.MemberName;
                 fields.Add(field);
             }
 
-            // set the aggregate type for procedures to allow interception
-            QueryParts.AggregateType = typeof(TOut);
+            if (QueryParts.AggregateType == null)
+            {
+                // set the aggregate type for procedures to allow interception
+                QueryParts.AggregateType = typeof(TOut);
+            }
 
             var expr = Context.ConnectionProvider.QueryCompiler;
             var query = expr.Compile(QueryParts, Context.Interceptors);

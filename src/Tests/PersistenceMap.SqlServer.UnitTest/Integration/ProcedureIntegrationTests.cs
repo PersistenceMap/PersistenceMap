@@ -116,6 +116,50 @@ namespace PersistenceMap.SqlServer.UnitTest.Integration
             }
         }
 
+        [Test]
+        public void PersistenceMap_SqlServer_Procedure_Integration_MapAfterFor()
+        {
+            var warrior = new
+            {
+                WarriorID = 1,
+                WarriorName = "Olaf",
+                Tribe = "Elf"
+            };
+
+            var warriors = new[]
+            {
+                warrior
+            }.ToList();
+
+            var connectionProvider = new Mock<IConnectionProvider>();
+            connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
+
+            var provider = new SqlContextProvider(connectionProvider.Object);
+            provider.Interceptor(() => warrior).Returns(() => warriors);
+
+            using (var context = provider.Open())
+            {
+                var items = context.Procedure("ProcedureName")
+                    .AddParameter("@param1", () => 1)
+                    .AddParameter("@param2", () => 2)
+                    .For(() => new
+                    {
+                        WarriorID = 0,
+                        WarriorName = string.Empty,
+                        Tribe = string.Empty
+                    })
+                    .Map("ID", d => d.WarriorID)
+                    .Map("Name", d => d.WarriorName)
+                    .Map("Race", d => d.Tribe)
+                    .Execute<Warrior>();
+
+                var item = items.First();
+                Assert.That(item.ID == warrior.WarriorID);
+                Assert.That(item.Name == warrior.WarriorName);
+                Assert.That(item.Race == warrior.Tribe);
+            }
+        }
+
         private class SalesByYear
         {
             public DateTime ShippedDate { get; set; }
