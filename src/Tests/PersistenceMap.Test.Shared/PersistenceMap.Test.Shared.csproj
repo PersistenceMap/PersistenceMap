@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interception\IReaderInterceptor.cs" />
     <Compile Include="Interception\MockedConnectionProvider.cs" />
     <Compile Include="Interception\MockedQueryKernel.cs" />
     <Compile Include="Interception\InterceptorExtensions.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Interception\MockedDataReader.cs" />
     <Compile Include="Extensions\IQueryProviderExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Interception\Result.cs" />
     <Compile Include="LocalDb\LocalDbManager.cs" />
     <Compile Include="MessageStackLogWriter.cs" />
     <Compile Include="Interception\ObjectDataReader.cs" />

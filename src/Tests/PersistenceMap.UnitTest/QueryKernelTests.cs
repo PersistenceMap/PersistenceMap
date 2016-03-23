@@ -108,8 +108,8 @@ namespace PersistenceMap.UnitTest
             };
 
             var reader = new MockedDataReader<Warrior>(warriors)
-                .AddResult<Armour>(armours)
-                .AddResult<Weapon>(weapons);
+                .AddResult<Armour>(() => armours)
+                .AddResult<Weapon>(() => weapons);
 
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new DataReaderContext(reader));
 

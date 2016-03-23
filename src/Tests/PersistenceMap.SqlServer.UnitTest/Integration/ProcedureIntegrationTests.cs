@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PersistenceMap.SqlServer.UnitTest.Procedure
+namespace PersistenceMap.SqlServer.UnitTest.Integration
 {
     [TestFixture]
-    public class InterceptionTests
+    public class ProcedureIntegrationTests
     {
         [Test]
         public void PersistenceMap_SqlServer_Procedure_Interception_Mock_DataReader_Test()
@@ -30,7 +30,6 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
             connectionProvider.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(dataReader));
 
             var provider = new SqlContextProvider(connectionProvider.Object);
-            //ovider.Interceptor<SalesByYear>().Returns(() => lst);
 
             using (var context = provider.Open())
             {
@@ -55,7 +54,7 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
                     Subtotal = 50
                 }
             };
-            
+
             var connectionProvider = new Mock<IConnectionProvider>();
             connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
 
@@ -75,7 +74,6 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
         }
 
         [Test]
-        [NUnit.Framework.Ignore("Interception with multiple results is not yet implemented")]
         public void PersistenceMap_SqlServer_Procedure_Interception_Mock_WithInterception_OutParam_Test()
         {
             var lst = new List<Warrior>
@@ -90,7 +88,7 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
             {
                 new
                 {
-                    outstring = "passed"
+                    p1 = "passed"
                 }
             }.ToList();
 
@@ -98,7 +96,9 @@ namespace PersistenceMap.SqlServer.UnitTest.Procedure
             connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
 
             var provider = new SqlContextProvider(connectionProvider.Object);
-            provider.Interceptor<Warrior>().Returns(() => lst);
+            provider.Interceptor<Warrior>()
+                .Returns(() => lst)
+                .AddResult(() => outlst);
 
             using (var context = provider.Open())
             {
