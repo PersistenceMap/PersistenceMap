@@ -162,9 +162,9 @@ namespace PersistenceMap
         {
             _compiledParts = new HashSet<IQueryPart>();
 
-            if (container.AggregatePart != null)
+            if (container.AggregateType != null)
             {
-                var interception = new InterceptionHandler(interceptors, container.AggregatePart.EntityType, null);
+                var interception = new InterceptionHandler(interceptors, container.AggregateType);
                 interception.HandleBeforeCompile(container);
             }
 

@@ -38,6 +38,21 @@ namespace PersistenceMap.Factories
             return GetConstructorMethod(type).Invoke();
         }
 
+        /// <summary>
+        /// Anonymous objects have a constructor that accepts all arguments in the same order as defined
+        /// To populate a anonymous object the data has to be passed in the same order as defined to the constructor
+        /// </summary>
+        /// <typeparam name="T">The object type to crate</typeparam>
+        /// <param name="args">The list of arguments needed for constructing the anonmous object</param>
+        /// <returns>An instance of an anonymous object T</returns>
+        public static T CreateAnonymousObject<T>(IEnumerable<object> args)
+        {
+            // create a instance an inject the data
+            var row = (T) Activator.CreateInstance(typeof(T), args.ToArray());
+
+            return row;
+        }
+
         #region Constructor Delegate generation methods
 
         private static EmptyConstructorDelegate GetConstructorMethodToCache(Type type)
@@ -82,12 +97,8 @@ namespace PersistenceMap.Factories
             var emptyCtor = type.GetEmptyConstructor();
             if (emptyCtor != null)
             {
-#if SL5 
-                var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes);
-#else
-                //var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, typeof(TypeExtensions).Module, true);
                 var dynamicMethod = new DynamicMethod("MyCtor", type, Type.EmptyTypes, type.Module, true);
-#endif
+
                 var ilGenerator = dynamicMethod.GetILGenerator();
                 ilGenerator.Emit(System.Reflection.Emit.OpCodes.Nop);
                 ilGenerator.Emit(System.Reflection.Emit.OpCodes.Newobj, emptyCtor);

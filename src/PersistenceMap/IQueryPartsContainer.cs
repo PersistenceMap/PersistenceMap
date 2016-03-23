@@ -43,6 +43,10 @@ namespace PersistenceMap
         /// <param name="predicate"></param>
         void AddToLast(IQueryPart part, Func<IQueryPart, bool> predicate);
 
+        /// <summary>
+        /// Remove the part from the Query tree
+        /// </summary>
+        /// <param name="part">The part to be removed</param>
         void Remove(IQueryPart part);
 
         /// <summary>
@@ -50,6 +54,14 @@ namespace PersistenceMap
         /// </summary>
         IEnumerable<IQueryPart> Parts { get; }
 
+        /// <summary>
+        /// Gets the aggregate part for the query
+        /// </summary>
         IQueryPart AggregatePart { get; }
+
+        /// <summary>
+        /// Gets or sets the aggregate type for this query
+        /// </summary>
+        Type AggregateType { get; set; }
     }
 }

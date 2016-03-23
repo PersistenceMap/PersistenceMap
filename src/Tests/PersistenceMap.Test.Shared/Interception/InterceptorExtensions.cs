@@ -12,7 +12,7 @@ namespace PersistenceMap.Interception
 
         public static IInterceptionContext<T> Returns<T>(this IInterceptionContext<T> interceptionContext, Func<IEnumerable<T>> list)
         {
-            var interceptor = new DataReaderInterceptor<T>(list.Invoke());
+            var interceptor = new DataReaderInterceptor<T>(list);
             interceptionContext.Interceptors.Add(interceptor);
 
             return interceptionContext;
@@ -31,7 +31,7 @@ namespace PersistenceMap.Interception
                 return interceptionBuilder;
             }
 
-            var interceptor = new DataReaderInterceptor<T>(list.Invoke());
+            var interceptor = new DataReaderInterceptor<T>(list);
             context.Interceptors.Add(interceptor);
 
             return interceptionBuilder;

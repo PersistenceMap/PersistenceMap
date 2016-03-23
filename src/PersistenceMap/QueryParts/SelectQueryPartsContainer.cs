@@ -20,6 +20,7 @@ namespace PersistenceMap.QueryParts
                     if (AggregatePart == null)
                     {
                         AggregatePart = part;
+                        AggregateType = part.EntityType;
                     }
 
                     break;

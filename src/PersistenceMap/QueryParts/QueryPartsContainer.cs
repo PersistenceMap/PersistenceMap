@@ -9,7 +9,7 @@ namespace PersistenceMap.QueryParts
     /// </summary>
     public class QueryPartsContainer : IQueryPartsContainer
     {
-        #region IQueryPartsContainer Implementation
+        private IList<IQueryPart> _parts;
 
         public virtual void Add(IQueryPart part)
         {
@@ -18,6 +18,7 @@ namespace PersistenceMap.QueryParts
             if (AggregatePart == null)
             {
                 AggregatePart = part;
+                AggregateType = part.EntityType;
             }
         }
 
@@ -63,6 +64,10 @@ namespace PersistenceMap.QueryParts
             last.Add(part);
         }
 
+        /// <summary>
+        /// Remove the part from the Query tree
+        /// </summary>
+        /// <param name="part">The part to be removed</param>
         public void Remove(IQueryPart part)
         {
             if (Parts.Contains(part))
@@ -71,6 +76,9 @@ namespace PersistenceMap.QueryParts
             }
         }
 
+        /// <summary>
+        /// The list of queryparts in the container
+        /// </summary>
         IEnumerable<IQueryPart> IQueryPartsContainer.Parts
         {
             get
@@ -79,7 +87,9 @@ namespace PersistenceMap.QueryParts
             }
         }
 
-        private IList<IQueryPart> _parts;
+        /// <summary>
+        /// The list of queryparts in the container
+        /// </summary>
         public IList<IQueryPart> Parts
         {
             get
@@ -93,10 +103,16 @@ namespace PersistenceMap.QueryParts
             }
         }
 
+        /// <summary>
+        /// Gets the aggregate part for the query
+        /// </summary>
         public IQueryPart AggregatePart { get; set; }
 
-        #endregion
-
+        /// <summary>
+        /// Gets or sets the aggregate type for this query
+        /// </summary>
+        public Type AggregateType { get; set; }
+        
         #region IEnumerable<IQueryPart> Implementation
 
         public IEnumerator<IQueryPart> GetEnumerator()

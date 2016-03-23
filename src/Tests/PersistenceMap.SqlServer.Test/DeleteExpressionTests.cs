@@ -1,18 +1,16 @@
 ﻿using NUnit.Framework;
-using PersistenceMap.Test.TableTypes;
+using PersistenceMap.Test;
 using System;
-using System.Linq;
 
-namespace PersistenceMap.Test.Expression
+namespace PersistenceMap.SqlServer.Test
 {
     [TestFixture]
     public class DeleteExpressionTests : TestBase
     {
         [Test]
-        [Description("A failing delete satement that defines the deletestatement according to the values from a distinct Keyproperty of a given entity")]
-        public void DeleteEntityWithExpressionKeyThatFails()
+        public void PersistenceMap_SqlServer_Integration_PassEmptyConnectionStringToSqlContextFails()
         {
-            Assert.Throws<ArgumentException>(() => new SqlContextProvider(null));
+            Assert.Throws<ArgumentException>(() => new SqlContextProvider(string.Empty));
         }
     }
 }

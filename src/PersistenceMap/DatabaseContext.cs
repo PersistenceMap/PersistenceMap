@@ -125,38 +125,38 @@ namespace PersistenceMap
         }
 
         /// <summary>
-        /// Executes the query against a RDBMS
+        /// Executes the query against a RDBMS without retrieving a result
         /// </summary>
         /// <param name="query">The query that will be executed</param>
-        public void Execute(CompiledQuery query)
+        public void ExecuteNonQuery(CompiledQuery query)
         {
             var parts = query.QueryParts;
-            if (parts != null && parts.AggregatePart != null)
+            if (parts != null && parts.AggregateType != null)
             {
-                var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
+                var interception = new InterceptionHandler(_interceptors, parts.AggregateType, this);
                 interception.HandleBeforeExecute(query);
             }
 
-            Kernel.Execute(query);
+            Kernel.ExecuteNonQuery(query);
             // TODO: Interceptors AfterExecute
         }
 
-        ///// <summary>
-        ///// Executes a CompiledQuery that returnes multiple resultsets against the RDBMS
-        ///// </summary>
-        ///// <param name="query">The CompiledQuery containing the expression</param>
-        ///// <param name="expressions">All contexts that have to be parsed</param>
-        //public void Execute(CompiledQuery query, params Action<IDataReaderContext>[] expressions)
-        //{
-        //    var parts = query.QueryParts;
-        //    if (parts != null && parts.AggregatePart != null)
-        //    {
-        //        var interception = new InterceptionHandler(_interceptors, parts.AggregatePart.EntityType, this);
-        //        interception.HandleBeforeExecute(query);
-        //    }
+        /// <summary>
+        /// Executes the query against a RDBMS and parses all values to a Colleciton of ReaderResult
+        /// </summary>
+        /// <param name="query">The query to execute</param>
+        /// <returns>All results as a List of ReaderResult</returns>
+        public IEnumerable<ReaderResult> Execute(CompiledQuery query)
+        {
+            var parts = query.QueryParts;
+            if (parts != null && parts.AggregateType != null)
+            {
+                var interception = new InterceptionHandler(_interceptors, parts.AggregateType, this);
+                interception.HandleBeforeExecute(query);
+            }
 
-        //    Kernel.Execute(query, expressions);
-        //}
+            return Kernel.Execute(query);
+        }
 
         #endregion
 
@@ -164,6 +164,12 @@ namespace PersistenceMap
 
         #region Execute
 
+        /// <summary>
+        /// Execute the query
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="queryString">The SQL query</param>
+        /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(string queryString)
         {
             var query = new CompiledQuery
@@ -174,6 +180,13 @@ namespace PersistenceMap
             return Execute<T>(query);
         }
 
+        /// <summary>
+        /// Execute the query
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="queryString">The SQL query</param>
+        /// <param name="anonymobject">The object that defines T</param>
+        /// <returns>A list of T</returns>
         public IEnumerable<T> Execute<T>(string queryString, Expression<Func<T>> anonymobject)
         {
             var query = new CompiledQuery
@@ -184,6 +197,10 @@ namespace PersistenceMap
             return Execute<T>(query);
         }
 
+        /// <summary>
+        /// Execute the query without a result
+        /// </summary>
+        /// <param name="queryString">The SQL query</param>
         public void Execute(string queryString)
         {
             var query = new CompiledQuery
@@ -191,7 +208,7 @@ namespace PersistenceMap
                 QueryString = queryString
             };
 
-            Execute(query);
+            ExecuteNonQuery(query);
         }
 
         #endregion

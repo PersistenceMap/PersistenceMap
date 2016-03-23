@@ -5,12 +5,14 @@ using PersistenceMap.Expressions;
 using PersistenceMap.Factories;
 using PersistenceMap.QueryParts;
 using PersistenceMap.Sql;
-using PersistenceMap.Diagnostics;
 
 namespace PersistenceMap.QueryBuilder
 {
     public class UpdateQueryBuilder<T> : IUpdateQueryExpression<T>, IQueryExpression
     {
+        private readonly IDatabaseContext _context;
+        private IQueryPartsContainer _queryParts;
+
         public UpdateQueryBuilder(IDatabaseContext context)
         {
             _context = context;
@@ -24,7 +26,6 @@ namespace PersistenceMap.QueryBuilder
         
         #region IQueryProvider Implementation
 
-        readonly IDatabaseContext _context;
         public IDatabaseContext Context
         {
             get
@@ -33,13 +34,15 @@ namespace PersistenceMap.QueryBuilder
             }
         }
 
-        IQueryPartsContainer _queryParts;
         public IQueryPartsContainer QueryParts
         {
             get
             {
                 if (_queryParts == null)
+                {
                     _queryParts = new QueryPartsContainer();
+                }
+
                 return _queryParts;
             }
         }
@@ -87,9 +90,6 @@ namespace PersistenceMap.QueryBuilder
             var dataObject = dataPredicate.Compile().Invoke();
 
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
-
-            var last = tableFields.LastOrDefault(f => f.MemberName != keyName);
-
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);

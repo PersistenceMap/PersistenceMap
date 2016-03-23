@@ -30,23 +30,7 @@ namespace PersistenceMap
 
             return cache;
         }
-
-        public static Dictionary<string, int> CreateFieldIndexCache(this IDataReader reader, ObjectDefinition[] objectDefs)
-        {
-            var cache = new Dictionary<string, int>();
-
-            for (var i = 0; i < reader.FieldCount; i++)
-            {
-                var name = reader.GetName(i);
-                if (objectDefs.Any(o => o.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    cache[name] = i;
-                }
-            }
-
-            return cache;
-        }
-
+        
         /// <summary>
         /// Gets the Index of a column inside a datareader. The search is case insensitive.
         /// </summary>

@@ -50,36 +50,98 @@ namespace PersistenceMap.UnitTest
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
 
             // Act
-            kernel.Execute(new CompiledQuery());
+            kernel.ExecuteNonQuery(new CompiledQuery());
 
             _provider.Verify(p => p.Execute(It.IsAny<string>()), Times.Never);
             _provider.Verify(p => p.ExecuteNonQuery(It.IsAny<string>()), Times.Once);
         }
-
+        
         [Test]
-        public void PersistenceMap_QueryKernel_ExecuteCompiledQueryWithMultipleReaderContext()
+        public void PersistenceMap_QueryKernel_Execute_ReaderResult()
         {
-            bool result = true;
-            var dr = new Mock<IDataReader>();
-            dr.Setup(d => d.IsClosed).Returns(false);
-            dr.Setup(d => d.NextResult()).Returns(() => result).Callback(() => result = false);
+            var warriors = new List<Warrior>
+            {
+                new Warrior { ID = 1, Name = "Mojo" },
+                new Warrior { ID = 2, Name = "Hornet" },
+                new Warrior { ID = 3, Name = "Sanjo" }
+            };
 
-            _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new DataReaderContext(dr.Object));
-            
-            bool expressionOne = false;
-            bool expressionTwo = false;
-            bool expressionThree = false;
+            var reader = new MockedDataReader<Warrior>(warriors);
+
+            _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new DataReaderContext(reader));
 
             var kernel = new QueryKernel(_provider.Object, _settings.Object);
+            var results = kernel.Execute(new CompiledQuery());
 
-            // Act
-            kernel.Execute(new CompiledQuery(), c => expressionOne = true, c => expressionTwo = true, c => expressionThree = true);
+            Assert.That(results.Count() == 1);
+            var result = results.First();
+            var row = result.First();
+            Assert.AreEqual(row["Name"], "Mojo");
+            Assert.AreEqual(row["ID"], 1);
 
-            // reader only executes two results so expressionThree is never set
-            Assert.IsFalse(expressionThree);
-            Assert.IsTrue(expressionOne);
-            Assert.IsTrue(expressionTwo);
-            _provider.Verify(p => p.Execute(It.IsAny<string>()), Times.Once);
+            row = result.Last();
+            Assert.AreEqual(row["Name"], "Sanjo");
+            Assert.AreEqual(row["ID"], 3);
+        }
+
+        [Test]
+        public void PersistenceMap_QueryKernel_Execute_ReaderResult_MultipleResults()
+        {
+            var warriors = new List<Warrior>
+            {
+                new Warrior { ID = 1, Name = "Mojo" },
+                new Warrior { ID = 2, Name = "Hornet" },
+                new Warrior { ID = 3, Name = "Sanjo" }
+            };
+
+            var armours = new List<Armour>
+            {
+                new Armour { WarriorID = 1, Name = "Shield" },
+                new Armour { WarriorID = 2, Name = "Breastplate" },
+                new Armour { WarriorID = 3, Name = "Shoulderplate" }
+            };
+
+            var weapons = new List<Weapon>
+            {
+                new Weapon { ID = 1, Name = "Sword" },
+                new Weapon { ID = 1, Name = "Bow" }
+            };
+
+            var reader = new MockedDataReader<Warrior>(warriors)
+                .AddResult<Armour>(armours)
+                .AddResult<Weapon>(weapons);
+
+            _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(new DataReaderContext(reader));
+
+            var kernel = new QueryKernel(_provider.Object, _settings.Object);
+            var results = kernel.Execute(new CompiledQuery());
+
+            Assert.That(results.Count() == 3);
+
+            var items = results.ToList();
+            var item = items[0];
+
+            Assert.That(item.Count() == 3);
+            Assert.AreEqual(item.First()["ID"], warriors.First().ID);
+            Assert.AreEqual(item.First()["Name"], warriors.First().Name);
+            Assert.AreEqual(item.Last()["ID"], warriors.Last().ID);
+            Assert.AreEqual(item.Last()["Name"], warriors.Last().Name);
+
+            item = items[1];
+
+            Assert.That(item.Count() == 3);
+            Assert.AreEqual(item.First()["WarriorID"], armours.First().WarriorID);
+            Assert.AreEqual(item.First()["Name"], armours.First().Name);
+            Assert.AreEqual(item.Last()["WarriorID"], armours.Last().WarriorID);
+            Assert.AreEqual(item.Last()["Name"], armours.Last().Name);
+
+            item = items[2];
+
+            Assert.That(item.Count() == 2);
+            Assert.AreEqual(item.First()["ID"], weapons.First().ID);
+            Assert.AreEqual(item.First()["Name"], weapons.First().Name);
+            Assert.AreEqual(item.Last()["ID"], weapons.Last().ID);
+            Assert.AreEqual(item.Last()["Name"], weapons.Last().Name);
         }
     }
 }
