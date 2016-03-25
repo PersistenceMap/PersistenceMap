@@ -4,6 +4,7 @@ using PersistenceMap.Interception;
 using PersistenceMap.Test.TableTypes;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace PersistenceMap.SqlServer.UnitTest.Integration
@@ -157,6 +158,27 @@ namespace PersistenceMap.SqlServer.UnitTest.Integration
                 Assert.That(item.ID == warrior.WarriorID);
                 Assert.That(item.Name == warrior.WarriorName);
                 Assert.That(item.Race == warrior.Tribe);
+            }
+        }
+
+        [Test]
+        public void PersistenceMap_SqlServer_Procedure_Integration_NullParameter()
+        {
+            var connectionProvider = new Mock<IConnectionProvider>();
+            connectionProvider.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
+            connectionProvider.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(new Mock<IDataReader>().Object));
+
+            var provider = new SqlContextProvider(connectionProvider.Object);
+            using (var context = provider.Open())
+            {
+                string nullvalue = null;
+                context.Procedure("ProcedureName")
+                    .AddParameter("@param1", () => 1)
+                    .AddParameter("@param2", () => nullvalue)
+                    .AddParameter("@param3", () => string.Empty)
+                    .Execute();
+
+                connectionProvider.Verify(exp => exp.Execute(It.Is<string>(s => s == "EXEC ProcedureName @param1=1, @param2=NULL, @param3=''")), Times.Once);
             }
         }
 

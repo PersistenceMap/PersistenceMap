@@ -119,8 +119,8 @@ namespace PersistenceMap.SqlServer.Test.Benchmark
             profile2.Trace();
             profile3.Trace();
 
-            Assert.IsTrue(profile1.TotalTime > profile2.TotalTime);
-            Assert.IsTrue(profile2.TotalTime > profile3.TotalTime);
+            Assert.IsTrue(profile1.TotalTime > profile2.TotalTime, "Profile 1 was faster than Profile 2");
+            Assert.IsTrue(profile2.TotalTime > profile3.TotalTime, "Profile 2 was faster than Profile 3");
         }
     }
 }

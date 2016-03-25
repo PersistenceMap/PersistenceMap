@@ -95,6 +95,7 @@ namespace PersistenceMap.QueryBuilder
         {
             // get the value. Dont compile the expression to sql
             var value = predicate.Compile().Invoke();
+            
             if (value != null)
             {
                 // quotate and format the value if needed
@@ -116,7 +117,7 @@ namespace PersistenceMap.QueryBuilder
                 return string.Format(format: "{0}={1}", arg0: name, arg1: value);
             }
 
-            return string.Empty;
+            return $"{name}=NULL";
         }
 
         protected void MergeIncludes(IEnumerable<FieldDefinition> fields)
