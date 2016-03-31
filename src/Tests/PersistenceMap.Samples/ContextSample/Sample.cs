@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MeasureMap;
+using Scribe;
 
 namespace PersistenceMap.Samples.ContextSample
 {
@@ -15,40 +17,41 @@ namespace PersistenceMap.Samples.ContextSample
 
         public void Work()
         {
+            var listener = new PersistenceMapLogListener();
+
+            var factory = new LoggerFactory();
+            factory.AddListener(listener);
+            factory.AddWriter(new TraceLogWriter());
+            
             _log = new List<string>();
             int count = 100;
 
             DatabaseManager.CreateDatabase();
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
+            
             var provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
+            provider.Settings.AddLogger(listener);
             using (var context = provider.Open())
             {
-                for (int i = 0; i < count; i++)
-                {
-                    DoReadWork(context, i);
-                }
+                var profile1 = ProfilerSession.StartSession()
+                    .SetIterations(count)
+                    .Task(() => DoReadWork(context, 0))
+                    .RunSession();
+
+                _log.Add($"Creating one context for {count} selects calls took {profile1.TotalTime.TotalMilliseconds} ms");
             }
 
-            stopwatch.Stop();
-            _log.Add(string.Format("Creating one context for {0} selects calls took {1} ms", count, stopwatch.ElapsedMilliseconds));
-
-            stopwatch.Reset();
-            stopwatch.Start();
-
-            for (int i = 0; i < count; i++)
-            {
-                provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
-                using (var context = provider.Open())
+            var profile2 = ProfilerSession.StartSession()
+                .SetIterations(count)
+                .Task(() =>
                 {
-                    DoReadWork(context, i);
-                }
-            }
-
-            stopwatch.Stop();
-            _log.Add(string.Format("Creating a context per call for {0} selects calls took {1} ms", count, stopwatch.ElapsedMilliseconds));
+                    provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
+                    using (var context = provider.Open())
+                    {
+                        DoReadWork(context, 0);
+                    }
+                }).RunSession();
+            
+            _log.Add($"Creating a context per call for {count} selects calls took {profile2.TotalTime.TotalMilliseconds} ms");
 
             PrintLog();
         }
@@ -82,6 +85,34 @@ namespace PersistenceMap.Samples.ContextSample
             foreach (var log in _log)
             {
                 Console.WriteLine(log);
+            }
+        }
+
+        private class PersistenceMapLogListener : IListener, PersistenceMap.Diagnostics.ILogWriter
+        {
+            private ILogger _logger;
+
+            public void Initialize(ILoggerFactory loggerFactory)
+            {
+                _logger = loggerFactory.GetLogger();
+            }
+
+            public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
+            {
+                if (_logger == null)
+                {
+                    return;
+                }
+
+                _logger.Write(message, LogLevel.Information, Priority.Medium, category, logtime);
+            }
+        }
+
+        class TraceLogWriter : ILogWriter
+        {
+            public void Write(ILogEntry logEntry)
+            {
+                Trace.WriteLine(logEntry.ToString());
             }
         }
     }
