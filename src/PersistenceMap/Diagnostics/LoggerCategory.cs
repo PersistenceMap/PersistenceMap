@@ -1,7 +1,7 @@
 ﻿
 namespace PersistenceMap.Diagnostics
 {
-    internal static class LoggerCategory
+    public static class LoggerCategory
     {
         public const string Error = "Error";
 

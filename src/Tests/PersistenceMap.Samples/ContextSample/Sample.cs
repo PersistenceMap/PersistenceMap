@@ -8,23 +8,30 @@ using System.Text;
 using System.Threading.Tasks;
 using MeasureMap;
 using Scribe;
+using PersistenceMap.Samples;
 
 namespace PersistenceMap.Samples.ContextSample
 {
     class Sample
     {
-        List<string> _log;
+        List<string> _log = new List<string>();
 
         public void Work()
         {
             var listener = new PersistenceMapLogListener();
 
-            var factory = new LoggerFactory();
-            factory.AddListener(listener);
-            factory.AddWriter(new TraceLogWriter());
+            var factory = new LoggerConfiguration()
+                .AddListener(listener)
+                .AddPersistenceMapTraceWriter()
+                .BuildFactory();
             
-            _log = new List<string>();
             int count = 100;
+
+            var logger = new LoggerConfiguration()
+                .AddWriter(l => _log.Add(l.Message))
+                .AddTraceWriter()
+                .BuildFactory()
+                .GetLogger();
 
             DatabaseManager.CreateDatabase();
             
@@ -37,7 +44,8 @@ namespace PersistenceMap.Samples.ContextSample
                     .Task(() => DoReadWork(context, 0))
                     .RunSession();
 
-                _log.Add($"Creating one context for {count} selects calls took {profile1.TotalTime.TotalMilliseconds} ms");
+                profile1.Trace();
+                logger.Write($"Creating one context for {count} selects calls took {profile1.TotalTime.TotalMilliseconds} ms");
             }
 
             var profile2 = ProfilerSession.StartSession()
@@ -50,8 +58,9 @@ namespace PersistenceMap.Samples.ContextSample
                         DoReadWork(context, 0);
                     }
                 }).RunSession();
-            
-            _log.Add($"Creating a context per call for {count} selects calls took {profile2.TotalTime.TotalMilliseconds} ms");
+
+            profile2.Trace();
+            logger.Write($"Creating a context per call for {count} selects calls took {profile2.TotalTime.TotalMilliseconds} ms");
 
             PrintLog();
         }
@@ -85,34 +94,6 @@ namespace PersistenceMap.Samples.ContextSample
             foreach (var log in _log)
             {
                 Console.WriteLine(log);
-            }
-        }
-
-        private class PersistenceMapLogListener : IListener, PersistenceMap.Diagnostics.ILogWriter
-        {
-            private ILogger _logger;
-
-            public void Initialize(ILoggerFactory loggerFactory)
-            {
-                _logger = loggerFactory.GetLogger();
-            }
-
-            public void Write(string message, string source = null, string category = null, DateTime? logtime = null)
-            {
-                if (_logger == null)
-                {
-                    return;
-                }
-
-                _logger.Write(message, LogLevel.Information, Priority.Medium, category, logtime);
-            }
-        }
-
-        class TraceLogWriter : ILogWriter
-        {
-            public void Write(ILogEntry logEntry)
-            {
-                Trace.WriteLine(logEntry.ToString());
             }
         }
     }
