@@ -105,7 +105,7 @@ namespace PersistenceMap.Sqlite.Test
         {
             var provider = new SqliteContextProvider(ConnectionString);
             var logger = new MessageStackLogWriter();
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 // table with a foreign key
@@ -210,7 +210,7 @@ namespace PersistenceMap.Sqlite.Test
         {
             var provider = new SqliteContextProvider(ConnectionString);
             var logger = new MessageStackLogWriter();
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 context.Database.Table<Warrior>().Ignore(wrir => wrir.Race).Create();

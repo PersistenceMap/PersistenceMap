@@ -30,7 +30,7 @@ namespace PersistenceMap.UnitTest
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
             _provider.Setup(p => p.QueryCompiler).Returns(compiler.Object);
 
-            var loggerFactory = new Mock<ILogWriterFactory>();
+            var loggerFactory = new Mock<ILoggerFactory>();
             loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogWriter>().Object);
 
             _settings = new Mock<ISettings>();

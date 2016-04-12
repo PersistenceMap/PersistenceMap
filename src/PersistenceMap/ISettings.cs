@@ -4,10 +4,10 @@ namespace PersistenceMap
 {
     public interface ISettings
     {
-        ILogWriterFactory LoggerFactory { get; }
+        ILoggerFactory LoggerFactory { get; }
 
         RestrictiveMode RestrictiveMappingMode { get; set; }
 
-        void AddLogger(ILogWriter logger);
+        void AddLogWriter(ILogWriter logger);
     }
 }

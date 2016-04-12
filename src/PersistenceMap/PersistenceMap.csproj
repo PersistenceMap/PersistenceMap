@@ -70,10 +70,12 @@
     <Compile Include="Attributes\IgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\SettingsConfiguration.cs" />
     <Compile Include="ConnectionProvider.cs" />
     <Compile Include="ContextProvider.cs" />
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="DatabaseContextExtensions.cs" />
+    <Compile Include="Diagnostics\LoggerConfiguration.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
     <Compile Include="Enums\RestrictiveMode.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
@@ -109,9 +111,9 @@
     <Compile Include="Enums\FieldOperation.cs" />
     <Compile Include="IConnectionProvider.cs" />
     <Compile Include="Diagnostics\ILogWriter.cs" />
-    <Compile Include="Diagnostics\ILogWriterFactory.cs" />
+    <Compile Include="Diagnostics\ILoggerFactory.cs" />
     <Compile Include="Diagnostics\LogDelegate.cs" />
-    <Compile Include="Diagnostics\LogWriterFactory.cs" />
+    <Compile Include="Diagnostics\LoggerFactory.cs" />
     <Compile Include="Enums\OperationType.cs" />
     <Compile Include="IDeleteQueryExpression.cs" />
     <Compile Include="IInsertQueryExpression.cs" />

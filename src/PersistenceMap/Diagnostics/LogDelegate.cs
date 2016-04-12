@@ -8,9 +8,9 @@ namespace PersistenceMap.Diagnostics
     /// </summary>
     public class LogDelegate : ILogWriter
     {
-        private readonly ILogWriterFactory _loggerFactory;
+        private readonly ILoggerFactory _loggerFactory;
 
-        public LogDelegate(ILogWriterFactory loggerFactory)
+        public LogDelegate(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
         }

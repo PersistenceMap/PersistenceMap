@@ -333,7 +333,7 @@ namespace PersistenceMap.SqlServer.Test
 
             var provider = new SqlContextProvider(GetConnectionString("WarriorDB"));
             var logger = new MessageStackLogWriter();
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 // table with a foreign key

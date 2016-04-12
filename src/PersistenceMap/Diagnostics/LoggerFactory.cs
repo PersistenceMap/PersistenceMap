@@ -2,7 +2,7 @@
 
 namespace PersistenceMap.Diagnostics
 {
-    public class LogWriterFactory : ILogWriterFactory
+    public class LoggerFactory : ILoggerFactory
     {
         private readonly Dictionary<string, ILogWriter> _logProviders = new Dictionary<string, ILogWriter>();
 
@@ -14,7 +14,7 @@ namespace PersistenceMap.Diagnostics
             }
         }
 
-        public void AddLogger(string name, ILogWriter logger)
+        public void AddWriter(string name, ILogWriter logger)
         {
             if (!_logProviders.ContainsKey(name))
             {

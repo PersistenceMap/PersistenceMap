@@ -2,11 +2,11 @@
 
 namespace PersistenceMap.Diagnostics
 {
-    public interface ILogWriterFactory
+    public interface ILoggerFactory
     {
         IEnumerable<ILogWriter> LogProviders { get; }
 
-        void AddLogger(string name, ILogWriter loggerProvider);
+        void AddWriter(string name, ILogWriter loggerProvider);
 
         ILogWriter CreateLogger();
     }

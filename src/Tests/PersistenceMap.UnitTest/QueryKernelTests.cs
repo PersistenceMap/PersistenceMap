@@ -25,7 +25,7 @@ namespace PersistenceMap.UnitTest
             _provider = new Mock<IConnectionProvider>();
             _provider.Setup(p => p.Execute(It.IsAny<string>())).Returns(reader);
 
-            var loggerFactory = new Mock<ILogWriterFactory>();
+            var loggerFactory = new Mock<ILoggerFactory>();
             loggerFactory.Setup(l => l.CreateLogger()).Returns(new Mock<ILogWriter>().Object);
 
             _settings = new Mock<ISettings>();

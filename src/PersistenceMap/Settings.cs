@@ -1,27 +1,18 @@
 ﻿using PersistenceMap.Configuration;
 using PersistenceMap.Diagnostics;
-using PersistenceMap.Factories;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 
 namespace PersistenceMap
 {
     public class Settings : ISettings
     {
-        private static ConfigurationSettings _configurationSettings;
+        private static SettingsConfiguration _configurationSettings;
+        private Lazy<ILoggerFactory> _loggerFactory;
 
         public Settings()
         {
             // initialize the loggerfactory
-            _loggerFactory = new Lazy<ILogWriterFactory>(() => 
-            {
-                // copy all loggers from the Configuration
-                var factory = new LogWriterFactory();
-                ConfigSettings.Loggers.ForEach(l => factory.AddLogger(l.GetType().Name, l));
-                return factory;
-            });
+            Initialize();
 
             RestrictiveMappingMode = RestrictiveMode.Log;
         }
@@ -29,25 +20,20 @@ namespace PersistenceMap
         /// <summary>
         /// Gets the singleton instace of the configuration settings that are defined in the *.config file
         /// </summary>
-        private ConfigurationSettings ConfigSettings        
+        internal static SettingsConfiguration Configuration()
         {
-            get
+            if (_configurationSettings == null)
             {
-                if (_configurationSettings == null)
-                {
-                    _configurationSettings = new ConfigurationSettings();
-                }
-
-                return _configurationSettings;
+                _configurationSettings = new SettingsConfiguration();
             }
-        }
 
-        readonly Lazy<ILogWriterFactory> _loggerFactory;
+            return _configurationSettings;
+        }
 
         /// <summary>
         /// Gets the loggerfactory that containes all loggers that are defined in the configuraiton additionaly to the loggers added per instance of the settings
         /// </summary>
-        public ILogWriterFactory LoggerFactory
+        public ILoggerFactory LoggerFactory
         {
             get
             {
@@ -60,55 +46,31 @@ namespace PersistenceMap
         /// <summary>
         /// Adds a logger to the factory to the already defined loggers from the configuration
         /// </summary>
-        /// <param name="logger">The logger to add to the loggerfactory</param>
-        public void AddLogger(ILogWriter logger)
+        /// <param name="writer">The logger to add to the loggerfactory</param>
+        public void AddLogWriter(ILogWriter writer)
         {
-            LoggerFactory.AddLogger(logger.GetType().Name, logger);
+            LoggerFactory.AddWriter(writer.GetType().Name, writer);
         }
 
         /// <summary>
-        /// Class that is used to read the configuration from the app.config
+        /// Reset all settings for all instances to default
         /// </summary>
-        internal class ConfigurationSettings
+        public void Reset()
         {
-            public ConfigurationSettings()
+            _configurationSettings = null;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            // initialize the loggerfactory
+            _loggerFactory = new Lazy<ILoggerFactory>(() =>
             {
-                var loggers = new List<ILogWriter>();
-
-                // add loggers that are defined in the configurationsection in the app.config
-                var section = ConfigurationManager.GetSection("PersistenceMap") as PersistenceMapSection;
-                if (section != null)
-                {
-                    foreach (var element in section.Loggers)
-                    {
-                        var type = Type.GetType(element.Type);
-                        if (type != null)
-                        {
-                            var instance = type.CreateInstance() as ILogWriter;
-                            if (instance != null)
-                            {
-                                loggers.Add(instance);
-
-                                Trace.WriteLine(string.Format("## PersistenceMap - Added Logger: {0} defined by the configuration", instance.GetType()));
-                            }
-                            else
-                            {
-                                var loggerFactory = new LogWriterFactory();
-                                var logger = loggerFactory.CreateLogger();
-
-                                var message = string.Format("Logger {0} cannot be created because the Type does not exist or does not derive from {1}.", element.Type, typeof(ILogWriter).Name);
-                                
-                                logger.Write(message, "Configuration error", "Configuration", DateTime.Now);
-                                Trace.WriteLine(string.Format("PersistenceMap - Configuration error: {0}", message));
-                            }
-                        }
-                    }
-                }
-
-                Loggers = loggers;
-            }
-
-            internal IEnumerable<ILogWriter> Loggers { get; private set; }
+                // copy all loggers from the Configuration
+                var factory = new LoggerFactory();
+                Configuration().Loggers.ForEach(l => factory.AddWriter(l.GetType().Name, l));
+                return factory;
+            });
         }
     }
 }

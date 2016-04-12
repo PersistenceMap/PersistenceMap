@@ -36,7 +36,7 @@ namespace PersistenceMap.Samples.ContextSample
             DatabaseManager.CreateDatabase();
             
             var provider = new SqliteContextProvider(DatabaseManager.ConnectionString);
-            provider.Settings.AddLogger(listener);
+            provider.Settings.AddLogWriter(listener);
             using (var context = provider.Open())
             {
                 var profile1 = ProfilerSession.StartSession()

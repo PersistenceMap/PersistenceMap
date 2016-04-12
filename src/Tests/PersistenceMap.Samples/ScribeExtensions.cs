@@ -1,5 +1,4 @@
-﻿using PersistenceMap.Diagnostics;
-using Scribe;
+﻿using Scribe;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -44,7 +43,7 @@ namespace PersistenceMap.Samples
 
             switch (logEntry.Category)
             {
-                case LoggerCategory.Query:
+                case Diagnostics.LoggerCategory.Query:
                     sb.AppendLine($"PersistenceMap - Query");
                     sb.AppendLine(logEntry.Message.TrimEnd());
                     AppendCategory(sb, logEntry.Category);
@@ -63,11 +62,11 @@ namespace PersistenceMap.Samples
 
             switch (logEntry.Category)
             {
-                case LoggerCategory.Error:
+                case Diagnostics.LoggerCategory.Error:
                     Trace.TraceError(sb.ToString());
                     break;
 
-                case LoggerCategory.Query:
+                case Diagnostics.LoggerCategory.Query:
                     Trace.WriteLine(sb.ToString());
                     break;
 

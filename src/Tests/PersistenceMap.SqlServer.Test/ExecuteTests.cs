@@ -12,7 +12,7 @@ namespace PersistenceMap.Test.Integration
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 // select with string select statement
@@ -28,7 +28,7 @@ namespace PersistenceMap.Test.Integration
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 // select with string select statement
@@ -44,7 +44,7 @@ namespace PersistenceMap.Test.Integration
         {
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
-            provider.Settings.AddLogger(logger);
+            provider.Settings.AddLogWriter(logger);
             using (var context = provider.Open())
             {
                 // select with string select statement
