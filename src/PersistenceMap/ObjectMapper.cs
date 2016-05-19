@@ -343,8 +343,10 @@ namespace PersistenceMap
             }
             catch (InvalidCastException invalidCast)
             {
+                string tmpValue = value != null ? value.ToString() : "NULL";
+
                 var sb = new StringBuilder();
-                sb.AppendLine($"The value {value ?? "NULL"} could not be cast to the desired type.");
+                sb.AppendLine($"The value {tmpValue} could not be cast to the desired type.");
                 sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
                 throw new InvalidConverterException(sb.ToString(), invalidCast);
             }
@@ -420,9 +422,11 @@ namespace PersistenceMap
                 }
                 catch (InvalidCastException invalidCast)
                 {
+                    string tmpValue = convertedValue != null ? convertedValue.ToString() : "NULL";
+
                     var sb = new StringBuilder();
                     sb.AppendLine($"There was an error when trying to convert a value using the converter {field.Converter.Method}.");
-                    sb.AppendLine($"The value {convertedValue ?? "NULL"} could not be cast to the desired type.");
+                    sb.AppendLine($"The value {tmpValue ?? "NULL"} could not be cast to the desired type.");
                     sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
                     throw new InvalidConverterException(sb.ToString(), invalidCast);
                 }
