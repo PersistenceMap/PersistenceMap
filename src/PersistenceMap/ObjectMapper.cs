@@ -1,12 +1,11 @@
-﻿using PersistenceMap.Factories;
-using PersistenceMap.Diagnostics;
+﻿using PersistenceMap.Diagnostics;
+using PersistenceMap.Factories;
+using PersistenceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Text;
-using System.Linq;
-using PersistenceMap.QueryBuilder;
 
 namespace PersistenceMap
 {
@@ -203,7 +202,8 @@ namespace PersistenceMap
                                 var sb = new StringBuilder();
                                 sb.AppendLine($"The destination Type {fieldDefinition.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
                                 sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType}.{fieldDefinition.MemberName}");
-                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader. The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
+                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader.");
+                                sb.AppendLine($"The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
@@ -302,7 +302,8 @@ namespace PersistenceMap
                 var sb = new StringBuilder();
                 sb.AppendLine($"The destination Type {field.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
                 sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName} from Field in Query {field.FieldName}");
-                sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet. The Member {field.MemberName} will be ignored when mapping the data to the objects.");
+                sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet.");
+                sb.AppendLine($"The Member {field.MemberName} will be ignored when mapping the data to the objects.");
 
                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                 {
@@ -343,7 +344,8 @@ namespace PersistenceMap
             catch (InvalidCastException invalidCast)
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"The value {value} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
+                sb.AppendLine($"The value {value ?? "NULL"} could not be cast to the desired type.");
+                sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
                 throw new InvalidConverterException(sb.ToString(), invalidCast);
             }
         }
@@ -420,7 +422,8 @@ namespace PersistenceMap
                 {
                     var sb = new StringBuilder();
                     sb.AppendLine($"There was an error when trying to convert a value using the converter {field.Converter.Method}.");
-                    sb.AppendLine($"The value {convertedValue} could not be cast to the desired type {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
+                    sb.AppendLine($"The value {convertedValue ?? "NULL"} could not be cast to the desired type.");
+                    sb.Append($"Expected Type: {field.MemberType} for the property {field.MemberName} on object {field.EntityType.Name}");
                     throw new InvalidConverterException(sb.ToString(), invalidCast);
                 }
             }

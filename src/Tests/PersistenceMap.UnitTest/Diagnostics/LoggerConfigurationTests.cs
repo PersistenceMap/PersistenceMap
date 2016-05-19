@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
 using PersistenceMap.Diagnostics;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PersistenceMap.UnitTest.Diagnostics
 {
@@ -26,6 +22,20 @@ namespace PersistenceMap.UnitTest.Diagnostics
         }
 
         [Test]
+        public void PersistenceMap_Diagnostics_LoggerConfiguration_SetToSettings_Fluent()
+        {
+            var settings = new Settings();
+            var writer = new TraceLogger();
+
+            new LoggerConfiguration()
+                .AddWriter(writer)
+                .SetToFactory(settings);
+
+            var logger = settings.LoggerFactory.LogProviders.First();
+            Assert.AreSame(writer, logger);
+        }
+
+        [Test]
         public void PersistenceMap_Diagnostics_LoggerConfiguration_SetDefault()
         {
             var writer = new TraceLogger();
@@ -33,6 +43,21 @@ namespace PersistenceMap.UnitTest.Diagnostics
             configuration.AddWriter(writer);
             
             configuration.SetDefault();
+
+            var settings = new Settings();
+            var logger = settings.LoggerFactory.LogProviders.First();
+            Assert.AreSame(writer, logger);
+
+            settings.Reset();
+        }
+
+        [Test]
+        public void PersistenceMap_Diagnostics_LoggerConfiguration_SetDefault_Fluent()
+        {
+            var writer = new TraceLogger();
+            new LoggerConfiguration()
+                .AddWriter(writer)
+                .SetDefault();
 
             var settings = new Settings();
             var logger = settings.LoggerFactory.LogProviders.First();
