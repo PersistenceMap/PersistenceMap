@@ -767,22 +767,22 @@ namespace PersistenceMap.UnitTest.Expression
         [Test]
         public void PersistenceMap_Integration_Select_NullableTypes_Null()
         {
-            var warriors = new List<Warrior>
+            var warriors = new List<Warrior2>
             {
-                new Warrior { ID = 1, Name = "Olaf", Streangth = null },
-                new Warrior { ID = 2, Name = "Knut", Streangth = null },
-                new Warrior { ID = 3, Name = "Henry", Streangth = null },
+                new Warrior2 { ID = 1, Name = "Olaf", Streangth = null },
+                new Warrior2 { ID = 2, Name = "Knut", Streangth = null },
+                new Warrior2 { ID = 3, Name = "Henry", Streangth = null },
             };
 
             var connection = new Mock<IConnectionProvider>();
             connection.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
-            connection.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(new MockedDataReader<Warrior>(warriors)));
+            connection.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(new MockedDataReader<Warrior2>(warriors)));
 
             var provider = new ContextProvider(connection.Object);
             provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;
             using (var context = provider.Open())
             {
-                var items = context.Select<Warrior>();
+                var items = context.Select<Warrior2>();
 
                 Assert.IsTrue(items.Any());
             }
