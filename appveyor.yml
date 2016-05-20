@@ -26,12 +26,12 @@ install:
 #  - nuget restore PersistenceMap.sln
  
 # enable patching of AssemblyInfo.* files
-# assembly_info:
-#   patch: true
-#   file: AssemblyInfo.*
-#   assembly_version: "2.2.{build}"
-#   assembly_file_version: "{version}"
-#   assembly_informational_version: "{version}"
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}" # "0.3.3.{build}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
  
 # to add several platforms to build matrix:
 #platform:
@@ -51,10 +51,10 @@ before_build:
 
 build:
   parallel: true                  # enable MSBuild parallel builds
-  project: PersistenceMap.sln      # path to Visual Studio solution or project
-  publish_wap: true               # package Web Application Projects (WAP) for Web Deploy
-  publish_wap_xcopy: true         # package Web Application Projects (WAP) for XCopy deployment
-  publish_azure: true             # package Azure Cloud Service projects and push to artifacts
+  project: PersistenceMap.sln     # path to Visual Studio solution or project
+  publish_wap: false              # package Web Application Projects (WAP) for Web Deploy
+  publish_wap_xcopy: false        # package Web Application Projects (WAP) for XCopy deployment
+  publish_azure: false            # package Azure Cloud Service projects and push to artifacts
   publish_nuget: true             # package projects with .nuspec files and push to artifacts
   publish_nuget_symbols: true     # generate and publish NuGet symbol packages
   include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
@@ -89,7 +89,8 @@ before_test:
 
 # scripts to run after tests
 after_test:
-
+  - ps: .\pack.ps1   # Run a script to create the nuget package
+  
 # to run your custom scripts instead of automatic tests
 test_script:
 #  - echo This is my custom test script
@@ -97,6 +98,21 @@ test_script:
 # to disable automatic tests 
 #test: off
 
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+  - path: src\PersistenceMap\bin\Release\PersistenceMap.dll
+    name: PersistenceMap.dll
+  - path: src\PersistenceMap.SqlServer\bin\Release\PersistenceMap.SqlServer.dll
+    name: PersistenceMap.SqlServer.dll
+  - path: src\PersistenceMap.Sqlite\bin\Release\PersistenceMap.Sqlite.dll
+    name: PersistenceMap.Sqlite.dll
+    
+  # pushing all *.nupkg files in directory
+  - path: '.\*.nupkg'
+  
 notifications:
 
   - provider: Webhook
