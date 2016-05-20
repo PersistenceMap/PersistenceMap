@@ -1,7 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
+using PersistenceMap.Interception;
 using PersistenceMap.Test;
 using PersistenceMap.Test.TableTypes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PersistenceMap.SqlServer.Test
@@ -475,6 +478,35 @@ namespace PersistenceMap.SqlServer.Test
                     .For<SalesByYear>()
                     .Ignore(s => s.SpecialSubtotal)
                     .Execute();
+            }
+        }
+
+        [Test]
+        public void PersistenceMap_SqlServer_Integration_Procedure_DBNullValues()
+        {
+            var warriors = new[]
+            {
+                new { ID = 1, Name = "Olaf", Streangth = DBNull.Value, WeaponID = 0, Race = "", SpecialSkill = "" },
+                new { ID = 2, Name = "Knut", Streangth = DBNull.Value, WeaponID = 0, Race = "", SpecialSkill = "" },
+                new { ID = 3, Name = "Henry", Streangth = DBNull.Value, WeaponID = 0, Race = "", SpecialSkill = "" },
+            };
+
+            var connection = new Mock<IConnectionProvider>();
+            connection.Setup(exp => exp.QueryCompiler).Returns(() => new QueryCompiler());
+            connection.Setup(exp => exp.Execute(It.IsAny<string>())).Returns(() => new DataReaderContext(new MockedDataReader(warriors, warriors.First().GetType())));
+
+            var provider = new SqlContextProvider(connection.Object);
+            provider.Settings.RestrictiveMappingMode = RestrictiveMode.ThrowException;
+            using (var context = provider.Open())
+            {
+                var items = context.Procedure("SomeProc")
+                    .AddParameter("@BeginDate", () => new DateTime(1970, 1, 1))
+                    .AddParameter("@EndDate", () => DateTime.Today)
+                    .For<Warrior>()
+                    .Execute();
+
+                // just make sure no error happens with DBNull values
+                Assert.IsTrue(items.Any());
             }
         }
     }

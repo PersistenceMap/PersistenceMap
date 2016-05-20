@@ -12,5 +12,7 @@ namespace PersistenceMap.Test.TableTypes
         public string Race { get; set; }
 
         public string SpecialSkill { get; set; }
+
+        public int? Streangth { get; set; }
     }
 }

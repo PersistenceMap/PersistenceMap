@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Interception\IReaderInterceptor.cs" />
     <Compile Include="Interception\MockedConnectionProvider.cs" />
+    <Compile Include="Interception\MockedDataReaderOfT.cs" />
     <Compile Include="Interception\MockedQueryKernel.cs" />
     <Compile Include="Interception\InterceptorExtensions.cs" />
     <Compile Include="Interception\DataReaderInterceptor.cs" />

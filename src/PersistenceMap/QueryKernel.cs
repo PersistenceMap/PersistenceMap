@@ -127,6 +127,8 @@ namespace PersistenceMap
         /// <returns>All results as a List of ReaderResult</returns>
         public virtual IEnumerable<ReaderResult> Execute(CompiledQuery query)
         {
+            Logger.Write(query.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+
             var results = new List<ReaderResult>();
 
             using (var context = ConnectionProvider.Execute(query.QueryString))

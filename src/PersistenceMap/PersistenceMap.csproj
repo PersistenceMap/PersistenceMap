@@ -80,6 +80,7 @@
     <Compile Include="Enums\RestrictiveMode.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Exceptions\InvalidMapException.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Factories\ConnectionStringBuilder.cs" />
     <Compile Include="CustomConfiguration.cs" />
     <Compile Include="Configuration\LoggerElement.cs" />

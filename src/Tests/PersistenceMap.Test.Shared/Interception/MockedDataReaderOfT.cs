@@ -8,7 +8,7 @@ namespace PersistenceMap.Interception
     /// Creates an IDataReader over an instance of IEnumerable&lt;> or IEnumerable.
     /// Anonymous type arguments are acceptable.
     /// </summary>
-    public class MockedDataReader : ObjectDataReader
+    public class MockedDataReader<T> : ObjectDataReader
     {
         private readonly Queue<Result> _results;
         private IEnumerator _enumerator;
@@ -20,10 +20,10 @@ namespace PersistenceMap.Interception
         /// Use other constructor for IEnumerable&lt;>
         /// </summary>
         /// <param name="collection">The collection</param>
-        public MockedDataReader(IEnumerable collection, Type type)
-            : base(type)
+        public MockedDataReader(IEnumerable<T> collection)
+            : base(typeof(T))
         {
-            _type = type;
+            _type = typeof(T);
             _enumerator = collection?.GetEnumerator();
 
             _results = new Queue<Result>();
@@ -56,11 +56,6 @@ namespace PersistenceMap.Interception
         /// </returns>
         public override bool Read()
         {
-            if (_enumerator == null)
-            {
-                throw new InvalidOperationException("MockedDataReader is executed without a collection to return");
-            }
-
             bool returnValue = _enumerator.MoveNext();
             _current = returnValue ? _enumerator.Current : _type.IsValueType ? Activator.CreateInstance(_type) : null;
             return returnValue;
@@ -82,14 +77,14 @@ namespace PersistenceMap.Interception
             return true;
         }
 
-        public MockedDataReader AddResult<T2>(Func<IEnumerable<T2>> collection)
+        public MockedDataReader<T> AddResult<T2>(Func<IEnumerable<T2>> collection)
         {
             _results.Enqueue(new Result(collection, typeof(T2)));
 
             return this;
         }
 
-        internal MockedDataReader AddResult(Result result)
+        internal MockedDataReader<T> AddResult(Result result)
         {
             _results.Enqueue(result);
 

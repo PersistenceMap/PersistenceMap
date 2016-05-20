@@ -408,10 +408,11 @@ namespace PersistenceMap
             }
 
             // if still no match than just pass the db value and hope it works...
-            if (convertedValue == null)
+            if (convertedValue == null && !databaseValue.IsDBNull())
             {
-                Logger.Write($"## PersictanceMap - Cannot convert value {databaseValue??"NULL"} from type {field.FieldType.Name} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
-                convertedValue = databaseValue;
+                string tmpValue = databaseValue == null ? "NULL" : databaseValue.IsDBNull() ? "DBNull" : databaseValue.ToString();
+                Logger.Write($"Cannot convert value {tmpValue} from type {field.FieldType.Name} to type {field.MemberName}", GetType().Name, LoggerCategory.Error, DateTime.Now);
+                convertedValue = databaseValue.IsDBNull() ? null : databaseValue;
             }
 
             if (field.Converter != null)
@@ -443,7 +444,7 @@ namespace PersistenceMap
         /// <returns>The value as a .net value type</returns>
         private object ConvertDatabaseValueToTypeValue(object value, Type memberType)
         {
-            if (value == null || value is DBNull)
+            if (value == null || value.IsDBNull())
             {
                 return null;
             }

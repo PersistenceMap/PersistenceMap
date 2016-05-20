@@ -6,6 +6,11 @@ namespace PersistenceMap.Interception
 {
     public abstract class ObjectDataReader : IDataReader
     {
+        protected ObjectDataReader()
+        {
+            Closed = false;
+        }
+
         protected ObjectDataReader(Type elementType)
         {
             SetFields(elementType);
