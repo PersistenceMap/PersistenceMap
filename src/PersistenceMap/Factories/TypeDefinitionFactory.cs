@@ -162,7 +162,7 @@ namespace PersistenceMap.Factories
                     definition.FieldType = part.FieldType;
                 }
             }
-
+            
             if (ignoreUnusedFields)
             {
                 // remove all fields that are not contained in the query/datareader
