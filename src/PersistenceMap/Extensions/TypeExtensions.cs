@@ -15,7 +15,14 @@ namespace PersistenceMap
         /// <returns></returns>
         public static IEnumerable<PropertyInfo> GetSelectionMembers(this Type type)
         {
-            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).Where(p => !Attribute.IsDefined(p, typeof(IgnoreAttribute)) && p.GetIndexParameters().Length == 0);
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty).Where(p => p.GetIndexParameters().Length == 0);
+            var ignored = properties.Where(p => Attribute.IsDefined(p, typeof(IgnoreAttribute)));
+            foreach (var property in ignored)
+            {
+                System.Diagnostics.Trace.WriteLine($"Property {property.Name} on {type.Name} is marked with the IgnoreAttribute and will not be contained in the Selection");
+            }
+
+            return properties.Where(p => !Attribute.IsDefined(p, typeof(IgnoreAttribute)));
         }
 
         /// <summary>

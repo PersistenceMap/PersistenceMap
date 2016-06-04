@@ -46,7 +46,9 @@ namespace PersistenceMap.Factories
                 // merge the fields from the defined type to the provided type (anonymous object)
                 var defined = definedFields.FirstOrDefault(f => f.MemberName == field.MemberName);
                 if (defined == null)
+                {
                     continue;
+                }
 
                 field.IsNullable = defined.IsNullable;
                 field.IsPrimaryKey = defined.IsPrimaryKey;
@@ -116,14 +118,14 @@ namespace PersistenceMap.Factories
         {
             var isNullableType = propertyInfo.PropertyType.IsNullableType();
 
-            var isNullable = !propertyInfo.PropertyType.IsValueType /*&& !propertyInfo.HasAttributeNamed(typeof(RequiredAttribute).Name))*/ || isNullableType;
+            var isNullable = !propertyInfo.PropertyType.IsValueType || isNullableType;
 
             var propertyType = isNullableType ? Nullable.GetUnderlyingType(propertyInfo.PropertyType) : propertyInfo.PropertyType;
 
             return new FieldDefinition
             {
                 FieldName = propertyInfo.Name,
-                MemberName = propertyInfo.Name/*.ToLower()*/,
+                MemberName = propertyInfo.Name,
                 EntityName = propertyInfo.DeclaringType.Name,
                 MemberType = propertyType,
                 FieldType = propertyType,
@@ -146,7 +148,9 @@ namespace PersistenceMap.Factories
         private static IEnumerable<FieldDefinition> MatchFieldInformation(IEnumerable<FieldDefinition> fields, IQueryPartsContainer queryParts, bool ignoreUnusedFields)
         {
             if (queryParts == null)
+            {
                 return fields;
+            }
 
             // cast to list to ensure that there is no multiple enumeration
             var definitions = fields.ToList();
