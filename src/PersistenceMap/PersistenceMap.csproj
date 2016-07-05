@@ -75,8 +75,12 @@
     <Compile Include="ContextProvider.cs" />
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="DatabaseContextExtensions.cs" />
+    <Compile Include="Diagnostics\TimeLogger.cs" />
     <Compile Include="Diagnostics\LoggerConfiguration.cs" />
+    <Compile Include="Diagnostics\LogWriterExtensions.cs" />
+    <Compile Include="Diagnostics\Timer.cs" />
     <Compile Include="Enums\KeyValuePart.cs" />
+    <Compile Include="Enums\LogDebth.cs" />
     <Compile Include="Enums\RestrictiveMode.cs" />
     <Compile Include="Exceptions\InvalidConverterException.cs" />
     <Compile Include="Exceptions\InvalidMapException.cs" />

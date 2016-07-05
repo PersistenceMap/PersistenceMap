@@ -106,6 +106,8 @@ namespace PersistenceMap.Sqlite.Test
             var provider = new SqliteContextProvider(ConnectionString);
             var logger = new MessageStackLogWriter();
             provider.Settings.AddLogWriter(logger);
+            provider.Settings.LogLevel = LogDebth.Simple;
+
             using (var context = provider.Open())
             {
                 // table with a foreign key

@@ -16,6 +16,22 @@ namespace PersistenceMap.Configuration
 
         public SettingsConfiguration()
         {
+            var loggers = ReadConfiguration();
+
+            _writers = loggers;
+        }
+        
+        internal IEnumerable<ILogWriter> Loggers => _writers;
+
+        internal SettingsConfiguration AddWriter(ILogWriter writer)
+        {
+            _writers.Add(writer);
+
+            return this;
+        }
+
+        private static IList<ILogWriter> ReadConfiguration()
+        {
             var loggers = new List<ILogWriter>();
 
             // add loggers that are defined in the configurationsection in the app.config
@@ -48,16 +64,7 @@ namespace PersistenceMap.Configuration
                 }
             }
 
-            _writers = loggers;
-        }
-
-        internal IEnumerable<ILogWriter> Loggers => _writers;
-
-        internal SettingsConfiguration AddWriter(ILogWriter writer)
-        {
-            _writers.Add(writer);
-
-            return this;
+            return loggers;
         }
     }
 }

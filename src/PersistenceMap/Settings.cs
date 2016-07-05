@@ -15,6 +15,7 @@ namespace PersistenceMap
             Initialize();
 
             RestrictiveMappingMode = RestrictiveMode.Log;
+            LogLevel = LogDebth.Extended;
         }
 
         /// <summary>
@@ -41,7 +42,15 @@ namespace PersistenceMap
             }
         }
 
+        /// <summary>
+        /// Gets or sets how restrictive the mapper handles errors
+        /// </summary>
         public RestrictiveMode RestrictiveMappingMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the depth of information that is logged
+        /// </summary>
+        public LogDebth LogLevel { get; set; }
 
         /// <summary>
         /// Adds a logger to the factory to the already defined loggers from the configuration

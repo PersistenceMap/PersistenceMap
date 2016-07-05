@@ -13,6 +13,8 @@ namespace PersistenceMap.Test.Integration
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogWriter(logger);
+            provider.Settings.LogLevel = LogDebth.Simple;
+
             using (var context = provider.Open())
             {
                 // select with string select statement
@@ -29,6 +31,8 @@ namespace PersistenceMap.Test.Integration
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogWriter(logger);
+            provider.Settings.LogLevel = LogDebth.Simple;
+
             using (var context = provider.Open())
             {
                 // select with string select statement
@@ -45,6 +49,8 @@ namespace PersistenceMap.Test.Integration
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogWriter(logger);
+            provider.Settings.LogLevel = LogDebth.Simple;
+
             using (var context = provider.Open())
             {
                 // select with string select statement

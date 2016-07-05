@@ -3,6 +3,7 @@ using PersistenceMap.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace PersistenceMap
@@ -51,15 +52,27 @@ namespace PersistenceMap
         /// <returns>A list of objects containing the result returned by the query expression</returns>
         public virtual IEnumerable<T> Execute<T>(CompiledQuery compiledQuery)
         {
-            // TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
 
             try
             {
                 // TODO: _connectionProvider has to be wrapped to be able to return a EnumerableDataReader or the efective DataReader
+                var timer = new TimeLogger(_settings)
+                    .StartTimer(key: "Total duration:")
+                    .StartTimer(key: "Execution duration:");
+
                 using (var context = ConnectionProvider.Execute(compiledQuery.QueryString))
                 {
-                    return _mapper.Map<T>(context.DataReader, compiledQuery);
+                    timer.StopTimer(key: "Execution duration:")
+                        .StartTimer(key: "Mapper duration:");
+
+                    var mapped = _mapper.Map<T>(context.DataReader, compiledQuery);
+
+                    timer.Stop();
+                    timer.AppendLine($"{mapped.Count()} row(s) resolved");
+
+                    Logger.Write(compiledQuery.QueryString, timer, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+
+                    return mapped;
                 }
             }
             catch (InvalidConverterException)
@@ -80,7 +93,7 @@ namespace PersistenceMap
 
                 sb.AppendLine($"For more information see the inner exception");
 
-                throw new System.Data.DataException(sb.ToString(), ex);
+                throw new System.Data.DataException(sb.ToString().TrimEnd(), ex);
             }
         }
 
@@ -90,13 +103,13 @@ namespace PersistenceMap
         /// <param name="compiledQuery">The CompiledQuery containing the expression</param>
         public virtual void ExecuteNonQuery(CompiledQuery compiledQuery)
         {
-            // TODO: Add more information to log like time and duration
-            Logger.Write(compiledQuery.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
-
             try
             {
+                var timer = new TimeLogger(_settings).StartTimer(key: "Execution duration:");
                 var affectedRows = ConnectionProvider.ExecuteNonQuery(compiledQuery.QueryString);
-                Logger.Write($"{affectedRows} row(s) affected", ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
+                timer.Stop().AppendLine($"{affectedRows} row(s) affected");
+
+                Logger.Write(compiledQuery.QueryString, timer, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
             }
             catch (InvalidConverterException)
             {
@@ -127,19 +140,27 @@ namespace PersistenceMap
         /// <returns>All results as a List of ReaderResult</returns>
         public virtual IEnumerable<ReaderResult> Execute(CompiledQuery query)
         {
-            Logger.Write(query.QueryString, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
-
             var results = new List<ReaderResult>();
+
+            var timer = new TimeLogger(_settings)
+                    .StartTimer(key: "Total duration:")
+                    .StartTimer(key: "Execution duration:");
 
             using (var context = ConnectionProvider.Execute(query.QueryString))
             {
+                timer.StopTimer(key: "Execution duration:")
+                        .StartTimer(key: "Mapper duration:");
+
                 var reader = context.DataReader;
-                
+
                 do
                 {
                     var result = _mapper.Map(reader);
                     results.Add(result);
                 } while (reader.NextResult());
+
+                timer.Stop();
+                Logger.Write(query.QueryString, timer, ConnectionProvider.GetType().Name, LoggerCategory.Query, DateTime.Now);
             }
 
             return results;

@@ -13,6 +13,8 @@ namespace PersistenceMap.Test.Integration
             var logger = new MessageStackLogWriter();
             var provider = new SqlContextProvider(ConnectionString);
             provider.Settings.AddLogWriter(logger);
+            provider.Settings.LogLevel = LogDebth.Simple;
+
             using (var context = provider.Open())
             {
                 context.Update<Orders>(() => new { Freight = 20 }, o => o.OrdersID == 10000000);
