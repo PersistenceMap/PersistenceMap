@@ -90,6 +90,8 @@ namespace PersistenceMap.QueryBuilder
             var dataObject = dataPredicate.Compile().Invoke();
 
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>();
+
+            // update all items except the ones defined as key
             foreach (var field in tableFields.Where(f => f.MemberName != keyName))
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
@@ -130,7 +132,8 @@ namespace PersistenceMap.QueryBuilder
             var dataObject = anonym.Compile().Invoke();
             var tableFields = TypeDefinitionFactory.GetFieldDefinitions<T>(dataObject.GetType());
 
-            foreach (var field in tableFields.Where(f => f.MemberName != keyName))
+            // update all fields that are defined in the anonymous object even if it is the key statement
+            foreach (var field in tableFields)
             {
                 var value = DialectProvider.Instance.GetQuotedValue(field.GetValueFunction(dataObject), field.MemberType);
                 var keyValuePart = new ValueCollectionQueryPart(OperationType.UpdateValue, typeof(T), field.MemberName);

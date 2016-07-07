@@ -323,7 +323,7 @@ namespace PersistenceMap.UnitTest
             Assert.IsTrue(expression.QueryParts.Parts.Any(p => p.OperationType == OperationType.Where));
 
             // update only name property
-            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count() == 1);
+            Assert.IsTrue(expression.QueryParts.Parts.Where(p => p.OperationType == OperationType.Update).OfType<DelegateQueryPart>().First().Parts.Count() == 2);
 
             Assert.IsTrue(context.QueryStore.Any());
 
