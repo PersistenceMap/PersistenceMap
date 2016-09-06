@@ -200,10 +200,10 @@ namespace PersistenceMap
                             if (index < 0)
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine($"The destination Type {fieldDefinition.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
-                                sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType}.{fieldDefinition.MemberName}");
-                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the IDataReader.");
-                                sb.AppendLine($"The Field {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
+                                sb.AppendLine($"Failed to Map: {fieldDefinition.EntityType.Name}.{fieldDefinition.MemberName}");
+                                sb.AppendLine($"There is no Field with the name {fieldDefinition.MemberName} contained in the result of the IDataReader.");
+                                sb.AppendLine($"The Member {fieldDefinition.MemberName} will be ignored when mapping the data to the objects.");
+                                sb.AppendLine($"The Member {fieldDefinition.EntityType.Name}.{fieldDefinition.MemberName} should be marked as ignored in the Querydefinition.");
 
                                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                                 {
@@ -300,10 +300,10 @@ namespace PersistenceMap
             if (!result.ContainsField(field.FieldName))
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"The destination Type {field.EntityName} containes fields that are not contained in the IDataReader result. Make sure that all Fields defined on the destination Type are contained in the Result or ignore the Fields in the Querydefinition");
                 sb.AppendLine($"Failed to Map: {field.EntityType.Name}.{field.MemberName} from Field in Query {field.FieldName}");
                 sb.AppendLine($"There is no Field with the name {field.FieldName} contained in the ResultSet.");
                 sb.AppendLine($"The Member {field.MemberName} will be ignored when mapping the data to the objects.");
+                sb.AppendLine($"The Member {field.EntityType.Name}.{field.MemberName} should be marked as ignored in the Querydefinition.");
 
                 if (_settings.RestrictiveMappingMode.HasFlag(RestrictiveMode.Log))
                 {
